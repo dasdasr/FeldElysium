@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.feldelysium.presentation.editor.EditorScreen
 import com.example.feldelysium.presentation.playback.PlaybackScreen
+import com.example.feldelysium.presentation.settings.SettingsScreen
 
 /**
  * Single NavHost for the entire app.
@@ -26,7 +27,16 @@ fun AppNavGraph() {
             EditorScreen(
                 onNavigateToPlayback = {
                     navController.navigate(Screen.Playback.route)
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Screen.Settings.route)
                 }
+            )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

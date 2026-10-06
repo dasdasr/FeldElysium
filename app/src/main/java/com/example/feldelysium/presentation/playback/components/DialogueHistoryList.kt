@@ -2,9 +2,11 @@ package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,8 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -114,11 +119,24 @@ fun DialogueHistoryList(
                 restBottomPx = restBottomPx,
                 viewportHeightPx = viewportPx,
                 textShiftPx = textShiftPx,
-            ).roundToInt()
+            )
+            anchor.noteScroll(
+                y = y,
+                contentHeightPx = placeable.height.toFloat(),
+                restBottomPx = restBottomPx,
+            )
             layout(constraints.maxWidth, constraints.maxHeight) {
-                placeable.place(0, y)
+                placeable.place(0, y.roundToInt())
             }
         }
+
+        TapeScrollIndicator(
+            anchor = anchor,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .fillMaxHeight()
+                .width(14.dp),
+        )
     }
 }
 
@@ -133,6 +151,9 @@ private class ColumnScrollAnchor(
 ) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
+
+    var scrollFraction: Float? = null
+        private set
 
     private var bonus = 0f
     private var tapeTarget = 0f
@@ -180,6 +201,19 @@ private class ColumnScrollAnchor(
         }
     }
 
+    fun noteScroll(
+        y: Float,
+        contentHeightPx: Float,
+        restBottomPx: Float,
+    ) {
+        val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
+        scrollFraction = if (maxOffset > 1f) {
+            ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
+        } else {
+            null
+        }
+    }
+
     private fun startScroll() {
         val gen = ++generation
         job?.cancel()
@@ -214,12 +248,47 @@ private class ColumnScrollAnchor(
     }
 }
 
-@Preview
+@Composable
+private fun TapeScrollIndicator(
+    anchor: ColumnScrollAnchor,
+    modifier: Modifier = Modifier,
+) {
+    Canvas(modifier) {
+        val fraction = anchor.scrollFraction ?: return@Canvas
+        val lineX = size.width - 3.dp.toPx()
+        val lineInset = 16.dp.toPx()
+        val lineTop = lineInset
+        val lineBottom = size.height - lineInset
+        if (lineBottom <= lineTop) return@Canvas
+        drawLine(
+            color = Color.White.copy(alpha = 0.38f),
+            start = Offset(lineX, lineTop),
+            end = Offset(lineX, lineBottom),
+            strokeWidth = 1.dp.toPx(),
+        )
+        val dotRadius = 2.25.dp.toPx()
+        val dotInset = 10.dp.toPx() + dotRadius
+        val travelTop = lineTop + dotInset
+        val travelBottom = lineBottom - dotInset
+        val dotY = if (travelBottom <= travelTop) {
+            (lineTop + lineBottom) / 2f
+        } else {
+            travelTop + (travelBottom - travelTop) * fraction
+        }
+        drawCircle(
+            color = Color.White,
+            radius = dotRadius,
+            center = Offset(lineX, dotY),
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 private fun DialogueHistoryListPreview() {
     DialogueHistoryList(
         entries = listOf(
-            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
+            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro, we are so back, so so bak, you know?"),
             DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
             DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
         ),
