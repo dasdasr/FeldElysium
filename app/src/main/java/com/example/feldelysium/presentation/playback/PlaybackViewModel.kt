@@ -24,8 +24,8 @@ import kotlinx.coroutines.launch
  * Sound is played synchronously inside [advance] on the main dispatcher —
  * SoundPool.play() is main-thread safe and fast enough to not block frames.
  *
- * Scroll-to-bottom is handled in the Composable via LaunchedEffect on
- * revealedEntries.size — this avoids needing a Channel for it.
+ * The column and film scroll live in DialogueHistoryList. This class only
+ * appends the next entry; it does not animate.
  */
 class PlaybackViewModel(
     application: Application,

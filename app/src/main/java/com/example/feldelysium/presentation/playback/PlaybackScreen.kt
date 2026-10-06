@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -18,10 +17,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.domain.model.AttributeGroup
@@ -30,7 +33,6 @@ import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
-import com.example.feldelysium.presentation.playback.components.TapeBackground
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
 
@@ -61,6 +63,18 @@ fun PlaybackScreen(
         onDispose { activity.requestedOrientation = original }
     }
 
+    DisposableEffect(Unit) {
+        val window = activity.window
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        controller.hide(WindowInsetsCompat.Type.systemBars())
+
+        onDispose {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
     LaunchedEffect(Unit) {
         vm.effects.collect { effect ->
             when (effect) {
@@ -84,75 +98,72 @@ fun PlaybackScreenContent(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(state.revealedEntries.size) {
-        if (state.revealedEntries.isNotEmpty()) listState.animateScrollToItem(0)
-    }
-
-    BoxWithConstraints(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ChromaKeyGreen)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onTap
-            )
+            .background(Color.Black),
+        contentAlignment = Alignment.Center
     ) {
-        val tapeWidth = maxWidth * (TAPE_WIDTH_PX / REFERENCE_WIDTH_PX)
-        val tapeRightMargin = maxWidth * (TAPE_RIGHT_MARGIN_PX / REFERENCE_WIDTH_PX)
-        val portraitLeft = maxWidth * (PORTRAIT_LEFT_PX / REFERENCE_WIDTH_PX)
-        val portraitTop = maxHeight * (PORTRAIT_TOP_PX / REFERENCE_HEIGHT_PX)
-        val portraitWidth = maxWidth * (PORTRAIT_WIDTH_PX / REFERENCE_WIDTH_PX)
-        val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
-        val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
-
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
-                .fillMaxHeight()
-                .width(tapeWidth + tapeRightMargin)
-                .align(Alignment.CenterEnd)
+                .aspectRatio(16f / 9f, matchHeightConstraintsFirst = false)
+                .background(ChromaKeyGreen)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onTap
+                )
         ) {
-            TapeBackground(
-                scrollProgress = state.revealedEntries.size.toFloat(),
+            val tapeWidth = maxWidth * (TAPE_WIDTH_PX / REFERENCE_WIDTH_PX)
+            val tapeRightMargin = maxWidth * (TAPE_RIGHT_MARGIN_PX / REFERENCE_WIDTH_PX)
+            val portraitLeft = maxWidth * (PORTRAIT_LEFT_PX / REFERENCE_WIDTH_PX)
+            val portraitTop = maxHeight * (PORTRAIT_TOP_PX / REFERENCE_HEIGHT_PX)
+            val portraitWidth = maxWidth * (PORTRAIT_WIDTH_PX / REFERENCE_WIDTH_PX)
+            val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
+            val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
+
+            Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(tapeWidth)
-                    .align(Alignment.CenterStart)
-            )
-            DialogueHistoryList(
-                entries = state.revealedEntries,
-                listState = listState,
+                    .width(tapeWidth + tapeRightMargin)
+                    .align(Alignment.CenterEnd)
+            ) {
+                DialogueHistoryList(
+                    entries = state.revealedEntries,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(tapeWidth)
+                        .align(Alignment.CenterStart)
+                )
+            }
+
+            LatestSpeakerPortrait(
+                speaker = state.revealedEntries.lastOrNull()?.speaker,
+                portraitWidth = portraitWidth,
+                portraitHeight = portraitHeight,
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(tapeWidth)
-                    .align(Alignment.CenterStart)
+                    .offset(
+                        x = portraitLeft - portraitBackdropInset,
+                        y = portraitTop - portraitBackdropInset
+                    )
+                    .size(
+                        width = portraitWidth + portraitBackdropInset * 2,
+                        height = portraitHeight + portraitBackdropInset * 2
+                    )
             )
-        }
 
-        LatestSpeakerPortrait(
-            speaker = state.revealedEntries.lastOrNull()?.speaker,
-            portraitWidth = portraitWidth,
-            portraitHeight = portraitHeight,
-            modifier = Modifier
-                .offset(
-                    x = portraitLeft - portraitBackdropInset,
-                    y = portraitTop - portraitBackdropInset
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 8.dp, top = 8.dp)
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    "Back",
+                    tint = ChromaKeyGreen.copy(alpha = 0.0f)
                 )
-                .size(
-                    width = portraitWidth + portraitBackdropInset * 2,
-                    height = portraitHeight + portraitBackdropInset * 2
-                )
-        )
-
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 8.dp, top = 8.dp)
-        ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back", tint = ChromaKeyGreen.copy(alpha = 0.0f))
+            }
         }
     }
 }
