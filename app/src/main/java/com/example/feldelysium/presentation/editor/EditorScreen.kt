@@ -50,7 +50,6 @@ fun EditorScreen(
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // ── One-shot effects ──────────────────────────────────────────────────────
     LaunchedEffect(Unit) {
         vm.effects.collect { effect ->
             when (effect) {
@@ -131,7 +130,6 @@ fun EditorScreen(
         }
     }
 
-    // ── Overlaid dialogs / sheets ─────────────────────────────────────────────
     if (state.isSpeakerPickerOpen) {
         SpeakerPickerDialog(
             speakers = state.allSpeakers,
@@ -160,7 +158,7 @@ fun EditorScreen(
 
     if (state.isEntryEditOpen) {
         EntryEditSheet(
-            entry = state.editingEntry,      // null = new entry for pendingSpeaker
+            entry = state.editingEntry,
             speaker = state.editingEntry?.speaker ?: state.pendingSpeaker,
             onConfirm = { text ->
                 if (state.editingEntry != null)
