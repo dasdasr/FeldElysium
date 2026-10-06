@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,6 +34,7 @@ import com.example.feldelysium.presentation.shared.SceneViewModel
 private fun EditorScreenPreview() {
     EditorScreen(
         onNavigateToPlayback = {},
+        onNavigateToSettings = {},
     )
 }
 
@@ -41,6 +43,7 @@ private fun EditorScreenPreview() {
 @Composable
 fun EditorScreen(
     onNavigateToPlayback: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as ComponentActivity
@@ -84,6 +87,9 @@ fun EditorScreen(
             TopAppBar(
                 title = { Text(state.sceneName) },
                 actions = {
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Default.Settings, "Settings")
+                    }
                     IconButton(onClick = { vm.dispatch(EditorEvent.OpenImportDialog) }) {
                         Icon(Icons.Default.Upload, "Bulk Import")
                     }

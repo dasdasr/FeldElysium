@@ -9,27 +9,27 @@ package com.example.feldelysium.data.sound
 enum class SoundGroup(val key: String, val assetPath: String) {
     INTELLECT(
         "intellect",
-        "sounds/intellect_appear.wav"
+        "intellect_appear.wav"
     ),
     PSYCHE(
         "psyche",
-        "sounds/psyche_appear.wav"
+        "psyche_appear.wav"
     ),
     PHYSIQUE(
         "physique",
-        "sounds/physique_appear.wav"
+        "physique_appear.wav"
     ),
     MOTORICS(
         "motorics",
-        "sounds/motorics_appear.wav"
+        "motorics_appear.wav"
     ),
     NPC(
         "npc",
-        "sounds/npc_appear.wav"
+        "npc_appear.wav"
     ),
     DEFAULT(
         "default",
-        "sounds/default_appear.wav"
+        "default_appear.wav"
     );
 
     companion object {
