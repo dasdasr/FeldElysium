@@ -3,33 +3,40 @@ package com.example.feldelysium.presentation.editor
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 
-/**
- * All state required to render the Editor screen.
- * Derived from [SceneState] + local editor UI concerns.
- */
 data class EditorUiState(
-    // Synced from SceneState
     val entries: List<DialogueEntry> = emptyList(),
     val allSpeakers: List<Speaker> = emptyList(),
     val sceneName: String = "Untitled Scene",
 
-    // Local UI state
     val editingEntry: DialogueEntry? = null,
-    val pendingSpeaker: Speaker? = null,  // selected for new entry, awaiting text input
+    val pendingSpeaker: Speaker? = null,
 
-    // Dialog visibility
     val isSpeakerPickerOpen: Boolean = false,
     val isEntryEditOpen: Boolean = false,
     val isImportDialogOpen: Boolean = false,
     val isCustomSpeakerDialogOpen: Boolean = false,
 
-    // Import state
     val importText: String = "",
-    val importError: String? = null
+    val importPreview: ImportPreview? = null,
+
+    val editingSpeaker: Speaker? = null,
 )
 
+data class ImportPreview(
+    val lineCount: Int,
+    val newSpeakerCount: Int,
+) {
+    val caption: String
+        get() {
+            if (lineCount == 0) return "No lines"
+            val lines = if (lineCount == 1) "1 line" else "$lineCount lines"
+            if (newSpeakerCount == 0) return lines
+            val speakers = if (newSpeakerCount == 1) "1 new speaker" else "$newSpeakerCount new speakers"
+            return "$lines · $speakers"
+        }
+}
+
 sealed class EditorEvent {
-    // Entry management
     data object RequestAddEntry : EditorEvent()
     data class SelectSpeakerForNewEntry(val speaker: Speaker) : EditorEvent()
     data class ConfirmNewEntry(val text: String) : EditorEvent()
@@ -39,22 +46,20 @@ sealed class EditorEvent {
     data class ReorderEntries(val entries: List<DialogueEntry>) : EditorEvent()
     data object DismissEntryEdit : EditorEvent()
 
-    // Custom speaker management
     data object RequestCustomSpeaker : EditorEvent()
     data class ConfirmCustomSpeaker(val speaker: Speaker) : EditorEvent()
+    data class RequestEditSpeaker(val speaker: Speaker) : EditorEvent()
+    data class ConfirmEditSpeaker(val speaker: Speaker) : EditorEvent()
     data object DismissCustomSpeaker : EditorEvent()
 
-    // Bulk import
     data object OpenImportDialog : EditorEvent()
     data object CloseImportDialog : EditorEvent()
     data class ImportTextChanged(val text: String) : EditorEvent()
     data object ConfirmImport : EditorEvent()
 
-    // Speaker picker
     data object OpenSpeakerPicker : EditorEvent()
     data object CloseSpeakerPicker : EditorEvent()
 
-    // Navigation / scene
     data object NavigateToPlayback : EditorEvent()
     data class RenameScene(val name: String) : EditorEvent()
     data object ClearScene : EditorEvent()
@@ -63,6 +68,7 @@ sealed class EditorEvent {
 sealed class EditorEffect {
     data object NavigateToPlayback : EditorEffect()
     data class ShowSnackbar(val message: String) : EditorEffect()
-    data class ShowImportWarning(val skipped: List<String>) : EditorEffect()
-    data object LaunchGalleryPicker : EditorEffect() // for custom speaker icon
+
+    // Picks an icon for a custom speaker.
+    data object LaunchGalleryPicker : EditorEffect()
 }

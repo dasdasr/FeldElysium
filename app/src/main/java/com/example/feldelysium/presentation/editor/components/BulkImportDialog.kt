@@ -6,13 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.presentation.editor.ImportPreview
 
 @Preview
 @Composable
 private fun BulkImportDialogPreview() {
     BulkImportDialog(
         text = "VOLITION:\nThis city is trying to kill you.\n\nKIM KITSURAGI:\nLet's focus.",
-        error = null,
+        preview = ImportPreview(lineCount = 2, newSpeakerCount = 0),
         onText = {},
         onConfirm = {},
         onDismiss = {},
@@ -22,7 +23,7 @@ private fun BulkImportDialogPreview() {
 @Composable
 fun BulkImportDialog(
     text: String,
-    error: String?,
+    preview: ImportPreview?,
     onText: (String) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
@@ -42,19 +43,18 @@ fun BulkImportDialog(
                     onValueChange = onText,
                     modifier      = Modifier.fillMaxWidth().heightIn(min = 160.dp),
                     placeholder   = { Text("VOLITION:\nThis city is trying to kill you.\n\nKIM KITSURAGI:\nLet's focus.") },
-                    isError       = error != null
                 )
-                if (error != null) {
+                if (preview != null) {
                     Text(
-                        text  = error,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall
+                        text  = preview.caption,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         },
         confirmButton = {
-            Button(onClick = onConfirm, enabled = text.isNotBlank()) { Text("Import") }
+            Button(onClick = onConfirm) { Text("Import") }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text("Cancel") }

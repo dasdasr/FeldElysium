@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,9 +24,15 @@ import com.example.feldelysium.domain.registry.PredefinedSpeakers
 @Composable
 private fun SpeakerPickerDialogPreview() {
     SpeakerPickerDialog(
-        speakers = PredefinedSpeakers.ALL,
+        speakers = PredefinedSpeakers.ALL + Speaker(
+            id = "custom",
+            name = "Ancient Reptilian Brain",
+            colorArgb = Speaker.DEFAULT_CUSTOM_COLOR,
+            type = SpeakerType.CUSTOM,
+        ),
         onSpeakerSelected = {},
         onCreateCustom = {},
+        onEditCustom = {},
         onDismiss = {},
     )
 }
@@ -34,6 +42,7 @@ fun SpeakerPickerDialog(
     speakers: List<Speaker>,
     onSpeakerSelected: (Speaker) -> Unit,
     onCreateCustom: () -> Unit,
+    onEditCustom: (Speaker) -> Unit,
     onDismiss: () -> Unit
 ) {
     // Group speakers by type/attribute for organized display
@@ -75,8 +84,12 @@ fun SpeakerPickerDialog(
                 // Custom
                 if (custom.isNotEmpty()) {
                     item { SectionDivider("Custom") }
-                    items(custom) { speaker ->
-                        SpeakerRow(speaker = speaker, onClick = { onSpeakerSelected(speaker) })
+                    items(custom, key = { it.id }) { speaker ->
+                        SpeakerRow(
+                            speaker = speaker,
+                            onClick = { onSpeakerSelected(speaker) },
+                            onEdit = { onEditCustom(speaker) },
+                        )
                     }
                 }
 
@@ -99,21 +112,35 @@ fun SpeakerPickerDialog(
 }
 
 @Composable
-private fun SpeakerRow(speaker: Speaker, onClick: () -> Unit) {
+private fun SpeakerRow(
+    speaker: Speaker,
+    onClick: () -> Unit,
+    onEdit: (() -> Unit)? = null,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 4.dp, vertical = 6.dp),
+            .padding(horizontal = 4.dp, vertical = if (onEdit != null) 0.dp else 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Color dot
         Surface(
             color  = Color(speaker.colorArgb),
             shape  = CircleShape,
-            modifier = Modifier.size(10.dp).align(Alignment.CenterVertically)
+            modifier = Modifier.size(10.dp)
         ) {}
-        Text(speaker.name)
+        Text(text = speaker.name, modifier = Modifier.weight(1f))
+        if (onEdit != null) {
+            IconButton(onClick = onEdit, modifier = Modifier.size(36.dp)) {
+                Icon(
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = "Edit",
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 

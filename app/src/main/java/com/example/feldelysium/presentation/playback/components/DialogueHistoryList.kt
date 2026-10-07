@@ -2,6 +2,7 @@ package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -10,13 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,18 +35,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * Film texture plus the dialogue column.
- *
- * New content is measured into the column immediately, so it hangs below the
- * current bottom. [ColumnScrollAnchor] then moves every line by the same
- * distance until that bottom sits on [PlaybackMotion.REST_BOTTOM_FRACTION].
- * The texture moves only during that scroll, by [PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR].
- *
- * [footer] scrolls with the lines. Pass CONTINUE or choices here — the rest
- * position is the bottom of whatever is last, footer included. The gap above
- * a CONTINUE block is not added automatically; use [PlaybackMotion.CONTINUE_GAP_FRACTION].
- */
 @Composable
 fun DialogueHistoryList(
     entries: List<DialogueEntry>,
@@ -64,10 +54,9 @@ fun DialogueHistoryList(
         val restBottomPx = viewportPx * PlaybackMotion.REST_BOTTOM_FRACTION
         val textStart = maxWidth * PlaybackMotion.TEXT_COLUMN_START_FRACTION
         val textEndInset = maxWidth * (1f - PlaybackMotion.TEXT_COLUMN_END_FRACTION)
-        val bodyLineHeight = MaterialTheme.typography.bodyMedium.lineHeight
-        val entryGap = with(density) {
-            (bodyLineHeight.toPx() * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS).toDp()
-        }
+        val fontSize = with(density) { (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp() }
+        val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
+        val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
 
         TapeBackground(
             offsetPx = tapeOffsetPx,
@@ -93,6 +82,8 @@ fun DialogueHistoryList(
                                 DialogueEntryItem(
                                     entry = entry,
                                     isLatest = index == entries.lastIndex,
+                                    fontSize = fontSize,
+                                    lineHeight = lineHeight,
                                 )
                             }
                         }
@@ -114,25 +105,33 @@ fun DialogueHistoryList(
                 restBottomPx = restBottomPx,
                 viewportHeightPx = viewportPx,
                 textShiftPx = textShiftPx,
-            ).roundToInt()
+            )
+            anchor.noteScroll(
+                y = y,
+                contentHeightPx = placeable.height.toFloat(),
+                restBottomPx = restBottomPx,
+            )
             layout(constraints.maxWidth, constraints.maxHeight) {
-                placeable.place(0, y)
+                placeable.place(0, y.roundToInt())
             }
         }
+
+        TapeScrollIndicator(
+            anchor = anchor,
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 
-/**
- * One upward shift, in pixels, shared by the column and (scaled) by the tape.
- *
- * [bonus] jumps with each new block in the same layout pass, so existing lines
- * do not hop. [textShift] then animates up to [bonus], which is the scroll.
- */
+// Shared scroll offset for the dialogue column and tape background.
 private class ColumnScrollAnchor(
     private val scope: CoroutineScope,
 ) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
+
+    var scrollFraction: Float = 0f
+        private set
 
     private var bonus = 0f
     private var tapeTarget = 0f
@@ -180,6 +179,19 @@ private class ColumnScrollAnchor(
         }
     }
 
+    fun noteScroll(
+        y: Float,
+        contentHeightPx: Float,
+        restBottomPx: Float,
+    ) {
+        val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
+        scrollFraction = if (maxOffset > 1f) {
+            ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
+        } else {
+            0f
+        }
+    }
+
     private fun startScroll() {
         val gen = ++generation
         job?.cancel()
@@ -214,12 +226,42 @@ private class ColumnScrollAnchor(
     }
 }
 
-@Preview
+@Composable
+private fun TapeScrollIndicator(
+    anchor: ColumnScrollAnchor,
+    modifier: Modifier = Modifier,
+) {
+    Canvas(modifier) {
+        val lineX = size.width * (
+            PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+            )
+        val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
+        val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
+        if (lineBottom <= lineTop) return@Canvas
+        drawLine(
+            color = Color.White.copy(alpha = 0.38f),
+            start = Offset(lineX, lineTop),
+            end = Offset(lineX, lineBottom),
+            strokeWidth = 1.dp.toPx(),
+        )
+        val lineLength = lineBottom - lineTop
+        val travelTop = lineTop + lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_START
+        val travelBottom = lineTop + lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_END
+        val dotY = travelTop + (travelBottom - travelTop) * anchor.scrollFraction
+        drawCircle(
+            color = Color.White,
+            radius = 3.dp.toPx(),
+            center = Offset(lineX, dotY),
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 private fun DialogueHistoryListPreview() {
     DialogueHistoryList(
         entries = listOf(
-            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
+            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro, we are so back, so so bak, you know?"),
             DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
             DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
         ),

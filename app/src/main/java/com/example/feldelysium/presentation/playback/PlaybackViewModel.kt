@@ -18,15 +18,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * [AndroidViewModel] because [SoundManager] requires Application context.
- *
- * Sound is played synchronously inside [advance] on the main dispatcher —
- * SoundPool.play() is main-thread safe and fast enough to not block frames.
- *
- * The column and film scroll live in DialogueHistoryList. This class only
- * appends the next entry; it does not animate.
- */
 class PlaybackViewModel(
     application: Application,
     private val sceneViewModel: SceneViewModel
@@ -41,9 +32,9 @@ class PlaybackViewModel(
     private val _effects = Channel<PlaybackEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    // Playback works on a frozen snapshot of the scene; later edits are ignored.
     init {
         viewModelScope.launch {
-            // Take the current scene snapshot — playback freezes the scene as-is
             val sceneState = sceneViewModel.state.first()
             engine = PlaybackEngine(sceneState.scene.entries)
             _state.update { it.copy(allEntries = sceneState.scene.entries) }
@@ -62,7 +53,6 @@ class PlaybackViewModel(
         if (!::engine.isInitialized) return
         val step = engine.advance() ?: return
 
-        // Update state first so Compose starts rendering the new entry
         _state.update { current ->
             current.copy(
                 revealedEntries = current.revealedEntries + step.entry,
@@ -70,7 +60,6 @@ class PlaybackViewModel(
             )
         }
 
-        // Play sound — synchronous, fast, safe on main thread
         val group = SoundGroup.fromKey(step.entry.speaker.soundKey)
         soundManager.play(group)
     }

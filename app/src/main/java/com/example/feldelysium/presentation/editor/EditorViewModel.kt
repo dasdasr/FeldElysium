@@ -34,8 +34,6 @@ class EditorViewModel(
     val effects = _effects.receiveAsFlow()
 
     init {
-        // Mirror scene state into editor UI state automatically.
-        // This keeps the editor in sync without manual "refresh" calls.
         sceneViewModel.state
             .onEach { sceneState ->
                 _state.update { editor ->
@@ -99,20 +97,29 @@ class EditorViewModel(
         }
 
         EditorEvent.RequestCustomSpeaker -> _state.update {
-            it.copy(isCustomSpeakerDialogOpen = true)
+            it.copy(editingSpeaker = null, isCustomSpeakerDialogOpen = true)
         }
 
         is EditorEvent.ConfirmCustomSpeaker -> {
             sceneViewModel.dispatch(SceneAction.AddCustomSpeaker(event.speaker))
-            _state.update { it.copy(isCustomSpeakerDialogOpen = false) }
+            _state.update { it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null) }
+        }
+
+        is EditorEvent.RequestEditSpeaker -> _state.update {
+            it.copy(editingSpeaker = event.speaker, isCustomSpeakerDialogOpen = true)
+        }
+
+        is EditorEvent.ConfirmEditSpeaker -> {
+            sceneViewModel.dispatch(SceneAction.UpdateCustomSpeaker(event.speaker))
+            _state.update { it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null) }
         }
 
         EditorEvent.DismissCustomSpeaker -> _state.update {
-            it.copy(isCustomSpeakerDialogOpen = false)
+            it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
         }
 
         EditorEvent.OpenImportDialog -> _state.update {
-            it.copy(isImportDialogOpen = true, importText = "", importError = null)
+            it.copy(isImportDialogOpen = true, importText = "", importPreview = null)
         }
 
         EditorEvent.CloseImportDialog -> _state.update {
@@ -120,7 +127,7 @@ class EditorViewModel(
         }
 
         is EditorEvent.ImportTextChanged -> _state.update {
-            it.copy(importText = event.text, importError = null)
+            it.copy(importText = event.text, importPreview = previewFor(event.text))
         }
 
         EditorEvent.ConfirmImport -> handleImport()
@@ -139,32 +146,37 @@ class EditorViewModel(
             sceneViewModel.dispatch(SceneAction.ClearScene)
     }
 
+    private fun previewFor(text: String): ImportPreview? {
+        if (text.isBlank()) return null
+        val result = parseUseCase.execute(text, sceneViewModel.state.value.customSpeakers)
+        return ImportPreview(
+            lineCount = result.entries.size,
+            newSpeakerCount = result.newSpeakers.size,
+        )
+    }
+
     private fun handleImport() {
         val text = _state.value.importText
         if (text.isBlank()) {
-            _state.update { it.copy(importError = "Nothing to import.") }
+            notify("Nothing to import.")
             return
         }
 
-        val customSpeakers = sceneViewModel.state.value.customSpeakers
-        val result = parseUseCase.execute(text, customSpeakers)
-
+        val result = parseUseCase.execute(text, sceneViewModel.state.value.customSpeakers)
         if (result.entries.isEmpty()) {
-            val detail = if (result.unrecognizedSpeakers.isNotEmpty())
-                "Unrecognized speakers: ${result.unrecognizedSpeakers.joinToString()}"
-            else "No dialogue blocks found."
-            _state.update { it.copy(importError = detail) }
+            notify("No lines recognized.")
             return
         }
 
-        sceneViewModel.dispatch(SceneAction.BulkAddEntries(result.entries))
-        _state.update { it.copy(isImportDialogOpen = false, importText = "") }
-
-        if (result.unrecognizedSpeakers.isNotEmpty()) {
-            viewModelScope.launch {
-                _effects.send(EditorEffect.ShowImportWarning(result.unrecognizedSpeakers))
-            }
+        result.newSpeakers.forEach { speaker ->
+            sceneViewModel.dispatch(SceneAction.AddCustomSpeaker(speaker))
         }
+        sceneViewModel.dispatch(SceneAction.BulkAddEntries(result.entries))
+        _state.update { it.copy(isImportDialogOpen = false, importText = "", importPreview = null) }
+    }
+
+    private fun notify(message: String) {
+        viewModelScope.launch { _effects.send(EditorEffect.ShowSnackbar(message)) }
     }
 
     companion object {

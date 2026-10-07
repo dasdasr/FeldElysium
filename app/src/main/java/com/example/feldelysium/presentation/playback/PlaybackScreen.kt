@@ -3,10 +3,19 @@ package com.example.feldelysium.presentation.playback
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -18,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,12 +38,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.feldelysium.domain.model.AttributeGroup
+import com.example.feldelysium.R
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
+import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
+import com.example.feldelysium.data.settings.AppSettings
+import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
 
@@ -45,6 +60,7 @@ private const val PORTRAIT_TOP_PX = 232f
 private const val PORTRAIT_WIDTH_PX = 177f
 private const val PORTRAIT_HEIGHT_PX = 250f
 private const val PORTRAIT_BACKDROP_INSET_RATIO = 0.12f
+private const val BOTTOM_BAR_WIDTH_PX = 770f
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -54,8 +70,10 @@ fun PlaybackScreen(
 ) {
     val activity = LocalContext.current as ComponentActivity
     val sceneVm: SceneViewModel = viewModel(activity)
+    val settingsVm: SettingsViewModel = viewModel(activity)
     val vm: PlaybackViewModel = viewModel(factory = PlaybackViewModel.factory(sceneVm))
     val state = vm.state.collectAsStateWithLifecycle().value
+    val settings = settingsVm.state.collectAsStateWithLifecycle().value
 
     DisposableEffect(Unit) {
         val original = activity.requestedOrientation
@@ -85,6 +103,11 @@ fun PlaybackScreen(
 
     PlaybackScreenContent(
         state = state,
+        lockAspectRatio16x9 = settings.lockAspectRatio16x9,
+        background = settings,
+        money = settings.playbackMoney,
+        time = settings.playbackTime,
+        day = settings.playbackDay,
         onTap = { vm.dispatch(PlaybackEvent.Tap) },
         onBackClick = { vm.dispatch(PlaybackEvent.NavigateBack) },
         modifier = modifier
@@ -96,75 +119,135 @@ fun PlaybackScreenContent(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    lockAspectRatio16x9: Boolean = true,
+    background: AppSettings = AppSettings(),
+    money: String = "40.95",
+    time: String = "16:36",
+    day: String = "Day 3",
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        contentAlignment = Alignment.Center
-    ) {
-        BoxWithConstraints(
-            modifier = Modifier
-                .aspectRatio(16f / 9f, matchHeightConstraintsFirst = false)
-                .background(ChromaKeyGreen)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onTap
-                )
-        ) {
-            val tapeWidth = maxWidth * (TAPE_WIDTH_PX / REFERENCE_WIDTH_PX)
-            val tapeRightMargin = maxWidth * (TAPE_RIGHT_MARGIN_PX / REFERENCE_WIDTH_PX)
-            val portraitLeft = maxWidth * (PORTRAIT_LEFT_PX / REFERENCE_WIDTH_PX)
-            val portraitTop = maxHeight * (PORTRAIT_TOP_PX / REFERENCE_HEIGHT_PX)
-            val portraitWidth = maxWidth * (PORTRAIT_WIDTH_PX / REFERENCE_WIDTH_PX)
-            val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
-            val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
-
+    Box(modifier = modifier.fillMaxSize()) {
+        if (lockAspectRatio16x9) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .width(tapeWidth + tapeRightMargin)
-                    .align(Alignment.CenterEnd)
+                    .fillMaxSize()
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
             ) {
-                DialogueHistoryList(
-                    entries = state.revealedEntries,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(tapeWidth)
-                        .align(Alignment.CenterStart)
+                PlaybackStage(
+                    state = state,
+                    onTap = onTap,
+                    onBackClick = onBackClick,
+                    background = background,
+                    money = money,
+                    time = time,
+                    day = day,
+                    modifier = Modifier.aspectRatio(16f / 9f, matchHeightConstraintsFirst = false)
                 )
             }
-
-            LatestSpeakerPortrait(
-                speaker = state.revealedEntries.lastOrNull()?.speaker,
-                portraitWidth = portraitWidth,
-                portraitHeight = portraitHeight,
-                modifier = Modifier
-                    .offset(
-                        x = portraitLeft - portraitBackdropInset,
-                        y = portraitTop - portraitBackdropInset
-                    )
-                    .size(
-                        width = portraitWidth + portraitBackdropInset * 2,
-                        height = portraitHeight + portraitBackdropInset * 2
-                    )
+        } else {
+            PlaybackStage(
+                state = state,
+                onTap = onTap,
+                onBackClick = onBackClick,
+                background = background,
+                money = money,
+                time = time,
+                day = day,
+                modifier = Modifier.fillMaxSize()
             )
-
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 8.dp, top = 8.dp)
-            ) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    "Back",
-                    tint = ChromaKeyGreen.copy(alpha = 0.0f)
-                )
-            }
         }
+    }
+}
+
+@Composable
+private fun PlaybackStage(
+    state: PlaybackUiState,
+    onTap: () -> Unit,
+    onBackClick: () -> Unit,
+    background: AppSettings,
+    money: String,
+    time: String,
+    day: String,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(
+        modifier = modifier
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onTap
+            )
+    ) {
+        val tapeWidth = maxWidth * (TAPE_WIDTH_PX / REFERENCE_WIDTH_PX)
+        val tapeRightMargin = maxWidth * (TAPE_RIGHT_MARGIN_PX / REFERENCE_WIDTH_PX)
+        val portraitLeft = maxWidth * (PORTRAIT_LEFT_PX / REFERENCE_WIDTH_PX)
+        val portraitTop = maxHeight * (PORTRAIT_TOP_PX / REFERENCE_HEIGHT_PX)
+        val portraitWidth = maxWidth * (PORTRAIT_WIDTH_PX / REFERENCE_WIDTH_PX)
+        val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
+        val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
+
+        PlaybackBackground(
+            settings = background,
+            modifier = Modifier.matchParentSize(),
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(tapeWidth + tapeRightMargin)
+                .align(Alignment.CenterEnd)
+        ) {
+            DialogueHistoryList(
+                entries = state.revealedEntries,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(tapeWidth)
+                    .align(Alignment.CenterStart)
+            )
+        }
+
+        LatestSpeakerPortrait(
+            speaker = state.revealedEntries.lastOrNull()?.speaker,
+            modifier = Modifier
+                .offset(
+                    x = portraitLeft - portraitBackdropInset,
+                    y = portraitTop - portraitBackdropInset
+                )
+                .size(
+                    width = portraitWidth + portraitBackdropInset * 2,
+                    height = portraitHeight + portraitBackdropInset * 2
+                )
+        )
+
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 8.dp, top = 8.dp)
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowBack,
+                "Back",
+                tint = ChromaKeyGreen.copy(alpha = 0.0f)
+            )
+        }
+
+        Image(
+            painter = painterResource(R.drawable.bottom_ui_bar),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX))
+        )
+
+        PlaybackStatusHud(
+            money = money,
+            time = time,
+            day = day,
+            modifier = Modifier.fillMaxSize(),
+        )
     }
 }
 
@@ -176,13 +259,7 @@ fun PlaybackScreenContent(
 )
 @Composable
 private fun PlaybackScreenPreview() {
-    val skillSpeaker = Speaker(
-        id = "logic",
-        name = "Logic",
-        colorArgb = 0xFF_42_A6_B5L,
-        type = SpeakerType.SKILL,
-        attributeGroup = AttributeGroup.INTELLECT
-    )
+    val skillSpeaker = PredefinedSpeakers.LOGIC
     val npcSpeaker = Speaker(
         id = "kim",
         name = "Kim Kitsuragi",
