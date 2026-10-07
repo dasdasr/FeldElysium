@@ -10,14 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/**
- * Activity-scoped source of [AppSettings].
- *
- * Obtain with `viewModel(activity)` from any screen, the same way as
- * [com.example.feldelysium.presentation.shared.SceneViewModel]. The flow stays
- * hot for the activity, so a change on Settings is visible on Playback without
- * passing arguments through navigation.
- */
+/** Activity-scoped [viewModel(activity)], so Settings changes are visible on Playback without nav args. */
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = SettingsRepository(application)
@@ -32,6 +25,23 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         when (event) {
             is SettingsEvent.SetLockAspectRatio16x9 -> update {
                 it.copy(lockAspectRatio16x9 = event.enabled)
+            }
+            is SettingsEvent.SetPlaybackMoney -> update {
+                it.copy(playbackMoney = event.value)
+            }
+            is SettingsEvent.SetPlaybackTime -> update {
+                it.copy(playbackTime = event.value)
+            }
+            is SettingsEvent.SetPlaybackDay -> update {
+                it.copy(playbackDay = event.value)
+            }
+            SettingsEvent.ResetPlaybackUiText -> update {
+                val defaults = AppSettings()
+                it.copy(
+                    playbackMoney = defaults.playbackMoney,
+                    playbackTime = defaults.playbackTime,
+                    playbackDay = defaults.playbackDay,
+                )
             }
         }
     }

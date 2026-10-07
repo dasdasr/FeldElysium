@@ -15,12 +15,38 @@ object PlaybackMotion {
     /** Bottom of the latest block (line, choices, or CONTINUE) at rest. Fraction of screen height. */
     const val REST_BOTTOM_FRACTION = 0.67f
 
-    /** Text column inside the tape, as fractions of tape width. Right edge is at [TEXT_COLUMN_END_FRACTION]. */
-    const val TEXT_COLUMN_START_FRACTION = 0.08f
-    const val TEXT_COLUMN_END_FRACTION = 0.89f
+    /** Text column inside the tape, as fractions of tape width (side strip included). Right edge is at [TEXT_COLUMN_END_FRACTION]. */
+    const val TEXT_COLUMN_START_FRACTION = 0.105f
+    const val TEXT_COLUMN_END_FRACTION = 0.88f
 
-    /** Gap between the last line of one entry and the first line of the next, in body line-heights. */
-    const val ENTRY_GAP_LINE_HEIGHTS = 1.5f
+    /** Baseline-to-baseline distance inside an entry, as a fraction of scene height. */
+    const val LINE_HEIGHT_FRACTION = 0.033f
+
+    /**
+     * Body size as a fraction of scene height.
+     * Same 12:16 ratio as the previous sp pair, so the size shrinks with [LINE_HEIGHT_FRACTION].
+     */
+    const val FONT_SIZE_FRACTION = LINE_HEIGHT_FRACTION * 12f / 16f
+
+    /**
+     * Extra space between entries, in body line-heights.
+     * Baseline of the last line to baseline of the next entry's first line is
+     * `1 + ENTRY_GAP_LINE_HEIGHTS` line intervals (the line box already contributes one).
+     */
+    const val ENTRY_GAP_LINE_HEIGHTS = 0.6f
+
+    /** Scrollbar line on the tape. Fractions of tape width and tape height. */
+    const val SCROLLBAR_X_FRACTION = 0.94f
+
+    /** Extra shift of the scrollbar to the left, fraction of tape width. */
+    const val SCROLLBAR_X_SHIFT_FRACTION = 0.025f
+
+    const val SCROLLBAR_TOP_FRACTION = 0.22f
+    const val SCROLLBAR_BOTTOM_FRACTION = 0.78f
+
+    /** Dot travel along the scrollbar line, as fractions of the line length. */
+    const val SCROLLBAR_DOT_RANGE_START = 0.2f
+    const val SCROLLBAR_DOT_RANGE_END = 0.8f
 
     const val COLUMN_SCROLL_DURATION_MS = 200
     const val TAPE_SCROLL_DURATION_MS = 200
@@ -40,8 +66,8 @@ object PlaybackMotion {
     const val TEXT_FADE_IN_MS = 120
     const val PREVIOUS_DIM_MS = 150
 
-    /** Every line except the latest. Not measured. */
-    const val PREVIOUS_LINES_ALPHA = 0.75f
+    /** Older lines, as a fraction of the latest line's brightness. */
+    const val PREVIOUS_LINES_ALPHA = 0.5f
 
     const val TAPE_SCROLL_DISTANCE_FACTOR = 1f
 

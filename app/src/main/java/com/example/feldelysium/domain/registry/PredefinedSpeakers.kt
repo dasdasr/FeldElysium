@@ -6,25 +6,14 @@ import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import kotlin.collections.filter
 
-/**
- * Compile-time catalog of all built-in speakers.
- *
- * Design rationale:
- *   - Named `val` properties give IDE navigation and compile-time references.
- *   - Pre-built Map index makes name lookup O(1) — critical for bulk import parsing.
- *   - This is NOT a DI singleton. It is a Kotlin object: a compile-time constant catalog.
- *   - Color values are ARGB Longs (approximated from the DE UI palette).
- */
 object PredefinedSpeakers {
-
-    // ── Builder helpers ───────────────────────────────────────────────────────
 
     private fun skill(
         id: String,
         name: String,
         colorArgb: Long,
         iconResId: Int?,
-        group: AttributeGroup  //TODO() delete nullable
+        group: AttributeGroup
     ) = Speaker(
         id = id,
         name = name,
@@ -37,10 +26,12 @@ object PredefinedSpeakers {
     private fun npc(
         id: String, name: String, colorArgb: Long, iconResId: Int?
     ) = Speaker(
-        id = id, name = name, colorArgb = colorArgb, iconResId = iconResId, type = SpeakerType.NPC
+        id = id,
+        name = name,
+        colorArgb = colorArgb,
+        iconResId = iconResId,
+        type = SpeakerType.NPC
     )
-
-    // ── INTELLECT skills ──────────────────────────────────────────────────────
 
     val LOGIC =
         skill("logic", "Logic", 0xFF_6B_9E_C8L, R.drawable.ic_logic, AttributeGroup.INTELLECT)
@@ -56,8 +47,6 @@ object PredefinedSpeakers {
     )
     val VISUAL_CALCULUS =
         skill("visual_calculus", "Visual Calculus", 0xFF_5E_6E_AEL, null, AttributeGroup.INTELLECT)
-
-    // ── PSYCHE skills ─────────────────────────────────────────────────────────
 
     val VOLITION = skill("volition", "Volition", 0xFF_B5_A6_42L, null, AttributeGroup.PSYCHE)
     val INLAND_EMPIRE = skill(
@@ -75,25 +64,39 @@ object PredefinedSpeakers {
         skill("esprit_de_corps", "Esprit De Corps", 0xFF_98_8E_48L, null, AttributeGroup.PSYCHE)
     val SUGGESTION = skill("suggestion", "Suggestion", 0xFF_B8_6E_98L, null, AttributeGroup.PSYCHE)
 
-    // ── PHYSIQUE skills ───────────────────────────────────────────────────────
-
     val ENDURANCE =
         skill("endurance", "Endurance", 0xFF_8E_4E_2EL, null, AttributeGroup.PHYSIQUE)
     val PAIN_THRESHOLD =
         skill("pain_threshold", "Pain Threshold", 0xFF_7E_3E_1EL, null, AttributeGroup.PHYSIQUE)
     val PHYSICAL_INSTRUMENT =
-        skill("physical_instrument", "Physical Instrument", 0xFF_9E_5E_3EL, R.drawable.ic_physical_instrument, AttributeGroup.PHYSIQUE)
+        skill(
+            "physical_instrument",
+            "Physical Instrument",
+            0xFF_9E_5E_3EL,
+            R.drawable.ic_physical_instrument,
+            AttributeGroup.PHYSIQUE
+        )
     val ELECTROCHEMISTRY =
-        skill("electrochemistry", "Electrochemistry", 0xFF_CE_7E_1EL, R.drawable.ic_electrochemistry, AttributeGroup.PHYSIQUE)
+        skill(
+            "electrochemistry",
+            "Electrochemistry",
+            0xFF_CE_7E_1EL,
+            R.drawable.ic_electrochemistry,
+            AttributeGroup.PHYSIQUE
+        )
     val SHIVERS =
         skill("shivers", "Shivers", 0xFF_6E_8E_AEL, null, AttributeGroup.PHYSIQUE)
     val HALF_LIGHT =
         skill("half_light", "Half Light", 0xFF_AE_4E_2EL, null, AttributeGroup.PHYSIQUE)
 
-    // ── MOTORICS skills ───────────────────────────────────────────────────────
-
     val HAND_EYE_COORD =
-        skill("hand_eye_coord", "Hand/Eye Coordination", 0xFF_6E_9E_6EL, null, AttributeGroup.MOTORICS)
+        skill(
+            "hand_eye_coord",
+            "Hand/Eye Coordination",
+            0xFF_6E_9E_6EL,
+            null,
+            AttributeGroup.MOTORICS
+        )
     val PERCEPTION =
         skill("perception", "Perception", 0xFF_7E_AE_7EL, null, AttributeGroup.MOTORICS)
     val REACTION_SPEED =
@@ -104,8 +107,6 @@ object PredefinedSpeakers {
         skill("interfacing", "Interfacing", 0xFF_6E_AE_6EL, null, AttributeGroup.MOTORICS)
     val COMPOSURE =
         skill("composure", "Composure", 0xFF_9E_CE_9EL, null, AttributeGroup.MOTORICS)
-
-    // ── NPCs ──────────────────────────────────────────────────────────────────
 
     val KIM_KITSURAGI =
         npc("kim_kitsuragi", "Kim Kitsuragi", 0xFF_4A_7E_9EL, null)
@@ -123,8 +124,6 @@ object PredefinedSpeakers {
         npc("steban", "Steban", 0xFF_5E_5E_5EL, R.drawable.ic_steban)
     val MEASUREHEAD =
         npc("measurehead", "Measurehead", 0xFF_5E_5E_5EL, R.drawable.ic_measurehead)
-
-    // ── Aggregates ────────────────────────────────────────────────────────────
 
     val SKILLS: List<Speaker> = listOf(
         LOGIC,
@@ -166,8 +165,6 @@ object PredefinedSpeakers {
 
     val ALL: List<Speaker> = SKILLS + NPCS
 
-    // Pre-built for O(1) bulk-import lookup. Keys are uppercased display names.
-    // "ESPRIT DE CORPS" → ESPRIT_DE_CORPS, "KIM KITSURAGI" → KIM_KITSURAGI, etc.
     private val byNameIndex: Map<String, Speaker> = ALL.associateBy { it.name.uppercase() }
 
     fun findByName(name: String): Speaker? = byNameIndex[name.trim().uppercase()]

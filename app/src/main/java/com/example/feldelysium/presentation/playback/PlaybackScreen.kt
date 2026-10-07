@@ -3,13 +3,21 @@ package com.example.feldelysium.presentation.playback
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.foundation.Image
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -31,13 +39,13 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.R
-import com.example.feldelysium.domain.model.AttributeGroup
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
+import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
@@ -64,8 +72,7 @@ fun PlaybackScreen(
     val settingsVm: SettingsViewModel = viewModel(activity)
     val vm: PlaybackViewModel = viewModel(factory = PlaybackViewModel.factory(sceneVm))
     val state = vm.state.collectAsStateWithLifecycle().value
-    val lockAspectRatio16x9 =
-        settingsVm.state.collectAsStateWithLifecycle().value.lockAspectRatio16x9
+    val settings = settingsVm.state.collectAsStateWithLifecycle().value
 
     DisposableEffect(Unit) {
         val original = activity.requestedOrientation
@@ -95,7 +102,10 @@ fun PlaybackScreen(
 
     PlaybackScreenContent(
         state = state,
-        lockAspectRatio16x9 = lockAspectRatio16x9,
+        lockAspectRatio16x9 = settings.lockAspectRatio16x9,
+        money = settings.playbackMoney,
+        time = settings.playbackTime,
+        day = settings.playbackDay,
         onTap = { vm.dispatch(PlaybackEvent.Tap) },
         onBackClick = { vm.dispatch(PlaybackEvent.NavigateBack) },
         modifier = modifier
@@ -109,6 +119,9 @@ fun PlaybackScreenContent(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     lockAspectRatio16x9: Boolean = true,
+    money: String = "40.95",
+    time: String = "16:36",
+    day: String = "Day 3",
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (lockAspectRatio16x9) {
@@ -122,6 +135,9 @@ fun PlaybackScreenContent(
                     state = state,
                     onTap = onTap,
                     onBackClick = onBackClick,
+                    money = money,
+                    time = time,
+                    day = day,
                     modifier = Modifier.aspectRatio(16f / 9f, matchHeightConstraintsFirst = false)
                 )
             }
@@ -130,6 +146,9 @@ fun PlaybackScreenContent(
                 state = state,
                 onTap = onTap,
                 onBackClick = onBackClick,
+                money = money,
+                time = time,
+                day = day,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -141,6 +160,9 @@ private fun PlaybackStage(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
+    money: String,
+    time: String,
+    day: String,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(
@@ -177,8 +199,6 @@ private fun PlaybackStage(
 
         LatestSpeakerPortrait(
             speaker = state.revealedEntries.lastOrNull()?.speaker,
-            portraitWidth = portraitWidth,
-            portraitHeight = portraitHeight,
             modifier = Modifier
                 .offset(
                     x = portraitLeft - portraitBackdropInset,
@@ -210,6 +230,13 @@ private fun PlaybackStage(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX))
+        )
+
+        PlaybackStatusHud(
+            money = money,
+            time = time,
+            day = day,
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }

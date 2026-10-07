@@ -6,18 +6,15 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -69,10 +66,9 @@ fun DialogueHistoryList(
         val restBottomPx = viewportPx * PlaybackMotion.REST_BOTTOM_FRACTION
         val textStart = maxWidth * PlaybackMotion.TEXT_COLUMN_START_FRACTION
         val textEndInset = maxWidth * (1f - PlaybackMotion.TEXT_COLUMN_END_FRACTION)
-        val bodyLineHeight = MaterialTheme.typography.bodyMedium.lineHeight
-        val entryGap = with(density) {
-            (bodyLineHeight.toPx() * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS).toDp()
-        }
+        val fontSize = with(density) { (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp() }
+        val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
+        val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
 
         TapeBackground(
             offsetPx = tapeOffsetPx,
@@ -98,6 +94,8 @@ fun DialogueHistoryList(
                                 DialogueEntryItem(
                                     entry = entry,
                                     isLatest = index == entries.lastIndex,
+                                    fontSize = fontSize,
+                                    lineHeight = lineHeight,
                                 )
                             }
                         }
@@ -132,10 +130,7 @@ fun DialogueHistoryList(
 
         TapeScrollIndicator(
             anchor = anchor,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .fillMaxHeight()
-                .width(14.dp),
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -152,7 +147,8 @@ private class ColumnScrollAnchor(
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
-    var scrollFraction: Float? = null
+    /** 0 is the top of the column, 1 is fully scrolled. 0 when there is nothing to scroll. */
+    var scrollFraction: Float = 0f
         private set
 
     private var bonus = 0f
@@ -210,7 +206,7 @@ private class ColumnScrollAnchor(
         scrollFraction = if (maxOffset > 1f) {
             ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
         } else {
-            null
+            0f
         }
     }
 
@@ -254,11 +250,11 @@ private fun TapeScrollIndicator(
     modifier: Modifier = Modifier,
 ) {
     Canvas(modifier) {
-        val fraction = anchor.scrollFraction ?: return@Canvas
-        val lineX = size.width - 3.dp.toPx()
-        val lineInset = 16.dp.toPx()
-        val lineTop = lineInset
-        val lineBottom = size.height - lineInset
+        val lineX = size.width * (
+            PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+            )
+        val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
+        val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
         if (lineBottom <= lineTop) return@Canvas
         drawLine(
             color = Color.White.copy(alpha = 0.38f),
@@ -266,18 +262,13 @@ private fun TapeScrollIndicator(
             end = Offset(lineX, lineBottom),
             strokeWidth = 1.dp.toPx(),
         )
-        val dotRadius = 2.25.dp.toPx()
-        val dotInset = 10.dp.toPx() + dotRadius
-        val travelTop = lineTop + dotInset
-        val travelBottom = lineBottom - dotInset
-        val dotY = if (travelBottom <= travelTop) {
-            (lineTop + lineBottom) / 2f
-        } else {
-            travelTop + (travelBottom - travelTop) * fraction
-        }
+        val lineLength = lineBottom - lineTop
+        val travelTop = lineTop + lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_START
+        val travelBottom = lineTop + lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_END
+        val dotY = travelTop + (travelBottom - travelTop) * anchor.scrollFraction
         drawCircle(
             color = Color.White,
-            radius = dotRadius,
+            radius = 3.dp.toPx(),
             center = Offset(lineX, dotY),
         )
     }
