@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,9 +36,7 @@ import com.example.feldelysium.designsystem.components.card.FeldDialogCard
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.shape.RoughStyle
-import com.example.feldelysium.theme.DialogueText
 import com.example.feldelysium.theme.DiscoDialogueTheme
-import com.example.feldelysium.theme.DiscoPrimary
 
 @Composable
 fun DesignSystemPlayground(
@@ -96,13 +95,13 @@ fun DesignSystemPlayground(
                 Text(
                     text = "LOGIC",
                     style = MaterialTheme.typography.labelSmall,
-                    color = DiscoPrimary,
+                    color = colorScheme.primary,
                 )
 
                 Text(
                     text = "Let's be precise. What do you actually remember about that night?",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = DialogueText,
+                    color = colorScheme.onSurface,
                     modifier = Modifier.padding(top = 6.dp),
                 )
             }
@@ -118,7 +117,7 @@ fun DesignSystemPlayground(
                 maxLength = 500,
                 minLines = 1,
                 enabled = true,
-                textStyle = MaterialTheme.typography.bodyMedium.copy(color = DialogueText),
+                textStyle = MaterialTheme.typography.bodyMedium.copy(color = colorScheme.onSurface),
                 contentPadding = PaddingValues(16.dp),
                 time = { 0f },
             )
@@ -153,8 +152,8 @@ fun DesignSystemPlayground(
                 seed = 5,
                 modifier = Modifier.padding(16.dp),
             ) {
-                Text("LOGIC: Let's be precise.", color = DialogueText)
-                Text("HARRY: I remember the cold.", color = DialogueText)
+                Text("LOGIC: Let's be precise.", color = colorScheme.onSurface)
+                Text("HARRY: I remember the cold.", color = colorScheme.onSurface)
             }
 
             val largeStyle = MaterialTheme.typography.titleLarge.copy(

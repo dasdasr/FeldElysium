@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
             DiscoDialogueTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color    = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavGraph()
                 }

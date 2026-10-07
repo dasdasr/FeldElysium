@@ -56,6 +56,7 @@ fun FeldTitleTag(
                 text = text,
                 seed = seed,
                 spec = distressedSpec.copy(color = contentColor),
+                strength = 1.1f,
                 textStyle = textStyle,
             )
         } else {
