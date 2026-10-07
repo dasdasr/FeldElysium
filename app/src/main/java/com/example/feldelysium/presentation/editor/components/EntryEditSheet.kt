@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.designsystem.components.FeldTextField
 
 @Preview
 @Composable
@@ -26,10 +27,6 @@ private fun EntryEditSheetPreview() {
     ) { }
 }
 
-/**
- * Bottom sheet for creating or editing a single dialogue entry.
- * [entry] is null when creating a new entry (speaker is [speaker]).
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EntryEditSheet(
@@ -50,30 +47,36 @@ fun EntryEditSheet(
         ) {
             speaker?.let {
                 Text(
-                    text  = it.name.uppercase(),
+                    text = it.name.uppercase(),
                     style = MaterialTheme.typography.labelMedium,
                     color = Color(it.colorArgb)
                 )
             }
 
-            OutlinedTextField(
-                value         = text,
+            FeldTextField(
+                value = text,
                 onValueChange = { text = it },
-                label         = { Text("Dialogue text") },
-                modifier      = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 100.dp),
-                maxLines      = 8
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = "Dialogue text",
+                minLines = 4,
+                maxLength = 500,
             )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                modifier              = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                TextButton(onClick = onDismiss) { Text("Cancel") }
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel")
+                }
+
                 Button(
-                    onClick  = { if (text.isNotBlank()) onConfirm(text.trim()) },
-                    enabled  = text.isNotBlank()
+                    onClick = {
+                        if (text.isNotBlank()) {
+                            onConfirm(text.trim())
+                        }
+                    },
+                    enabled = text.isNotBlank()
                 ) {
                     Text(if (entry == null) "Add" else "Save")
                 }
