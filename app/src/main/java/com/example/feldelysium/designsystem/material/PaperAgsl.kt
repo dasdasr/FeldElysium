@@ -1,30 +1,5 @@
 package com.example.feldelysium.designsystem.material
 
-private const val NOISE_LIB = """
-float hash(float2 p) {
-    float3 p3 = fract(float3(p.x, p.y, p.x) * 0.1031);
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.x + p3.y) * p3.z);
-}
-float noise(float2 p) {
-    float2 i = floor(p);
-    float2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
-    return mix(mix(hash(i), hash(i + float2(1.0, 0.0)), f.x),
-               mix(hash(i + float2(0.0, 1.0)), hash(i + float2(1.0, 1.0)), f.x), f.y);
-}
-float fbm(float2 p) {
-    float v = 0.0;
-    float a = 0.5;
-    for (int i = 0; i < 3; i++) {
-        v += a * noise(p);
-        p = p * 2.03 + 17.0;
-        a *= 0.5;
-    }
-    return v;
-}
-"""
-
 internal const val PAPER_AGSL = """
 uniform float2 size;
 uniform float seed;
@@ -51,6 +26,9 @@ uniform float speckleStrength;
 uniform float edgeShade;
 uniform float pressShade;
 
+uniform float sinkBand;
+uniform float sinkShade;
+
 layout(color) uniform half4 baseColor;
 layout(color) uniform half4 scuffColor;
 $NOISE_LIB
@@ -76,6 +54,10 @@ half4 main(float2 p) {
 
     float3 rgb = float3(baseColor.rgb);
     rgb *= 1.0 - edgeShade * edge;
+        float sink = 1.0 - smoothstep(0.0, sinkBand, d);
+    float vy = p.y / size.y;
+    rgb *= 1.0 - sinkShade * (1.0 + press * 0.8) * sink * (1.25 - vy); 
+    rgb += sinkShade * 0.35 * sink * smoothstep(0.55, 1.0, vy);
     rgb += (mottle - 0.4) * mottleStrength * 0.2;
     rgb = mix(rgb, float3(scuffColor.rgb), scuff * scuffTint);
     rgb += (grain - 0.5) * grainStrength;
@@ -91,19 +73,14 @@ half4 main(float2 p) {
 
 internal const val INK_AGSL = """
 uniform float seed;
-uniform float time;
 uniform float grainScale;
-uniform float patchScale;
-uniform float patchWeight;
 uniform float minAlpha;
 uniform float contrast;
 layout(color) uniform half4 inkColor;
 $NOISE_LIB
 half4 main(float2 p) {
     float2 sp = p + seed * 53.0;
-    float fine  = noise(sp / grainScale + time * 7.0);
-    float patch = noise(sp / patchScale) * 0.65 + noise(sp / (patchScale * 0.37) + 9.0) * 0.35;
-    float n = mix(fine, patch, patchWeight);
+    float n = noise(sp / grainScale);
     n = clamp((n - 0.5) * contrast + 0.5, 0.0, 1.0);
     float a = mix(minAlpha, 1.0, n) * float(inkColor.a);
     return half4(half3(float3(inkColor.rgb) * a), half(a));

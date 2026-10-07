@@ -3,11 +3,16 @@ package com.example.feldelysium.presentation.shared
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,11 +20,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.FeldCard
+import com.example.feldelysium.designsystem.components.FeldButton
+import com.example.feldelysium.designsystem.components.FeldButtonDefaults
+import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.FeldRough
 import com.example.feldelysium.designsystem.components.FeldTextField
+import com.example.feldelysium.designsystem.components.card.FeldDialogCard
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DialogueText
@@ -51,7 +60,7 @@ fun DesignSystemPlayground(
 
             FeldCard(
                 modifier = Modifier.fillMaxWidth(),
-                seed = 8,
+                seed = 811,
                 spec = FeldPaper.Panel,
                 rough = RoughStyle(
                     roughness = 1.2.dp,
@@ -59,7 +68,7 @@ fun DesignSystemPlayground(
                     smoothness = 0.35f,
                     step = 56.dp,
                     slide = 0.12f,
-                    corner = 10.dp,
+                    corner = 3.dp,
                     cornerVariation = 0.35f,
                     cornerJitter = 0.5f,
                     inset = 1.5.dp,
@@ -70,14 +79,12 @@ fun DesignSystemPlayground(
                     forceTorn = -1,
                     tornPush = 0.6f,
                     inkVariation = 0.55f,
-                    inkJump = 0.45f,
                     inkNoiseStep = 36.dp,
                 ),
                 contentPadding = PaddingValues(16.dp),
-                revealOnEnter = false,
-                revealWear = 0.65f,
-                revealMillis = 700,
-                pressScale = 0.012f,
+                revealOnEnter = true,
+                revealMillis = 300,
+                pressScale = 0.12f,
                 pressMillis = 90,
                 time = { 0f },
                 onClick = {},
@@ -111,6 +118,35 @@ fun DesignSystemPlayground(
                 contentPadding = PaddingValues(16.dp),
                 time = { 0f },
             )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                FeldButton("Cancel", {}, Modifier.weight(1f), seed = 21)
+                FeldButton(
+                    "Save", {}, Modifier.weight(1f),
+                    seed = 8,
+                    spec = FeldButtonDefaults.Orange,
+                    icon = { Icon(Icons.Default.Check, null, Modifier.size(20.dp)) },
+                )
+            }
+            FeldButton(
+                "Delete line", {}, Modifier.fillMaxWidth(),
+                seed = 3,
+                spec = FeldButtonDefaults.Orange,
+                minHeight = 72.dp,
+                contentAlignment = Alignment.CenterStart,
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
+            )
+
+            FeldDialogCard(
+                title = "Bulk import",
+                subtitle = "Paste your dialogue lines. One per line.",
+                onClose = {},
+                seed = 5,
+                modifier = Modifier.padding(16.dp),
+            ) {
+                Text("LOGIC: Let's be precise.", color = DialogueText)
+                Text("HARRY: I remember the cold.", color = DialogueText)
+            }
         }
     }
 }

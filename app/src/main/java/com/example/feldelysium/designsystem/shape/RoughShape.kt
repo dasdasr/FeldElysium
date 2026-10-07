@@ -4,10 +4,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.lerp
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -37,9 +39,15 @@ data class RoughStyle(
     val forceTorn: Int = -1,
     val tornPush: Float = 0.6f,
 
-    val inkVariation: Float = 0.55f,
-    val inkJump: Float = 0.45f,
-    val inkNoiseStep: Dp = 36.dp,
+    val inkVariation: Float = 0.4f,
+    val inkNoiseStep: Dp = 140.dp,
+    val inkFineStep: Dp = 16.dp,
+    val inkPressStep: Dp = 360.dp,
+    val inkPressRamp: Dp = 20.dp,
+    val inkMinAlpha: Float = 0.5f,
+    val inkContrast: Float = 1.5f,
+    val inkWidthCorrelation: Float = 0.5f,
+    val inkLevels: Int = 10,
 )
 
 private data class Knot(val p: Offset, val jumpNext: Boolean = false)
@@ -167,72 +175,114 @@ class RoughShape(
             close()
         }
     }
+}
 
-    fun buildInkPath(outline: Path, density: Density, baseWidth: Float): Path {
-        val measure = PathMeasure().apply { setPath(outline, true) }
-        val len = measure.length
-        if (len <= 0f) return Path()
 
-        val rnd = Random(seed * 31 + 7)
-        val cell = with(density) { style.inkNoiseStep.toPx() }
-        val ramp = with(density) { 3.dp.toPx() }
+class InkLayer(val path: Path, val alpha: Float)
 
-        val cells = (len / cell).roundToInt().coerceAtLeast(4)
-        val smoothT = FloatArray(cells) { rnd.nextFloat() }
-        fun smoothAt(s: Float): Float {
-            val x = s / len * cells
-            val i = floor(x).toInt()
-            val f = x - i
-            val u = f * f * (3f - 2f * f)
-            val a = smoothT[i.mod(cells)]
-            val b = smoothT[(i + 1).mod(cells)]
-            return a + (b - a) * u
-        }
+private class LoopNoise(seed: Int, private val len: Float, cellPx: Float) {
+    private val cells = (len / cellPx).roundToInt().coerceAtLeast(3)
+    private val table = Random(seed).let { r -> FloatArray(cells) { r.nextFloat() } }
 
-        val starts = ArrayList<Float>()
-        val vals = ArrayList<Float>()
-        var s0 = 0f
-        while (s0 < len) {
-            starts += s0
+    fun at(s: Float): Float {
+        val x = s / len * cells
+        val i = floor(x).toInt()
+        val f = x - i
+        val u = f * f * (3f - 2f * f)
+        val a = table[i.mod(cells)]
+        val b = table[(i + 1).mod(cells)]
+        return a + (b - a) * u
+    }
+}
+
+private class LoopSteps(seed: Int, len: Float, cellPx: Float, private val rampPx: Float) {
+    private val starts = ArrayList<Float>()
+    private val vals = ArrayList<Float>()
+
+    init {
+        val rnd = Random(seed)
+        var s = 0f
+        while (s < len) {
+            starts += s
             vals += rnd.nextFloat()
-            s0 += cell * (0.8f + rnd.nextFloat() * 2.2f)
-        }
-        fun stepAt(s: Float): Float {
-            val i = starts.indexOfLast { it <= s }.coerceAtLeast(0)
-            val prev = vals[(i - 1 + vals.size) % vals.size]
-            val u = ((s - starts[i]) / ramp).coerceIn(0f, 1f)
-            return prev + (vals[i] - prev) * (u * u * (3f - 2f * u))
-        }
-
-        fun widthAt(s: Float): Float {
-            val w = baseWidth *
-                    (1f + style.inkVariation * (smoothAt(s) * 2f - 1f)) *
-                    (1f + style.inkJump * (stepAt(s) * 2f - 1f))
-            return w.coerceIn(baseWidth * 0.35f, baseWidth * 2.4f)
-        }
-
-        val samples = (len / with(density) { 2.5.dp.toPx() }).toInt().coerceAtLeast(16)
-        val outer = ArrayList<Offset>(samples)
-        val inner = ArrayList<Offset>(samples)
-        for (i in 0 until samples) {
-            val s = len * i / samples
-            val pos = measure.getPosition(s)
-            val tan = measure.getTangent(s)
-            val nrm = Offset(-tan.y, tan.x)
-            val h = widthAt(s) * 0.5f
-            outer += pos + nrm * h
-            inner += pos - nrm * h
-        }
-
-        return Path().apply {
-            moveTo(outer[0].x, outer[0].y)
-            for (i in 1 until outer.size) lineTo(outer[i].x, outer[i].y)
-            close()
-            moveTo(inner.last().x, inner.last().y)
-            for (i in inner.size - 2 downTo 0) lineTo(inner[i].x, inner[i].y)
-            close()
+            s += cellPx * (0.7f + rnd.nextFloat() * 0.8f)
         }
     }
+
+    fun at(s: Float): Float {
+        val i = starts.indexOfLast { it <= s }.coerceAtLeast(0)
+        val prev = vals[(i - 1 + vals.size) % vals.size]
+        val u = ((s - starts[i]) / rampPx).coerceIn(0f, 1f)
+        return prev + (vals[i] - prev) * (u * u * (3f - 2f * u))
+    }
+}
+
+fun RoughShape.buildInkLayers(
+    outline: Path,
+    density: Density,
+    baseWidth: Float,
+): List<InkLayer> {
+    val measure = PathMeasure().apply { setPath(outline, true) }
+    val len = measure.length
+    if (len <= 0f) return emptyList()
+
+    val cell = with(density) { style.inkNoiseStep.toPx() }
+    val fineCell = with(density) { style.inkFineStep.toPx() }
+    val pressCell = with(density) { style.inkPressStep.toPx() }
+    val ramp = with(density) { style.inkPressRamp.toPx() }
+
+    val slow = LoopNoise(seed * 31 + 7, len, cell)
+    val fine = LoopNoise(seed * 13 + 5, len, fineCell)
+    val press = LoopSteps(seed * 7 + 11, len, pressCell, ramp)
+    val widthNoise = LoopNoise(seed * 17 + 3, len, cell * 1.4f)
+
+    val levels = style.inkLevels.coerceAtLeast(2)
+    val samples = (len / with(density) { 2.5.dp.toPx() }).toInt().coerceAtLeast(16)
+
+    val outer = ArrayList<Offset>(samples)
+    val inner = ArrayList<Offset>(samples)
+    val levelOf = IntArray(samples)
+
+    for (i in 0 until samples) {
+        val s = len * i / samples
+        val pos = measure.getPosition(s)
+        val tan = measure.getTangent(s)
+        val nrm = Offset(-tan.y, tan.x)
+
+        val raw = 0.55f * slow.at(s) + 0.3f * press.at(s) + 0.15f * fine.at(s)
+        val n = ((raw - 0.5f) * style.inkContrast + 0.5f).coerceIn(0f, 1f)
+        levelOf[i] = (n * (levels - 1)).roundToInt()
+
+        val c = style.inkWidthCorrelation.coerceIn(0f, 1f)
+        val wn = c * n + (1f - c) * widthNoise.at(s)
+        val w = (baseWidth * (1f + style.inkVariation * (wn * 2f - 1f)))
+            .coerceIn(baseWidth * 0.5f, baseWidth * 1.8f)
+
+        outer += pos + nrm * (w * 0.5f)
+        inner += pos - nrm * (w * 0.5f)
+    }
+
+    val paths = Array(levels) { Path() }
+    val used = BooleanArray(levels)
+    for (i in 0 until samples) {
+        val j = (i + 1) % samples
+        val p = paths[levelOf[i]]
+        used[levelOf[i]] = true
+        p.moveTo(outer[i].x, outer[i].y)
+        p.lineTo(outer[j].x, outer[j].y)
+        p.lineTo(inner[j].x, inner[j].y)
+        p.lineTo(inner[i].x, inner[i].y)
+        p.close()
+    }
+
+    return paths.indices.filter { used[it] }.map {
+        val t = it / (levels - 1).toFloat()
+        InkLayer(paths[it], style.inkMinAlpha + (1f - style.inkMinAlpha) * t)
+    }
+}
+
+fun DrawScope.drawInk(layers: List<InkLayer>, brush: Brush) {
+    for (layer in layers) drawPath(layer.path, brush, alpha = layer.alpha)
 }
 
 private fun Path.catmullRomTo(k: List<Knot>) {
