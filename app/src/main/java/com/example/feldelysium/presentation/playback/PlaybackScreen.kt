@@ -46,6 +46,7 @@ import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
+import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
@@ -103,6 +104,7 @@ fun PlaybackScreen(
     PlaybackScreenContent(
         state = state,
         lockAspectRatio16x9 = settings.lockAspectRatio16x9,
+        background = settings,
         money = settings.playbackMoney,
         time = settings.playbackTime,
         day = settings.playbackDay,
@@ -119,6 +121,7 @@ fun PlaybackScreenContent(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     lockAspectRatio16x9: Boolean = true,
+    background: AppSettings = AppSettings(),
     money: String = "40.95",
     time: String = "16:36",
     day: String = "Day 3",
@@ -135,6 +138,7 @@ fun PlaybackScreenContent(
                     state = state,
                     onTap = onTap,
                     onBackClick = onBackClick,
+                    background = background,
                     money = money,
                     time = time,
                     day = day,
@@ -146,6 +150,7 @@ fun PlaybackScreenContent(
                 state = state,
                 onTap = onTap,
                 onBackClick = onBackClick,
+                background = background,
                 money = money,
                 time = time,
                 day = day,
@@ -160,6 +165,7 @@ private fun PlaybackStage(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
+    background: AppSettings,
     money: String,
     time: String,
     day: String,
@@ -167,7 +173,6 @@ private fun PlaybackStage(
 ) {
     BoxWithConstraints(
         modifier = modifier
-            .background(ChromaKeyGreen)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -181,6 +186,11 @@ private fun PlaybackStage(
         val portraitWidth = maxWidth * (PORTRAIT_WIDTH_PX / REFERENCE_WIDTH_PX)
         val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
         val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
+
+        PlaybackBackground(
+            settings = background,
+            modifier = Modifier.matchParentSize(),
+        )
 
         Box(
             modifier = Modifier

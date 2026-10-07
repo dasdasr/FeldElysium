@@ -18,7 +18,6 @@ import com.example.feldelysium.R
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
-/** Avatar inside the frame, as fractions of the outer frame. */
 private const val PORTRAIT_PHOTO_WIDTH_FRACTION = 0.92f
 private const val PORTRAIT_PHOTO_HEIGHT_FRACTION = 0.88f
 private const val FRAME_SCALE_X = 1.02f

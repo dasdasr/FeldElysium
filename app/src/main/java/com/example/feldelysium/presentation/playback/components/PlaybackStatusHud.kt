@@ -24,30 +24,20 @@ import androidx.compose.ui.unit.TextUnit
 import com.example.feldelysium.R
 import kotlin.math.roundToInt
 
-/** Baseline of the status row, fraction of scene height from the top. */
 private const val BASELINE_Y_FRACTION = 0.92f
 
-/** Extra drop of the icon, amount, time, and day. Fraction of scene height. */
 private const val ROW_Y_SHIFT_FRACTION = 0.015f
 
-/** Center of the reals icon, fraction of scene width. */
 private const val ICON_CENTER_X_FRACTION = 0.866f
 
-/** Left edge of each label, fraction of scene width. */
 private const val MONEY_START_X_FRACTION = 0.876f
 private const val TIME_START_X_FRACTION = 0.907f
 private const val DAY_START_X_FRACTION = 0.969f
 
-/**
- * Em size of the amount and the day, fraction of scene width.
- * About five condensed glyphs of "40.95" span ~87.6–90.1%.
- */
 private const val SMALL_FONT_WIDTH_FRACTION = 0.011f
 
-/** Time digits are this many times the amount's digit height. */
 private const val TIME_FONT_SCALE = 2.3f
 
-/** Cap-center of a digit sits about this far above the baseline, in ems. */
 private const val DIGIT_CENTER_ABOVE_BASELINE_EM = 0.35f
 
 private const val MONEY_BRIGHTNESS = 0.65f
@@ -58,12 +48,6 @@ private val RobotoCondensedLight = FontFamily(
     Font(DeviceFontFamilyName("sans-serif-condensed"), FontWeight.Light),
 )
 
-/**
- * Reals, clock, and day over the bottom of the scene.
- *
- * Positions are fractions of the scene, not of the bottom-bar image.
- * Nothing here handles pointer input, so taps pass through to the stage.
- */
 @Composable
 fun PlaybackStatusHud(
     money: String,

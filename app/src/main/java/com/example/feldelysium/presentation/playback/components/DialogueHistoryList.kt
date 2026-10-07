@@ -35,18 +35,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * Film texture plus the dialogue column.
- *
- * New content is measured into the column immediately, so it hangs below the
- * current bottom. [ColumnScrollAnchor] then moves every line by the same
- * distance until that bottom sits on [PlaybackMotion.REST_BOTTOM_FRACTION].
- * The texture moves only during that scroll, by [PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR].
- *
- * [footer] scrolls with the lines. Pass CONTINUE or choices here — the rest
- * position is the bottom of whatever is last, footer included. The gap above
- * a CONTINUE block is not added automatically; use [PlaybackMotion.CONTINUE_GAP_FRACTION].
- */
 @Composable
 fun DialogueHistoryList(
     entries: List<DialogueEntry>,
@@ -135,19 +123,13 @@ fun DialogueHistoryList(
     }
 }
 
-/**
- * One upward shift, in pixels, shared by the column and (scaled) by the tape.
- *
- * [bonus] jumps with each new block in the same layout pass, so existing lines
- * do not hop. [textShift] then animates up to [bonus], which is the scroll.
- */
+// Shared scroll offset for the dialogue column and tape background.
 private class ColumnScrollAnchor(
     private val scope: CoroutineScope,
 ) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
-    /** 0 is the top of the column, 1 is fully scrolled. 0 when there is nothing to scroll. */
     var scrollFraction: Float = 0f
         private set
 

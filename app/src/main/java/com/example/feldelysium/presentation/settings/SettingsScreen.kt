@@ -34,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.feldelysium.data.settings.AppSettings
+import com.example.feldelysium.data.settings.BackgroundKind
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -48,6 +49,7 @@ fun SettingsScreen(
     val vm: SettingsViewModel = viewModel(activity)
     val settings by vm.state.collectAsStateWithLifecycle()
     var showPlaybackUiText by remember { mutableStateOf(false) }
+    var showBackground by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -90,6 +92,13 @@ fun SettingsScreen(
                 headlineContent = { Text("Playback UI text") },
                 supportingContent = { Text("Reals, time, and day") },
             )
+            ListItem(
+                modifier = Modifier.clickable { showBackground = true },
+                headlineContent = { Text("Background") },
+                supportingContent = {
+                    Text(if (settings.backgroundKind == BackgroundKind.MEDIA) "Media" else "Color")
+                },
+            )
         }
     }
 
@@ -103,6 +112,18 @@ fun SettingsScreen(
             onDayChange = { vm.dispatch(SettingsEvent.SetPlaybackDay(it)) },
             onReset = { vm.dispatch(SettingsEvent.ResetPlaybackUiText) },
             onDismiss = { showPlaybackUiText = false },
+        )
+    }
+
+    if (showBackground) {
+        BackgroundPickerDialog(
+            settings = settings,
+            onKind = { vm.dispatch(SettingsEvent.SetBackgroundKind(it)) },
+            onColor = { vm.dispatch(SettingsEvent.SetBackgroundColor(it)) },
+            onMedia = { uri, isVideo -> vm.dispatch(SettingsEvent.SetBackgroundMedia(uri, isVideo)) },
+            onVideoSound = { vm.dispatch(SettingsEvent.SetBackgroundVideoSound(it)) },
+            onVideoFill = { vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it)) },
+            onDismiss = { showBackground = false },
         )
     }
 }

@@ -9,8 +9,8 @@ data class PlaybackUiState(
 )
 
 sealed class PlaybackEvent {
-    data object Tap : PlaybackEvent()  // advance to next entry
-    data object Reset : PlaybackEvent()  // restart from beginning
+    data object Tap : PlaybackEvent()
+    data object Reset : PlaybackEvent()
     data object NavigateBack : PlaybackEvent()
 }
 
