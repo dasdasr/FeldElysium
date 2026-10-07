@@ -34,8 +34,6 @@ class EditorViewModel(
     val effects = _effects.receiveAsFlow()
 
     init {
-        // Mirror scene state into editor UI state automatically.
-        // This keeps the editor in sync without manual "refresh" calls.
         sceneViewModel.state
             .onEach { sceneState ->
                 _state.update { editor ->

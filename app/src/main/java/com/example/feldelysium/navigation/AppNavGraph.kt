@@ -8,19 +8,13 @@ import com.example.feldelysium.presentation.editor.EditorScreen
 import com.example.feldelysium.presentation.playback.PlaybackScreen
 import com.example.feldelysium.presentation.settings.SettingsScreen
 
-/**
- * Single NavHost for the entire app.
- *
- * [SceneViewModel] is Activity-scoped — both screens obtain it via
- * `viewModel(LocalContext.current as ComponentActivity)` internally.
- * No need to pass it through the nav graph.
- */
+/** SceneViewModel is Activity-scoped and obtained inside screens, so it is not passed through the nav graph. */
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()
 
     NavHost(
-        navController  = navController,
+        navController = navController,
         startDestination = Screen.Editor.route
     ) {
         composable(Screen.Editor.route) {

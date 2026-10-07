@@ -50,10 +50,8 @@ fun DialogueEntryCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Drag handle
             dragHandle()
 
-            // Speaker color accent bar
             Box(
                 modifier = Modifier
                     .width(3.dp)
@@ -61,7 +59,6 @@ fun DialogueEntryCard(
                     .background(speakerColor)
             )
 
-            // Content
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text  = entry.speaker.name.uppercase(),
@@ -77,7 +74,6 @@ fun DialogueEntryCard(
                 )
             }
 
-            // Actions
             IconButton(onClick = onEdit) {
                 Icon(Icons.Default.Edit, "Edit", modifier = Modifier.size(18.dp))
             }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -25,15 +26,24 @@ class SettingsRepository(private val context: Context) {
         context.appSettingsDataStore.edit { prefs ->
             val next = transform(toAppSettings(prefs))
             prefs[Keys.LOCK_ASPECT_RATIO_16_9] = next.lockAspectRatio16x9
+            prefs[Keys.PLAYBACK_MONEY] = next.playbackMoney
+            prefs[Keys.PLAYBACK_TIME] = next.playbackTime
+            prefs[Keys.PLAYBACK_DAY] = next.playbackDay
         }
     }
 
     private fun toAppSettings(prefs: Preferences): AppSettings =
         AppSettings(
             lockAspectRatio16x9 = prefs[Keys.LOCK_ASPECT_RATIO_16_9] ?: true,
+            playbackMoney = prefs[Keys.PLAYBACK_MONEY] ?: "40.95",
+            playbackTime = prefs[Keys.PLAYBACK_TIME] ?: "16:36",
+            playbackDay = prefs[Keys.PLAYBACK_DAY] ?: "Day 3",
         )
 
     private object Keys {
         val LOCK_ASPECT_RATIO_16_9 = booleanPreferencesKey("lock_aspect_ratio_16_9")
+        val PLAYBACK_MONEY = stringPreferencesKey("playback_money")
+        val PLAYBACK_TIME = stringPreferencesKey("playback_time")
+        val PLAYBACK_DAY = stringPreferencesKey("playback_day")
     }
 }
