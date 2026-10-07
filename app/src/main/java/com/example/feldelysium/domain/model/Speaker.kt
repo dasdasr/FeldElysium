@@ -15,4 +15,8 @@ data class Speaker(
             SpeakerType.NPC -> "npc"
             SpeakerType.CUSTOM -> "default"
         }
+
+    companion object {
+        const val DEFAULT_CUSTOM_COLOR: Long = 0xFF_9E_7E_5EL
+    }
 }

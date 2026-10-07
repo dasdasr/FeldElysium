@@ -2,6 +2,7 @@ package com.example.feldelysium.domain.usecase
 
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
+import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import java.util.UUID
 
@@ -9,7 +10,7 @@ class ParseBulkImportUseCase {
 
     data class ParseResult(
         val entries: List<DialogueEntry>,
-        val unrecognizedSpeakers: List<String>
+        val newSpeakers: List<Speaker>,
     )
 
     fun execute(rawText: String, customSpeakers: List<Speaker> = emptyList()): ParseResult {
@@ -19,17 +20,22 @@ class ParseBulkImportUseCase {
         }
 
         val entries = mutableListOf<DialogueEntry>()
-        val unrecognized = linkedSetOf<String>()
+        // Drafted on first sight, committed only once a block actually has text.
+        val draftedSpeakers = linkedMapOf<String, Speaker>()
+        val newSpeakers = linkedMapOf<String, Speaker>()
 
         var currentSpeaker: Speaker? = null
+        var currentIsNew = false
         val textBuffer = StringBuilder()
 
         fun flushEntry() {
             val text = textBuffer.toString().trim()
-            if (text.isNotEmpty() && currentSpeaker != null) {
+            val speaker = currentSpeaker
+            if (text.isNotEmpty() && speaker != null) {
+                if (currentIsNew) newSpeakers[speaker.name.uppercase()] = speaker
                 entries += DialogueEntry(
                     id = UUID.randomUUID().toString(),
-                    speaker = currentSpeaker!!,
+                    speaker = speaker,
                     text = text
                 )
             }
@@ -41,12 +47,21 @@ class ParseBulkImportUseCase {
             if (match != null) {
                 flushEntry()
                 val rawName = match.groupValues[1].trim()
-                val speaker = nameIndex[rawName.uppercase()]
-                if (speaker != null) {
-                    currentSpeaker = speaker
+                val key = rawName.uppercase()
+                val known = nameIndex[key]
+                if (known != null) {
+                    currentSpeaker = known
+                    currentIsNew = false
                 } else {
-                    unrecognized += rawName
-                    currentSpeaker = null
+                    currentSpeaker = draftedSpeakers.getOrPut(key) {
+                        Speaker(
+                            id = UUID.randomUUID().toString(),
+                            name = rawName,
+                            colorArgb = Speaker.DEFAULT_CUSTOM_COLOR,
+                            type = SpeakerType.CUSTOM,
+                        )
+                    }
+                    currentIsNew = true
                 }
             } else if (currentSpeaker != null) {
                 if (textBuffer.isNotEmpty()) textBuffer.append('\n')
@@ -58,7 +73,7 @@ class ParseBulkImportUseCase {
 
         return ParseResult(
             entries = entries,
-            unrecognizedSpeakers = unrecognized.toList()
+            newSpeakers = newSpeakers.values.toList(),
         )
     }
 
