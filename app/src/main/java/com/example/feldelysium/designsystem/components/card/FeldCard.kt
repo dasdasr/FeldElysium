@@ -1,7 +1,5 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.card
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,6 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.animation.FeldAnimationValues
+import com.example.feldelysium.designsystem.animation.FeldAnimations
+import com.example.feldelysium.designsystem.animation.feldAnimate
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
@@ -40,68 +40,118 @@ fun FeldCard(
     rough: RoughStyle = RoughStyle(),
     contentPadding: PaddingValues = PaddingValues(16.dp),
     revealOnEnter: Boolean = false,
-    revealWear: Float = 0.65f,
-    revealMillis: Int = 700,
+    revealMillis: Int = 500,
     pressScale: Float = 0.012f,
     pressMillis: Int = 90,
     time: () -> Float = { 0f },
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    val shape = remember(seed, rough) { RoughShape(seed = seed, style = rough) }
-
     val interaction = remember { MutableInteractionSource() }
+
     val pressed by interaction.collectIsPressedAsState()
+
     val press by animateFloatAsState(
         targetValue = if (pressed) 1f else 0f,
         animationSpec = tween(pressMillis),
         label = "press",
     )
 
-    val reveal = remember { Animatable(if (revealOnEnter) 1f else 0f) }
-    LaunchedEffect(revealOnEnter) {
-        if (revealOnEnter) reveal.animateTo(0f, tween(revealMillis, easing = FastOutSlowInEasing))
+    val reveal = feldAnimate(
+        values = FeldAnimationValues(
+            "roughness" to rough.roughness.value,
+            "irregularity" to rough.irregularity,
+            "wear" to spec.wear,
+        ),
+        animation = FeldAnimations.Reveal.from(
+            initial = mapOf(
+                "roughness" to { it + 10f },
+                "irregularity" to { it * 1.5f },
+                "wear" to { it * 1.5f },
+            ),
+            enabled = revealOnEnter,
+            durationMillis = revealMillis,
+        ),
+    )
+
+    val animatedRough = rough.copy(
+        roughness = reveal["roughness"].dp,
+        irregularity = reveal["irregularity"],
+    )
+
+    val shape = remember(seed, animatedRough) {
+        RoughShape(
+            seed = seed,
+            style = animatedRough,
+        )
     }
 
     Column(
         modifier = modifier
             .graphicsLayer {
-                val s = 1f - pressScale * press
-                scaleX = s
-                scaleY = s
+                val scale = 1f - pressScale * press
+                scaleX = scale
+                scaleY = scale
             }
             .paperMaterial(
                 shape = shape,
                 spec = spec,
-                wear = { spec.wear + reveal.value * revealWear },
+                wear = { reveal["wear"] },
                 press = { press },
                 time = time,
             )
             .then(
                 if (onClick != null) {
-                    Modifier.clickable(interaction, indication = null, onClick = onClick)
-                } else Modifier
+                    Modifier.clickable(
+                        interactionSource = interaction,
+                        indication = null,
+                        onClick = onClick,
+                    )
+                } else {
+                    Modifier
+                }
             )
             .padding(contentPadding),
         content = content,
     )
 }
 
-@Preview(widthDp = 360, heightDp = 520, showBackground = true, backgroundColor = 0xFF0B1011)
+@Preview(
+    widthDp = 360,
+    heightDp = 520,
+    showBackground = true,
+    backgroundColor = 0xFF0B1011,
+)
 @Composable
 private fun FeldCardPreview() {
     DiscoDialogueTheme {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(
+            Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
             SampleCard(seed = 7)
+
             SampleCard(
                 seed = 3,
                 spec = FeldPaper.Panel.copy(wear = 0.2f),
-                rough = RoughStyle(roughness = 0.7.dp, irregularity = 0.4f),
+                rough = RoughStyle(
+                    roughness = 0.7.dp,
+                    irregularity = 0.4f,
+                ),
             )
+
             SampleCard(
                 seed = 11,
-                spec = FeldPaper.Panel.copy(wear = 0.6f, chipSize = 6.dp, inkContrast = 3.2f),
-                rough = RoughStyle(roughness = 2.dp, irregularity = 0.9f, step = 40.dp),
+                spec = FeldPaper.Panel.copy(
+                    wear = 0.6f,
+                    chipSize = 6.dp,
+                    inkContrast = 3.2f,
+                ),
+                rough = RoughStyle(
+                    roughness = 2.dp,
+                    irregularity = 0.9f,
+                    step = 40.dp,
+                ),
             )
         }
     }
@@ -113,14 +163,22 @@ private fun SampleCard(
     spec: PaperSpec = FeldPaper.Panel,
     rough: RoughStyle = RoughStyle(),
 ) {
-    FeldCard(Modifier.fillMaxWidth(), seed = seed, spec = spec, rough = rough, onClick = {}) {
+    FeldCard(
+        modifier = Modifier.fillMaxWidth(),
+        seed = seed,
+        spec = spec,
+        rough = rough,
+        revealOnEnter = true,
+        onClick = {},
+    ) {
         Text(
-            "LOGIC",
+            text = "LOGIC",
             style = MaterialTheme.typography.labelSmall,
             color = Color(0xFF4FB3A6),
         )
+
         Text(
-            "Let's be precise. What do you actually remember about that night?",
+            text = "Let's be precise. What do you actually remember about that night?",
             style = MaterialTheme.typography.bodyMedium,
             color = DialogueText,
             modifier = Modifier.padding(top = 6.dp),
