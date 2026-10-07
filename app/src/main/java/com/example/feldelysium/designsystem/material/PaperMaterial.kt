@@ -21,9 +21,29 @@ data class PaperSpec(
     val base: Color,
     val scuff: Color,
     val ink: Color,
+
     val wear: Float = 0.35f,
     val edgeWear: Float = 0.8f,
-    val inkWidth: Dp = 1.25.dp,
+    val edgeBand: Dp = 16.dp,
+    val chipSize: Dp = 4.dp,
+    val chipCoverage: Float = 0.7f,
+    val innerWear: Float = 0.12f,
+    val maxLoss: Float = 0.8f,
+    val scuffTint: Float = 0.5f,
+
+    val mottleSize: Dp = 30.dp,
+    val mottleStrength: Float = 0.22f,
+    val grainSize: Dp = 0.4.dp,
+    val grainStrength: Float = 0.05f,
+    val edgeShade: Float = 0.08f,
+    val pressShade: Float = 0.12f,
+
+    val inkWidth: Dp = 1.5.dp,
+    val inkGrainSize: Dp = 4.dp,
+    val inkPatchSize: Dp = 36.dp,
+    val inkPatchWeight: Float = 0.5f,
+    val inkMinAlpha: Float = 0.2f,
+    val inkContrast: Float = 2.4f,
 )
 
 object FeldPaper {
@@ -57,20 +77,42 @@ fun Modifier.paperMaterial(
     val stroke = Stroke(width = spec.inkWidth.toPx())
     val seed = shape.seed.mod(97).toFloat()
     val rim = shape.rimPx(this)
-    val band = 16.dp.toPx()
+
+    val band = spec.edgeBand.toPx()
+    val chipScale = spec.chipSize.toPx()
+    val mottleScale = spec.mottleSize.toPx()
+    val grainScale = spec.grainSize.toPx()
+    val inkGrain = spec.inkGrainSize.toPx()
+    val inkPatch = spec.inkPatchSize.toPx()
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val paper = RuntimeShader(PAPER_AGSL).apply {
             setFloatUniform("size", size.width, size.height)
             setFloatUniform("seed", seed)
-            setFloatUniform("edgeWear", spec.edgeWear)
             setFloatUniform("rim", rim)
+            setFloatUniform("edgeWear", spec.edgeWear)
             setFloatUniform("band", band)
+            setFloatUniform("chipScale", chipScale)
+            setFloatUniform("chipCoverage", spec.chipCoverage)
+            setFloatUniform("innerWear", spec.innerWear)
+            setFloatUniform("maxLoss", spec.maxLoss)
+            setFloatUniform("scuffTint", spec.scuffTint)
+            setFloatUniform("mottleScale", mottleScale)
+            setFloatUniform("mottleStrength", spec.mottleStrength)
+            setFloatUniform("grainScale", grainScale)
+            setFloatUniform("grainStrength", spec.grainStrength)
+            setFloatUniform("edgeShade", spec.edgeShade)
+            setFloatUniform("pressShade", spec.pressShade)
             setColorUniform("baseColor", spec.base.toArgb())
             setColorUniform("scuffColor", spec.scuff.toArgb())
         }
         val ink = RuntimeShader(INK_AGSL).apply {
             setFloatUniform("seed", seed)
+            setFloatUniform("grainScale", inkGrain)
+            setFloatUniform("patchScale", inkPatch)
+            setFloatUniform("patchWeight", spec.inkPatchWeight)
+            setFloatUniform("minAlpha", spec.inkMinAlpha)
+            setFloatUniform("contrast", spec.inkContrast)
             setColorUniform("inkColor", spec.ink.toArgb())
         }
         val paperBrush = ShaderBrush(paper)

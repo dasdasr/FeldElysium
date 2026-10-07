@@ -1,5 +1,6 @@
 package com.example.feldelysium.designsystem.shape
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.lerp
@@ -10,17 +11,32 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlin.math.floor
+import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
+@Immutable
+data class RoughStyle(
+    val roughness: Dp = 1.2.dp,
+    val irregularity: Float = 0.65f,
+    val smoothness: Float = 0.55f,
+    val step: Dp = 56.dp,
+    val slide: Float = 0.12f,
+    val corner: Dp = 6.dp,
+    val cornerVariation: Float = 0.35f,
+    val cornerJitter: Float = 0.5f,
+    val inset: Dp = 1.5.dp,
+)
+
 class RoughShape(
     val seed: Int,
-    private val roughness: Dp = 2.5.dp,
-    private val corner: Dp = 7.dp,
-    private val step: Dp = 40.dp,
+    val style: RoughStyle = RoughStyle(),
 ) : Shape {
 
-    fun rimPx(density: Density): Float = with(density) { roughness.toPx() } * 1.5f
+    fun rimPx(density: Density): Float = with(density) {
+        style.roughness.toPx() * (1.5f + style.cornerJitter) + style.inset.toPx()
+    }
 
     override fun createOutline(
         size: Size,
@@ -31,34 +47,61 @@ class RoughShape(
     fun buildPath(size: Size, density: Density): Path {
         if (size.minDimension <= 0f) return Path()
 
-        val amp = with(density) { roughness.toPx() }
-        val rim = amp * 1.5f
-        val stepPx = with(density) { step.toPx() }
-        val cornerPx = with(density) { corner.toPx() }
+        val amp = with(density) { style.roughness.toPx() }
+        val rim = rimPx(density)
+        val stepPx = with(density) { style.step.toPx() }
+        val cornerPx = with(density) { style.corner.toPx() }
+        val smooth = style.smoothness.coerceIn(0f, 0.95f)
 
         val rnd = Random(seed)
         fun j(a: Float) = (rnd.nextFloat() * 2f - 1f) * a
 
+        // 1D value noise along the perimeter: decides where the edge is calm and where it is rough
+        val table = FloatArray(32) { rnd.nextFloat() }
+        fun envelope(s: Float): Float {
+            val x = s / (stepPx * 2.5f)
+            val i = floor(x).toInt()
+            val f = x - i
+            val u = f * f * (3f - 2f * f)
+            val a = table[i.mod(32)]
+            val b = table[(i + 1).mod(32)]
+            val v = (a + (b - a) * u).pow(1.5f)
+            return (1f - style.irregularity) + v * (style.irregularity * 1.5f)
+        }
+
+        val cj = amp * style.cornerJitter
         val corners = listOf(
             Offset(rim, rim),
             Offset(size.width - rim, rim),
             Offset(size.width - rim, size.height - rim),
             Offset(rim, size.height - rim),
-        ).map { Offset(it.x + j(amp * 0.6f), it.y + j(amp * 0.6f)) }
-        val radius = FloatArray(4) { cornerPx * (0.7f + rnd.nextFloat() * 0.6f) }
+        ).map { Offset(it.x + j(cj), it.y + j(cj)) }
+        val radius = FloatArray(4) {
+            cornerPx * (1f - style.cornerVariation + rnd.nextFloat() * 2f * style.cornerVariation)
+        }
 
+        var perimeter = 0f
+        var drift = 0f
         val sides = List(4) { i ->
             val a = corners[i]
             val b = corners[(i + 1) % 4]
-            val dir = (b - a) / (b - a).getDistance()
+            val length = (b - a).getDistance()
+            val dir = (b - a) / length
             val normal = Offset(-dir.y, dir.x)
-            val s = a + dir * radius[i]
-            val e = b - dir * radius[(i + 1) % 4]
-            val n = ((e - s).getDistance() / stepPx).roundToInt().coerceAtLeast(1)
+            val start = a + dir * radius[i]
+            val end = b - dir * radius[(i + 1) % 4]
+            val n = ((end - start).getDistance() / stepPx).roundToInt().coerceAtLeast(1)
+            val sideStart = perimeter
+            perimeter += length
+
             List(n + 1) { k ->
-                val base = lerp(s, e, k / n.toFloat())
-                val slide = if (k in 1 until n) j(stepPx * 0.12f) else 0f
-                base + normal * j(amp) + dir * slide
+                val t = k / n.toFloat()
+                val base = lerp(start, end, t)
+                drift = drift * smooth + j(1f) * (1f - smooth)
+                val dev = (drift * amp * envelope(sideStart + t * length) * 1.6f)
+                    .coerceIn(-amp * 1.5f, amp * 1.5f)
+                val slide = if (k in 1 until n) j(stepPx * style.slide) else 0f
+                base + normal * dev + dir * slide
             }
         }
 
