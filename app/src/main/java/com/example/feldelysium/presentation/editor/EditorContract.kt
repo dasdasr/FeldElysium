@@ -17,8 +17,24 @@ data class EditorUiState(
     val isCustomSpeakerDialogOpen: Boolean = false,
 
     val importText: String = "",
-    val importError: String? = null
+    val importPreview: ImportPreview? = null,
+
+    val editingSpeaker: Speaker? = null,
 )
+
+data class ImportPreview(
+    val lineCount: Int,
+    val newSpeakerCount: Int,
+) {
+    val caption: String
+        get() {
+            if (lineCount == 0) return "No lines"
+            val lines = if (lineCount == 1) "1 line" else "$lineCount lines"
+            if (newSpeakerCount == 0) return lines
+            val speakers = if (newSpeakerCount == 1) "1 new speaker" else "$newSpeakerCount new speakers"
+            return "$lines · $speakers"
+        }
+}
 
 sealed class EditorEvent {
     data object RequestAddEntry : EditorEvent()
@@ -32,6 +48,8 @@ sealed class EditorEvent {
 
     data object RequestCustomSpeaker : EditorEvent()
     data class ConfirmCustomSpeaker(val speaker: Speaker) : EditorEvent()
+    data class RequestEditSpeaker(val speaker: Speaker) : EditorEvent()
+    data class ConfirmEditSpeaker(val speaker: Speaker) : EditorEvent()
     data object DismissCustomSpeaker : EditorEvent()
 
     data object OpenImportDialog : EditorEvent()
@@ -50,7 +68,6 @@ sealed class EditorEvent {
 sealed class EditorEffect {
     data object NavigateToPlayback : EditorEffect()
     data class ShowSnackbar(val message: String) : EditorEffect()
-    data class ShowImportWarning(val skipped: List<String>) : EditorEffect()
 
     // Picks an icon for a custom speaker.
     data object LaunchGalleryPicker : EditorEffect()
