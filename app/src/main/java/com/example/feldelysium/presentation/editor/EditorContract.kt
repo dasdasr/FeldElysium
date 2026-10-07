@@ -68,7 +68,5 @@ sealed class EditorEvent {
 sealed class EditorEffect {
     data object NavigateToPlayback : EditorEffect()
     data class ShowSnackbar(val message: String) : EditorEffect()
-
-    // Picks an icon for a custom speaker.
     data object LaunchGalleryPicker : EditorEffect()
 }

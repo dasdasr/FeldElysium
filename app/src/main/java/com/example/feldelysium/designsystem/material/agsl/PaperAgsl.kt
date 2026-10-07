@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.material
+package com.example.feldelysium.designsystem.material.agsl
 
 internal const val PAPER_AGSL = """
 uniform float2 size;
@@ -31,7 +31,7 @@ uniform float sinkShade;
 
 layout(color) uniform half4 baseColor;
 layout(color) uniform half4 scuffColor;
-$NOISE_LIB
+${NOISE_LIB}
 half4 main(float2 p) {
     float d = min(min(p.x, size.x - p.x), min(p.y, size.y - p.y)) - rim;
     float edge = 1.0 - smoothstep(0.0, band, d);
@@ -77,7 +77,7 @@ uniform float grainScale;
 uniform float minAlpha;
 uniform float contrast;
 layout(color) uniform half4 inkColor;
-$NOISE_LIB
+${NOISE_LIB}
 half4 main(float2 p) {
     float2 sp = p + seed * 53.0;
     float n = noise(sp / grainScale);

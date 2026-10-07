@@ -21,18 +21,18 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
         )
-//        setContent {
-//            DiscoDialogueTheme {
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color    = MaterialTheme.colorScheme.background
-//                ) {
-//                    AppNavGraph()
-//                }
-//            }
-//        }
         setContent {
-            DesignSystemPlayground()
+            DiscoDialogueTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color    = MaterialTheme.colorScheme.background
+                ) {
+                    AppNavGraph()
+                }
+            }
         }
+//        setContent {
+//            DesignSystemPlayground()
+//        }
     }
 }

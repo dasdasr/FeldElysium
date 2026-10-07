@@ -25,7 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.FeldTitleTag
+import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.FeldTape
 import com.example.feldelysium.designsystem.material.PaperSpec

@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.material.agsl.DRY_PAPER_AGSL
 
 @Immutable
 data class DryPaperSpec(

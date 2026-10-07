@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.material.agsl.INK_AGSL
+import com.example.feldelysium.designsystem.material.agsl.PAPER_AGSL
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.buildInkLayers
 import com.example.feldelysium.designsystem.shape.drawInk

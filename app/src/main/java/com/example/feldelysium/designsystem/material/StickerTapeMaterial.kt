@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.material.agsl.NOISE_LIB
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -86,7 +87,7 @@ uniform float ageStrength;
 layout(color) uniform half4 baseColor;
 layout(color) uniform half4 stainColor;
 layout(color) uniform half4 rimColor;
-$NOISE_LIB
+${NOISE_LIB}
 
 float ridge(float2 p) { return 1.0 - abs(noise(p) * 2.0 - 1.0); }
 
