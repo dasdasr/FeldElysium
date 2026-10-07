@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.feldelysium.navigation.AppNavGraph
+import com.example.feldelysium.presentation.shared.DesignSystemPlayground
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import android.graphics.Color as AndroidColor
 
@@ -20,15 +21,18 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
         )
+//        setContent {
+//            DiscoDialogueTheme {
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color    = MaterialTheme.colorScheme.background
+//                ) {
+//                    AppNavGraph()
+//                }
+//            }
+//        }
         setContent {
-            DiscoDialogueTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color    = MaterialTheme.colorScheme.background
-                ) {
-                    AppNavGraph()
-                }
-            }
+            DesignSystemPlayground()
         }
     }
 }
