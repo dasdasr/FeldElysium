@@ -32,26 +32,30 @@ data class PaperSpec(
     val scuffTint: Float = 0.5f,
 
     val mottleSize: Dp = 30.dp,
-    val mottleStrength: Float = 0.22f,
+    val mottleStrength: Float = 0.5f,
     val grainSize: Dp = 0.4.dp,
-    val grainStrength: Float = 0.05f,
+    val grainStrength: Float = 0.12f,
+    val colorGrain: Float = 0.035f,
+    val toothStrength: Float = 0.05f,
+    val speckleStrength: Float = 0.14f,
     val edgeShade: Float = 0.08f,
     val pressShade: Float = 0.12f,
 
     val inkWidth: Dp = 1.5.dp,
     val inkGrainSize: Dp = 4.dp,
     val inkPatchSize: Dp = 36.dp,
-    val inkPatchWeight: Float = 0.5f,
-    val inkMinAlpha: Float = 0.2f,
-    val inkContrast: Float = 2.4f,
+    val inkMinAlpha: Float = 0.14f,
+    val inkContrast: Float = 3.0f,
+    val inkPatchWeight: Float = 0.55f,
 )
 
 object FeldPaper {
     val Panel = PaperSpec(
-        base = Color(0xFF131C1F),
-        scuff = Color(0xFF5A6E70),
-        ink = Color(0xFF6E8183),
+        base = Color(0xFF0C1212),
+        scuff = Color(0xFF4A5757),
+        ink = Color(0xFF7C7C7A),
     )
+    val Field = Panel.copy(wear = 0.3f, inkWidth = 1.4.dp)
     val Cream = PaperSpec(
         base = Color(0xFFD9CDB4),
         scuff = Color(0xFF8B7B5F),
@@ -74,7 +78,7 @@ fun Modifier.paperMaterial(
     time: () -> Float = { 0f },
 ): Modifier = drawWithCache {
     val path = shape.buildPath(size, this)
-    val stroke = Stroke(width = spec.inkWidth.toPx())
+    val inkPath = shape.buildInkPath(path, this, spec.inkWidth.toPx())
     val seed = shape.seed.mod(97).toFloat()
     val rim = shape.rimPx(this)
 
@@ -105,6 +109,9 @@ fun Modifier.paperMaterial(
             setFloatUniform("pressShade", spec.pressShade)
             setColorUniform("baseColor", spec.base.toArgb())
             setColorUniform("scuffColor", spec.scuff.toArgb())
+            setFloatUniform("colorGrain", spec.colorGrain)
+            setFloatUniform("toothStrength", spec.toothStrength)
+            setFloatUniform("speckleStrength", spec.speckleStrength)
         }
         val ink = RuntimeShader(INK_AGSL).apply {
             setFloatUniform("seed", seed)
@@ -128,7 +135,7 @@ fun Modifier.paperMaterial(
                 drawRect(paperBrush)
                 this@onDrawWithContent.drawContent()
             }
-            drawPath(path, inkBrush, style = stroke)
+            drawPath(inkPath, inkBrush)
         }
     } else {
         // TODO: Baked Material fallback. For now: flat fill + solid outline.
@@ -137,7 +144,7 @@ fun Modifier.paperMaterial(
                 drawRect(spec.base)
                 this@onDrawWithContent.drawContent()
             }
-            drawPath(path, spec.ink, style = stroke)
+            drawPath(inkPath, spec.ink)
         }
     }
 }

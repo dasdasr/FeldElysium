@@ -45,7 +45,6 @@ fun SpeakerPickerDialog(
     onEditCustom: (Speaker) -> Unit,
     onDismiss: () -> Unit
 ) {
-    // Group speakers by type/attribute for organized display
     val skills = speakers.filter { it.type == SpeakerType.SKILL }
     val npcs   = speakers.filter { it.type == SpeakerType.NPC }
     val custom = speakers.filter { it.type == SpeakerType.CUSTOM }
@@ -55,7 +54,6 @@ fun SpeakerPickerDialog(
         title = { Text("Choose Speaker") },
         text = {
             LazyColumn(modifier = Modifier.heightIn(max = 400.dp)) {
-                // SKILLS grouped by attribute
                 AttributeGroup.entries.forEach { group ->
                     val groupSkills = skills.filter { it.attributeGroup == group }
                     if (groupSkills.isNotEmpty()) {
@@ -73,7 +71,6 @@ fun SpeakerPickerDialog(
                     }
                 }
 
-                // NPCs
                 if (npcs.isNotEmpty()) {
                     item { SectionDivider("NPCs") }
                     items(npcs) { speaker ->
@@ -81,7 +78,6 @@ fun SpeakerPickerDialog(
                     }
                 }
 
-                // Custom
                 if (custom.isNotEmpty()) {
                     item { SectionDivider("Custom") }
                     items(custom, key = { it.id }) { speaker ->
@@ -93,7 +89,6 @@ fun SpeakerPickerDialog(
                     }
                 }
 
-                // Create new
                 item {
                     TextButton(
                         onClick = onCreateCustom,
