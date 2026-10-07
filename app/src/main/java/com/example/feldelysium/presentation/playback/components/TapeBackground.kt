@@ -16,14 +16,7 @@ private const val TAPE_TEXTURE_WIDTH_PX = 614f
 private const val TAPE_TEXTURE_HEIGHT_PX = 3598f
 private const val TAPE_TEXTURE_ASPECT = TAPE_TEXTURE_HEIGHT_PX / TAPE_TEXTURE_WIDTH_PX
 
-/**
- * Repeats [R.drawable.seamless_tape] and shifts it up by [offsetPx].
- *
- * The visible strip is only about two tiles tall, so the copies are drawn in a
- * loop and the shift is wrapped with the tile height. When one copy leaves the
- * top, the next is already coming in from the bottom. A lazy list would recycle
- * tiles without keeping that shift exact.
- */
+// Tile manually to keep the texture scroll seamless.
 @Composable
 fun TapeBackground(
     offsetPx: Float,

@@ -61,7 +61,7 @@ fun EditorScreen(
                     onNavigateToPlayback()
 
                 is EditorEffect.ShowSnackbar ->
-                    // The import dialog is its own window, so a scaffold snackbar would sit behind it.
+                    // The import dialog is its own window, so a scaffold snackbar would sit behind it
                     Toast.makeText(activity, effect.message, Toast.LENGTH_SHORT).show()
 
                 EditorEffect.LaunchGalleryPicker -> { /* TODO: launch ActivityResultContract */
