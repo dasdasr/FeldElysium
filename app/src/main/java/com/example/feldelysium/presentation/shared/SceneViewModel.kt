@@ -59,6 +59,21 @@ class SceneViewModel : ViewModel() {
             current.copy(customSpeakers = current.customSpeakers + custom)
         }
 
+        is SceneAction.UpdateCustomSpeaker -> {
+            val updated = action.speaker.copy(type = SpeakerType.CUSTOM)
+            if (current.customSpeakers.none { it.id == updated.id }) current
+            else current.copy(
+                customSpeakers = current.customSpeakers.map {
+                    if (it.id == updated.id) updated else it
+                },
+                scene = current.scene.copy(
+                    entries = current.scene.entries.map { entry ->
+                        if (entry.speaker.id == updated.id) entry.copy(speaker = updated) else entry
+                    }
+                )
+            )
+        }
+
         is SceneAction.RemoveCustomSpeaker -> current.copy(
             customSpeakers = current.customSpeakers.filter { it.id != action.speakerId }
         )

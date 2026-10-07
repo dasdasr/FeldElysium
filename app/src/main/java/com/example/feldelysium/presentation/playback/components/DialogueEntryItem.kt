@@ -2,10 +2,6 @@ package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,14 +10,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.presentation.playback.PlaybackMotion
 
-@Preview
+private const val NAME_TRACKING_EM = 0.4f / 12f
+private const val HANGING_INDENT_EM = 14f / 12f
+private val BodyColor = Color(0xFF_E8_D8_C0)
+
+@Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 private fun DialogueEntryItemPreview() {
     DialogueEntryItem(
@@ -30,6 +36,8 @@ private fun DialogueEntryItemPreview() {
             text = "Go-go Gyro",
         ),
         isLatest = true,
+        fontSize = 9.sp,
+        lineHeight = 12.sp,
     )
 }
 
@@ -37,6 +45,8 @@ private fun DialogueEntryItemPreview() {
 fun DialogueEntryItem(
     entry: DialogueEntry,
     isLatest: Boolean,
+    fontSize: TextUnit,
+    lineHeight: TextUnit,
     modifier: Modifier = Modifier,
 ) {
     val alpha = remember(entry.id) { Animatable(0f) }
@@ -47,23 +57,41 @@ fun DialogueEntryItem(
     }
     val animatedAlpha = alpha.value
 
+    val bodyStyle = MaterialTheme.typography.bodyMedium
     val speakerColor = Color(entry.speaker.colorArgb)
-    Column(
+    Text(
+        text = buildAnnotatedString {
+            withStyle(
+                SpanStyle(
+                    color = speakerColor,
+                    fontSize = fontSize,
+                    letterSpacing = fontSize * NAME_TRACKING_EM,
+                )
+            ) {
+                append(entry.speaker.name.uppercase())
+                append(" – ")
+            }
+            withStyle(
+                SpanStyle(
+                    color = BodyColor,
+                    fontSize = fontSize,
+                )
+            ) {
+                append(entry.text)
+            }
+        },
         modifier = modifier
-            .fillMaxWidth()
-            .graphicsLayer { this.alpha = animatedAlpha }
-    ) {
-        Text(
-            text = entry.speaker.name.uppercase(),
-            color = speakerColor,
-            style = MaterialTheme.typography.labelSmall,
-            letterSpacing = 1.8.sp
-        )
-        Spacer(Modifier.height(3.dp))
-        Text(
-            text = entry.text,
-            color = Color(0xFF_E8_D8_C0),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+            .graphicsLayer { this.alpha = animatedAlpha },
+        style = bodyStyle.copy(
+            color = BodyColor,
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            textIndent = TextIndent(firstLine = 0.sp, restLine = fontSize * HANGING_INDENT_EM),
+            platformStyle = PlatformTextStyle(includeFontPadding = false),
+            lineHeightStyle = LineHeightStyle(
+                alignment = LineHeightStyle.Alignment.Proportional,
+                trim = LineHeightStyle.Trim.None,
+            ),
+        ),
+    )
 }

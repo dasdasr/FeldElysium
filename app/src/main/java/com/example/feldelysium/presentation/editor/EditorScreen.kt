@@ -1,11 +1,13 @@
 package com.example.feldelysium.presentation.editor
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,6 +35,7 @@ import com.example.feldelysium.presentation.shared.SceneViewModel
 private fun EditorScreenPreview() {
     EditorScreen(
         onNavigateToPlayback = {},
+        onNavigateToSettings = {},
     )
 }
 
@@ -41,6 +44,7 @@ private fun EditorScreenPreview() {
 @Composable
 fun EditorScreen(
     onNavigateToPlayback: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalContext.current as ComponentActivity
@@ -57,12 +61,8 @@ fun EditorScreen(
                     onNavigateToPlayback()
 
                 is EditorEffect.ShowSnackbar ->
-                    snackbarHostState.showSnackbar(effect.message)
-
-                is EditorEffect.ShowImportWarning ->
-                    snackbarHostState.showSnackbar(
-                        "Imported with warnings. Skipped: ${effect.skipped.joinToString()}"
-                    )
+                    // The import dialog is its own window, so a scaffold snackbar would sit behind it
+                    Toast.makeText(activity, effect.message, Toast.LENGTH_SHORT).show()
 
                 EditorEffect.LaunchGalleryPicker -> { /* TODO: launch ActivityResultContract */
                 }
@@ -70,20 +70,21 @@ fun EditorScreen(
         }
     }
 
-    // ── Reorderable list state ────────────────────────────────────────────────
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val reordered = state.entries.toMutableList().apply { add(to.index, removeAt(from.index)) }
         vm.dispatch(EditorEvent.ReorderEntries(reordered))
     }
 
-    // ── Scaffold ──────────────────────────────────────────────────────────────
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(state.sceneName) },
                 actions = {
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(Icons.Default.Settings, "Settings")
+                    }
                     IconButton(onClick = { vm.dispatch(EditorEvent.OpenImportDialog) }) {
                         Icon(Icons.Default.Upload, "Bulk Import")
                     }
@@ -135,6 +136,7 @@ fun EditorScreen(
             speakers = state.allSpeakers,
             onSpeakerSelected = { vm.dispatch(EditorEvent.SelectSpeakerForNewEntry(it)) },
             onCreateCustom = { vm.dispatch(EditorEvent.RequestCustomSpeaker) },
+            onEditCustom = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
             onDismiss = { vm.dispatch(EditorEvent.CloseSpeakerPicker) }
         )
     }
@@ -142,7 +144,7 @@ fun EditorScreen(
     if (state.isImportDialogOpen) {
         BulkImportDialog(
             text = state.importText,
-            error = state.importError,
+            preview = state.importPreview,
             onText = { vm.dispatch(EditorEvent.ImportTextChanged(it)) },
             onConfirm = { vm.dispatch(EditorEvent.ConfirmImport) },
             onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) }
@@ -150,10 +152,18 @@ fun EditorScreen(
     }
 
     if (state.isCustomSpeakerDialogOpen) {
-        CustomSpeakerDialog(
-            onConfirm = { vm.dispatch(EditorEvent.ConfirmCustomSpeaker(it)) },
-            onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) }
-        )
+        key(state.editingSpeaker?.id ?: "create") {
+            CustomSpeakerDialog(
+                speaker = state.editingSpeaker,
+                onConfirm = { speaker ->
+                    if (state.editingSpeaker != null)
+                        vm.dispatch(EditorEvent.ConfirmEditSpeaker(speaker))
+                    else
+                        vm.dispatch(EditorEvent.ConfirmCustomSpeaker(speaker))
+                },
+                onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) }
+            )
+        }
     }
 
     if (state.isEntryEditOpen) {
