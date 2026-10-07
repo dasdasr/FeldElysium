@@ -36,7 +36,7 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 
 enum class FeldIconId {
     Back, More, MoreHoriz, Import, Play, Reorder, Edit, Delete, Drag, Add, Close, Chevron,
-    DialogueStyle, Font, Palette, Grid, FastAdd, Timer, Voice, Image, Aspect, PlaybackText,
+    DialogueStyle, Font, Palette, Grid, FastAdd, Timer, Voice, Image, Aspect, PlaybackText, Settings,
 }
 
 @Composable
@@ -69,6 +69,7 @@ fun FeldIcon(
         FeldIconId.Image -> Icons.Default.Image
         FeldIconId.Aspect -> Icons.Default.AspectRatio
         FeldIconId.PlaybackText -> Icons.Default.Subtitles
+        FeldIconId.Settings -> Icons.Default.Settings
     }
     Icon(v, contentDescription = null, modifier = modifier.size(size), tint = tint)
 }

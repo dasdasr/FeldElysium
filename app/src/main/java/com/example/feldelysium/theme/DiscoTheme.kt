@@ -5,36 +5,36 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 
 private val DiscoColorScheme = darkColorScheme(
-    primary = DiscoPrimary,
-    onPrimary = DiscoOnPrimary,
-    primaryContainer = DiscoPrimary,
-    onPrimaryContainer = DiscoOnPrimary,
-    inversePrimary = DiscoPrimaryPressed,
+    primary = DiscoOrange,
+    onPrimary = DiscoInk,
+    primaryContainer = DiscoOrange,
+    onPrimaryContainer = DiscoInk,
+    inversePrimary = DiscoOrangePressed,
 
-    secondary = DiscoSecondary,
-    onSecondary = DiscoOnSurface,
-    secondaryContainer = DiscoSecondary,
-    onSecondaryContainer = DiscoOnSurface,
+    secondary = DiscoCream,
+    onSecondary = DiscoInk,
+    secondaryContainer = DiscoCream,
+    onSecondaryContainer = DiscoInk,
 
-    tertiary = DiscoPlateRare,
-    onTertiary = DiscoOnPlateRare,
-    tertiaryContainer = DiscoPlateDone,
-    onTertiaryContainer = DiscoOnPlateDone,
+    tertiary = DiscoOrangePressed,
+    onTertiary = DiscoText,
+    tertiaryContainer = DiscoSurfaceHigh,
+    onTertiaryContainer = DiscoText,
 
     background = DiscoBackground,
-    onBackground = DiscoOnSurface,
+    onBackground = DiscoText,
     surface = DiscoSurface,
-    onSurface = DiscoOnSurface,
-    surfaceVariant = DiscoSurfaceVariant,
-    onSurfaceVariant = DiscoTextSecondary,
+    onSurface = DiscoText,
+    surfaceVariant = DiscoSurfaceHigh,
+    onSurfaceVariant = DiscoTextMuted,
     surfaceTint = Color.Transparent,
-    inverseSurface = DiscoPlateLight,
-    inverseOnSurface = DiscoOnPlateLight,
+    inverseSurface = DiscoCream,
+    inverseOnSurface = DiscoInk,
 
     error = DiscoError,
-    onError = DiscoOnError,
-    errorContainer = DiscoButtonConfirm,
-    onErrorContainer = DiscoOnError,
+    onError = DiscoText,
+    errorContainer = DiscoError,
+    onErrorContainer = DiscoText,
 
     outline = DiscoOutline,
     outlineVariant = DiscoOutline,
@@ -43,42 +43,31 @@ private val DiscoColorScheme = darkColorScheme(
     surfaceBright = DiscoSurfaceHigh,
     surfaceContainerLowest = DiscoBackground,
     surfaceContainerLow = DiscoSurface,
-    surfaceContainer = DiscoSurfaceVariant,
+    surfaceContainer = DiscoSurface,
     surfaceContainerHigh = DiscoSurfaceHigh,
     surfaceContainerHighest = DiscoSurfaceHigh,
 )
 
 @Immutable
 data class DiscoExtraColors(
-    val textTertiary: Color = DiscoTextTertiary,
-    val primaryPressed: Color = DiscoPrimaryPressed,
-    val primarySoft: Color = DiscoPrimarySoft,
-    val inactiveOption: Color = DiscoInactiveOption,
-    val inactiveText: Color = DiscoInactiveText,
-    val buttonConfirm: Color = DiscoButtonConfirm,
-    val plateDone: Color = DiscoPlateDone,
-    val onPlateDone: Color = DiscoOnPlateDone,
-    val plateRare: Color = DiscoPlateRare,
-    val onPlateRare: Color = DiscoOnPlateRare,
-    val plateLight: Color = DiscoPlateLight,
-    val onPlateLight: Color = DiscoOnPlateLight,
     val success: Color = DiscoSuccess,
+    val primaryPressed: Color = DiscoOrangePressed,
+)
+
+@Composable
+fun discoSwitchColors() = SwitchDefaults.colors(
+    checkedThumbColor = DiscoText,
+    checkedTrackColor = DiscoOrange,
+    checkedBorderColor = DiscoOrange,
+    uncheckedThumbColor = DiscoTextMuted,
+    uncheckedTrackColor = DiscoOutline,
+    uncheckedBorderColor = DiscoOutline,
 )
 
 private val LocalDiscoColors = staticCompositionLocalOf { DiscoExtraColors() }
 
 val MaterialTheme.disco: DiscoExtraColors
     @Composable @ReadOnlyComposable get() = LocalDiscoColors.current
-
-@Composable
-fun discoSwitchColors() = SwitchDefaults.colors(
-    checkedThumbColor = DiscoOnSurface,
-    checkedTrackColor = DiscoPrimary,
-    checkedBorderColor = DiscoPrimary,
-    uncheckedThumbColor = DiscoTextTertiary,
-    uncheckedTrackColor = DiscoOutline,
-    uncheckedBorderColor = DiscoOutline,
-)
 
 @Composable
 fun DiscoDialogueTheme(content: @Composable () -> Unit) {

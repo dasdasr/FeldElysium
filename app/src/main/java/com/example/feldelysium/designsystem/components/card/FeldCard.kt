@@ -29,7 +29,6 @@ import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
-import com.example.feldelysium.theme.DialogueText
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -180,7 +179,7 @@ private fun SampleCard(
         Text(
             text = "Let's be precise. What do you actually remember about that night?",
             style = MaterialTheme.typography.bodyMedium,
-            color = DialogueText,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(top = 6.dp),
         )
     }

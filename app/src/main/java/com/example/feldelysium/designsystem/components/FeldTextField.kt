@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,9 +32,7 @@ import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
-import com.example.feldelysium.theme.DialogueText
 import com.example.feldelysium.theme.DiscoDialogueTheme
-import com.example.feldelysium.theme.DiscoPrimary
 
 object FeldRough {
     val Card = RoughStyle()
@@ -52,7 +51,7 @@ fun FeldTextField(
     maxLength: Int? = null,
     minLines: Int = 3,
     enabled: Boolean = true,
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(color = DialogueText),
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(color = colorScheme.onSurface),
     contentPadding: PaddingValues = PaddingValues(16.dp),
     time: () -> Float = { 0f },
 ) {
@@ -83,13 +82,13 @@ fun FeldTextField(
             enabled = enabled,
             textStyle = textStyle,
             minLines = minLines,
-            cursorBrush = SolidColor(DiscoPrimary),
+            cursorBrush = SolidColor(colorScheme.primary),
             interactionSource = interaction,
             modifier = Modifier.fillMaxWidth().focusRequester(requester),
             decorationBox = { inner ->
                 Box {
                     if (value.isEmpty()) {
-                        Text(placeholder, style = textStyle, color = DialogueText.copy(alpha = 0.4f))
+                        Text(placeholder, style = textStyle, color = colorScheme.onSurface.copy(alpha = 0.4f))
                     }
                     inner()
                 }
