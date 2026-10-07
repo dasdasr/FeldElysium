@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.material
+package com.example.feldelysium.designsystem.material.agsl
 
 internal const val DRY_PAPER_AGSL = """
 uniform float2 size;
@@ -26,7 +26,7 @@ uniform float pressShade;
 
 layout(color) uniform half4 baseColor;
 layout(color) uniform half4 crackColor;
-$NOISE_LIB
+${NOISE_LIB}
 
 float2 hash2(float2 p) { return float2(hash(p), hash(p + 19.19)); }
 

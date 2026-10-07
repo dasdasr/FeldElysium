@@ -1,6 +1,8 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.title
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,8 +16,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import com.example.feldelysium.designsystem.components.DistressedTitleSpec
+import com.example.feldelysium.designsystem.components.FeldDistressedTitle
+import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.material.FeldTape
 import com.example.feldelysium.designsystem.material.StickerTapeSpec
 import com.example.feldelysium.designsystem.material.stickerTapeMaterial
@@ -30,9 +33,11 @@ fun FeldTitleTag(
     contentColor: Color = Color(0xFF1B1612),
     textStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontWeight = FontWeight.Bold,
-    letterSpacing = 0.4.sp,
+        letterSpacing = 0.4.sp,
     ),
     rotation: Float = -0.6f,
+    distressed: Boolean = false,
+    distressedSpec: DistressedTitleSpec = FeldDistressedTitles.Small,
 ) {
     Box(
         modifier = modifier
@@ -46,18 +51,28 @@ fun FeldTitleTag(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text.uppercase(), style = textStyle, color = contentColor)
+        if (distressed) {
+            FeldDistressedTitle(
+                text = text,
+                seed = seed,
+                spec = distressedSpec.copy(color = contentColor),
+                textStyle = textStyle,
+            )
+        } else {
+            Text(text.uppercase(), style = textStyle, color = contentColor)
+        }
     }
 }
 
-@Preview(widthDp = 360, heightDp = 240, showBackground = true, backgroundColor = 0xFF0B1011)
+@Preview(widthDp = 360, heightDp = 420, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldTitleTagPreview() {
     DiscoDialogueTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             FeldTitleTag("Choose speaker", seed = 1)
-            FeldTitleTag("Background settings", seed = 2)
-            FeldTitleTag("Entry edit", seed = 14)
+            FeldTitleTag("Choose speaker", seed = 1, distressed = true)
+            FeldTitleTag("Background settings", seed = 2, distressed = true,)
+            FeldTitleTag("Entry edit", seed = 14, distressed = true)
         }
     }
 }

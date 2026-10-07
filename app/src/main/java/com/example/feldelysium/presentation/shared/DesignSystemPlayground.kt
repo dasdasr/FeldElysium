@@ -23,12 +23,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.FeldButton
-import com.example.feldelysium.designsystem.components.FeldButtonDefaults
+import androidx.compose.ui.unit.sp
+import com.example.feldelysium.designsystem.components.button.FeldButton
+import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
+import com.example.feldelysium.designsystem.components.FeldDistressedTitle
+import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.FeldRough
 import com.example.feldelysium.designsystem.components.FeldTextField
 import com.example.feldelysium.designsystem.components.card.FeldDialogCard
+import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DialogueText
@@ -137,6 +141,11 @@ fun DesignSystemPlayground(
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
             )
 
+            FeldTitleTag(
+                text = "BACKGROUND",
+                distressed = true,
+            )
+
             FeldDialogCard(
                 title = "Bulk import",
                 subtitle = "Paste your dialogue lines. One per line.",
@@ -147,6 +156,25 @@ fun DesignSystemPlayground(
                 Text("LOGIC: Let's be precise.", color = DialogueText)
                 Text("HARRY: I remember the cold.", color = DialogueText)
             }
+
+            val largeStyle = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 52.sp,
+                lineHeight = 54.sp,
+                letterSpacing = 1.sp,
+            )
+            FeldDistressedTitle(
+                text = "The final interview",
+                seed = 2,
+                spec = FeldDistressedTitles.Large,
+                textStyle = largeStyle,
+            )
+
+            FeldDistressedTitle(
+                text = "SMOKE",
+                seed = 2,
+                spec = FeldDistressedTitles.Large,
+                textStyle = largeStyle,
+            )
         }
     }
 }
