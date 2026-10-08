@@ -6,8 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -88,12 +88,21 @@ fun FeldFab(
     }
 }
 
-@Preview(widthDp = 220, heightDp = 120, showBackground = true, backgroundColor = 0xFF0B1011)
+@Preview(
+    widthDp = 120,
+    heightDp = 120,
+    showBackground = true,
+    backgroundColor = 0xFF0B1011
+)
 @Composable
 private fun FeldFabPreview() {
     DiscoDialogueTheme {
-        Box(Modifier.padding(24.dp)) {
-            FeldFab(onClick = {}, seed = 3, contentDescription = "Add entry")
+        Box(Modifier.wrapContentSize()) {
+            FeldFab(
+                onClick = {},
+                seed = 3,
+                contentDescription = "Add entry"
+            )
         }
     }
 }

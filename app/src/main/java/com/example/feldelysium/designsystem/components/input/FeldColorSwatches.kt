@@ -41,7 +41,9 @@ fun swatchSpec(argb: Long, selected: Boolean = false): PaperSpec {
         base = c,
         scuff = lerp(c, Color.Black, 0.35f),
         ink = Cream,
-        inkWidth = if (selected) 2.dp else 0.dp,
+        inkWidth = if (selected) 1.dp else 0.dp,
+        inkMinAlpha = 0.72f,
+        inkContrast = 1.35f,
 
         wear = 0.5f,
         edgeWear = 0f,

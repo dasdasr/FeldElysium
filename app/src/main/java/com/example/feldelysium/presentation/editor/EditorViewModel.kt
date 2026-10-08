@@ -186,13 +186,13 @@ class EditorViewModel(
     private fun handleImport() {
         val text = _state.value.importText
         if (text.isBlank()) {
-            notify("Nothing to import.")
+            notify("Paste some lines first")
             return
         }
 
         val result = parseUseCase.execute(text, sceneViewModel.state.value.customSpeakers)
         if (result.entries.isEmpty()) {
-            notify("No lines recognized.")
+            notify("No lines found. Try «NAME: text»")
             return
         }
 

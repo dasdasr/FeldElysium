@@ -61,8 +61,8 @@ import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.presentation.playback.BackgroundVideo
 
 private val Presets = listOf(
+    0xFF00B140L,
     AppSettings.DEFAULT_BACKGROUND_COLOR,
-    0xFF000000L,
     0xFF59663AL,
     0xFFC4A57AL,
     0xFFE45720L,
@@ -327,7 +327,7 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            Spacer(Modifier.width(24.dp))
+            Spacer(Modifier.width(22.dp))
             Box(
                 Modifier
                     .weight(1f)
