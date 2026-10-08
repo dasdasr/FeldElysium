@@ -36,14 +36,14 @@ val DiscoTypography = Typography(
         letterSpacing = 1.6.sp,
     ),
     bodyMedium = TextStyle(
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         fontFamily = SinaNova,
         lineHeight = 20.sp,
         fontWeight = FontWeight.Normal,
         letterSpacing = 0.1.sp,
     ),
     labelSmall = TextStyle(
-        fontSize = 10.sp,
+        fontSize = 14.sp,
         fontFamily = SinaNova,
         letterSpacing = 1.5.sp,
         fontWeight = FontWeight.Bold

@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Tune
@@ -98,8 +97,17 @@ fun SettingsScreen(
                     value = PlaybackFontName,
                     onClick = { /* TODO: font picker dialog */ },
                 )
-                FeldSettingsDivider(seed = 103)
+            }
 
+            FeldSettingsSection(title = "Background", seed = 12) {
+                FeldBackgroundRow(
+                    settings = settings,
+                    currentLabel = backgroundLabel(settings),
+                    onClick = { showBackground = true },
+                )
+            }
+
+            FeldSettingsSection(title = "Coming soon", seed = 13) {
                 FeldSettingSwitchRow(
                     icon = Icons.Filled.PlayArrow,
                     title = "Autoplay",
@@ -123,14 +131,6 @@ fun SettingsScreen(
                     title = "Status icons",
                     subtitle = "Tap the icons right in playback",
                     enabled = false,
-                )
-            }
-
-            FeldSettingsSection(title = "Background", seed = 12) {
-                FeldBackgroundRow(
-                    settings = settings,
-                    currentLabel = backgroundLabel(settings),
-                    onClick = { showBackground = true },
                 )
             }
         }
@@ -168,4 +168,3 @@ private fun backgroundLabel(settings: AppSettings): String = when {
     settings.backgroundMediaUri.isBlank() -> "Default"
     else -> "Custom"
 }
-

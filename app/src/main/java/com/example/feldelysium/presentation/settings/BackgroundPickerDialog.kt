@@ -1,5 +1,6 @@
 package com.example.feldelysium.presentation.settings
 
+import android.graphics.Color.HSVToColor
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -278,6 +279,9 @@ private fun MediaPreview(settings: AppSettings) {
 private fun hsvOf(argb: Long): FloatArray =
     FloatArray(3).also { android.graphics.Color.colorToHSV(argb.toInt(), it) }
 
+private fun colorOf(hue: Float, sat: Float, bri: Float): Long =
+    HSVToColor(floatArrayOf(hue, sat, bri)).toLong() and 0xFFFFFFFFL
+
 @Composable
 private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
     val initial = remember { hsvOf(argb) }
@@ -285,22 +289,31 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
     var sat by remember { mutableFloatStateOf(initial[1]) }
     var bri by remember { mutableFloatStateOf(initial[2]) }
     var last by remember { mutableLongStateOf(argb) }
+    val pending = remember { ArrayDeque<Long>() }
 
     LaunchedEffect(argb) {
-        if (argb != last) {
-            val hsv = hsvOf(argb)
-            hue = hsv[0]; sat = hsv[1]; bri = hsv[2]
-            last = argb
+        val idx = pending.indexOf(argb)
+        when {
+            idx >= 0 -> repeat(idx + 1) { pending.removeFirst() }
+            argb != last -> {
+                val hsv = hsvOf(argb)
+                hue = hsv[0]; sat = hsv[1]; bri = hsv[2]
+                last = argb
+                pending.clear()
+            }
         }
     }
 
-    fun emit() {
-        val c =
-            android.graphics.Color.HSVToColor(floatArrayOf(hue, sat, bri)).toLong() and 0xFFFFFFFFL
+    fun commit() {
+        val c = colorOf(hue, sat, bri)
+        if (c == last) return
         last = c
+        pending.addLast(c)
+        if (pending.size > 32) pending.removeFirst()
         onColor(c)
     }
 
+    val live = colorOf(hue, sat, bri)
     val chipShape = remember { RoughShape(13, PreviewRough.copy(corner = 4.dp)) }
 
     Column {
@@ -322,7 +335,7 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
                 Modifier
                     .weight(1f)
                     .height(52.dp)
-                    .paperMaterial(chipShape, swatchSpec(argb, selected = true)),
+                    .paperMaterial(chipShape, swatchSpec(live, selected = true)),
             )
         }
 
@@ -332,14 +345,15 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             onValueChange = {
                 hue = it
                 if (sat < 0.1f) sat = 1f
-                emit()
             },
+            onValueChangeFinished = { commit() },
             valueRange = 0f..360f,
             seed = 3,
         )
         FeldSlider(
             value = bri,
-            onValueChange = { bri = it; emit() },
+            onValueChange = { bri = it },
+            onValueChangeFinished = { commit() },
             seed = 4,
         )
         Spacer(Modifier.height(12.dp))

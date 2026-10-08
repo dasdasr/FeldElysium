@@ -19,12 +19,16 @@ import com.example.feldelysium.designsystem.material.paperMaterial
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 
-private val SwatchRough = RoughStyle(
-    roughness = 0.6.dp,
-    step = 20.dp,
-    corner = 3.dp,
-    cornerVariation = 0.3f,
-    tornChance = 0.15f,
+private val CleanRound = RoughStyle(
+    roughness = 0.dp,
+    irregularity = 0f,
+    slide = 0f,
+    corner = 9.dp,
+    cornerVariation = 0f,
+    cornerJitter = 0f,
+    inset = 0.dp,
+    jerkChance = 0f,
+    tornChance = 0f,
 )
 
 private val Cream = Color(0xFFE6DCC4)
@@ -33,9 +37,21 @@ fun swatchSpec(argb: Long, selected: Boolean = false): PaperSpec {
     val c = Color(argb.toInt())
     return FeldPaper.DryButtonCream.copy(
         base = c,
-        scuff = lerp(c, Color.Black, 0.3f),
+        scuff = lerp(c, Color.Black, 0.35f),
         ink = Cream,
         inkWidth = if (selected) 2.dp else 0.dp,
+
+        wear = 0.5f,
+        edgeWear = 0f,
+        innerWear = 0.5f,
+        scuffTint = 0.45f,
+        chipSize = 5.dp,
+        chipCoverage = 0.5f,
+
+        mottleStrength = 0.5f,
+        grainStrength = 0.06f,
+        toothStrength = 0.05f,
+        speckleStrength = 0.05f,
     )
 }
 
@@ -52,7 +68,7 @@ fun FeldColorSwatches(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         colors.forEachIndexed { i, argb ->
-            val shape = remember(seed, i) { RoughShape(seed + i * 5, SwatchRough) }
+            val shape = remember(seed, i) { RoughShape(seed + i * 5, CleanRound) }
             Box(
                 Modifier
                     .weight(1f)
