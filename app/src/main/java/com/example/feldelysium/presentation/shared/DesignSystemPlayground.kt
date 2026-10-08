@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -36,6 +37,7 @@ import com.example.feldelysium.designsystem.components.card.FeldDialogCard
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.eggs.EggToastPlayground
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -59,6 +61,13 @@ fun DesignSystemPlayground(
             Text(
                 text = "DESIGN SYSTEM PLAYGROUND",
                 style = MaterialTheme.typography.labelSmall,
+                color = colorScheme.primary,
+            )
+
+            EggToastPlayground(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(220.dp),
             )
 
             FeldCard(

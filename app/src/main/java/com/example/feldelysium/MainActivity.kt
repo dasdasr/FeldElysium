@@ -1,28 +1,34 @@
 package com.example.feldelysium
 
+import android.graphics.Color as AndroidColor
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.example.feldelysium.eggs.EggToastHost
+import com.example.feldelysium.eggs.EggsViewModel
+import com.example.feldelysium.eggs.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
 import com.example.feldelysium.presentation.shared.DesignSystemPlayground
 import com.example.feldelysium.theme.DiscoDialogueTheme
-import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
 
-    companion object {
-        private const val SHOW_PLAYGROUND = false
-    }
+    private val eggsVm: EggsViewModel by viewModels()
+
+    companion object { private const val SHOW_PLAYGROUND = true }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
@@ -30,14 +36,26 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DiscoDialogueTheme {
-                if (SHOW_PLAYGROUND) {
-                    DesignSystemPlayground()
-                } else {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
-                        AppNavGraph()
+                val eggs = eggsVm.eggs
+
+                LaunchedEffect(eggs) {
+                    if (savedInstanceState == null) {
+                        eggs.awaitReady()
+                        eggs.report("app.open")
+                    }
+                }
+
+                CompositionLocalProvider(LocalEasterEggs provides eggs) {
+                    if (SHOW_PLAYGROUND) {
+                        DesignSystemPlayground()
+                    } else {
+                        Box(Modifier.fillMaxSize()) {
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                color = MaterialTheme.colorScheme.background
+                            ) { AppNavGraph() }
+//                            EggToastHost(eggs)
+                        }
                     }
                 }
             }

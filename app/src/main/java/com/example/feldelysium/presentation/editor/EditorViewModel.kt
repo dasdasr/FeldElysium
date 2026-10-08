@@ -172,6 +172,16 @@ class EditorViewModel(
 
         EditorEvent.ClearScene ->
             sceneViewModel.dispatch(SceneAction.ClearScene)
+
+        EditorEvent.AddEntryWithRandomSpeaker -> _state.update {
+            val speaker = it.allSpeakers.randomOrNull()
+            if (speaker == null) it.copy(isSpeakerPickerOpen = true)
+            else it.copy(
+                pendingSpeaker = speaker,
+                isSpeakerPickerOpen = false,
+                isEntryEditOpen = true,
+            )
+        }
     }
 
     private fun previewFor(text: String): ImportPreview? {

@@ -6,6 +6,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -39,6 +42,7 @@ import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitc
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsSection
+import com.example.feldelysium.eggs.LocalEasterEggs
 
 private const val PlaybackFontName = "Sina Nova Regular"
 
@@ -52,6 +56,7 @@ fun SettingsScreen(
     val vm: SettingsViewModel = viewModel(activity)
     val settings by vm.state.collectAsStateWithLifecycle()
     val haptics = rememberFeldHaptics()
+    val eggs = LocalEasterEggs.current
     var showPlaybackUiText by remember { mutableStateOf(false) }
     var showBackground by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
@@ -91,6 +96,7 @@ fun SettingsScreen(
                     subtitle = "Keep playback inside a 16:9 frame",
                     checked = settings.lockAspectRatio16x9,
                     onCheckedChange = {
+                        eggs?.report("switch.toggle", "Cinema frame")
                         vm.dispatch(SettingsEvent.SetLockAspectRatio16x9(it))
                     },
                     seed = 21,
@@ -123,30 +129,40 @@ fun SettingsScreen(
             }
 
             FeldSettingsSection(title = "Coming soon", seed = 13) {
-                FeldSettingSwitchRow(
-                    icon = Icons.Filled.PlayArrow,
-                    title = "Autoplay",
-                    subtitle = "Play scene automatically",
-                    checked = false,
-                    onCheckedChange = {},
-                    enabled = false,
-                    seed = 22,
-                )
+                SoonTap("Autoplay") {
+                    FeldSettingSwitchRow(
+                        icon = Icons.Filled.PlayArrow,
+                        title = "Autoplay",
+                        subtitle = "Play scene automatically",
+                        checked = false,
+                        onCheckedChange = {},
+                        enabled = false,
+                        seed = 22,
+                    )
+                }
+
                 FeldSettingsDivider(seed = 104)
-                FeldSettingValueRow(
-                    icon = Icons.Filled.Timer,
-                    title = "Line delay",
-                    subtitle = "Time between lines (seconds)",
-                    value = "x",
-                    enabled = false,
-                )
+
+                SoonTap("Line delay") {
+                    FeldSettingValueRow(
+                        icon = Icons.Filled.Timer,
+                        title = "Line delay",
+                        subtitle = "Time between lines (seconds)",
+                        value = "x",
+                        enabled = false,
+                    )
+                }
+
                 FeldSettingsDivider(seed = 105)
-                FeldSettingRow(
-                    icon = Icons.Filled.Tune,
-                    title = "Status icons",
-                    subtitle = "Tap the icons right in playback",
-                    enabled = false,
-                )
+
+                SoonTap("Status icons") {
+                    FeldSettingRow(
+                        icon = Icons.Filled.Tune,
+                        title = "Status icons",
+                        subtitle = "Tap the icons right in playback",
+                        enabled = false,
+                    )
+                }
             }
         }
     }
@@ -159,7 +175,11 @@ fun SettingsScreen(
             onMoneyChange = { vm.dispatch(SettingsEvent.SetPlaybackMoney(it)) },
             onTimeChange = { vm.dispatch(SettingsEvent.SetPlaybackTime(it)) },
             onDayChange = { vm.dispatch(SettingsEvent.SetPlaybackDay(it)) },
-            onReset = { haptics.thud(); vm.dispatch(SettingsEvent.ResetPlaybackUiText) },
+            onReset = {
+                haptics.thud()
+                if (settings.playbackTextIsDefault()) eggs?.report("settings.reset", "nochange")
+                vm.dispatch(SettingsEvent.ResetPlaybackUiText)
+            },
             onDismiss = { showPlaybackUiText = false },
         )
     }
@@ -169,10 +189,21 @@ fun SettingsScreen(
             settings = settings,
             onKind = { vm.dispatch(SettingsEvent.SetBackgroundKind(it)) },
             onColor = { vm.dispatch(SettingsEvent.SetBackgroundColor(it)) },
-            onMedia = { uri, isVideo -> vm.dispatch(SettingsEvent.SetBackgroundMedia(uri, isVideo)) },
+            onMedia = { uri, isVideo ->
+                vm.dispatch(
+                    SettingsEvent.SetBackgroundMedia(
+                        uri,
+                        isVideo
+                    )
+                )
+            },
             onVideoSound = { vm.dispatch(SettingsEvent.SetBackgroundVideoSound(it)) },
             onVideoFill = { vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it)) },
-            onReset = { haptics.thud(); vm.dispatch(SettingsEvent.ResetBackground) },
+            onReset = {
+                haptics.thud()
+                if (settings.backgroundIsDefault()) eggs?.report("settings.reset", "nochange")
+                vm.dispatch(SettingsEvent.ResetBackground)
+            },
             onDismiss = { showBackground = false },
         )
     }
@@ -182,4 +213,35 @@ private fun backgroundLabel(settings: AppSettings): String = when {
     settings.backgroundKind == BackgroundKind.COLOR -> "Color"
     settings.backgroundMediaUri.isBlank() -> "Default"
     else -> "Custom"
+}
+
+@Composable
+private fun SoonTap(
+    title: String,
+    content: @Composable () -> Unit,
+) {
+    val eggs = LocalEasterEggs.current
+    Box(
+        Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+        ) { eggs?.report("soon.tap", title) }
+    ) { content() }
+}
+
+private fun AppSettings.playbackTextIsDefault(): Boolean {
+    val d = AppSettings()
+    return playbackMoney == d.playbackMoney &&
+            playbackTime == d.playbackTime &&
+            playbackDay == d.playbackDay
+}
+
+private fun AppSettings.backgroundIsDefault(): Boolean {
+    val d = AppSettings()
+    return backgroundKind == d.backgroundKind &&
+            backgroundColorArgb == d.backgroundColorArgb &&
+            backgroundMediaUri == d.backgroundMediaUri &&
+            backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
+            backgroundVideoSound == d.backgroundVideoSound &&
+            backgroundVideoFill == d.backgroundVideoFill
 }
