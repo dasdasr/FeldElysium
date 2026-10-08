@@ -1,0 +1,127 @@
+package com.example.feldelysium.designsystem.components.card
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.material.FeldPaper
+import com.example.feldelysium.designsystem.material.FeldTape
+import com.example.feldelysium.designsystem.material.PaperSpec
+import com.example.feldelysium.designsystem.material.StickerTapeSpec
+import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.theme.DiscoDialogueTheme
+
+@Composable
+fun FeldDialogCard(
+    title: String,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    onClose: (() -> Unit)? = null,
+    seed: Int = 0,
+    tagSeed: Int = seed + 1,
+    spec: PaperSpec = FeldPaper.Panel,
+    rough: RoughStyle = RoughStyle(),
+    tapeSpec: StickerTapeSpec = FeldTape.Cream,
+    contentPadding: PaddingValues = PaddingValues(start = 18.dp, end = 18.dp, bottom = 18.dp),
+    tagStart: Dp = 6.dp,
+    tagLift: Dp = 12.dp,
+    tagHeight: Dp = 44.dp,
+    revealOnEnter: Boolean = false,
+    time: () -> Float = { 0f },
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Box(modifier) {
+        FeldCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = tagLift),
+            seed = seed,
+            spec = spec,
+            rough = rough,
+            contentPadding = PaddingValues(0.dp),
+            revealOnEnter = revealOnEnter,
+            time = time,
+        ) {
+            Column(Modifier.padding(contentPadding)) {
+                Spacer(Modifier.height(tagHeight - tagLift + 12.dp))
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = colorScheme.onSurface.copy(alpha = 0.7f),
+                    )
+                    Spacer(Modifier.height(14.dp))
+                }
+                content()
+            }
+        }
+
+        FeldTitleTag(
+            text = title,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .offset(x = tagStart),
+            seed = tagSeed,
+            spec = tapeSpec,
+        )
+
+        if (onClose != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = tagLift + 8.dp, end = 10.dp)
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .clickable(role = Role.Button, onClick = onClose),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Close",
+                    tint = colorScheme.onSurface,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+    }
+}
+
+@Preview(widthDp = 380, heightDp = 360, showBackground = true, backgroundColor = 0xFF0B1011)
+@Composable
+private fun FeldDialogCardPreview() {
+    DiscoDialogueTheme {
+        FeldDialogCard(
+            title = "Bulk import",
+            subtitle = "Paste your dialogue lines. One per line.",
+            onClose = {},
+            seed = 5,
+            modifier = Modifier.padding(16.dp),
+        ) {
+            Text("LOGIC: Let's be precise.", color = colorScheme.onSurface)
+            Text("HARRY: I remember the cold.", color = colorScheme.onSurface)
+        }
+    }
+}

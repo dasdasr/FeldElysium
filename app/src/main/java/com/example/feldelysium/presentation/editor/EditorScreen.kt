@@ -3,68 +3,79 @@ package com.example.feldelysium.presentation.editor
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Upload
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.feldelysium.designsystem.components.FeldFooterBand
+import com.example.feldelysium.designsystem.components.FeldIcon
+import com.example.feldelysium.designsystem.components.FeldIconId
+import com.example.feldelysium.designsystem.components.FeldScreenHeader
+import com.example.feldelysium.designsystem.components.FeldToolbar
+import com.example.feldelysium.designsystem.components.FeldToolbarItem
+import com.example.feldelysium.designsystem.components.button.FeldButton
+import com.example.feldelysium.designsystem.components.button.FeldFab
+import com.example.feldelysium.designsystem.components.card.FeldEntryCard
 import com.example.feldelysium.presentation.editor.components.BulkImportDialog
 import com.example.feldelysium.presentation.editor.components.CustomSpeakerDialog
-import com.example.feldelysium.presentation.editor.components.DialogueEntryCard
 import com.example.feldelysium.presentation.editor.components.EntryEditSheet
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
 import com.example.feldelysium.presentation.shared.SceneViewModel
-
-@Preview
-@Composable
-private fun EditorScreenPreview() {
-    EditorScreen(
-        onNavigateToPlayback = {},
-        onNavigateToSettings = {},
-    )
-}
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @SuppressLint("ContextCastToActivity")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditorScreen(
     onNavigateToPlayback: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val activity = LocalContext.current as ComponentActivity
+    val haptic = LocalHapticFeedback.current
     val sceneVm: SceneViewModel = viewModel(activity)
     val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
-
     val state by vm.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+
+    var menuEntryId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         vm.effects.collect { effect ->
             when (effect) {
-                EditorEffect.NavigateToPlayback ->
-                    onNavigateToPlayback()
-
+                EditorEffect.NavigateToPlayback -> onNavigateToPlayback()
                 is EditorEffect.ShowSnackbar ->
-                    // The import dialog is its own window, so a scaffold snackbar would sit behind it
                     Toast.makeText(activity, effect.message, Toast.LENGTH_SHORT).show()
 
-                EditorEffect.LaunchGalleryPicker -> { /* TODO: launch ActivityResultContract */
+                EditorEffect.LaunchGalleryPicker -> { /* TODO */
                 }
             }
         }
@@ -72,63 +83,130 @@ fun EditorScreen(
 
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        val reordered = state.entries.toMutableList().apply { add(to.index, removeAt(from.index)) }
+        val reordered = state.entries.toMutableList().apply {
+            add(to.index, removeAt(from.index))
+        }
+
+        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+
         vm.dispatch(EditorEvent.ReorderEntries(reordered))
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text(state.sceneName) },
-                actions = {
-                    IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, "Settings")
-                    }
-                    IconButton(onClick = { vm.dispatch(EditorEvent.OpenImportDialog) }) {
-                        Icon(Icons.Default.Upload, "Bulk Import")
-                    }
-                    IconButton(
-                        onClick = { vm.dispatch(EditorEvent.NavigateToPlayback) },
-                        enabled = state.entries.isNotEmpty()
-                    ) {
-                        Icon(Icons.Default.PlayArrow, "Play")
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { vm.dispatch(EditorEvent.RequestAddEntry) }) {
-                Icon(Icons.Default.Add, "Add Dialogue Entry")
-            }
-        },
+    Column(
         modifier = modifier
-    ) { padding ->
-        if (state.entries.isEmpty()) {
-            EmptyStatePrompt(
-                onImport = { vm.dispatch(EditorEvent.OpenImportDialog) },
-                modifier = Modifier.padding(padding)
-            )
-        } else {
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-            ) {
-                items(state.entries, key = { it.id }) { entry ->
-                    ReorderableItem(reorderState, key = entry.id) { isDragging ->
-                        DialogueEntryCard(
-                            entry = entry,
-                            isDragging = isDragging,
-                            onEdit = { vm.dispatch(EditorEvent.RequestEditEntry(entry)) },
-                            onDelete = { vm.dispatch(EditorEvent.DeleteEntry(entry.id)) },
-                            dragHandle = { /* pass the reorderable drag handle modifier here */ }
-                        )
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding(),
+    ) {
+        FeldScreenHeader(
+            title = state.sceneName,
+            eyebrow = "SCENE EDITOR",
+            metaStart = "${state.entries.size} LINES",
+            metaEnd = "DIALOGUE SCENE",
+            navIcon = null,
+            seed = 3,
+        )
+
+        FeldToolbar(
+            seed = 5,
+            items = listOf(
+                FeldToolbarItem(FeldIconId.Import, "Import") {
+                    vm.dispatch(EditorEvent.OpenImportDialog)
+                },
+                FeldToolbarItem(
+                    icon = FeldIconId.Play,
+                    label = "Playback",
+                    enabled = state.entries.isNotEmpty(),
+                    onClick = { vm.dispatch(EditorEvent.NavigateToPlayback) },
+                ),
+                FeldToolbarItem(FeldIconId.Settings, "Settings", onClick = onNavigateToSettings),
+            ),
+        )
+
+        Box(Modifier.weight(1f)) {
+            if (state.entries.isEmpty()) {
+                EmptyState(
+                    onImport = { vm.dispatch(EditorEvent.OpenImportDialog) },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp,
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(state.entries, key = { it.id }) { entry ->
+                        ReorderableItem(reorderState, key = entry.id) { isDragging ->
+                            LaunchedEffect(isDragging) {
+                                if (isDragging) {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
+                            }
+
+                            Box {
+                                FeldEntryCard(
+                                    speakerName = entry.speaker.name,
+                                    speakerColor = Color(entry.speaker.colorArgb),
+                                    text = entry.text,
+                                    seed = entry.id.hashCode(),
+                                    isDragging = isDragging,
+                                    onClick = { vm.dispatch(EditorEvent.RequestEditEntry(entry)) },
+                                    onMore = { menuEntryId = entry.id },
+                                    dragHandle = {
+                                        Box(
+                                            Modifier
+                                                .longPressDraggableHandle()
+                                                .size(32.dp),
+                                            contentAlignment = Alignment.Center,
+                                        ) {
+                                            FeldIcon(
+                                                FeldIconId.Drag,
+                                                tint = colorScheme.onSurface.copy(alpha = 0.5f),
+                                                size = 20.dp,
+                                            )
+                                        }
+                                    },
+                                )
+                                // TODO: Change to FeldMenu
+                                DropdownMenu(
+                                    expanded = menuEntryId == entry.id,
+                                    onDismissRequest = { menuEntryId = null },
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Edit") },
+                                        onClick = {
+                                            menuEntryId = null
+                                            vm.dispatch(EditorEvent.RequestEditEntry(entry))
+                                        },
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Delete") },
+                                        onClick = {
+                                            menuEntryId = null
+                                            vm.dispatch(EditorEvent.DeleteEntry(entry.id))
+                                        },
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
+
+            FeldFab(
+                onClick = { vm.dispatch(EditorEvent.RequestAddEntry) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp),
+                seed = 7,
+                contentDescription = "Add dialogue entry",
+            )
         }
+
+//        FeldFooterBand(sceneName = state.sceneName)
     }
 
     if (state.isSpeakerPickerOpen) {
@@ -137,7 +215,7 @@ fun EditorScreen(
             onSpeakerSelected = { vm.dispatch(EditorEvent.SelectSpeakerForNewEntry(it)) },
             onCreateCustom = { vm.dispatch(EditorEvent.RequestCustomSpeaker) },
             onEditCustom = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
-            onDismiss = { vm.dispatch(EditorEvent.CloseSpeakerPicker) }
+            onDismiss = { vm.dispatch(EditorEvent.CloseSpeakerPicker) },
         )
     }
 
@@ -147,7 +225,7 @@ fun EditorScreen(
             preview = state.importPreview,
             onText = { vm.dispatch(EditorEvent.ImportTextChanged(it)) },
             onConfirm = { vm.dispatch(EditorEvent.ConfirmImport) },
-            onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) }
+            onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) },
         )
     }
 
@@ -161,7 +239,7 @@ fun EditorScreen(
                     else
                         vm.dispatch(EditorEvent.ConfirmCustomSpeaker(speaker))
                 },
-                onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) }
+                onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) },
             )
         }
     }
@@ -170,26 +248,31 @@ fun EditorScreen(
         EntryEditSheet(
             entry = state.editingEntry,
             speaker = state.editingEntry?.speaker ?: state.pendingSpeaker,
+            onSpeakerClick = { vm.dispatch(EditorEvent.RequestChangeSpeaker) },
+            onEditSpeaker = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
             onConfirm = { text ->
                 if (state.editingEntry != null)
                     vm.dispatch(EditorEvent.ConfirmEditEntry(state.editingEntry!!.copy(text = text)))
                 else
                     vm.dispatch(EditorEvent.ConfirmNewEntry(text))
             },
-            onDismiss = { vm.dispatch(EditorEvent.DismissEntryEdit) }
+            onDismiss = { vm.dispatch(EditorEvent.DismissEntryEdit) },
         )
     }
 }
 
 @Composable
-private fun EmptyStatePrompt(onImport: () -> Unit, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text("No dialogue entries yet.", style = MaterialTheme.typography.bodyLarge)
-            OutlinedButton(onClick = onImport) { Text("Bulk Import") }
-        }
+private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+    ) {
+        Text(
+            "NO DIALOGUE ENTRIES YET.",
+            style = MaterialTheme.typography.labelSmall,
+            color = colorScheme.onSurface.copy(alpha = 0.6f),
+        )
+        FeldButton("Bulk import", onClick = onImport, seed = 4)
     }
 }

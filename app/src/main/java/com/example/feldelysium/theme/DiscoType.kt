@@ -11,16 +11,53 @@ import com.example.feldelysium.R
 // TODO: replace with matching the Disco Elysium UI font
 
 private val SinaNova = FontFamily(Font(R.font.sina_nova_regular))
+private val BebasNeue = FontFamily(Font(R.font.bebas_neue_regular, FontWeight.Normal))
+
 val DiscoTypography = Typography(
+    titleLarge = TextStyle(
+        fontFamily = BebasNeue,
+        fontWeight = FontWeight.Normal,
+        fontSize = 30.sp,
+        lineHeight = 32.sp,
+        letterSpacing = 1.2.sp,
+    ),
+    titleMedium = TextStyle(
+        fontFamily = BebasNeue,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 1.2.sp,
+    ),
     bodyMedium = TextStyle(
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         fontFamily = SinaNova,
         lineHeight = 20.sp,
         fontWeight = FontWeight.Normal,
         letterSpacing = 0.1.sp,
     ),
+    bodySmall = TextStyle(
+        fontSize = 14.sp,
+        fontFamily = SinaNova,
+        lineHeight = 18.sp,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 0.1.sp,
+    ),
+    labelLarge = TextStyle(
+        fontFamily = BebasNeue,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 1.6.sp,
+    ),
+    labelMedium = TextStyle(
+        fontFamily = BebasNeue,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 1.2.sp,
+    ),
     labelSmall = TextStyle(
-        fontSize = 10.sp,
+        fontSize = 12.sp,
         fontFamily = SinaNova,
         letterSpacing = 1.5.sp,
         fontWeight = FontWeight.Bold

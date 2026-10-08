@@ -32,7 +32,6 @@ class PlaybackViewModel(
     private val _effects = Channel<PlaybackEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
-    // Playback works on a frozen snapshot of the scene; later edits are ignored.
     init {
         viewModelScope.launch {
             val sceneState = sceneViewModel.state.first()
