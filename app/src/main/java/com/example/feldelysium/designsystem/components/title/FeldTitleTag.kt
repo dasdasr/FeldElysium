@@ -22,6 +22,7 @@ import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.material.FeldTape
 import com.example.feldelysium.designsystem.material.StickerTapeSpec
 import com.example.feldelysium.designsystem.material.stickerTapeMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 private val CompactCream = FeldTape.Cream.copy(
@@ -42,7 +43,7 @@ private val CompactCream = FeldTape.Cream.copy(
 fun FeldTitleTag(
     text: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: StickerTapeSpec = CompactCream,
     contentColor: Color = Color(0xFF1B1612),
     textStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(
@@ -58,7 +59,7 @@ fun FeldTitleTag(
             .stickerTapeMaterial(spec, seed)
             .padding(
                 start = spec.edgeInset + 2.dp,
-                end = spec.edgeInset + 10.dp,
+                end = spec.edgeInset + 6.dp,
                 top = 5.dp,
                 bottom = 5.dp,
             ),

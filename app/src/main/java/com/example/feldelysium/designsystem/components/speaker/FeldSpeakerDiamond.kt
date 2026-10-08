@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.material.DryPaperSpec
 import com.example.feldelysium.designsystem.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 
 private fun diamondSpec(color: Color) = DryPaperSpec(
     base = color,
@@ -37,7 +38,7 @@ fun FeldSpeakerDiamond(
     color: Color,
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
 ) {
     val spec = remember(color) { diamondSpec(color) }
     Box(modifier.size(size), contentAlignment = Alignment.Center) {

@@ -31,6 +31,7 @@ import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.FeldTape
 import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.StickerTapeSpec
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
@@ -40,7 +41,7 @@ fun FeldDialogCard(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     onClose: (() -> Unit)? = null,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     tagSeed: Int = seed + 1,
     spec: PaperSpec = FeldPaper.Panel,
     rough: RoughStyle = RoughStyle(),

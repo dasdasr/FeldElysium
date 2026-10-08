@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,21 +21,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
+import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
 fun FeldSection(
     title: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     count: String? = null,
     expanded: Boolean? = null,
     onToggle: (() -> Unit)? = null,
     distressedTag: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
-    Column(modifier.fillMaxWidth().animateContentSize()) {
+    Column(modifier
+        .fillMaxWidth()
+        .animateContentSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -42,7 +49,6 @@ fun FeldSection(
         ) {
             FeldTitleTag(
                 text = title,
-                seed = seed,
                 distressed = distressedTag,
                 textStyle = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
@@ -64,7 +70,7 @@ fun FeldSection(
                 )
             }
         }
-        FeldDivider(seed = seed + 3)
+        FeldDivider()
         AnimatedVisibility(visible = expanded != false) {
             Column(content = content)
         }
@@ -75,13 +81,27 @@ fun FeldSection(
 @Composable
 private fun FeldSectionPreview() {
     DiscoDialogueTheme {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            FeldSection("Skills", seed = 1, count = "5", expanded = true, onToggle = {}) {
-                FeldSettingRow("Logic", value = "Reason. Question. Understand.", onClick = {}, seed = 1)
-                FeldSettingRow("Empathy", value = "Feel. Connect. Care.", onClick = {}, seed = 2)
+        Column(
+            Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            FeldSection("Skills", count = "5", expanded = true, onToggle = {}) {
+                FeldSettingValueRow(
+                    icon = Icons.Filled.Tune,
+                    title = "Logic",
+                    value = "Reason. Question. Understand.",
+                    onClick = {},
+                )
+                FeldSettingValueRow(
+                    icon = Icons.Filled.Tune,
+                    title = "Empathy",
+                    value = "Feel. Connect. Care.",
+                    onClick = {},
+                )
             }
-            FeldSection("NPCs", seed = 4, count = "4", expanded = false, onToggle = {})
-            FeldSection("Format", seed = 6)
+
+            FeldSection("NPCs", count = "4", expanded = false, onToggle = {})
+            FeldSection("Format")
         }
     }
 }

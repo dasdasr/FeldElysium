@@ -30,6 +30,7 @@ import com.example.feldelysium.designsystem.material.DryPaperSpec
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.dryPaperMaterial
 import com.example.feldelysium.designsystem.material.paperMaterialMorph
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -70,7 +71,7 @@ fun FeldSwitch(
     checked: Boolean,
     onCheckedChange: ((Boolean) -> Unit)?,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     enabled: Boolean = true,
 ) {
     val trackW = 48.dp

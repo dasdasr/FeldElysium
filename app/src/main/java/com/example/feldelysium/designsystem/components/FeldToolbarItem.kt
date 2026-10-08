@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.seed.rememberSeed
 
 data class FeldToolbarItem(
     val icon: FeldIconId,
@@ -27,7 +28,7 @@ data class FeldToolbarItem(
 fun FeldToolbar(
     items: List<FeldToolbarItem>,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
 ) {
     Column(modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {

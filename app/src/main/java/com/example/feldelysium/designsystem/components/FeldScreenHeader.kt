@@ -50,6 +50,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.designsystem.components.button.FeldIconButton
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.eggs.LocalEasterEggs
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
@@ -66,7 +68,7 @@ fun FeldScreenHeader(
     actions: @Composable RowScope.() -> Unit = {},
     onTitleChange: ((String) -> Unit)? = null,
     titlePlaceholder: String = "Untitled scene",
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     titleSpec: DistressedTitleSpec = FeldDistressedTitles.Large,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontSize = 52.sp,
@@ -115,13 +117,12 @@ fun FeldScreenHeader(
 
         Spacer(Modifier.height(6.dp))
         if (onTitleChange == null) {
-            FeldDistressedTitle(text = title, seed = seed, spec = titleSpec, textStyle = titleStyle)
+            FeldDistressedTitle(text = title, spec = titleSpec, textStyle = titleStyle)
         } else {
             EditableTitle(
                 text = title,
                 onTextChange = onTitleChange,
                 placeholder = titlePlaceholder,
-                seed = seed,
                 spec = titleSpec,
                 style = titleStyle,
             )
@@ -154,7 +155,6 @@ fun FeldScreenHeader(
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 12.dp),
-                    seed = seed + 5,
                 )
                 metaEnd?.let {
                     Text(
@@ -168,7 +168,7 @@ fun FeldScreenHeader(
 
         if (divider) {
             Spacer(Modifier.height(12.dp))
-            FeldDivider(seed = seed + 9, thickness = 1.dp)
+            FeldDivider(thickness = 1.dp)
         }
     }
 }
@@ -188,7 +188,6 @@ private fun EditableTitle(
     text: String,
     onTextChange: (String) -> Unit,
     placeholder: String,
-    seed: Int,
     spec: DistressedTitleSpec,
     style: TextStyle,
 ) {
@@ -220,7 +219,6 @@ private fun EditableTitle(
     ) {
         FeldDistressedTitle(
             text = if (blank) placeholder else shown,
-            seed = seed,
             spec = spec,
             textStyle = style,
             maxLines = 1,
@@ -285,7 +283,6 @@ private fun FeldScreenHeaderPreview() {
                 eyebrow = "Scene editor",
                 metaStart = "4 / 12",
                 metaEnd = "Dialogue scene",
-                seed = 2,
                 actions = { FeldIconButton(FeldIconId.More, onClick = {}) },
             )
             FeldScreenHeader(
@@ -293,7 +290,6 @@ private fun FeldScreenHeaderPreview() {
                 eyebrow = "Choose speaker",
                 subtitle = "Select who will say this line.",
                 navIcon = FeldIconId.Close,
-                seed = 7,
             )
         }
     }

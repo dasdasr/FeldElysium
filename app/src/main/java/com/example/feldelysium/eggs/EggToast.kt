@@ -1,10 +1,19 @@
 package com.example.feldelysium.eggs
 
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOutCubic
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloat
@@ -24,17 +33,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -45,28 +51,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
+import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.asin
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
@@ -80,15 +86,30 @@ private val Cream = Color(0xFFE9DFC9)
 private val CreamDim = Color(0xFF8F8B7E)
 private val TextCream = Color(0xFFEFE8D6)
 
-private val PadStart = 30.dp
-private val PadTop = 50.dp
-private val PadBottom = 26.dp
+private val PadStart = 26.dp
+private val PadTop = 40.dp
+private val PadBottom = 24.dp
+private val ToastHeadroom = 120.dp
+private val ToastFadeDistance = 100.dp
+private const val ToastBgAlpha = 0.90f
 
 private fun skillColor(skill: String): Color = when (skill.lowercase()) {
-    "logic", "encyclopedia", "rhetoric", "drama", "conceptualization", "visual calculus" -> Color(0xFF4FB3A9)
-    "volition", "inland empire", "empathy", "authority", "esprit de corps", "suggestion" -> Color(0xFF8E7FCB)
-    "endurance", "pain threshold", "physical instrument", "electrochemistry", "shivers", "half light" -> Color(0xFFC9564B)
-    "hand/eye coordination", "perception", "reaction speed", "savoir faire", "interfacing", "composure" -> Color(0xFFD8B54A)
+    "logic", "encyclopedia", "rhetoric", "drama", "conceptualization", "visual calculus" -> Color(
+        0xFF4FB3A9
+    )
+
+    "volition", "inland empire", "empathy", "authority", "esprit de corps", "suggestion" -> Color(
+        0xFF8E7FCB
+    )
+
+    "endurance", "pain threshold", "physical instrument", "electrochemistry", "shivers", "half light" -> Color(
+        0xFFC9564B
+    )
+
+    "hand/eye coordination", "perception", "reaction speed", "savoir faire", "interfacing", "composure" -> Color(
+        0xFFD8B54A
+    )
+
     else -> Color(0xFF4FB3A9)
 }
 
@@ -107,24 +128,58 @@ fun EggToastHost(eggs: EasterEggs, modifier: Modifier = Modifier) {
     LaunchedEffect(toast) { toast?.let { last = it } }
     val current = toast ?: last
 
-    Box(
-        modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
-            .padding(horizontal = 6.dp),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        AnimatedVisibility(
-            visible = toast != null,
-            enter = fadeIn(tween(160)) + slideInVertically(tween(260)) { it / 2 },
-            exit = fadeOut(tween(200)) + slideOutVertically(tween(220)) { it / 2 },
-        ) {
-            current?.let { t ->
-                key(t.id) {
-                    EggToast(t, eggs::dismiss)
+    val visible = remember { MutableTransitionState(false) }
+    visible.targetState = toast != null
+
+    if (visible.currentState || visible.targetState) {
+        ToastWindow {
+            Box(
+                modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 6.dp)
+                    .padding(top = ToastHeadroom),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                AnimatedVisibility(
+                    visibleState = visible,
+                    enter = fadeIn(tween(160)) + slideInVertically(tween(260)) { it / 2 },
+                    exit = fadeOut(tween(200)) + slideOutVertically(tween(220)) { it / 2 },
+                ) {
+                    current?.let { t ->
+                        key(t.id) { EggToast(t, eggs::dismiss) }
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ToastWindow(content: @Composable () -> Unit) {
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false,
+            decorFitsSystemWindows = false,
+        ),
+    ) {
+        val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+        SideEffect {
+            window?.apply {
+                clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                addFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                )
+                setDimAmount(0f)
+                setGravity(Gravity.BOTTOM)
+                setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            }
+        }
+        content()
     }
 }
 
@@ -146,11 +201,12 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
         Modifier
             .widthIn(max = 520.dp)
             .fillMaxWidth()
+            .padding(horizontal = 20.dp)
             .graphicsLayer {
                 translationX = drag.value.x
                 translationY = drag.value.y
                 rotationZ = drag.value.x / 60f
-                alpha = 1f - (drag.value.getDistance() / (220.dp.toPx())).coerceIn(0f, 1f)
+                alpha = 1f - (drag.value.getDistance() / ToastFadeDistance.toPx()).coerceIn(0f, 1f)
             }
             .pointerInput(toast.id) {
                 val threshold = 64.dp.toPx()
@@ -181,25 +237,44 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
                 .fillMaxWidth()
                 .toastCard(seed, accent),
         ) {
-            Row(Modifier.padding(start = 26.dp, end = 34.dp, top = 12.dp, bottom = 14.dp)) {
-                SkillDiamond(accent, seed, Modifier.padding(top = 4.dp))
-                Spacer(Modifier.width(12.dp))
+            Row(
+                Modifier.padding(start = 22.dp, end = 28.dp, top = 10.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                FeldSpeakerDiamond(
+                    color = accent,
+                    size = 26.dp,
+                    seed = seed,
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .scale(scaleX = 1f, scaleY = 1.3f),
+                )
+                Spacer(Modifier.width(10.dp))
                 Column(Modifier.weight(1f)) {
-                    ToastTag(view.skill, seed)
-                    Spacer(Modifier.height(7.dp))
+                    FeldTitleTag(
+                        text = filmSkillLabel(view.skill, seed),
+                        seed = seed,
+                        textStyle = MaterialTheme.typography.titleMedium.copy(
+                            fontSize = 20.sp,
+                            letterSpacing = 0.4.sp
+                        )
+                    )
                     Text(
                         text = buildAnnotatedString {
-                            view.check?.let {
-                                withStyle(SpanStyle(color = accent, fontWeight = FontWeight.Bold)) { append("$it ") }
-                            }
+//                            view.check?.let {
+//                                withStyle(
+//                                    SpanStyle(
+//                                        color = accent,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                ) { append("$it ") }
+//                            }
                             append(view.text)
                         },
                         color = TextCream,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontSize = 17.sp,
-                            lineHeight = 23.sp,
-                        ),
-                        maxLines = 4,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 3,
+                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
             }
@@ -214,26 +289,49 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
     val rnd = Random(seed)
 
     val body = roughRectPoints(Rect(0f, 0f, w, h), 15 * d, 1.5f * d, 0.14f, rnd).toPath()
-    val band = roughRectPoints(Rect(-3 * d, -2 * d, 15 * d, h + 2 * d), 10 * d, 1.1f * d, 0.08f, rnd).toPath()
-    val rightBand = roughRectPoints(Rect(w - 5 * d, 9 * d, w + 0.5f * d, h - 15 * d), 9 * d, 0.8f * d, 0.10f, rnd).toPath()
+    val band = roughRectPoints(
+        Rect(-3 * d, -2 * d, 15 * d, h + 2 * d),
+        10 * d,
+        1.1f * d,
+        0.08f,
+        rnd
+    ).toPath()
+    val rightBand = roughRectPoints(
+        Rect(w - 5 * d, 9 * d, w + 0.5f * d, h - 15 * d),
+        9 * d,
+        0.8f * d,
+        0.10f,
+        rnd
+    ).toPath()
 
     val frays = ArrayList<Pair<Offset, Offset>>()
     var x = 8 * d
     while (x < w - 12 * d) {
         val len = (5 + rnd.nextFloat() * 30) * d
         if (rnd.nextFloat() < 0.75f)
-            frays.add(Offset(x, 0.8f * d) to Offset(min(x + len, w - 8 * d), 0.8f * d + rnd.nextFloat() * 0.8f * d))
+            frays.add(
+                Offset(x, 0.8f * d) to Offset(
+                    min(x + len, w - 8 * d),
+                    0.8f * d + rnd.nextFloat() * 0.8f * d
+                )
+            )
         x += len + (4 + rnd.nextFloat() * 26) * d
     }
     var y = 8 * d
     while (y < h - 14 * d) {
         val len = (5 + rnd.nextFloat() * 24) * d
         if (rnd.nextFloat() < 0.7f)
-            frays.add(Offset(w - 0.8f * d, y) to Offset(w - 0.8f * d - rnd.nextFloat() * 0.8f * d, min(y + len, h - 10 * d)))
+            frays.add(
+                Offset(w - 0.8f * d, y) to Offset(
+                    w - 0.8f * d - rnd.nextFloat() * 0.8f * d,
+                    min(y + len, h - 10 * d)
+                )
+            )
         y += len + (4 + rnd.nextFloat() * 22) * d
     }
 
     class Speck(val at: Offset, val s: Float, val light: Boolean, val a: Float)
+
     val specks = List(120) {
         Speck(
             Offset(rnd.nextFloat() * w, rnd.nextFloat() * h),
@@ -249,12 +347,8 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
     val bandSpecks = List(28) { Offset(rnd.nextFloat() * 15 * d, rnd.nextFloat() * h) }
     val stripe = lerp(accent, Color.Black, 0.3f)
 
-    fun diamond(c: Offset, r: Float) = Path().apply {
-        moveTo(c.x, c.y - r * 1.25f); lineTo(c.x + r, c.y); lineTo(c.x, c.y + r * 1.25f); lineTo(c.x - r, c.y); close()
-    }
-
     onDrawBehind {
-        drawPath(body, Ink)
+        drawPath(body, Ink.copy(alpha = ToastBgAlpha))
         specks.forEach {
             drawRect(
                 if (it.light) CreamDim.copy(alpha = it.a) else Color.Black.copy(alpha = it.a * 3f),
@@ -268,45 +362,16 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
         drawPath(band, accent)
         clipPath(band) {
             drawRect(stripe, Offset(8 * d, 0f), Size(2 * d, h))
-            bandSpecks.forEach { drawRect(Color.Black.copy(alpha = 0.3f), it, Size(1.4f * d, 1.4f * d)) }
+            bandSpecks.forEach {
+                drawRect(
+                    Color.Black.copy(alpha = 0.3f),
+                    it,
+                    Size(1.4f * d, 1.4f * d)
+                )
+            }
         }
         drawPath(rightBand, accent)
-
-        val dx = w - 17 * d
-        drawPath(diamond(Offset(dx, h * 0.26f), 3.5f * d), CreamDim.copy(alpha = 0.7f))
-        drawPath(diamond(Offset(dx, h * 0.42f), 4.5f * d), CreamDim.copy(alpha = 0.85f))
-        drawPath(diamond(Offset(dx, h * 0.58f), 4.5f * d), CreamDim)
     }
-}
-
-@Composable
-private fun SkillDiamond(color: Color, seed: Int, modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .size(width = 30.dp, height = 38.dp)
-            .drawWithCache {
-                val d = density
-                val rnd = Random(seed + 7)
-                val c = Offset(size.width / 2f, size.height / 2f)
-                val rx = size.width / 2 * 0.95f
-                val ry = size.height / 2 * 0.95f
-                val j = 1.3f * d
-                fun p(x: Float, y: Float) =
-                    Offset(x + (rnd.nextFloat() - 0.5f) * 2 * j, y + (rnd.nextFloat() - 0.5f) * 2 * j)
-
-                val top = p(c.x, c.y - ry); val right = p(c.x + rx, c.y)
-                val bottom = p(c.x, c.y + ry); val left = p(c.x - rx, c.y)
-                val mid = { a: Offset, b: Offset -> p((a.x + b.x) / 2, (a.y + b.y) / 2) }
-                val path = listOf(top, mid(top, right), right, mid(right, bottom), bottom, mid(bottom, left), left, mid(left, top))
-                    .toPath()
-                val specks = List(7) { Offset(rnd.nextFloat() * size.width, rnd.nextFloat() * size.height) }
-
-                onDrawBehind {
-                    drawPath(path, color)
-                    clipPath(path) { specks.forEach { drawRect(Color.Black.copy(alpha = 0.25f), it, Size(1.5f * d, 1.5f * d)) } }
-                }
-            },
-    )
 }
 
 @Composable
@@ -321,12 +386,16 @@ private fun ToastTag(text: String, seed: Int, modifier: Modifier = Modifier) {
                 val pts = buildList<Offset> {
                     add(Offset(0f, rnd.nextFloat() * 1.5f * d))
                     var x = 12 * d
-                    while (x < w - 10 * d) { add(Offset(x, (rnd.nextFloat() * 1.6f - 0.4f) * d)); x += 12 * d }
+                    while (x < w - 10 * d) {
+                        add(Offset(x, (rnd.nextFloat() * 1.6f - 0.4f) * d)); x += 12 * d
+                    }
                     add(Offset(w, 0f))
                     add(Offset(w - 3 * d, h * 0.45f))
                     add(Offset(w - 9 * d, h))
                     x = w - 20 * d
-                    while (x > 8 * d) { add(Offset(x, h - (rnd.nextFloat() * 1.6f - 0.4f) * d)); x -= 12 * d }
+                    while (x > 8 * d) {
+                        add(Offset(x, h - (rnd.nextFloat() * 1.6f - 0.4f) * d)); x -= 12 * d
+                    }
                     add(Offset(0f, h - rnd.nextFloat() * 1.5f * d))
                 }
                 val path = pts.toPath()
@@ -340,7 +409,13 @@ private fun ToastTag(text: String, seed: Int, modifier: Modifier = Modifier) {
                     drawPath(path, Cream)
                     clipPath(path) {
                         cracks.forEach { (a, b) -> drawLine(Ink.copy(alpha = 0.28f), a, b, 1f * d) }
-                        specks.forEach { drawRect(Ink.copy(alpha = 0.18f), it, Size(1.3f * d, 1.3f * d)) }
+                        specks.forEach {
+                            drawRect(
+                                Ink.copy(alpha = 0.18f),
+                                it,
+                                Size(1.3f * d, 1.3f * d)
+                            )
+                        }
                     }
                 }
             }
@@ -358,14 +433,97 @@ private fun ToastTag(text: String, seed: Int, modifier: Modifier = Modifier) {
         Spacer(Modifier.width(14.dp))
         Canvas(Modifier.size(width = 8.dp, height = 10.dp)) {
             drawPath(
-                Path().apply { moveTo(0f, 0f); lineTo(size.width, size.height / 2); lineTo(0f, size.height); close() },
+                Path().apply {
+                    moveTo(0f, 0f); lineTo(size.width, size.height / 2); lineTo(
+                    0f,
+                    size.height
+                ); close()
+                },
                 Ink,
             )
         }
     }
 }
 
-private class ArcSeg(val path: Path, val width: Float, val frac: Float, val alpha: Float)
+private class ArcSeg(val path: Path, val alpha: Float, val frac: Float)
+private class Rib(val a: Offset, val b: Offset, val u: Float)
+private class Flick(val angle: Float, val len: Float, val jit: List<Float>, val nick: Float)
+
+private fun inkArc(
+    c: Offset, rx: Float, ry: Float,
+    startDeg: Float, endDeg: Float, d: Float, rnd: Random,
+): List<ArcSeg> {
+    val steps = ((startDeg - endDeg) / 2f).roundToInt()
+    val ph = List(2) { rnd.nextFloat() * 6.28f }
+    fun noise(u: Float, f1: Float, f2: Float) =
+        0.5f + 0.25f * sin(u * f1 + ph[0]) + 0.25f * sin(u * f2 + ph[1])
+
+    val ribs = List(steps + 1) { i ->
+        val u = i / steps.toFloat()
+        val r = Math.toRadians((startDeg + (endDeg - startDeg) * u).toDouble())
+        val cs = cos(r).toFloat()
+        val sn = sin(r).toFloat()
+        val n = Offset(ry * cs, rx * sn).let { it / it.getDistance() }
+        val taper = min(1f, min(u * 14f, (1f - u) * 9f)).coerceAtLeast(0.15f)
+        val w = (1.2f + 2.6f * noise(u, 9f, 23f)) * d * taper
+        val p = Offset(c.x + rx * cs, c.y + ry * sn) + n * ((rnd.nextFloat() - 0.5f) * 0.5f * d)
+        Rib(p - n * (w / 2f), p + n * (w / 2f), u)
+    }
+
+    val segs = ArrayList<ArcSeg>()
+    var i = 0
+    var gap = false
+    while (i < steps) {
+        val j = min(i + 3, steps)
+        val u = ribs[i].u
+        gap = u > 0.5f && !gap && rnd.nextFloat() < 0.22f
+        if (gap) {
+            i = min(i + 3 + rnd.nextInt(3), steps)
+            continue
+        }
+        val path = Path().apply {
+            moveTo(ribs[i].a.x, ribs[i].a.y)
+            for (k in i + 1..j) lineTo(ribs[k].a.x, ribs[k].a.y)
+            for (k in j downTo i) lineTo(ribs[k].b.x, ribs[k].b.y)
+            close()
+        }
+        segs.add(ArcSeg(path, (0.35f + 0.65f * noise(u, 14f, 31f)).coerceIn(0.3f, 1f), u))
+        i = j
+    }
+    return segs
+}
+
+private fun DrawScope.drawFlick(
+    from: Offset,
+    dir: Offset,
+    len: Float,
+    w: Float,
+    color: Color,
+    jit: List<Float>,
+    nick: Float,
+    d: Float
+) {
+    val nrm = Offset(-dir.y, dir.x)
+    val n = jit.size / 2
+    fun half(i: Int, side: Int): Float {
+        val t = i / (n - 1f)
+        return (w * (1f - 0.8f * t) / 2f + jit[side * n + i] * 0.5f * d).coerceAtLeast(0.2f * d)
+    }
+
+    val path = Path()
+    for (i in 0 until n) {
+        val p = from + dir * (len * i / (n - 1f)) + nrm * half(i, 0)
+        if (i == 0) path.moveTo(p.x, p.y) else path.lineTo(p.x, p.y)
+    }
+    for (i in n - 1 downTo 0) {
+        val p = from + dir * (len * i / (n - 1f)) - nrm * half(i, 1)
+        path.lineTo(p.x, p.y)
+    }
+    path.close()
+    drawPath(path, color)
+    val m = from + dir * (len * nick)
+    drawLine(InkDeep, m - nrm * w, m + nrm * w, 1.1f * d)
+}
 
 @Composable
 private fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) {
@@ -376,7 +534,10 @@ private fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) 
     val bob by rememberInfiniteTransition(label = "bob").animateFloat(
         initialValue = 0f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(900, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        animationSpec = infiniteRepeatable(
+            tween(900, easing = FastOutSlowInEasing),
+            RepeatMode.Reverse
+        ),
         label = "bobValue",
     )
 
@@ -400,70 +561,71 @@ private fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) 
             val cardT = PadTop.toPx()
             val cardB = size.height - PadBottom.toPx()
             val cardR = size.width
-            val cx = cardL + 40 * d
-            val cy = (cardT + cardB) / 2f
-            val rx = cx - 6 * d
-            val ry = (cardB - cardT) / 2f + 20 * d
+            val cardH = cardB - cardT
 
-            fun pt(deg: Float, dr: Float = 0f): Offset {
-                val r = Math.toRadians(deg.toDouble())
-                return Offset(cx + (rx + dr) * cos(r).toFloat(), cy + (ry + dr) * sin(r).toFloat())
+            val R = 12 * d
+            val rx = 58 * d
+            val ry = cardH * 0.62f
+            val cx = cardL + 36 * d
+            val topY = cardT - R + 3 * d
+            val cy = topY + ry
+            val sinEnd = ((cardB + 3 * d - cy) / ry).coerceIn(-1f, 1f)
+            val startDeg = -90f
+            val endDeg = Math.toDegrees(asin(sinEnd.toDouble())).toFloat() - 360f
+
+            val segs = inkArc(Offset(cx, cy), rx, ry, startDeg, endDeg, d, rnd)
+            val c = Offset(cx, topY)
+            val flicks = listOf(-58f to 15f, -24f to 17f).map { (ang, len) ->
+                Flick(
+                    ang,
+                    len * d,
+                    List(12) { rnd.nextFloat() * 2f - 1f },
+                    0.35f + rnd.nextFloat() * 0.3f
+                )
             }
-
-            val startDeg = -100f
-            val endDeg = -275f
-            val total = startDeg - endDeg
-            val segs = ArrayList<ArcSeg>()
-            var a = startDeg
-            while (a > endDeg) {
-                val sweep = if (rnd.nextFloat() < 0.2f) 2f + rnd.nextFloat() * 3f else 14f + rnd.nextFloat() * 26f
-                val a2 = max(a - sweep, endDeg)
-                val path = Path()
-                var t = a
-                var first = true
-                while (t >= a2) {
-                    val p = pt(t, (rnd.nextFloat() - 0.5f) * 2.4f * d)
-                    if (first) { path.moveTo(p.x, p.y); first = false } else path.lineTo(p.x, p.y)
-                    t -= 3f
-                }
-                val e = pt(a2); path.lineTo(e.x, e.y)
-                segs.add(ArcSeg(path, (1.6f + rnd.nextFloat() * 1.8f) * d, (startDeg - a) / total, 0.75f + rnd.nextFloat() * 0.25f))
-                a = a2 - (3f + rnd.nextFloat() * 8f)
-            }
-
-            val c = pt(startDeg)
-            val R = 14 * d
-            val lineSpecs = listOf(-55f to 14f, -22f to 16f)
 
             onDrawBehind {
                 val rv = reveal.value
-                segs.forEach {
-                    if (it.frac <= rv)
-                        drawPath(it.path, Cream.copy(alpha = it.alpha), style = Stroke(it.width, cap = StrokeCap.Round, join = StrokeJoin.Round))
-                }
+                segs.forEach { if (it.frac <= rv) drawPath(it.path, Cream.copy(alpha = it.alpha)) }
 
                 val appear = min(1f, rv * 6f)
                 if (ripple.value < 1f)
-                    drawCircle(accent.copy(alpha = (1f - ripple.value) * 0.6f), R * appear + 14 * d * ripple.value, c, style = Stroke(1.5f * d))
+                    drawCircle(
+                        accent.copy(alpha = (1f - ripple.value) * 0.6f),
+                        R * appear + 12 * d * ripple.value,
+                        c,
+                        style = Stroke(1.5f * d)
+                    )
                 val s = pulse.value
                 drawCircle(accent, R * s * appear, c)
-                drawCircle(InkDeep, (R - 4.5f * d) * s * appear, c)
-                drawCircle(Color(0xFFF3ECDD), 5.5f * d * (1f + (s - 1f) * 1.8f) * appear, c)
+                drawCircle(InkDeep, (R - 3.8f * d) * s * appear, c)
+                drawCircle(Color(0xFFF3ECDD), 4.6f * d * (1f + (s - 1f) * 1.8f) * appear, c)
 
                 val f = fly.value
-                lineSpecs.forEach { (ang, len) ->
-                    val r = Math.toRadians(ang.toDouble())
+                flicks.forEach { fl ->
+                    val r = Math.toRadians(fl.angle.toDouble())
                     val dir = Offset(cos(r).toFloat(), sin(r).toFloat())
                     val from = c + dir * (R + (2f + 7f * f) * d)
-                    val to = from + dir * (len * f * d + 2f * d)
-                    drawLine(Cream.copy(alpha = min(1f, f * 2.5f)), from, to, 2f * d, StrokeCap.Round)
+                    drawFlick(
+                        from,
+                        dir,
+                        fl.len * f + 2f * d,
+                        3.2f * d,
+                        Cream.copy(alpha = min(1f, f * 2.5f)),
+                        fl.jit,
+                        fl.nick,
+                        d
+                    )
                 }
 
                 val tx = cardL + (cardR - cardL) / 2f
                 val ty = cardB + (8f + bob * 3f) * d
                 drawPath(
                     Path().apply {
-                        moveTo(tx - 7 * d, ty); lineTo(tx + 7 * d, ty); lineTo(tx, ty + 8 * d); close()
+                        moveTo(tx - 6 * d, ty); lineTo(tx + 6 * d, ty); lineTo(
+                        tx,
+                        ty + 7 * d
+                    ); close()
                     },
                     Cream.copy(alpha = 0.9f),
                 )
@@ -478,7 +640,13 @@ private fun List<Offset>.toPath(): Path = Path().apply {
     close()
 }
 
-private fun roughRectPoints(r: Rect, step: Float, jitter: Float, tear: Float, rnd: Random): List<Offset> {
+private fun roughRectPoints(
+    r: Rect,
+    step: Float,
+    jitter: Float,
+    tear: Float,
+    rnd: Random
+): List<Offset> {
     val out = ArrayList<Offset>()
     fun edge(a: Offset, b: Offset, inward: Offset) {
         val len = (b - a).getDistance()
@@ -502,13 +670,23 @@ private fun roughRectPoints(r: Rect, step: Float, jitter: Float, tear: Float, rn
     return out
 }
 
+private fun filmSkillLabel(skill: String, seed: Int): String {
+    val random = Random(seed + 91)
+
+    return if (random.nextFloat() < 0.25f) {
+        "$skill     ▶"
+    } else {
+        skill
+    }
+}
+
 @Composable
 fun EggToastPlayground(
     modifier: Modifier = Modifier,
 ) {
     val toast = remember {
         EasterEggs.ActiveToast(
-            id = 3L,
+            id = 1L,
             eggId = "playground",
             reply = EggReply(
                 skill = "Logic",

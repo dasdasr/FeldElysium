@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -26,7 +27,7 @@ fun FeldActionBar(
     confirmText: String? = null,
     onConfirm: (() -> Unit)? = null,
     confirmEnabled: Boolean = true,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     divider: Boolean = true,
 ) {
     val hasConfirm = confirmText != null && onConfirm != null
@@ -51,7 +52,6 @@ fun FeldActionBar(
                     text = confirmText!!,
                     onClick = onConfirm!!,
                     modifier = Modifier.weight(1f),
-                    seed = seed + 11,
                     spec = FeldButtonDefaults.Orange,
                     enabled = confirmEnabled,
                     minHeight = 52.dp,

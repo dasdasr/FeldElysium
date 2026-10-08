@@ -37,13 +37,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.example.feldelysium.designsystem.material.FeldTape
 import com.example.feldelysium.designsystem.material.agsl.NOISE_LIB
 import com.example.feldelysium.designsystem.material.stickerTapeMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
 fun FeldDistressedTitle(
     text: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: DistressedTitleSpec = FeldDistressedTitles.Small,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     textAlign: TextAlign? = null,

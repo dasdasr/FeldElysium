@@ -25,13 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.material.agsl.INK_AGSL
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlin.random.Random
 
 @Composable
 fun FeldDivider(
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     vertical: Boolean = false,
     thickness: Dp = 1.dp,
     color: Color = Color(0xFF666866),
@@ -104,12 +105,10 @@ private fun FeldDividerPreview() {
         ) {
             FeldDivider(
                 modifier = Modifier.fillMaxWidth(),
-                seed = 1,
             )
 
             FeldDivider(
                 modifier = Modifier.fillMaxWidth(),
-                seed = 21,
                 thickness = 2.dp,
                 segment = 80.dp,
             )
@@ -118,7 +117,6 @@ private fun FeldDividerPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(2.dp),
-                seed = 42,
                 segment = 50.dp,
                 changeChance = 0.6f,
             )
@@ -129,7 +127,6 @@ private fun FeldDividerPreview() {
             ) {
                 FeldDivider(
                     vertical = true,
-                    seed = 3,
                     thickness = 1.dp,
                     segment = 40.dp,
                     changeChance = 0.35f,
@@ -137,7 +134,6 @@ private fun FeldDividerPreview() {
 
                 FeldDivider(
                     vertical = true,
-                    seed = 17,
                     thickness = 2.dp,
                     segment = 25.dp,
                     changeChance = 0.6f,

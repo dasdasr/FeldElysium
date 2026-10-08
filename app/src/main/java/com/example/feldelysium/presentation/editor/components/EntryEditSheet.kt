@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -42,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.FeldDiamond
 import com.example.feldelysium.designsystem.components.FeldDivider
-import com.example.feldelysium.designsystem.components.FeldIconButton
+import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.FeldIconId
 import com.example.feldelysium.designsystem.components.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
@@ -53,6 +52,7 @@ import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.paperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.domain.model.DialogueEntry
@@ -61,7 +61,8 @@ import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private val SheetRough = RoughStyle(roughness = 1.1.dp, corner = 18.dp)
-private val SelectorRough = RoughStyle(roughness = 0.8.dp, step = 48.dp, corner = 4.dp, tornChance = 0.1f)
+private val SelectorRough =
+    RoughStyle(roughness = 0.8.dp, step = 48.dp, corner = 4.dp, tornChance = 0.1f)
 
 private val SheetBleed = 28.dp
 
@@ -109,16 +110,21 @@ fun EntryEditSheet(
                 .fillMaxWidth()
                 .imePadding()
                 .bleedBottom(SheetBleed),
-            seed = 31,
+            spec = FeldPaper.flat(Color(0xFF080D0D)),
             rough = SheetRough,
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 16.dp, bottom = SheetBleed),
+            contentPadding = PaddingValues(
+                start = 20.dp,
+                end = 20.dp,
+                top = 16.dp,
+                bottom = SheetBleed
+            ),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 FeldDiamond(FeldPalette.Orange, size = 14.dp)
                 Text(
                     text = if (entry == null) "NEW ENTRY" else "EDIT ENTRY",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 18.sp,
                         letterSpacing = 1.6.sp,
                     ),
                     color = MaterialTheme.colorScheme.onSurface,
@@ -128,9 +134,9 @@ fun EntryEditSheet(
                 FeldIconButton(FeldIconId.Close, onDismiss)
             }
             Spacer(Modifier.height(8.dp))
-            FeldDivider(seed = 32)
+            FeldDivider()
 
-            FeldLabeledBlock("Speaker", seed = 1) {
+            FeldLabeledBlock("Speaker") {
                 SpeakerRow(
                     speaker = speaker,
                     onClick = onSpeakerClick,
@@ -139,22 +145,21 @@ fun EntryEditSheet(
                     } else null,
                 )
             }
-            FeldDivider(seed = 33)
+            FeldDivider()
 
-            FeldLabeledBlock("Dialogue", seed = 2) {
+            FeldLabeledBlock("Dialogue") {
                 FeldTextField(
                     value = text,
                     onValueChange = { text = it },
                     placeholder = "Dialogue text",
                     minLines = 4,
                     maxLength = 500,
-                    seed = 3,
                 )
             }
-            FeldDivider(seed = 34)
+            FeldDivider()
 
             StyleBlock(styleName = styleName, onClick = onStyleClick)
-            FeldDivider(seed = 35)
+            FeldDivider()
 
             FeldDialogActions(
                 confirmLabel = "Confirm",
@@ -162,7 +167,6 @@ fun EntryEditSheet(
                 onCancel = onDismiss,
                 confirmEnabled = text.isNotBlank(),
                 modifier = Modifier.navigationBarsPadding(),
-                seed = 36,
             )
         }
     }
@@ -179,7 +183,7 @@ private fun Modifier.bleedBottom(bleed: Dp): Modifier = layout { measurable, con
 @Composable
 private fun SelectorBox(
     modifier: Modifier,
-    seed: Int,
+    seed: Int = rememberSeed(),
     onClick: (() -> Unit)?,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -195,7 +199,12 @@ private fun SelectorBox(
 }
 
 @Composable
-private fun SquareButton(icon: ImageVector, description: String, seed: Int, onClick: () -> Unit) {
+private fun SquareButton(
+    icon: ImageVector,
+    description: String,
+    onClick: () -> Unit,
+) {
+    val seed = rememberSeed()
     val shape = remember(seed) { RoughShape(seed, SelectorRough) }
     Box(
         modifier = Modifier
@@ -239,7 +248,6 @@ private fun SpeakerRow(
             modifier = Modifier
                 .weight(1f)
                 .height(60.dp),
-            seed = 36,
             onClick = onClick,
         ) {
             FeldSpeakerDiamond(color = color, size = 34.dp, seed = speaker?.id.hashCode())
@@ -256,18 +264,17 @@ private fun SpeakerRow(
         }
         if (onEdit != null) {
             Spacer(Modifier.width(8.dp))
-            SquareButton(Icons.AutoMirrored.Filled.Sort, "Edit speaker", seed = 37, onClick = onEdit)
+            SquareButton(Icons.AutoMirrored.Filled.Sort, "Edit speaker", onClick = onEdit)
         }
     }
 }
 
 @Composable
 private fun StyleBlock(styleName: String, onClick: (() -> Unit)?) {
-    Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.Bottom) {
+    Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = "STYLE",
             style = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.Bold,
                 letterSpacing = 1.4.sp,
             ),
             color = MaterialTheme.colorScheme.onSurface,
@@ -276,7 +283,7 @@ private fun StyleBlock(styleName: String, onClick: (() -> Unit)?) {
             text = "(OPTIONAL)",
             style = MaterialTheme.typography.labelSmall,
             color = FeldPalette.Muted,
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier.padding(start = 4.dp, bottom = 4.dp),
         )
     }
     Spacer(Modifier.height(10.dp))
@@ -284,7 +291,6 @@ private fun StyleBlock(styleName: String, onClick: (() -> Unit)?) {
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp),
-        seed = 38,
         onClick = onClick,
     ) {
         Icon(

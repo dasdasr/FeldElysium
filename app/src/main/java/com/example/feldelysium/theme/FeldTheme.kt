@@ -18,14 +18,14 @@ private val DiscoColorScheme = darkColorScheme(
 
     tertiary = DiscoOrangePressed,
     onTertiary = DiscoText,
-    tertiaryContainer = DiscoSurfaceHigh,
+    tertiaryContainer = FeldSurfaceHigh,
     onTertiaryContainer = DiscoText,
 
-    background = DiscoBackground,
+    background = FeldBackground,
     onBackground = DiscoText,
-    surface = DiscoSurface,
+    surface = FeldSurface,
     onSurface = DiscoText,
-    surfaceVariant = DiscoSurfaceHigh,
+    surfaceVariant = FeldSurfaceHigh,
     onSurfaceVariant = DiscoTextMuted,
     surfaceTint = Color.Transparent,
     inverseSurface = DiscoCream,
@@ -36,16 +36,16 @@ private val DiscoColorScheme = darkColorScheme(
     errorContainer = DiscoError,
     onErrorContainer = DiscoText,
 
-    outline = DiscoOutline,
-    outlineVariant = DiscoOutline,
+    outline = FeldOutline,
+    outlineVariant = FeldOutline,
 
-    surfaceDim = DiscoBackground,
-    surfaceBright = DiscoSurfaceHigh,
-    surfaceContainerLowest = DiscoBackground,
-    surfaceContainerLow = DiscoSurface,
-    surfaceContainer = DiscoSurface,
-    surfaceContainerHigh = DiscoSurfaceHigh,
-    surfaceContainerHighest = DiscoSurfaceHigh,
+    surfaceDim = FeldBackground,
+    surfaceBright = FeldSurfaceHigh,
+    surfaceContainerLowest = FeldBackground,
+    surfaceContainerLow = FeldSurface,
+    surfaceContainer = FeldSurface,
+    surfaceContainerHigh = FeldSurfaceHigh,
+    surfaceContainerHighest = FeldSurfaceHigh,
 )
 
 @Immutable
@@ -60,8 +60,8 @@ fun discoSwitchColors() = SwitchDefaults.colors(
     checkedTrackColor = DiscoOrange,
     checkedBorderColor = DiscoOrange,
     uncheckedThumbColor = DiscoTextMuted,
-    uncheckedTrackColor = DiscoOutline,
-    uncheckedBorderColor = DiscoOutline,
+    uncheckedTrackColor = FeldOutline,
+    uncheckedBorderColor = FeldOutline,
 )
 
 private val LocalDiscoColors = staticCompositionLocalOf { DiscoExtraColors() }
@@ -74,7 +74,7 @@ fun DiscoDialogueTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalDiscoColors provides DiscoExtraColors()) {
         MaterialTheme(
             colorScheme = DiscoColorScheme,
-            typography = DiscoTypography,
+            typography = FeldTypography,
             content = content
         )
     }

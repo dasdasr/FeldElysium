@@ -39,6 +39,7 @@ import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import com.example.feldelysium.designsystem.seed.rememberSeed
 
 object FeldRough {
     val Card = RoughStyle()
@@ -55,7 +56,7 @@ fun FeldTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Field,
     rough: RoughStyle = FeldRough.Field,
     maxLength: Int? = null,

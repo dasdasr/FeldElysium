@@ -146,7 +146,6 @@ private fun FeldIconPreview() {
 
                 FeldDivider(
                     vertical = true,
-                    seed = 17,
                     thickness = 2.dp,
                     segment = 15.dp,
                     changeChance = 0.6f,

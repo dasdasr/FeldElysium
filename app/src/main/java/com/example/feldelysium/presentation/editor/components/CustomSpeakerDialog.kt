@@ -78,7 +78,6 @@ fun CustomSpeakerDialog(
         eyebrow = "Custom speaker",
         subtitle = "Name, color and icon of your voice.",
         onDismiss = onDismiss,
-        seed = 19,
         footer = {
             FeldDialogActions(
                 confirmLabel = if (editing) "Save" else "Create",
@@ -96,11 +95,10 @@ fun CustomSpeakerDialog(
                 },
                 onCancel = onDismiss,
                 confirmEnabled = name.isNotBlank(),
-                seed = 17,
             )
         },
     ) {
-        FeldLabeledBlock("Name", seed = 1) {
+        FeldLabeledBlock("Name") {
             FeldTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -108,22 +106,20 @@ fun CustomSpeakerDialog(
                 maxLength = 32,
                 showLength = false,
                 minLines = 1,
-                seed = 2,
             )
         }
-        FeldDivider(seed = 61)
+        FeldDivider()
 
-        FeldLabeledBlock("Color", seed = 3) {
+        FeldLabeledBlock("Color") {
             FeldColorSwatches(
                 colors = palette,
                 selected = color,
                 onSelect = { color = it },
                 columns = 7,
                 minRows = 2,
-                seed = 30,
             )
         }
-        FeldDivider(seed = 62)
+        FeldDivider()
 
         val res = iconRes
         val uri = iconUri
@@ -155,7 +151,7 @@ fun CustomSpeakerDialog(
                 }
             },
         )
-        FeldDivider(seed = 63)
+        FeldDivider()
     }
 
     if (showIcons) {

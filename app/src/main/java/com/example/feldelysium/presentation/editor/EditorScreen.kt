@@ -45,6 +45,7 @@ import com.example.feldelysium.designsystem.components.FeldIcon
 import com.example.feldelysium.designsystem.components.FeldIconId
 import com.example.feldelysium.designsystem.components.FeldPalette
 import com.example.feldelysium.designsystem.components.FeldScreenHeader
+import com.example.feldelysium.designsystem.components.FeldTapOutsideDismiss
 import com.example.feldelysium.designsystem.components.FeldToolbar
 import com.example.feldelysium.designsystem.components.FeldToolbarItem
 import com.example.feldelysium.designsystem.components.button.FeldButton
@@ -100,131 +101,134 @@ fun EditorScreen(
         vm.dispatch(EditorEvent.ReorderEntries(reordered))
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding(),
-    ) {
-        FeldScreenHeader(
-            title = state.sceneName,
-            eyebrow = "SCENE EDITOR",
-            metaStart = "${state.entries.size} LINES",
-            metaEnd = "DIALOGUE SCENE",
-            navIcon = null,
-            seed = 3,
-            onTitleChange = {
-                vm.dispatch(EditorEvent.RenameScene(it.take(60)))
-            },
-        )
-
-        FeldToolbar(
-            seed = 5,
-            items = listOf(
-                FeldToolbarItem(FeldIconId.Import, "Paste") {
-                    vm.dispatch(EditorEvent.OpenImportDialog)
+    FeldTapOutsideDismiss(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .statusBarsPadding(),
+        ) {
+            FeldScreenHeader(
+                title = state.sceneName,
+                eyebrow = "SCENE EDITOR",
+                metaStart = "${state.entries.size} LINES",
+                metaEnd = "DIALOGUE SCENE",
+                navIcon = null,
+                onTitleChange = {
+                    vm.dispatch(EditorEvent.RenameScene(it.take(60)))
                 },
-                FeldToolbarItem(
-                    icon = FeldIconId.Play,
-                    label = "Playback",
-                    enabled = state.entries.isNotEmpty(),
-                    onClick = { haptics.confirm(); vm.dispatch(EditorEvent.NavigateToPlayback) },
-                ),
-                FeldToolbarItem(FeldIconId.Settings, "Settings", onClick = onNavigateToSettings),
-            ),
-        )
+            )
 
-        Box(Modifier.weight(1f)) {
-            if (state.entries.isEmpty()) {
-                EmptyState(
-                    onImport = { vm.dispatch(EditorEvent.OpenImportDialog) },
-                    modifier = Modifier.fillMaxSize(),
-                )
-            } else {
-                LazyColumn(
-                    state = lazyListState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp,
+            FeldToolbar(
+                items = listOf(
+                    FeldToolbarItem(FeldIconId.Import, "Paste") {
+                        vm.dispatch(EditorEvent.OpenImportDialog)
+                    },
+                    FeldToolbarItem(
+                        icon = FeldIconId.Play,
+                        label = "Playback",
+                        enabled = state.entries.isNotEmpty(),
+                        onClick = { haptics.confirm(); vm.dispatch(EditorEvent.NavigateToPlayback) },
                     ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(state.entries, key = { it.id }) { entry ->
-                        ReorderableItem(reorderState, key = entry.id) { isDragging ->
-                            LaunchedEffect(isDragging) {
-                                if (isDragging) {
-                                    haptics.thud()
-                                }
-                            }
+                    FeldToolbarItem(
+                        FeldIconId.Settings,
+                        "Settings",
+                        onClick = onNavigateToSettings
+                    ),
+                ),
+            )
 
-                            Box {
-                                FeldEntryCard(
-                                    speakerName = entry.speaker.name,
-                                    speakerColor = Color(entry.speaker.colorArgb),
-                                    text = entry.text,
-                                    seed = entry.id.hashCode(),
-                                    isDragging = isDragging,
-                                    onClick = { vm.dispatch(EditorEvent.RequestEditEntry(entry)) },
-                                    onMore = { haptics.tick(); menuEntryId = entry.id },
-                                    dragHandle = {
-                                        Box(
-                                            Modifier
-                                                .longPressDraggableHandle()
-                                                .size(32.dp),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            FeldIcon(
-                                                FeldIconId.Drag,
-                                                tint = colorScheme.onSurface.copy(alpha = 0.5f),
-                                                size = 20.dp,
-                                            )
-                                        }
-                                    },
-                                )
-                                // TODO: Change to FeldMenu
-                                DropdownMenu(
-                                    expanded = menuEntryId == entry.id,
-                                    onDismissRequest = { menuEntryId = null },
-                                ) {
-                                    DropdownMenuItem(
-                                        text = { Text("Edit") },
-                                        onClick = {
-                                            menuEntryId = null
-                                            vm.dispatch(EditorEvent.RequestEditEntry(entry))
+            Box(Modifier.weight(1f)) {
+                if (state.entries.isEmpty()) {
+                    EmptyState(
+                        onImport = { vm.dispatch(EditorEvent.OpenImportDialog) },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                } else {
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp,
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        items(state.entries, key = { it.id }) { entry ->
+                            ReorderableItem(reorderState, key = entry.id) { isDragging ->
+                                LaunchedEffect(isDragging) {
+                                    if (isDragging) {
+                                        haptics.thud()
+                                    }
+                                }
+
+                                Box {
+                                    FeldEntryCard(
+                                        speakerName = entry.speaker.name,
+                                        speakerColor = Color(entry.speaker.colorArgb),
+                                        text = entry.text,
+                                        seed = entry.id.hashCode(),
+                                        isDragging = isDragging,
+                                        onClick = { vm.dispatch(EditorEvent.RequestEditEntry(entry)) },
+                                        onMore = { haptics.tick(); menuEntryId = entry.id },
+                                        dragHandle = {
+                                            Box(
+                                                Modifier
+                                                    .longPressDraggableHandle()
+                                                    .size(32.dp),
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                FeldIcon(
+                                                    FeldIconId.Drag,
+                                                    tint = colorScheme.onSurface.copy(alpha = 0.5f),
+                                                    size = 20.dp,
+                                                )
+                                            }
                                         },
                                     )
-                                    DropdownMenuItem(
-                                        text = { Text("Delete") },
-                                        onClick = {
-                                            menuEntryId = null
-                                            haptics.thud()
-                                            eggs?.report("entry.delete", entry.speaker.name)
-                                            vm.dispatch(EditorEvent.DeleteEntry(entry.id))
-                                        },
-                                    )
+                                    // TODO: Change to FeldMenu
+                                    DropdownMenu(
+                                        expanded = menuEntryId == entry.id,
+                                        onDismissRequest = { menuEntryId = null },
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("Edit") },
+                                            onClick = {
+                                                menuEntryId = null
+                                                vm.dispatch(EditorEvent.RequestEditEntry(entry))
+                                            },
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("Delete") },
+                                            onClick = {
+                                                menuEntryId = null
+                                                haptics.thud()
+                                                eggs?.report("entry.delete", entry.speaker.name)
+                                                vm.dispatch(EditorEvent.DeleteEntry(entry.id))
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                FeldFab(
+                    onClick = { haptics.tick(); vm.dispatch(EditorEvent.RequestAddEntry) },
+                    onLongClick = {
+                        haptics.thud()
+                        eggs?.report("fab.longpress")
+                        vm.dispatch(EditorEvent.AddEntryWithRandomSpeaker)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp),
+                    contentDescription = "Add dialogue entry",
+                )
             }
 
-            FeldFab(
-                onClick = { haptics.tick(); vm.dispatch(EditorEvent.RequestAddEntry) },
-                onLongClick = {
-                    haptics.thud()
-                    eggs?.report("fab.longpress")
-                    vm.dispatch(EditorEvent.AddEntryWithRandomSpeaker)
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-                seed = 7,
-                contentDescription = "Add dialogue entry",
-            )
-        }
-
 //        FeldFooterBand(sceneName = state.sceneName)
+        }
     }
 
     if (state.isSpeakerPickerOpen) {
@@ -295,7 +299,7 @@ private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
             style = typography.labelSmall,
             color = colorScheme.onSurface.copy(alpha = 0.6f),
         )
-        FeldButton("Bulk paste", onClick = onImport, seed = 4)
+        FeldButton("Bulk paste", onClick = onImport)
         Spacer(Modifier.height(14.dp))
     }
 }

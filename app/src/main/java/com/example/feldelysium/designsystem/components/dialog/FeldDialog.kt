@@ -25,14 +25,14 @@ import com.example.feldelysium.designsystem.components.FeldDiamond
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.FeldDivider
-import com.example.feldelysium.designsystem.components.FeldIconButton
+import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.FeldIconId
 import com.example.feldelysium.designsystem.components.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.material.DryPaperSpec
+import com.example.feldelysium.designsystem.seed.rememberSeed
 
 @Composable
 fun FeldDialog(
@@ -41,7 +41,7 @@ fun FeldDialog(
     modifier: Modifier = Modifier,
     eyebrow: String? = null,
     subtitle: String? = null,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     footer: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -117,7 +117,7 @@ fun FeldDialogFooter(
     onReset: (() -> Unit)? = null,
     cancelLabel: String = "RESET",
     confirmLabel: String = "SAVE",
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
 ) {
     Row(
         modifier = modifier

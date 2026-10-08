@@ -28,6 +28,7 @@ import com.example.feldelysium.designsystem.components.rememberFeldHaptics
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -37,12 +38,12 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 fun FeldFab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     size: Dp = 56.dp,
     cornerFraction: Float = 0.45f,
     contentDescription: String? = null,
     onLongClick: (() -> Unit)? = null,
-    spec: PaperSpec = FeldPaper.DryButtonRust,
+    spec: PaperSpec = FeldPaper.DryButtonCream,
     content: @Composable () -> Unit = {
         FeldIcon(
             id = FeldIconId.Add,

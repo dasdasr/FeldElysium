@@ -18,6 +18,7 @@ import com.example.feldelysium.designsystem.components.feldClickable
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 
@@ -65,7 +66,7 @@ fun FeldColorSwatches(
     selected: Long,
     onSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     columns: Int = colors.size.coerceAtLeast(1),
     minRows: Int = 1,
 ) {

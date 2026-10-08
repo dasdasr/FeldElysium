@@ -23,6 +23,7 @@ import com.example.feldelysium.designsystem.components.FeldDivider
 import com.example.feldelysium.designsystem.components.FeldIcon
 import com.example.feldelysium.designsystem.components.FeldIconId
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.seed.rememberSeed
 
 private val SectionTagStyle: TextStyle
     @Composable get() = MaterialTheme.typography.labelLarge.copy(
@@ -34,7 +35,7 @@ private val SectionTagStyle: TextStyle
 fun FeldSettingsSection(
     title: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     tagDrop: Dp = 10.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -58,10 +59,9 @@ fun FeldSettingsSection(
 }
 
 @Composable
-fun FeldSettingsDivider(seed: Int, modifier: Modifier = Modifier) {
+fun FeldSettingsDivider(modifier: Modifier = Modifier) {
     FeldDivider(
         modifier = modifier.padding(horizontal = 16.dp),
-        seed = seed,
         color = Color(0xFF3A3D3C),
     )
 }

@@ -1,4 +1,4 @@
-package com.example.feldelysium.domain.engine
+package com.example.feldelysium.domain.playback
 
 import com.example.feldelysium.domain.model.DialogueEntry
 

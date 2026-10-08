@@ -24,6 +24,7 @@ import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.material.DryPaperSpec
 import com.example.feldelysium.designsystem.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import kotlin.math.*
 import kotlin.random.Random
@@ -69,7 +70,7 @@ fun FeldToast(
     speakerColor: Color,
     text: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     onDismiss: (() -> Unit)? = null,
 ) {
     val lay = remember(seed) { ToastLayout(seed) }

@@ -75,13 +75,11 @@ fun BulkImportDialog(
         title = "Paste dialogue",
         eyebrow = "Quick add",
         onDismiss = onDismiss,
-        seed = 18,
         footer = {
             FeldDialogActions(
                 confirmLabel = "Import",
                 onConfirm = onConfirm,
                 onCancel = onDismiss,
-                seed = 16,
             )
         },
     ) {
@@ -94,7 +92,6 @@ fun BulkImportDialog(
             minLines = 8,
             textStyle = ImportTextStyle,
             visualTransformation = transformation,
-            seed = 2,
         )
         if (preview != null) {
             Spacer(Modifier.height(12.dp))
