@@ -19,14 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddPhotoAlternate
-import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.FitScreen
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,17 +38,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.FeldDivider
 import com.example.feldelysium.designsystem.components.FeldPalette
+import com.example.feldelysium.designsystem.components.FeldSwitch
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
-import com.example.feldelysium.designsystem.components.feldClickable
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
@@ -143,12 +141,48 @@ private fun MediaPane(
     onVideoFill: (Boolean) -> Unit,
 ) {
     val rowPadding = PaddingValues(vertical = 14.dp)
+    val video = settings.backgroundMediaIsVideo && settings.backgroundMediaUri.isNotBlank()
 
     Column {
-        MediaHeader(settings, onVideoSound, onVideoFill)
+        MediaHeader(video)
         Spacer(Modifier.height(12.dp))
         MediaPreview(settings)
         Spacer(Modifier.height(12.dp))
+
+        if (video) {
+            FeldDivider(seed = 38)
+            FeldSettingRow(
+                icon = Icons.Filled.VolumeOff,
+                title = "Mute sound",
+                subtitle = "Mute video sound.",
+                role = Role.Switch,
+                contentPadding = rowPadding,
+                onClick = { onVideoSound(!settings.backgroundVideoSound) },
+                trailing = {
+                    FeldSwitch(
+                        checked = !settings.backgroundVideoSound,
+                        onCheckedChange = null,
+                        seed = 23,
+                    )
+                },
+            )
+            FeldDivider(seed = 39)
+            FeldSettingRow(
+                icon = Icons.Filled.FitScreen,
+                title = "Fill screen",
+                subtitle = "Crop videos to fit the screen.",
+                role = Role.Switch,
+                contentPadding = rowPadding,
+                onClick = { onVideoFill(!settings.backgroundVideoFill) },
+                trailing = {
+                    FeldSwitch(
+                        checked = settings.backgroundVideoFill,
+                        onCheckedChange = null,
+                        seed = 24,
+                    )
+                },
+            )
+        }
 
         FeldDivider(seed = 41)
         FeldSettingRow(
@@ -173,17 +207,10 @@ private fun MediaPane(
 }
 
 @Composable
-private fun MediaHeader(
-    settings: AppSettings,
-    onVideoSound: (Boolean) -> Unit,
-    onVideoFill: (Boolean) -> Unit,
-) {
-    val video = settings.backgroundMediaIsVideo && settings.backgroundMediaUri.isNotBlank()
-
+private fun MediaHeader(video: Boolean) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-
-        if (!video) Icon(
-            imageVector = Icons.Filled.Image,
+        Icon(
+            imageVector = if (video) Icons.Filled.Videocam else Icons.Filled.Image,
             contentDescription = null,
             tint = FeldPalette.Muted,
             modifier = Modifier.size(24.dp),
@@ -202,36 +229,6 @@ private fun MediaHeader(
                 modifier = Modifier.padding(start = 8.dp),
             )
         }
-        Spacer(Modifier.weight(1f))
-        if (video) {
-            ToggleIcon(
-                icon = if (settings.backgroundVideoSound) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
-                description = "Sound",
-                onClick = { onVideoSound(!settings.backgroundVideoSound) },
-            )
-            ToggleIcon(
-                icon = if (settings.backgroundVideoFill) Icons.Filled.FitScreen else Icons.Filled.AspectRatio,
-                description = "Fill",
-                onClick = { onVideoFill(!settings.backgroundVideoFill) },
-            )
-        }
-    }
-}
-
-@Composable
-private fun ToggleIcon(icon: ImageVector, description: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(40.dp)
-            .feldClickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = description,
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(22.dp),
-        )
     }
 }
 

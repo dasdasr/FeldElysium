@@ -42,7 +42,7 @@ class ParseBulkImportUseCase {
         }
 
         for (line in rawText.lines()) {
-            val match = SPEAKER_HEADER.matchEntire(line.trim())
+            val match = SPEAKER_LINE.matchEntire(line)
             if (match != null) {
                 flushEntry()
                 val rawName = match.groupValues[1].trim()
@@ -62,6 +62,8 @@ class ParseBulkImportUseCase {
                     }
                     currentIsNew = true
                 }
+                val inline = match.groupValues[2].trim()
+                if (inline.isNotEmpty()) textBuffer.append(inline)
             } else if (currentSpeaker != null) {
                 if (textBuffer.isNotEmpty()) textBuffer.append('\n')
                 textBuffer.append(line)
@@ -77,7 +79,6 @@ class ParseBulkImportUseCase {
     }
 
     companion object {
-        // Speaker name must be uppercase and occupy the whole line.
-        private val SPEAKER_HEADER = Regex("""^([A-Z][A-Z0-9 /\-]+):$""")
+        val SPEAKER_LINE = Regex("""^\s*([A-Z][A-Z0-9 /\-]+):\s*(.*)$""")
     }
 }
