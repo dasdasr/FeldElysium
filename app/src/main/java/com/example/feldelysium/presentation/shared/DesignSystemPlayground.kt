@@ -108,12 +108,12 @@ fun DesignSystemPlayground(
 
             FeldTextField(
                 value = "",
-                onValueChange = {},
+                onValueChange = { },
                 modifier = Modifier.fillMaxWidth(),
                 seed = 5,
                 spec = FeldPaper.Field,
                 rough = FeldRough.Field,
-                placeholder = "Let's be precise. What do you actually remember about that night?",
+                placeholder = "Let's be precise.",
                 maxLength = 500,
                 minLines = 1,
                 enabled = true,
@@ -133,7 +133,7 @@ fun DesignSystemPlayground(
             }
             FeldButton(
                 "Delete line", {}, Modifier.fillMaxWidth(),
-                seed = 3,
+                seed = 4,
                 spec = FeldButtonDefaults.Orange,
                 minHeight = 72.dp,
                 contentAlignment = Alignment.CenterStart,
@@ -173,6 +173,9 @@ fun DesignSystemPlayground(
                 seed = 2,
                 spec = FeldDistressedTitles.Large,
                 textStyle = largeStyle,
+                strength = 0f,
+                roughness = 1f,
+                roughnessSize = 1f,
             )
         }
     }

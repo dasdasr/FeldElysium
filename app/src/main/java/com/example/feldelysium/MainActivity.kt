@@ -15,24 +15,32 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private const val SHOW_PLAYGROUND = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
         )
+
         setContent {
             DiscoDialogueTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    AppNavGraph()
+                if (SHOW_PLAYGROUND) {
+                    DesignSystemPlayground()
+                } else {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        AppNavGraph()
+                    }
                 }
             }
         }
-//        setContent {
-//            DesignSystemPlayground()
-//        }
     }
 }

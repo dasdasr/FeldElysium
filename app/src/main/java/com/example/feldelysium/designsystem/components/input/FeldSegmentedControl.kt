@@ -1,18 +1,27 @@
 package com.example.feldelysium.designsystem.components.input
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,6 +30,7 @@ import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.paperMaterial
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
+import kotlin.math.abs
 
 private val TrackRough = RoughStyle(
     roughness = 0.7.dp,
@@ -36,7 +46,7 @@ private val PillRough = RoughStyle(
     step = 30.dp,
     corner = 16.dp,
     cornerVariation = 0.2f,
-    tornChance = 0.25f,
+    tornChance = 0f,
 )
 
 private val OnPill = Color(0xFF1B1612)
@@ -50,35 +60,58 @@ fun FeldSegmentedControl(
     modifier: Modifier = Modifier,
     seed: Int = 0,
 ) {
+    val count = options.size.coerceAtLeast(1)
     val trackShape = remember(seed) { RoughShape(seed, TrackRough) }
 
-    Row(
+    val position by animateFloatAsState(
+        targetValue = selectedIndex.toFloat(),
+        animationSpec = tween(durationMillis = 280, easing = FastOutSlowInEasing),
+        label = "segmentPosition",
+    )
+
+    val leftRound = if (count == 1) 1f else (1f - position).coerceIn(0.1f, 1f)
+    val rightRound = if (count == 1) 1f else (position - (count - 2)).coerceIn(0.1f, 1f)
+
+    val pillShape = remember(seed, leftRound, rightRound) {
+        RoughShape(
+            seed = seed + 1,
+            style = PillRough.copy(leftCornerScale = leftRound, rightCornerScale = rightRound),
+        )
+    }
+
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
             .paperMaterial(trackShape, FeldPaper.Field)
             .padding(3.dp),
     ) {
-        options.forEachIndexed { i, label ->
-            val selected = i == selectedIndex
-            val pillShape = remember(seed, i) { RoughShape(seed + i * 7 + 1, PillRough) }
+        val segmentWidth = maxWidth / count
 
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .then(
-                        if (selected) Modifier.paperMaterial(pillShape, FeldPaper.DryButtonCream)
-                        else Modifier
+        Box(
+            Modifier
+                .offset(x = segmentWidth * position)
+                .width(segmentWidth)
+                .fillMaxHeight()
+                .paperMaterial(pillShape, FeldPaper.DryButtonCream),
+        )
+
+        Row(Modifier.fillMaxSize()) {
+            options.forEachIndexed { i, label ->
+                val activeness = (1f - abs(position - i)).coerceIn(0f, 1f)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .feldClickable(role = Role.Tab, onClick = { onSelect(i) }),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = label.uppercase(),
+                        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 1.6.sp),
+                        color = lerp(OffPill, OnPill, activeness),
                     )
-                    .feldClickable(role = Role.Tab, onClick = { onSelect(i) }),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = label.uppercase(),
-                    style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 1.6.sp),
-                    color = if (selected) OnPill else OffPill,
-                )
+                }
             }
         }
     }
