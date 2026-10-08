@@ -1,14 +1,46 @@
 package com.example.feldelysium.presentation.editor.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.feldelysium.designsystem.components.FeldDivider
+import com.example.feldelysium.designsystem.components.button.FeldDialogActions
+import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
+import com.example.feldelysium.designsystem.components.dialog.FeldDialog
+import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
+import com.example.feldelysium.designsystem.components.input.FeldTextField
+import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import java.util.UUID
+
+private val SkillColors: List<Long> by lazy {
+    PredefinedSpeakers.ALL
+        .filter { it.type == SpeakerType.SKILL }
+        .map { it.colorArgb }
+        .distinct()
+}
+
+private val KnownIconResIds: List<Int> by lazy {
+    PredefinedSpeakers.ALL.mapNotNull { it.iconResId }.distinct()
+}
 
 @Preview
 @Composable
@@ -23,63 +55,120 @@ private fun CustomSpeakerDialogPreview() {
 fun CustomSpeakerDialog(
     speaker: Speaker? = null,
     onConfirm: (Speaker) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    colorChoices: List<Long> = SkillColors,
+    iconResIds: List<Int> = KnownIconResIds,
 ) {
     val editing = speaker != null
-    var name      by remember { mutableStateOf(speaker?.name.orEmpty()) }
-    var colorHex  by remember { mutableStateOf((speaker?.colorArgb ?: Speaker.DEFAULT_CUSTOM_COLOR).toArgbHex()) }
-    var iconUri   by remember { mutableStateOf(speaker?.customIconUri) }
-    var nameError by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf(speaker?.name.orEmpty()) }
+    var color by remember {
+        mutableLongStateOf(speaker?.colorArgb ?: Speaker.DEFAULT_CUSTOM_COLOR)
+    }
+    var iconRes by remember { mutableStateOf(speaker?.iconResId) }
+    var iconUri by remember { mutableStateOf(speaker?.customIconUri) }
+    var showIcons by remember { mutableStateOf(false) }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(if (editing) "Edit Speaker" else "Create Custom Speaker") },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedTextField(
-                    value         = name,
-                    onValueChange = { name = it; nameError = false },
-                    label         = { Text("Speaker Name") },
-                    isError       = nameError,
-                    modifier      = Modifier.fillMaxWidth()
-                )
-                if (nameError) Text("Name is required", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
+    val initialColor = remember { color }
+    val palette = remember(colorChoices) {
+        (listOf(Speaker.DEFAULT_CUSTOM_COLOR) + colorChoices + initialColor).distinct()
+    }
 
-                // TODO: color picker widget — use a simple hex input for MVP
-                OutlinedTextField(
-                    value         = colorHex,
-                    onValueChange = { colorHex = it },
-                    label         = { Text("Color (ARGB hex)") },
-                    modifier      = Modifier.fillMaxWidth()
-                )
-
-                // TODO: icon picker — show selected URI preview, trigger gallery via effect
-                TextButton(onClick = { /* dispatch LaunchGalleryPicker effect */ }) {
-                    Text(if (iconUri != null) "Icon selected ✓" else "Choose Icon (optional)")
-                }
-            }
-        },
-        confirmButton = {
-            Button(onClick = {
-                if (name.isBlank()) { nameError = true; return@Button }
-                val argb = colorHex.toLongOrNull(16) ?: Speaker.DEFAULT_CUSTOM_COLOR
-                onConfirm(
-                    Speaker(
-                        id            = speaker?.id ?: UUID.randomUUID().toString(),
-                        name          = name.trim(),
-                        colorArgb     = argb,
-                        iconResId     = speaker?.iconResId,
-                        customIconUri = iconUri,
-                        type          = SpeakerType.CUSTOM
+    FeldDialog(
+        title = if (editing) "Edit speaker" else "Create speaker",
+        eyebrow = "Custom speaker",
+        subtitle = "Name, color and icon of your voice.",
+        onDismiss = onDismiss,
+        seed = 19,
+        footer = {
+            FeldDialogActions(
+                confirmLabel = if (editing) "Save" else "Create",
+                onConfirm = {
+                    onConfirm(
+                        Speaker(
+                            id = speaker?.id ?: UUID.randomUUID().toString(),
+                            name = name.trim(),
+                            colorArgb = color,
+                            iconResId = iconRes,
+                            customIconUri = iconUri,
+                            type = SpeakerType.CUSTOM,
+                        )
                     )
-                )
-            }) { Text(if (editing) "Save" else "Create") }
+                },
+                onCancel = onDismiss,
+                confirmEnabled = name.isNotBlank(),
+                seed = 17,
+            )
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+    ) {
+        FeldLabeledBlock("Name", seed = 1) {
+            FeldTextField(
+                value = name,
+                onValueChange = { name = it },
+                placeholder = "Speaker name",
+                maxLength = 32,
+                showLength = false,
+                minLines = 1,
+                seed = 2,
+            )
         }
-    )
-}
+        FeldDivider(seed = 61)
 
-private fun Long.toArgbHex(): String =
-    (this and 0xFFFF_FFFFL).toString(16).uppercase().padStart(8, '0')
+        FeldLabeledBlock("Color", seed = 3) {
+            FeldColorSwatches(
+                colors = palette,
+                selected = color,
+                onSelect = { color = it },
+                columns = 7,
+                minRows = 2,
+                seed = 30,
+            )
+        }
+        FeldDivider(seed = 62)
+
+        val res = iconRes
+        val uri = iconUri
+        FeldSettingRow(
+            icon = Icons.Filled.Image,
+            title = "Icon",
+            subtitle = if (res != null || uri != null) "Selected" else "Optional",
+            showChevron = true,
+            contentPadding = PaddingValues(vertical = 14.dp),
+            onClick = { showIcons = true },
+            trailing = {
+                val thumb = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                when {
+                    uri != null -> AsyncImage(
+                        model = uri,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = thumb,
+                    )
+
+                    res != null -> Image(
+                        painter = painterResource(res),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = thumb,
+                    )
+                }
+            },
+        )
+        FeldDivider(seed = 63)
+    }
+
+    if (showIcons) {
+        ChooseIconDialog(
+            iconResIds = iconResIds,
+            selectedResId = iconRes,
+            selectedUri = iconUri,
+            onConfirm = { res, uri ->
+                iconRes = res
+                iconUri = uri
+                showIcons = false
+            },
+            onDismiss = { showIcons = false },
+        )
+    }
+}

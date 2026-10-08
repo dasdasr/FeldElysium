@@ -35,7 +35,6 @@ fun PlaybackBackground(
         }.isSuccess
     }
     val showMedia = settings.backgroundKind == BackgroundKind.MEDIA && mediaOk
-    // Always the chosen color: it shows through letterbox bars around media.
     val color = Color(settings.backgroundColorArgb.toInt())
 
     Box(modifier = modifier.fillMaxSize().background(color)) {

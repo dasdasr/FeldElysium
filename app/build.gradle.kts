@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.feldelysium"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.feldelysium"
@@ -30,6 +30,8 @@ android {
 dependencies {
 
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.animation.core)
+    implementation(libs.androidx.ui.graphics)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui)

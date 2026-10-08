@@ -1,71 +1,85 @@
 package com.example.feldelysium.presentation.settings
 
-import android.net.Uri
+import android.graphics.Color.HSVToColor
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
+import androidx.compose.material.icons.filled.AspectRatio
+import androidx.compose.material.icons.filled.FitScreen
+import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material.icons.filled.VolumeOff
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import android.widget.VideoView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.FitScreen
-import androidx.compose.material.icons.filled.Fullscreen
-import androidx.compose.material3.FilledTonalIconToggleButton
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.designsystem.components.FeldDivider
+import com.example.feldelysium.designsystem.components.FeldPalette
+import com.example.feldelysium.designsystem.components.dialog.FeldDialog
+import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
+import com.example.feldelysium.designsystem.components.feldClickable
+import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
+import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
+import com.example.feldelysium.designsystem.components.input.FeldSlider
+import com.example.feldelysium.designsystem.components.input.swatchSpec
+import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
+import com.example.feldelysium.designsystem.material.FeldPaper
+import com.example.feldelysium.designsystem.material.paperMaterial
+import com.example.feldelysium.designsystem.shape.RoughShape
+import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.presentation.playback.BackgroundVideo
 
-private val Presets = longArrayOf(
+private val Presets = listOf(
     AppSettings.DEFAULT_BACKGROUND_COLOR,
     0xFF000000L,
-    0xFFFFFFFFL,
-    0xFF1B1B2FL,
-    0xFF4A2C6AL,
-    0xFF8B1E3FL,
+    0xFF59663AL,
+    0xFFC4A57AL,
+    0xFFE45720L,
+    0xFF3F8F86L,
+    0xFF3E67C8L,
+    0xFF7C55C9L,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+private val PreviewRough = RoughStyle(
+    roughness = 0.9.dp,
+    step = 48.dp,
+    corner = 3.dp,
+    tornChance = 0.2f,
+)
+
 @Composable
 fun BackgroundPickerDialog(
     settings: AppSettings,
@@ -74,6 +88,7 @@ fun BackgroundPickerDialog(
     onMedia: (uri: String, isVideo: Boolean) -> Unit,
     onVideoSound: (Boolean) -> Unit,
     onVideoFill: (Boolean) -> Unit,
+    onReset: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val imagePicker = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
@@ -83,40 +98,41 @@ fun BackgroundPickerDialog(
         if (uri != null) onMedia(uri.toString(), true)
     }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Text("Background")
-                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                    SegmentedButton(
-                        selected = settings.backgroundKind == BackgroundKind.MEDIA,
-                        onClick = { onKind(BackgroundKind.MEDIA) },
-                        shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
-                    ) { Text("Media") }
-                    SegmentedButton(
-                        selected = settings.backgroundKind == BackgroundKind.COLOR,
-                        onClick = { onKind(BackgroundKind.COLOR) },
-                        shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
-                    ) { Text("Color") }
-                }
-                if (settings.backgroundKind == BackgroundKind.MEDIA) {
-                    MediaPane(settings, imagePicker, videoPicker, onVideoSound, onVideoFill)
-                } else {
-                    ColorPane(settings.backgroundColorArgb, onColor)
-                }
-                Button(
-                    onClick = onDismiss,
-                    modifier = Modifier.align(Alignment.End),
-                ) { Text("Save") }
-            }
+    val isMedia = settings.backgroundKind == BackgroundKind.MEDIA
+    val animated =
+        isMedia && settings.backgroundMediaIsVideo && settings.backgroundMediaUri.isNotBlank()
+
+    FeldDialog(
+        title = "Background",
+        eyebrow = if (animated) "Animated" else "Plain",
+        subtitle = "Set a visual tone for your scene.",
+        onDismiss = onDismiss,
+        seed = 6,
+        footer = {
+            FeldDialogFooter(
+                onReset = onReset,
+                onCancel = onDismiss,
+                confirmLabel = "Save",
+                seed = 8,
+            )
+        },
+    ) {
+        FeldSegmentedControl(
+            options = listOf("Media", "Color"),
+            selectedIndex = if (isMedia) 0 else 1,
+            onSelect = { onKind(if (it == 0) BackgroundKind.MEDIA else BackgroundKind.COLOR) },
+            seed = 2,
+        )
+        Spacer(Modifier.height(16.dp))
+
+        if (isMedia) {
+            MediaPane(settings, imagePicker, videoPicker, onVideoSound, onVideoFill)
+        } else {
+            ColorPane(settings.backgroundColorArgb, onColor)
         }
     }
 }
+
 
 @Composable
 private fun MediaPane(
@@ -126,49 +142,123 @@ private fun MediaPane(
     onVideoSound: (Boolean) -> Unit,
     onVideoFill: (Boolean) -> Unit,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        OutlinedButton(onClick = {
-            imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
-        }) { Text("Image") }
-        OutlinedButton(onClick = {
-            videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly))
-        }) { Text("Video") }
-        if (settings.backgroundMediaIsVideo && settings.backgroundMediaUri.isNotBlank()) {
-            IconButton(onClick = { onVideoSound(!settings.backgroundVideoSound) }) {
-                Icon(
-                    if (settings.backgroundVideoSound) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
-                    contentDescription = "Sound",
-                )
-            }
-            IconButton(onClick = { onVideoFill(!settings.backgroundVideoFill) }) {
-                Icon(
-                    if (settings.backgroundVideoFill) Icons.Filled.FitScreen else Icons.Filled.AspectRatio,
-                    contentDescription = "Fill",
-                )
-            }
+    val rowPadding = PaddingValues(vertical = 14.dp)
+
+    Column {
+        MediaHeader(settings, onVideoSound, onVideoFill)
+        Spacer(Modifier.height(12.dp))
+        MediaPreview(settings)
+        Spacer(Modifier.height(12.dp))
+
+        FeldDivider(seed = 41)
+        FeldSettingRow(
+            icon = Icons.Filled.VideoLibrary,
+            title = "Video",
+            subtitle = "Add custom video",
+            showChevron = true,
+            contentPadding = rowPadding,
+            onClick = { videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly)) },
+        )
+        FeldDivider(seed = 42)
+        FeldSettingRow(
+            icon = Icons.Filled.AddPhotoAlternate,
+            title = "Image",
+            subtitle = "Add custom image",
+            showChevron = true,
+            contentPadding = rowPadding,
+            onClick = { imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
+        )
+        FeldDivider(seed = 43)
+    }
+}
+
+@Composable
+private fun MediaHeader(
+    settings: AppSettings,
+    onVideoSound: (Boolean) -> Unit,
+    onVideoFill: (Boolean) -> Unit,
+) {
+    val video = settings.backgroundMediaIsVideo && settings.backgroundMediaUri.isNotBlank()
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+
+        if (!video) Icon(
+            imageVector = Icons.Filled.Image,
+            contentDescription = null,
+            tint = FeldPalette.Muted,
+            modifier = Modifier.size(24.dp),
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(
+            text = if (video) "VIDEO" else "IMAGE",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        if (video) {
+            Text(
+                text = "› › ›",
+                style = MaterialTheme.typography.labelLarge,
+                color = FeldPalette.Muted,
+                modifier = Modifier.padding(start = 8.dp),
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        if (video) {
+            ToggleIcon(
+                icon = if (settings.backgroundVideoSound) Icons.Filled.VolumeUp else Icons.Filled.VolumeOff,
+                description = "Sound",
+                onClick = { onVideoSound(!settings.backgroundVideoSound) },
+            )
+            ToggleIcon(
+                icon = if (settings.backgroundVideoFill) Icons.Filled.FitScreen else Icons.Filled.AspectRatio,
+                description = "Fill",
+                onClick = { onVideoFill(!settings.backgroundVideoFill) },
+            )
         }
     }
-    MediaPreview(settings)
+}
+
+@Composable
+private fun ToggleIcon(icon: ImageVector, description: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .feldClickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = description,
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(22.dp),
+        )
+    }
 }
 
 @Composable
 private fun MediaPreview(settings: AppSettings) {
-    val shape = RoundedCornerShape(8.dp)
+    val shape = remember { RoughShape(9, PreviewRough) }
+    val uri = settings.backgroundMediaUri
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp)
-            .clip(shape)
-            .background(Color(settings.backgroundColorArgb.toInt())),
+            .aspectRatio(16f / 10f)
+            .paperMaterial(shape, FeldPaper.Field),
+        contentAlignment = Alignment.Center,
     ) {
-        val uri = settings.backgroundMediaUri
-        if (uri.isBlank()) return@Box
-
-        if (settings.backgroundMediaIsVideo) {
+        Box(
+            Modifier
+                .matchParentSize()
+                .background(Color(settings.backgroundColorArgb.toInt())),
+        )
+        if (uri.isBlank()) {
+            Text(
+                text = "NO MEDIA YET",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Black.copy(alpha = 0.55f),
+            )
+        } else if (settings.backgroundMediaIsVideo) {
             BackgroundVideo(
                 uri = uri,
                 sound = settings.backgroundVideoSound,
@@ -186,42 +276,92 @@ private fun MediaPreview(settings: AppSettings) {
     }
 }
 
+private fun hsvOf(argb: Long): FloatArray =
+    FloatArray(3).also { android.graphics.Color.colorToHSV(argb.toInt(), it) }
+
+private fun colorOf(hue: Float, sat: Float, bri: Float): Long =
+    HSVToColor(floatArrayOf(hue, sat, bri)).toLong() and 0xFFFFFFFFL
+
 @Composable
 private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
-    val color = Color(argb.toInt())
-    val hsv = remember(argb) {
-        FloatArray(3).also { android.graphics.Color.colorToHSV(color.toArgb(), it) }
-    }
-    var hue by remember(argb) { mutableFloatStateOf(hsv[0]) }
-    var value by remember(argb) { mutableFloatStateOf(hsv[2]) }
+    val initial = remember { hsvOf(argb) }
+    var hue by remember { mutableFloatStateOf(initial[0]) }
+    var sat by remember { mutableFloatStateOf(initial[1]) }
+    var bri by remember { mutableFloatStateOf(initial[2]) }
+    var last by remember { mutableLongStateOf(argb) }
+    val pending = remember { ArrayDeque<Long>() }
 
-    fun emit(h: Float, v: Float) {
-        onColor(android.graphics.Color.HSVToColor(floatArrayOf(h, 1f, v)).toLong() and 0xFFFFFFFFL)
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .size(72.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(color)
-                .border(1.dp, Color.White.copy(alpha = 0.4f), RoundedCornerShape(8.dp)),
-        )
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Presets.forEach { preset ->
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color(preset.toInt()))
-                        .clickable { onColor(preset) },
-                )
+    LaunchedEffect(argb) {
+        val idx = pending.indexOf(argb)
+        when {
+            idx >= 0 -> repeat(idx + 1) { pending.removeFirst() }
+            argb != last -> {
+                val hsv = hsvOf(argb)
+                hue = hsv[0]; sat = hsv[1]; bri = hsv[2]
+                last = argb
+                pending.clear()
             }
         }
     }
-    Slider(value = hue, onValueChange = { hue = it; emit(it, value) }, valueRange = 0f..360f)
-    Slider(value = value, onValueChange = { value = it; emit(hue, it) })
+
+    fun commit() {
+        val c = colorOf(hue, sat, bri)
+        if (c == last) return
+        last = c
+        pending.addLast(c)
+        if (pending.size > 32) pending.removeFirst()
+        onColor(c)
+    }
+
+    val live = colorOf(hue, sat, bri)
+    val chipShape = remember { RoughShape(13, PreviewRough.copy(corner = 4.dp)) }
+
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Filled.Palette,
+                contentDescription = null,
+                tint = FeldPalette.Muted,
+                modifier = Modifier.size(24.dp),
+            )
+            Spacer(Modifier.width(16.dp))
+            Text(
+                text = "COLOR",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.width(24.dp))
+            Box(
+                Modifier
+                    .weight(1f)
+                    .height(52.dp)
+                    .paperMaterial(chipShape, swatchSpec(live, selected = true)),
+            )
+        }
+
+        Spacer(Modifier.height(12.dp))
+        FeldSlider(
+            value = hue,
+            onValueChange = {
+                hue = it
+                if (sat < 0.1f) sat = 1f
+            },
+            onValueChangeFinished = { commit() },
+            valueRange = 0f..360f,
+            seed = 3,
+        )
+        FeldSlider(
+            value = bri,
+            onValueChange = { bri = it },
+            onValueChangeFinished = { commit() },
+            seed = 4,
+        )
+        Spacer(Modifier.height(12.dp))
+        FeldColorSwatches(
+            colors = Presets,
+            selected = argb,
+            onSelect = onColor,
+            seed = 20,
+        )
+    }
 }
