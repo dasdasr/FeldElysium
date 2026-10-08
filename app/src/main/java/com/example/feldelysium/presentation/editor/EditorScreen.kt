@@ -248,6 +248,8 @@ fun EditorScreen(
         EntryEditSheet(
             entry = state.editingEntry,
             speaker = state.editingEntry?.speaker ?: state.pendingSpeaker,
+            onSpeakerClick = { vm.dispatch(EditorEvent.RequestChangeSpeaker) },
+            onEditSpeaker = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
             onConfirm = { text ->
                 if (state.editingEntry != null)
                     vm.dispatch(EditorEvent.ConfirmEditEntry(state.editingEntry!!.copy(text = text)))

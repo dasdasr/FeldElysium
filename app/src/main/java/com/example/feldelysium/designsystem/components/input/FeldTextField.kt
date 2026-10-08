@@ -51,6 +51,7 @@ fun FeldTextField(
     placeholder: String = "",
     maxLength: Int? = null,
     minLines: Int = 3,
+    showLength: Boolean = true,
     enabled: Boolean = true,
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(color = colorScheme.onSurface),
     contentPadding: PaddingValues = PaddingValues(16.dp),
@@ -95,7 +96,7 @@ fun FeldTextField(
                 }
             },
         )
-        if (maxLength != null) {
+        if (maxLength != null && showLength) {
             Text(
                 "${value.length}/$maxLength",
                 style = MaterialTheme.typography.labelSmall,
@@ -108,7 +109,7 @@ fun FeldTextField(
 
 @Preview(widthDp = 360, heightDp = 300, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
-private fun FeldTextFieldPreview() {
+private fun FeldSettingsTextFieldPreview() {
     DiscoDialogueTheme {
         var text by remember { mutableStateOf("Let's be precise. What do you actually remember about that night?") }
         FeldTextField(text, { text = it }, Modifier.padding(16.dp).fillMaxWidth(), maxLength = 500)

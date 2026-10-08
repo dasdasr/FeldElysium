@@ -37,7 +37,18 @@ import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.FeldPalette
 import com.example.feldelysium.designsystem.components.FeldSwitch
 import com.example.feldelysium.designsystem.components.feldClickable
+import android.graphics.Bitmap
 import com.example.feldelysium.presentation.playback.BackgroundVideo
+import android.media.MediaMetadataRetriever
+import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -80,7 +91,7 @@ fun FeldSettingRow(
             Column(Modifier.weight(1f)) {
                 Text(
                     text = title.uppercase(),
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -90,7 +101,6 @@ fun FeldSettingRow(
                         text = subtitle,
                         style = MaterialTheme.typography.bodySmall,
                         color = FeldPalette.Muted,
-                        modifier = Modifier.padding(top = 2.dp),
                     )
                 }
             }
@@ -181,6 +191,7 @@ fun FeldBackgroundRow(
     settings: AppSettings,
     currentLabel: String,
     modifier: Modifier = Modifier,
+    freezeVideo: Boolean = false,
     onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(2.dp)
@@ -204,12 +215,15 @@ fun FeldBackgroundRow(
             val uri = settings.backgroundMediaUri
             if (settings.backgroundKind == BackgroundKind.MEDIA && uri.isNotBlank()) {
                 if (settings.backgroundMediaIsVideo) {
-                    BackgroundVideo(
-                        uri = uri,
-                        sound = false,
-                        fill = true,
-                        modifier = Modifier.matchParentSize(),
-                    )
+                    VideoThumbnail(uri, Modifier.matchParentSize())
+                    if (!freezeVideo) {
+                        BackgroundVideo(
+                            uri = uri,
+                            sound = false,
+                            fill = true,
+                            modifier = Modifier.matchParentSize(),
+                        )
+                    }
                 } else {
                     AsyncImage(
                         model = uri,
@@ -242,6 +256,34 @@ fun FeldBackgroundRow(
             contentDescription = null,
             tint = FeldPalette.Muted,
             modifier = Modifier.size(22.dp),
+        )
+    }
+}
+
+@Composable
+private fun VideoThumbnail(uri: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val frame by produceState<ImageBitmap?>(initialValue = null, uri) {
+        value = withContext(Dispatchers.IO) {
+            val retriever = MediaMetadataRetriever()
+            try {
+                retriever.setDataSource(context, Uri.parse(uri))
+                val bitmap: Bitmap? =
+                    retriever.getFrameAtTime(0L, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
+                bitmap?.asImageBitmap()
+            } catch (_: Exception) {
+                null
+            } finally {
+                runCatching { retriever.release() }
+            }
+        }
+    }
+    frame?.let {
+        Image(
+            bitmap = it,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = modifier,
         )
     }
 }

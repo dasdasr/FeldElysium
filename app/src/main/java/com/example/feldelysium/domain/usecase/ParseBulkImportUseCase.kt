@@ -20,7 +20,6 @@ class ParseBulkImportUseCase {
         }
 
         val entries = mutableListOf<DialogueEntry>()
-        // Drafted on first sight, committed only once a block actually has text.
         val draftedSpeakers = linkedMapOf<String, Speaker>()
         val newSpeakers = linkedMapOf<String, Speaker>()
 
