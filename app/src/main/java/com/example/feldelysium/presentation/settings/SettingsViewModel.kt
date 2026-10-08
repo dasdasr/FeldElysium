@@ -68,6 +68,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             is SettingsEvent.SetBackgroundVideoFill -> update {
                 it.copy(backgroundVideoFill = event.enabled)
             }
+            SettingsEvent.ResetBackground -> update {
+                val d = AppSettings()
+                it.copy(
+                    backgroundKind = d.backgroundKind,
+                    backgroundColorArgb = d.backgroundColorArgb,
+                    backgroundMediaUri = d.backgroundMediaUri,
+                    backgroundMediaIsVideo = d.backgroundMediaIsVideo,
+                    backgroundVideoSound = d.backgroundVideoSound,
+                    backgroundVideoFill = d.backgroundVideoFill,
+                )
+            }
         }
     }
 

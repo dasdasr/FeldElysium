@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.input
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -109,7 +110,7 @@ fun FeldTextField(
 @Composable
 private fun FeldTextFieldPreview() {
     DiscoDialogueTheme {
-        var text by remember { androidx.compose.runtime.mutableStateOf("Let's be precise. What do you actually remember about that night?") }
+        var text by remember { mutableStateOf("Let's be precise. What do you actually remember about that night?") }
         FeldTextField(text, { text = it }, Modifier.padding(16.dp).fillMaxWidth(), maxLength = 500)
     }
 }

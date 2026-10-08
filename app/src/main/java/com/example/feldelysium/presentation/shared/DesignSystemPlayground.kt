@@ -30,8 +30,8 @@ import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.card.FeldCard
-import com.example.feldelysium.designsystem.components.FeldRough
-import com.example.feldelysium.designsystem.components.FeldTextField
+import com.example.feldelysium.designsystem.components.input.FeldRough
+import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.card.FeldDialogCard
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.material.FeldPaper
