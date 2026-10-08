@@ -13,4 +13,5 @@ sealed interface SettingsEvent {
     data class SetBackgroundMedia(val uri: String, val isVideo: Boolean) : SettingsEvent
     data class SetBackgroundVideoSound(val enabled: Boolean) : SettingsEvent
     data class SetBackgroundVideoFill(val enabled: Boolean) : SettingsEvent
+    data object ResetBackground : SettingsEvent
 }

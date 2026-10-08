@@ -31,6 +31,9 @@ data class RoughStyle(
     val cornerJitter: Float = 0.5f,
     val inset: Dp = 1.5.dp,
 
+    val leftCornerScale: Float = 1f,
+    val rightCornerScale: Float = 1f,
+
     val jerkChance: Float = 0.14f,
     val jerkAmp: Float = 1.3f,
     val jerkWidth: Dp = 3.dp,
@@ -112,6 +115,10 @@ class RoughShape(
                 cornerPx * (1f - style.cornerVariation + rnd.nextFloat() * 2f * style.cornerVariation)
             if (torn[i]) r * 0.15f else r
         }
+        val cornerScale = floatArrayOf(
+            style.leftCornerScale, style.rightCornerScale,
+            style.rightCornerScale, style.leftCornerScale,
+        )
 
         var perimeter = 0f
         var drift = 0f
@@ -124,9 +131,11 @@ class RoughShape(
             val length = (b - a).getDistance()
             val dir = (b - a) / length
             val normal = Offset(-dir.y, dir.x)
-            val start = a + dir * radius[i]
-            val end = b - dir * radius[(i + 1) % 4]
-            val n = ((end - start).getDistance() / stepPx).roundToInt().coerceAtLeast(1)
+            val start = a + dir * (radius[i] * cornerScale[i])
+            val end = b - dir * (radius[(i + 1) % 4] * cornerScale[(i + 1) % 4])
+            val nStart = a + dir * radius[i]
+            val nEnd = b - dir * radius[(i + 1) % 4]
+            val n = ((nEnd - nStart).getDistance() / stepPx).roundToInt().coerceAtLeast(1)
             val sideStart = perimeter
             perimeter += length
 

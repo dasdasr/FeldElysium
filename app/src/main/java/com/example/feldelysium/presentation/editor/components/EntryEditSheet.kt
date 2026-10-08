@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import com.example.feldelysium.designsystem.components.FeldTextField
+import com.example.feldelysium.designsystem.components.input.FeldTextField
 
 @Preview
 @Composable

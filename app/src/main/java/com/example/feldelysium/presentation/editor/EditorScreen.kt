@@ -74,7 +74,9 @@ fun EditorScreen(
                 EditorEffect.NavigateToPlayback -> onNavigateToPlayback()
                 is EditorEffect.ShowSnackbar ->
                     Toast.makeText(activity, effect.message, Toast.LENGTH_SHORT).show()
-                EditorEffect.LaunchGalleryPicker -> { /* TODO */ }
+
+                EditorEffect.LaunchGalleryPicker -> { /* TODO */
+                }
             }
         }
     }
@@ -132,7 +134,7 @@ fun EditorScreen(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(
-                        start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp, // место под FAB
+                        start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp,
                     ),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -155,7 +157,9 @@ fun EditorScreen(
                                     onMore = { menuEntryId = entry.id },
                                     dragHandle = {
                                         Box(
-                                            modifier = Modifier.draggableHandle().size(32.dp),
+                                            Modifier
+                                                .longPressDraggableHandle()
+                                                .size(32.dp),
                                             contentAlignment = Alignment.Center,
                                         ) {
                                             FeldIcon(
