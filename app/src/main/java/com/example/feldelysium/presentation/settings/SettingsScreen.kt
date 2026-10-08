@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.FeldScreenHeader
+import com.example.feldelysium.designsystem.components.rememberFeldHaptics
 import com.example.feldelysium.designsystem.components.settings.FeldBackgroundRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
@@ -50,6 +51,7 @@ fun SettingsScreen(
     val activity = LocalContext.current as ComponentActivity
     val vm: SettingsViewModel = viewModel(activity)
     val settings by vm.state.collectAsStateWithLifecycle()
+    val haptics = rememberFeldHaptics()
     var showPlaybackUiText by remember { mutableStateOf(false) }
     var showBackground by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
@@ -99,7 +101,7 @@ fun SettingsScreen(
                     title = "Status line",
                     subtitle = "Reals, time and day",
                     showChevron = true,
-                    onClick = { showPlaybackUiText = true },
+                    onClick = { haptics.tick(); showPlaybackUiText = true },
                 )
                 FeldSettingsDivider(seed = 102)
                 FeldSettingValueRow(
@@ -116,7 +118,7 @@ fun SettingsScreen(
                     settings = settings,
                     currentLabel = backgroundLabel(settings),
                     freezeVideo = leaving,
-                    onClick = { showBackground = true },
+                    onClick = { haptics.tick(); showBackground = true },
                 )
             }
 
@@ -157,7 +159,7 @@ fun SettingsScreen(
             onMoneyChange = { vm.dispatch(SettingsEvent.SetPlaybackMoney(it)) },
             onTimeChange = { vm.dispatch(SettingsEvent.SetPlaybackTime(it)) },
             onDayChange = { vm.dispatch(SettingsEvent.SetPlaybackDay(it)) },
-            onReset = { vm.dispatch(SettingsEvent.ResetPlaybackUiText) },
+            onReset = { haptics.thud(); vm.dispatch(SettingsEvent.ResetPlaybackUiText) },
             onDismiss = { showPlaybackUiText = false },
         )
     }
@@ -170,7 +172,7 @@ fun SettingsScreen(
             onMedia = { uri, isVideo -> vm.dispatch(SettingsEvent.SetBackgroundMedia(uri, isVideo)) },
             onVideoSound = { vm.dispatch(SettingsEvent.SetBackgroundVideoSound(it)) },
             onVideoFill = { vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it)) },
-            onReset = { vm.dispatch(SettingsEvent.ResetBackground) },
+            onReset = { haptics.thud(); vm.dispatch(SettingsEvent.ResetBackground) },
             onDismiss = { showBackground = false },
         )
     }

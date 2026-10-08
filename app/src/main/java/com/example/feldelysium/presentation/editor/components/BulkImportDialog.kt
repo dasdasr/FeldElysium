@@ -3,6 +3,7 @@ package com.example.feldelysium.presentation.editor.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,14 +61,19 @@ fun BulkImportDialog(
 ) {
     val transformation = remember(speakers) {
         val colors = buildMap<String, Color> {
-            (PredefinedSpeakers.ALL + speakers).forEach { put(it.name.uppercase(), Color(it.colorArgb)) }
+            (PredefinedSpeakers.ALL + speakers).forEach {
+                put(
+                    it.name.uppercase(),
+                    Color(it.colorArgb)
+                )
+            }
         }
         SpeakerHeaderTransformation(colors)
     }
 
     FeldDialog(
-        title = "Bulk import",
-        eyebrow = "Import",
+        title = "Paste dialogue",
+        eyebrow = "Quick add",
         onDismiss = onDismiss,
         seed = 18,
         footer = {
@@ -103,7 +109,10 @@ fun BulkImportDialog(
 
 @Composable
 private fun FormatHint() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.padding(start = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
             text = "FORMAT",
             style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.4.sp),

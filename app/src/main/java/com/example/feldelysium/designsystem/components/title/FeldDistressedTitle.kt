@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.feldelysium.designsystem.material.FeldTape
 import com.example.feldelysium.designsystem.material.agsl.NOISE_LIB
 import com.example.feldelysium.designsystem.material.stickerTapeMaterial
@@ -46,6 +47,8 @@ fun FeldDistressedTitle(
     spec: DistressedTitleSpec = FeldDistressedTitles.Small,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     textAlign: TextAlign? = null,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     showOutline: Boolean = false,
     roughness: Float = 1f,
     roughnessSize: Float = 1f,
@@ -74,6 +77,8 @@ fun FeldDistressedTitle(
             text = upper,
             style = style,
             textAlign = textAlign,
+            maxLines = maxLines,
+            overflow = overflow,
             modifier = Modifier.erosionMask(
                 adjustedSpec,
                 seed,
@@ -91,6 +96,8 @@ fun FeldDistressedTitle(
             if (showOutline) {
                 Text(
                     text = upper,
+                    maxLines = maxLines,
+                    overflow = overflow,
                     style = style.copy(
                         drawStyle = Stroke(
                             width = strokePx * 2f,
@@ -103,6 +110,8 @@ fun FeldDistressedTitle(
 
             Text(
                 text = upper,
+                maxLines = maxLines,
+                overflow = overflow,
                 style = textStyle.copy(color = Color.Black),
                 textAlign = textAlign,
                 modifier = Modifier.clipToGlyphs(),

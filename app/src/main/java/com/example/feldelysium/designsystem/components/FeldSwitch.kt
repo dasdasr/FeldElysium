@@ -48,13 +48,15 @@ private val ThumbOn =
         base = Color(0xFFDCCFB5),
         crack = Color(0xFF5E4F38),
         crackDepth = 6.dp,
+        crackScale = 6.dp,
+        crackStrength = 0.4f,
     )
 private val ThumbOff =
     DryPaperSpec(
         base = Color(0xFF8C8E8A),
         crack = Color(0xFF242625),
 
-        bow = -0.8.dp,
+        bow = (-0.8).dp,
 
         crackScale = 15.dp,
         crackDepth = 7.dp,
@@ -75,6 +77,7 @@ fun FeldSwitch(
     val trackH = 28.dp
     val thumb = 20.dp
     val pad = 4.dp
+    val haptics = rememberFeldHaptics()
 
     val progress by animateFloatAsState(
         targetValue = if (checked) 1f else 0f,
@@ -102,7 +105,10 @@ fun FeldSwitch(
                     role = Role.Switch,
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-                    onValueChange = onCheckedChange,
+                    onValueChange = { next ->
+                        haptics.toggle(next)
+                        onCheckedChange(next)
+                    },
                 ) else Modifier
             ),
     ) {

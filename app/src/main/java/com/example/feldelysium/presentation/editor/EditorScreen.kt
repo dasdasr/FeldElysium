@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -19,6 +21,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,18 +36,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.designsystem.components.FeldFooterBand
 import com.example.feldelysium.designsystem.components.FeldIcon
 import com.example.feldelysium.designsystem.components.FeldIconId
+import com.example.feldelysium.designsystem.components.FeldPalette
 import com.example.feldelysium.designsystem.components.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.FeldToolbar
 import com.example.feldelysium.designsystem.components.FeldToolbarItem
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldFab
 import com.example.feldelysium.designsystem.components.card.FeldEntryCard
+import com.example.feldelysium.designsystem.components.rememberFeldHaptics
 import com.example.feldelysium.presentation.editor.components.BulkImportDialog
 import com.example.feldelysium.presentation.editor.components.CustomSpeakerDialog
 import com.example.feldelysium.presentation.editor.components.EntryEditSheet
@@ -61,7 +67,7 @@ fun EditorScreen(
     modifier: Modifier = Modifier,
 ) {
     val activity = LocalContext.current as ComponentActivity
-    val haptic = LocalHapticFeedback.current
+    val haptics = rememberFeldHaptics()
     val sceneVm: SceneViewModel = viewModel(activity)
     val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
     val state by vm.state.collectAsStateWithLifecycle()
@@ -86,8 +92,7 @@ fun EditorScreen(
         val reordered = state.entries.toMutableList().apply {
             add(to.index, removeAt(from.index))
         }
-
-        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        haptics.handleMove()
 
         vm.dispatch(EditorEvent.ReorderEntries(reordered))
     }
@@ -105,19 +110,22 @@ fun EditorScreen(
             metaEnd = "DIALOGUE SCENE",
             navIcon = null,
             seed = 3,
+            onTitleChange = {
+                vm.dispatch(EditorEvent.RenameScene(it.take(60)))
+            },
         )
 
         FeldToolbar(
             seed = 5,
             items = listOf(
-                FeldToolbarItem(FeldIconId.Import, "Import") {
+                FeldToolbarItem(FeldIconId.Import, "Paste") {
                     vm.dispatch(EditorEvent.OpenImportDialog)
                 },
                 FeldToolbarItem(
                     icon = FeldIconId.Play,
                     label = "Playback",
                     enabled = state.entries.isNotEmpty(),
-                    onClick = { vm.dispatch(EditorEvent.NavigateToPlayback) },
+                    onClick = { haptics.confirm(); vm.dispatch(EditorEvent.NavigateToPlayback) },
                 ),
                 FeldToolbarItem(FeldIconId.Settings, "Settings", onClick = onNavigateToSettings),
             ),
@@ -142,7 +150,7 @@ fun EditorScreen(
                         ReorderableItem(reorderState, key = entry.id) { isDragging ->
                             LaunchedEffect(isDragging) {
                                 if (isDragging) {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    haptics.thud()
                                 }
                             }
 
@@ -154,7 +162,7 @@ fun EditorScreen(
                                     seed = entry.id.hashCode(),
                                     isDragging = isDragging,
                                     onClick = { vm.dispatch(EditorEvent.RequestEditEntry(entry)) },
-                                    onMore = { menuEntryId = entry.id },
+                                    onMore = { haptics.tick(); menuEntryId = entry.id },
                                     dragHandle = {
                                         Box(
                                             Modifier
@@ -186,7 +194,11 @@ fun EditorScreen(
                                         text = { Text("Delete") },
                                         onClick = {
                                             menuEntryId = null
-                                            vm.dispatch(EditorEvent.DeleteEntry(entry.id))
+                                            haptics.thud(); vm.dispatch(
+                                            EditorEvent.DeleteEntry(
+                                                entry.id
+                                            )
+                                        )
                                         },
                                     )
                                 }
@@ -197,7 +209,7 @@ fun EditorScreen(
             }
 
             FeldFab(
-                onClick = { vm.dispatch(EditorEvent.RequestAddEntry) },
+                onClick = { haptics.tick(); vm.dispatch(EditorEvent.RequestAddEntry) },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
@@ -224,7 +236,7 @@ fun EditorScreen(
             text = state.importText,
             preview = state.importPreview,
             onText = { vm.dispatch(EditorEvent.ImportTextChanged(it)) },
-            onConfirm = { vm.dispatch(EditorEvent.ConfirmImport) },
+            onConfirm = { haptics.confirm(); vm.dispatch(EditorEvent.ConfirmImport) },
             onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) },
         )
     }
@@ -270,9 +282,10 @@ private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
     ) {
         Text(
             "NO DIALOGUE ENTRIES YET.",
-            style = MaterialTheme.typography.labelSmall,
+            style = typography.labelSmall,
             color = colorScheme.onSurface.copy(alpha = 0.6f),
         )
-        FeldButton("Bulk import", onClick = onImport, seed = 4)
+        FeldButton("Bulk paste", onClick = onImport, seed = 4)
+        Spacer(Modifier.height(14.dp))
     }
 }
