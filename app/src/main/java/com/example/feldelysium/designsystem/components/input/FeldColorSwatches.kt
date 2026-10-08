@@ -2,7 +2,9 @@ package com.example.feldelysium.designsystem.components.input
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -62,20 +64,45 @@ fun FeldColorSwatches(
     onSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
     seed: Int = 0,
+    columns: Int = colors.size.coerceAtLeast(1),
+    minRows: Int = 1,
 ) {
-    Row(
+    val cols = columns.coerceAtLeast(1)
+    val rows = colors.chunked(cols)
+    val totalRows = maxOf(rows.size, minRows)
+
+    Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        colors.forEachIndexed { i, argb ->
-            val shape = remember(seed, i) { RoughShape(seed + i * 5, CleanRound) }
-            Box(
-                Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
-                    .paperMaterial(shape, swatchSpec(argb, selected = argb == selected))
-                    .feldClickable(role = Role.RadioButton, onClick = { onSelect(argb) }),
-            )
+        repeat(totalRows) { r ->
+            val rowColors = rows.getOrNull(r).orEmpty()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                repeat(cols) { c ->
+                    val argb = rowColors.getOrNull(c)
+                    if (argb == null) {
+                        Spacer(
+                            Modifier
+                                .weight(1f)
+                                .aspectRatio(1f),
+                        )
+                    } else {
+                        val shape = remember(seed, r, c) {
+                            RoughShape(seed + (r * cols + c) * 5, CleanRound)
+                        }
+                        Box(
+                            Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .paperMaterial(shape, swatchSpec(argb, selected = argb == selected))
+                                .feldClickable(role = Role.RadioButton, onClick = { onSelect(argb) }),
+                        )
+                    }
+                }
+            }
         }
     }
 }

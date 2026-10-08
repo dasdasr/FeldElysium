@@ -37,10 +37,15 @@ class EditorViewModel(
         sceneViewModel.state
             .onEach { sceneState ->
                 _state.update { editor ->
+                    val speakers = sceneState.allSpeakers
+                    fun Speaker.fresh(): Speaker = speakers.firstOrNull { it.id == id } ?: this
+
                     editor.copy(
                         entries = sceneState.scene.entries,
-                        allSpeakers = sceneState.allSpeakers,
-                        sceneName = sceneState.scene.title
+                        allSpeakers = speakers,
+                        sceneName = sceneState.scene.title,
+                        editingEntry = editor.editingEntry?.let { it.copy(speaker = it.speaker.fresh()) },
+                        pendingSpeaker = editor.pendingSpeaker?.fresh(),
                     )
                 }
             }
@@ -53,12 +58,33 @@ class EditorViewModel(
             it.copy(isSpeakerPickerOpen = true)
         }
 
+        EditorEvent.RequestChangeSpeaker -> _state.update {
+            it.copy(isSpeakerPickerOpen = true, isChangingSpeaker = true)
+        }
+
         is EditorEvent.SelectSpeakerForNewEntry -> _state.update {
-            it.copy(
-                pendingSpeaker = event.speaker,
-                isSpeakerPickerOpen = false,
-                isEntryEditOpen = true
-            )
+            if (it.isChangingSpeaker) {
+                val editing = it.editingEntry
+                if (editing != null) {
+                    it.copy(
+                        editingEntry = editing.copy(speaker = event.speaker),
+                        isSpeakerPickerOpen = false,
+                        isChangingSpeaker = false,
+                    )
+                } else {
+                    it.copy(
+                        pendingSpeaker = event.speaker,
+                        isSpeakerPickerOpen = false,
+                        isChangingSpeaker = false,
+                    )
+                }
+            } else {
+                it.copy(
+                    pendingSpeaker = event.speaker,
+                    isSpeakerPickerOpen = false,
+                    isEntryEditOpen = true
+                )
+            }
         }
 
         is EditorEvent.ConfirmNewEntry -> {
@@ -133,7 +159,9 @@ class EditorViewModel(
         EditorEvent.ConfirmImport -> handleImport()
 
         EditorEvent.OpenSpeakerPicker -> _state.update { it.copy(isSpeakerPickerOpen = true) }
-        EditorEvent.CloseSpeakerPicker -> _state.update { it.copy(isSpeakerPickerOpen = false) }
+        EditorEvent.CloseSpeakerPicker -> _state.update {
+            it.copy(isSpeakerPickerOpen = false, isChangingSpeaker = false)
+        }
 
         EditorEvent.NavigateToPlayback -> viewModelScope.launch {
             _effects.send(EditorEffect.NavigateToPlayback)

@@ -290,8 +290,9 @@ fun RoughShape.buildInkLayers(
     }
 }
 
-fun DrawScope.drawInk(layers: List<InkLayer>, brush: Brush) {
-    for (layer in layers) drawPath(layer.path, brush, alpha = layer.alpha)
+fun DrawScope.drawInk(layers: List<InkLayer>, brush: Brush, alpha: Float = 1f) {
+    if (alpha <= 0f) return
+    for (layer in layers) drawPath(layer.path, brush, alpha = layer.alpha * alpha)
 }
 
 private fun Path.catmullRomTo(k: List<Knot>) {

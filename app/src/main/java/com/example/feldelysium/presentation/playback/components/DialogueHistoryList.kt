@@ -123,7 +123,7 @@ fun DialogueHistoryList(
     }
 }
 
-// Shared scroll offset for the dialogue column and tape background.
+// Shared scroll offset for the dialogue column and tape background
 private class ColumnScrollAnchor(
     private val scope: CoroutineScope,
 ) {

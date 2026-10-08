@@ -28,13 +28,6 @@ val DiscoTypography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 1.2.sp,
     ),
-    labelLarge = TextStyle(
-        fontFamily = BebasNeue,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 1.6.sp,
-    ),
     bodyMedium = TextStyle(
         fontSize = 16.sp,
         fontFamily = SinaNova,
@@ -42,8 +35,29 @@ val DiscoTypography = Typography(
         fontWeight = FontWeight.Normal,
         letterSpacing = 0.1.sp,
     ),
-    labelSmall = TextStyle(
+    bodySmall = TextStyle(
         fontSize = 14.sp,
+        fontFamily = SinaNova,
+        lineHeight = 18.sp,
+        fontWeight = FontWeight.SemiBold,
+        letterSpacing = 0.1.sp,
+    ),
+    labelLarge = TextStyle(
+        fontFamily = BebasNeue,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 1.6.sp,
+    ),
+    labelMedium = TextStyle(
+        fontFamily = BebasNeue,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 1.2.sp,
+    ),
+    labelSmall = TextStyle(
+        fontSize = 12.sp,
         fontFamily = SinaNova,
         letterSpacing = 1.5.sp,
         fontWeight = FontWeight.Bold

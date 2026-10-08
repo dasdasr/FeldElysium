@@ -54,7 +54,6 @@ class SceneViewModel : ViewModel() {
         )
 
         is SceneAction.AddCustomSpeaker -> {
-            // Enforce type — prevents caller bugs from leaking wrong type into state
             val custom = action.speaker.copy(type = SpeakerType.CUSTOM)
             current.copy(customSpeakers = current.customSpeakers + custom)
         }

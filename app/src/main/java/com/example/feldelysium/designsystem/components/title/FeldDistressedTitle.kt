@@ -46,7 +46,7 @@ fun FeldDistressedTitle(
     spec: DistressedTitleSpec = FeldDistressedTitles.Small,
     textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     textAlign: TextAlign? = null,
-
+    showOutline: Boolean = false,
     roughness: Float = 1f,
     roughnessSize: Float = 1f,
     strength: Float = 1f,
@@ -88,16 +88,18 @@ fun FeldDistressedTitle(
                 stroke = true,
             )
         ) {
-            Text(
-                text = upper,
-                style = style.copy(
-                    drawStyle = Stroke(
-                        width = strokePx * 2f,
-                        join = StrokeJoin.Round,
+            if (showOutline) {
+                Text(
+                    text = upper,
+                    style = style.copy(
+                        drawStyle = Stroke(
+                            width = strokePx * 2f,
+                            join = StrokeJoin.Round,
+                        ),
                     ),
-                ),
-                textAlign = textAlign,
-            )
+                    textAlign = textAlign,
+                )
+            }
 
             Text(
                 text = upper,
@@ -132,7 +134,7 @@ object FeldDistressedTitles {
 
     val Small = DistressedTitleSpec(
         color = Color(0xFF1B1612),
-        edgeBand = 9.dp,
+        edgeBand = 3.dp,
         edgeBias = 0.5f,
         chipSize = 5.dp,
         chipCoverage = 0.42f,
@@ -140,14 +142,14 @@ object FeldDistressedTitles {
         scratchStrength = 0.75f,
         scuffStrength = 0.7f,
         speckStrength = 0.8f,
-        grainStrength = 0.2f,
+        grainStrength = 0.6f,
         strokeWidth = 0.8.dp,
-        strokeBreak = 0.4f,
+        strokeBreak = 0.9f,
     )
 
     val Large = DistressedTitleSpec(
         color = Color(0xFFE6DCC4),
-        edgeBand = 18.dp,
+        edgeBand = 9.dp,
         edgeBias = 0.6f,
         chipSize = 9.dp,
         chipCoverage = 0.55f,

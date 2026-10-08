@@ -8,15 +8,20 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
+import androidx.compose.ui.graphics.lerp as lerpColor
 import com.example.feldelysium.designsystem.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.material.agsl.PAPER_AGSL
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.buildInkLayers
 import com.example.feldelysium.designsystem.shape.drawInk
+import kotlin.math.PI
+import kotlin.math.sin
 
 @Immutable
 data class PaperSpec(
@@ -237,6 +242,88 @@ fun Modifier.paperMaterial(
                 this@onDrawWithContent.drawContent()
             }
             drawInk(inkLayers, inkBrush)
+        }
+    }
+}
+
+fun Modifier.paperMaterialMorph(
+    shape: RoughShape,
+    from: PaperSpec,
+    to: PaperSpec,
+    progress: () -> Float,
+    wearBump: Float = 0.15f,
+): Modifier = drawWithCache {
+    val path = shape.buildPath(size, this)
+    val inkLayers = if (from.inkWidth.value > 0f)
+        shape.buildInkLayers(path, this, from.inkWidth.toPx()) else emptyList()
+    val seed = shape.seed.mod(97).toFloat()
+    val rim = shape.rimPx(this)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val paper = RuntimeShader(PAPER_AGSL).apply {
+            setFloatUniform("size", size.width, size.height)
+            setFloatUniform("seed", seed)
+            setFloatUniform("rim", rim)
+            setFloatUniform("chipScale", lerp(from.chipSize.toPx(), to.chipSize.toPx(), 0.5f))
+            setFloatUniform("mottleScale", lerp(from.mottleSize.toPx(), to.mottleSize.toPx(), 0.5f))
+            setFloatUniform("grainScale", lerp(from.grainSize.toPx(), to.grainSize.toPx(), 0.5f))
+            setFloatUniform("press", 0f)
+            setFloatUniform("time", 0f)
+        }
+        val ink = RuntimeShader(INK_AGSL).apply {
+            setFloatUniform("seed", seed)
+            setFloatUniform("grainScale", from.inkGrainSize.toPx())
+            setFloatUniform("minAlpha", from.inkMinAlpha)
+            setFloatUniform("contrast", from.inkContrast)
+            setColorUniform("inkColor", from.ink.toArgb())
+        }
+        val paperBrush = ShaderBrush(paper)
+        val inkBrush = ShaderBrush(ink)
+
+        onDrawWithContent {
+            val t = progress().coerceIn(0f, 1f)
+            val bump = sin(PI.toFloat() * t)
+
+            fun f(name: String, a: Float, b: Float) =
+                paper.setFloatUniform(name, lerp(a, b, t))
+            fun px(name: String, a: Dp, b: Dp) =
+                paper.setFloatUniform(name, lerp(a.toPx(), b.toPx(), t))
+
+            f("wear", from.wear, to.wear)
+            paper.setFloatUniform("wear", lerp(from.wear, to.wear, t) + bump * wearBump)
+            f("edgeWear", from.edgeWear, to.edgeWear)
+            px("band", from.edgeBand, to.edgeBand)
+            f("chipCoverage", from.chipCoverage, to.chipCoverage)
+            f("innerWear", from.innerWear, to.innerWear)
+            f("maxLoss", from.maxLoss, to.maxLoss)
+            f("scuffTint", from.scuffTint, to.scuffTint)
+            f("mottleStrength", from.mottleStrength, to.mottleStrength)
+            f("grainStrength", from.grainStrength, to.grainStrength)
+            f("colorGrain", from.colorGrain, to.colorGrain)
+            f("toothStrength", from.toothStrength, to.toothStrength)
+            f("speckleStrength", from.speckleStrength, to.speckleStrength)
+            f("edgeShade", from.edgeShade, to.edgeShade)
+            f("pressShade", from.pressShade, to.pressShade)
+            px("sinkBand", from.sinkBand, to.sinkBand)
+            f("sinkShade", from.sinkShade, to.sinkShade)
+            paper.setColorUniform("baseColor", lerpColor(from.base, to.base, t).toArgb())
+            paper.setColorUniform("scuffColor", lerpColor(from.scuff, to.scuff, t).toArgb())
+
+            clipPath(path) {
+                drawRect(paperBrush)
+                this@onDrawWithContent.drawContent()
+            }
+            drawInk(inkLayers, inkBrush, alpha = 1f - t)
+        }
+    } else {
+        val inkBrush = SolidColor(from.ink)
+        onDrawWithContent {
+            val t = progress().coerceIn(0f, 1f)
+            clipPath(path) {
+                drawRect(lerpColor(from.base, to.base, t))
+                this@onDrawWithContent.drawContent()
+            }
+            drawInk(inkLayers, inkBrush, alpha = 1f - t)
         }
     }
 }

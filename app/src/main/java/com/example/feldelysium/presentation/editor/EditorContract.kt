@@ -20,6 +20,7 @@ data class EditorUiState(
     val importPreview: ImportPreview? = null,
 
     val editingSpeaker: Speaker? = null,
+    val isChangingSpeaker: Boolean = false,
 )
 
 data class ImportPreview(
@@ -59,6 +60,7 @@ sealed class EditorEvent {
 
     data object OpenSpeakerPicker : EditorEvent()
     data object CloseSpeakerPicker : EditorEvent()
+    data object RequestChangeSpeaker : EditorEvent()
 
     data object NavigateToPlayback : EditorEvent()
     data class RenameScene(val name: String) : EditorEvent()

@@ -41,7 +41,6 @@ object PlaybackMotion {
     const val CONTINUE_GAP_FRACTION = 0.03f
     const val CONTINUE_HEIGHT_FRACTION = 0.05f
 
-    // Keeps short dialogues anchored while longer ones scroll only when needed
     val scrollPolicy: PlaybackScrollPolicy = PlaybackScrollPolicy.ReturnToRestAnchor
 }
 

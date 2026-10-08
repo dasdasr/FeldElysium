@@ -2,6 +2,9 @@ package com.example.feldelysium.presentation.settings
 
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,6 +52,15 @@ fun SettingsScreen(
     val settings by vm.state.collectAsStateWithLifecycle()
     var showPlaybackUiText by remember { mutableStateOf(false) }
     var showBackground by remember { mutableStateOf(false) }
+    var leaving by remember { mutableStateOf(false) }
+    BackHandler(enabled = !leaving) { leaving = true }
+    LaunchedEffect(leaving) {
+        if (leaving) {
+            withFrameNanos { }
+            withFrameNanos { }
+            onNavigateBack()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -60,7 +72,7 @@ fun SettingsScreen(
             title = "App settings",
             eyebrow = "Settings",
             subtitle = "Tune your scenes. Keep the vibe.",
-            onNav = onNavigateBack,
+            onNav = { leaving = true },
             seed = 4,
         )
 
@@ -103,6 +115,7 @@ fun SettingsScreen(
                 FeldBackgroundRow(
                     settings = settings,
                     currentLabel = backgroundLabel(settings),
+                    freezeVideo = leaving,
                     onClick = { showBackground = true },
                 )
             }
