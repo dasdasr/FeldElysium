@@ -126,5 +126,5 @@ data class EggConfig(
     val maxPerWindow: Int = 3,
     val window: Duration = 60.seconds,
     val rollGap: Duration = 10.seconds,
-    val toastDurationMillis: Long = 3800L,
+    val toastDurationMillis: Long = 5500L,
 )

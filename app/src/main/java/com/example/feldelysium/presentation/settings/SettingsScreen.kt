@@ -36,13 +36,15 @@ import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.rememberFeldHaptics
-import com.example.feldelysium.designsystem.components.settings.FeldBackgroundRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsSection
 import com.example.feldelysium.eggs.LocalEasterEggs
+import com.example.feldelysium.presentation.settings.components.BackgroundPickerDialog
+import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
+import com.example.feldelysium.presentation.settings.components.PlaybackUiTextDialog
 
 private const val PlaybackFontName = "Sina Nova Regular"
 
@@ -80,7 +82,6 @@ fun SettingsScreen(
             eyebrow = "Settings",
             subtitle = "Tune your scenes. Keep the vibe.",
             onNav = { leaving = true },
-            seed = 4,
         )
 
         Column(
@@ -89,7 +90,7 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
                 .navigationBarsPadding(),
         ) {
-            FeldSettingsSection(title = "Playback", seed = 11) {
+            FeldSettingsSection(title = "Playback") {
                 FeldSettingSwitchRow(
                     icon = Icons.Filled.AspectRatio,
                     title = "Cinema frame",
@@ -99,9 +100,8 @@ fun SettingsScreen(
                         eggs?.report("switch.toggle", "Cinema frame")
                         vm.dispatch(SettingsEvent.SetLockAspectRatio16x9(it))
                     },
-                    seed = 21,
                 )
-                FeldSettingsDivider(seed = 101)
+                FeldSettingsDivider()
                 FeldSettingRow(
                     icon = Icons.Filled.ViewDay,
                     title = "Status line",
@@ -109,7 +109,7 @@ fun SettingsScreen(
                     showChevron = true,
                     onClick = { haptics.tick(); showPlaybackUiText = true },
                 )
-                FeldSettingsDivider(seed = 102)
+                FeldSettingsDivider()
                 FeldSettingValueRow(
                     icon = Icons.Filled.TextFields,
                     title = "Typeface",
@@ -119,7 +119,7 @@ fun SettingsScreen(
                 )
             }
 
-            FeldSettingsSection(title = "Background", seed = 12) {
+            FeldSettingsSection(title = "Background") {
                 FeldBackgroundRow(
                     settings = settings,
                     currentLabel = backgroundLabel(settings),
@@ -128,7 +128,7 @@ fun SettingsScreen(
                 )
             }
 
-            FeldSettingsSection(title = "Coming soon", seed = 13) {
+            FeldSettingsSection(title = "Coming soon") {
                 SoonTap("Autoplay") {
                     FeldSettingSwitchRow(
                         icon = Icons.Filled.PlayArrow,
@@ -137,11 +137,10 @@ fun SettingsScreen(
                         checked = false,
                         onCheckedChange = {},
                         enabled = false,
-                        seed = 22,
                     )
                 }
 
-                FeldSettingsDivider(seed = 104)
+                FeldSettingsDivider()
 
                 SoonTap("Line delay") {
                     FeldSettingValueRow(
@@ -153,7 +152,7 @@ fun SettingsScreen(
                     )
                 }
 
-                FeldSettingsDivider(seed = 105)
+                FeldSettingsDivider()
 
                 SoonTap("Status icons") {
                     FeldSettingRow(

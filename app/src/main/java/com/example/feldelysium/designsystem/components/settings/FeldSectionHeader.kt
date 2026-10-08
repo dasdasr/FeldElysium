@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.FeldDivider
 import com.example.feldelysium.designsystem.components.feldClickable
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.seed.rememberSeed
 
 private val HeaderTagStyle: TextStyle
     @Composable get() = MaterialTheme.typography.labelLarge.copy(
@@ -29,7 +30,7 @@ private val HeaderTagStyle: TextStyle
 fun FeldSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     tagDrop: Dp = 10.dp,
     onClick: (() -> Unit)? = null,
     trailing: (@Composable RowScope.() -> Unit)? = null,

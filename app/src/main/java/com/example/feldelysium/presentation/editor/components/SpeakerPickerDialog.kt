@@ -129,7 +129,6 @@ fun SpeakerPickerDialog(
                 subtitle = "Select who will say this line.",
                 navIcon = FeldIconId.Close,
                 onNav = onDismiss,
-                seed = 7,
             )
 
             SearchField(value = query, onValueChange = { query = it })
@@ -246,7 +245,7 @@ private fun SearchField(value: String, onValueChange: (String) -> Unit) {
                 },
             )
         }
-        FeldDivider(modifier = Modifier.padding(horizontal = 16.dp), seed = 71)
+        FeldDivider(modifier = Modifier.padding(horizontal = 16.dp))
     }
 }
 
@@ -296,7 +295,7 @@ private fun SpeakerRow(
                 modifier = Modifier.size(22.dp),
             )
         }
-        FeldSettingsDivider(seed = speaker.id.hashCode() + 3)
+        FeldSettingsDivider()
     }
 }
 

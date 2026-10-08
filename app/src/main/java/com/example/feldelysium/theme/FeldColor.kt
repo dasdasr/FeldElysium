@@ -2,10 +2,10 @@ package com.example.feldelysium.theme
 
 import androidx.compose.ui.graphics.Color
 
-val DiscoBackground = Color(0xFF0C1212)
-val DiscoSurface = Color(0xFF141C1C)
-val DiscoSurfaceHigh = Color(0xFF1F2929)
-val DiscoOutline = Color(0xFF666866)
+val FeldBackground = Color(0xFF0C1212)
+val FeldSurface = Color(0xFF141C1C)
+val FeldSurfaceHigh = Color(0xFF1F2929)
+val FeldOutline = Color(0xFF666866)
 
 val DiscoText = Color(0xFFE9EAEC)
 val DiscoTextMuted = Color(0xFF8C8E8A)

@@ -38,11 +38,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.FeldDiamond
 import com.example.feldelysium.designsystem.components.FeldIcon
-import com.example.feldelysium.designsystem.components.FeldIconButton
+import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.FeldIconId
 import com.example.feldelysium.designsystem.components.FeldPalette
 import com.example.feldelysium.designsystem.material.DryPaperSpec
 import com.example.feldelysium.designsystem.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.delay
@@ -69,7 +70,7 @@ fun FeldEntryCard(
     speakerColor: Color,
     text: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     isDragging: Boolean = false,
     onClick: (() -> Unit)? = null,
     onMore: (() -> Unit)? = null,
@@ -154,7 +155,6 @@ fun FeldEntryCard(
                 transformOrigin = TransformOrigin(0.92f, 0.85f)
                 rotationZ = sway.angle
             },
-        seed = seed + seedShift,
         rough = rough,
         contentPadding = PaddingValues(0.dp),
         onClick = onClick,
@@ -181,7 +181,7 @@ fun FeldEntryCard(
                 Column(Modifier.weight(1f)) {
                     Text(
                         text = speakerName.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelMedium,
                         color = speakerColor,
                     )
                     Text(
@@ -215,17 +215,17 @@ private fun FeldEntryCardPreview() {
             FeldEntryCard(
                 "Logic", Color(0xFF4FB3A6),
                 "Let's be precise. What do you actually remember about that night?",
-                seed = 1, onClick = {}, onMore = {},
+                onClick = {}, onMore = {},
             )
             FeldEntryCard(
                 "Harry", Color(0xFFE45720),
                 "I remember the cold. And the taste of cheap whiskey.",
-                seed = 2, onClick = {}, onMore = {},
+                onClick = {}, onMore = {},
             )
             FeldEntryCard(
                 "Empathy", Color(0xFF8F6FD6),
                 "You're not just tired, you're scared. That's different.",
-                seed = 3, isDragging = true, onMore = {},
+                isDragging = true, onMore = {},
             )
         }
     }

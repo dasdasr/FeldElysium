@@ -13,7 +13,7 @@ import com.example.feldelysium.R
 private val SinaNova = FontFamily(Font(R.font.sina_nova_regular))
 private val BebasNeue = FontFamily(Font(R.font.bebas_neue_regular, FontWeight.Normal))
 
-val DiscoTypography = Typography(
+val FeldTypography = Typography(
     titleLarge = TextStyle(
         fontFamily = BebasNeue,
         fontWeight = FontWeight.Normal,
@@ -29,7 +29,7 @@ val DiscoTypography = Typography(
         letterSpacing = 1.2.sp,
     ),
     bodyMedium = TextStyle(
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         fontFamily = SinaNova,
         lineHeight = 20.sp,
         fontWeight = FontWeight.Normal,
@@ -52,7 +52,7 @@ val DiscoTypography = Typography(
     labelMedium = TextStyle(
         fontFamily = BebasNeue,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         lineHeight = 20.sp,
         letterSpacing = 1.2.sp,
     ),

@@ -1,4 +1,4 @@
-package com.example.feldelysium.presentation.settings
+package com.example.feldelysium.presentation.settings.components
 
 import android.graphics.Color.HSVToColor
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -58,7 +58,7 @@ import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.paperMaterial
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
-import com.example.feldelysium.presentation.playback.BackgroundVideo
+import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 
 private val Presets = listOf(
     0xFF00B140L,
@@ -105,13 +105,11 @@ fun BackgroundPickerDialog(
         eyebrow = if (animated) "Animated" else "Plain",
         subtitle = "Set a visual tone for your scene.",
         onDismiss = onDismiss,
-        seed = 6,
         footer = {
             FeldDialogFooter(
                 onReset = onReset,
                 onCancel = onDismiss,
                 confirmLabel = "Save",
-                seed = 8,
             )
         },
     ) {
@@ -119,7 +117,6 @@ fun BackgroundPickerDialog(
             options = listOf("Media", "Color"),
             selectedIndex = if (isMedia) 0 else 1,
             onSelect = { onKind(if (it == 0) BackgroundKind.MEDIA else BackgroundKind.COLOR) },
-            seed = 2,
         )
         Spacer(Modifier.height(16.dp))
 
@@ -150,7 +147,7 @@ private fun MediaPane(
         Spacer(Modifier.height(12.dp))
 
         if (video) {
-            FeldDivider(seed = 38)
+            FeldDivider()
             FeldSettingRow(
                 icon = Icons.Filled.VolumeOff,
                 title = "Mute sound",
@@ -162,11 +159,10 @@ private fun MediaPane(
                     FeldSwitch(
                         checked = !settings.backgroundVideoSound,
                         onCheckedChange = null,
-                        seed = 23,
                     )
                 },
             )
-            FeldDivider(seed = 39)
+            FeldDivider()
             FeldSettingRow(
                 icon = Icons.Filled.FitScreen,
                 title = "Fill screen",
@@ -178,13 +174,12 @@ private fun MediaPane(
                     FeldSwitch(
                         checked = settings.backgroundVideoFill,
                         onCheckedChange = null,
-                        seed = 24,
                     )
                 },
             )
         }
 
-        FeldDivider(seed = 41)
+        FeldDivider()
         FeldSettingRow(
             icon = Icons.Filled.VideoLibrary,
             title = "Video",
@@ -193,7 +188,7 @@ private fun MediaPane(
             contentPadding = rowPadding,
             onClick = { videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly)) },
         )
-        FeldDivider(seed = 42)
+        FeldDivider()
         FeldSettingRow(
             icon = Icons.Filled.AddPhotoAlternate,
             title = "Image",
@@ -202,7 +197,7 @@ private fun MediaPane(
             contentPadding = rowPadding,
             onClick = { imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
         )
-        FeldDivider(seed = 43)
+        FeldDivider()
     }
 }
 
@@ -345,20 +340,17 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             },
             onValueChangeFinished = { commit() },
             valueRange = 0f..360f,
-            seed = 3,
         )
         FeldSlider(
             value = bri,
             onValueChange = { bri = it },
             onValueChangeFinished = { commit() },
-            seed = 4,
         )
         Spacer(Modifier.height(12.dp))
         FeldColorSwatches(
             colors = Presets,
             selected = argb,
             onSelect = onColor,
-            seed = 20,
         )
     }
 }

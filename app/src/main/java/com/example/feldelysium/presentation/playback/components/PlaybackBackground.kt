@@ -1,4 +1,4 @@
-package com.example.feldelysium.presentation.playback
+package com.example.feldelysium.presentation.playback.components
 
 import android.media.MediaPlayer
 import android.net.Uri

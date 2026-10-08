@@ -45,6 +45,7 @@ import com.example.feldelysium.designsystem.components.feldClickable
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import kotlinx.coroutines.Dispatchers
@@ -107,13 +108,11 @@ fun ChooseIconDialog(
         eyebrow = "Speaker icon",
         subtitle = "Pick a picture for the speaker.",
         onDismiss = onDismiss,
-        seed = 24,
         footer = {
             FeldDialogActions(
                 confirmLabel = "Confirm",
                 onConfirm = { onConfirm(resId, uri) },
                 onCancel = onDismiss,
-                seed = 12,
             )
         },
     ) {
@@ -129,14 +128,12 @@ fun ChooseIconDialog(
                     val tileModifier = Modifier
                         .weight(1f)
                         .aspectRatio(0.8f)
-                    val seed = r * Columns + c + 1
 
                     when (tile) {
                         null -> Spacer(tileModifier)
 
                         IconTile.Add -> TileBox(
                             modifier = tileModifier,
-                            seed = seed,
                             spec = FeldPaper.DryButtonCream,
                             onClick = {
                                 picker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
@@ -166,7 +163,6 @@ fun ChooseIconDialog(
 
                         is IconTile.Custom -> TileBox(
                             modifier = tileModifier,
-                            seed = seed,
                             spec = selectedSpec(true),
                             onClick = { uri = null },
                         ) {
@@ -184,7 +180,6 @@ fun ChooseIconDialog(
                             val selected = resId == tile.id && uri == null
                             TileBox(
                                 modifier = tileModifier,
-                                seed = seed,
                                 spec = selectedSpec(selected),
                                 onClick = {
                                     resId = if (selected) null else tile.id
@@ -214,11 +209,11 @@ private fun selectedSpec(selected: Boolean): PaperSpec =
 @Composable
 private fun TileBox(
     modifier: Modifier,
-    seed: Int,
     spec: PaperSpec,
     onClick: () -> Unit,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val seed = rememberSeed()
     val shape = remember(seed) { RoughShape(seed * 3 + 1, TileRough) }
     Box(
         modifier = modifier

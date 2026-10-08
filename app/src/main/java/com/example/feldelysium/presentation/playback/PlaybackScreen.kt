@@ -53,6 +53,7 @@ import com.example.feldelysium.presentation.playback.components.LatestSpeakerPor
 import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.eggs.LocalEasterEggs
+import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen

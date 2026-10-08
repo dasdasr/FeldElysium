@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.material.DryPaperSpec
 import com.example.feldelysium.designsystem.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 object FeldButtonDefaults {
@@ -53,7 +54,7 @@ fun FeldButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: DryPaperSpec = FeldButtonDefaults.Cream,
     contentColor: Color = FeldButtonDefaults.InkDark,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge.copy(

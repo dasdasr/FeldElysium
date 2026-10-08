@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.feldClickable
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.paperMaterial
+import com.example.feldelysium.designsystem.seed.rememberSeed
 import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import kotlin.math.abs
@@ -58,8 +59,8 @@ fun FeldSegmentedControl(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
 ) {
+    val seed = rememberSeed()
     val count = options.size.coerceAtLeast(1)
     val trackShape = remember(seed) { RoughShape(seed, TrackRough) }
 
@@ -74,7 +75,7 @@ fun FeldSegmentedControl(
 
     val pillShape = remember(seed, leftRound, rightRound) {
         RoughShape(
-            seed = seed + 1,
+            seed = seed,
             style = PillRough.copy(leftCornerScale = leftRound, rightCornerScale = rightRound),
         )
     }

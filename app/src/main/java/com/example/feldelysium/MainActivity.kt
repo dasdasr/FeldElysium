@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.example.feldelysium.designsystem.seed.ProvideSeedScope
 import com.example.feldelysium.eggs.EggToastHost
 import com.example.feldelysium.eggs.EggsViewModel
 import com.example.feldelysium.eggs.LocalEasterEggs
@@ -25,7 +26,9 @@ class MainActivity : ComponentActivity() {
 
     private val eggsVm: EggsViewModel by viewModels()
 
-    companion object { private const val SHOW_PLAYGROUND = true }
+    companion object {
+        private const val SHOW_PLAYGROUND = false
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,25 +39,27 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DiscoDialogueTheme {
-                val eggs = eggsVm.eggs
+                ProvideSeedScope {
+                    val eggs = eggsVm.eggs
 
-                LaunchedEffect(eggs) {
-                    if (savedInstanceState == null) {
-                        eggs.awaitReady()
-                        eggs.report("app.open")
+                    LaunchedEffect(eggs) {
+                        if (savedInstanceState == null) {
+                            eggs.awaitReady()
+                            eggs.report("app.open")
+                        }
                     }
-                }
 
-                CompositionLocalProvider(LocalEasterEggs provides eggs) {
-                    if (SHOW_PLAYGROUND) {
-                        DesignSystemPlayground()
-                    } else {
-                        Box(Modifier.fillMaxSize()) {
-                            Surface(
-                                modifier = Modifier.fillMaxSize(),
-                                color = MaterialTheme.colorScheme.background
-                            ) { AppNavGraph() }
-//                            EggToastHost(eggs)
+                    CompositionLocalProvider(LocalEasterEggs provides eggs) {
+                        if (SHOW_PLAYGROUND) {
+                            DesignSystemPlayground()
+                        } else {
+                            Box(Modifier.fillMaxSize()) {
+                                Surface(
+                                    modifier = Modifier.fillMaxSize(),
+                                    color = MaterialTheme.colorScheme.background
+                                ) { AppNavGraph() }
+                                EggToastHost(eggs)
+                            }
                         }
                     }
                 }

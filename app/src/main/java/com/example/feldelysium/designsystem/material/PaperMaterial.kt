@@ -53,8 +53,8 @@ data class PaperSpec(
 
     val inkWidth: Dp = 1.1.dp,
     val inkGrainSize: Dp = 18.dp,
-    val inkMinAlpha: Float = 0.35f,
-    val inkContrast: Float = 3.0f,
+    val inkMinAlpha: Float = 0.25f,
+    val inkContrast: Float = 1.8f,
 
     val crackStrength: Float = 0f,
     val crackDensity: Float = 0f,
@@ -81,6 +81,10 @@ object FeldPaper {
         colorGrain = 0.008f,
         toothStrength = 0.02f,
         speckleStrength = 0.03f,
+
+        inkWidth = 1.dp,
+        inkMinAlpha = 0.65f,
+        inkContrast = 1.8f,
     )
 
     val Field = Panel.copy(
@@ -164,6 +168,24 @@ object FeldPaper {
         crackDensity = 0.38f,
         crackDepth = 5.dp,
         crackWidth = 1.2.dp,
+    )
+
+    fun flat(color: Color, from: PaperSpec = Panel) = from.copy(
+        base = color,
+        scuff = color,
+        wear = 0f,
+        edgeWear = 0f,
+        innerWear = 0f,
+        maxLoss = 0f,
+        scuffTint = 0f,
+        mottleStrength = 0f,
+        grainStrength = 0f,
+        colorGrain = 0f,
+        toothStrength = 0f,
+        speckleStrength = 0f,
+        edgeShade = 0f,
+        pressShade = 0f,
+        sinkShade = 0f,
     )
 }
 

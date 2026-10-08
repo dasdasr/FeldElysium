@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.feldelysium.data.sound.SoundGroup
 import com.example.feldelysium.data.sound.SoundManager
-import com.example.feldelysium.domain.engine.PlaybackEngine
+import com.example.feldelysium.domain.playback.PlaybackEngine
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.example.feldelysium.presentation.settings
+package com.example.feldelysium.presentation.settings.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
