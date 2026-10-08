@@ -51,6 +51,7 @@ import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldFab
 import com.example.feldelysium.designsystem.components.card.FeldEntryCard
 import com.example.feldelysium.designsystem.components.rememberFeldHaptics
+import com.example.feldelysium.eggs.LocalEasterEggs
 import com.example.feldelysium.presentation.editor.components.BulkImportDialog
 import com.example.feldelysium.presentation.editor.components.CustomSpeakerDialog
 import com.example.feldelysium.presentation.editor.components.EntryEditSheet
@@ -68,6 +69,8 @@ fun EditorScreen(
 ) {
     val activity = LocalContext.current as ComponentActivity
     val haptics = rememberFeldHaptics()
+    val eggs = LocalEasterEggs.current
+
     val sceneVm: SceneViewModel = viewModel(activity)
     val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
     val state by vm.state.collectAsStateWithLifecycle()
@@ -194,11 +197,9 @@ fun EditorScreen(
                                         text = { Text("Delete") },
                                         onClick = {
                                             menuEntryId = null
-                                            haptics.thud(); vm.dispatch(
-                                            EditorEvent.DeleteEntry(
-                                                entry.id
-                                            )
-                                        )
+                                            haptics.thud()
+                                            eggs?.report("entry.delete", entry.speaker.name)
+                                            vm.dispatch(EditorEvent.DeleteEntry(entry.id))
                                         },
                                     )
                                 }
@@ -210,6 +211,11 @@ fun EditorScreen(
 
             FeldFab(
                 onClick = { haptics.tick(); vm.dispatch(EditorEvent.RequestAddEntry) },
+                onLongClick = {
+                    haptics.thud()
+                    eggs?.report("fab.longpress")
+                    vm.dispatch(EditorEvent.AddEntryWithRandomSpeaker)
+                },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp),
@@ -263,10 +269,14 @@ fun EditorScreen(
             onSpeakerClick = { vm.dispatch(EditorEvent.RequestChangeSpeaker) },
             onEditSpeaker = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
             onConfirm = { text ->
-                if (state.editingEntry != null)
-                    vm.dispatch(EditorEvent.ConfirmEditEntry(state.editingEntry!!.copy(text = text)))
-                else
+                val editing = state.editingEntry
+                if (editing != null) {
+                    eggs?.report("entry.edit", editing.speaker.name)
+                    vm.dispatch(EditorEvent.ConfirmEditEntry(editing.copy(text = text)))
+                } else {
+                    eggs?.report("entry.add", state.pendingSpeaker?.name)
                     vm.dispatch(EditorEvent.ConfirmNewEntry(text))
+                }
             },
             onDismiss = { vm.dispatch(EditorEvent.DismissEntryEdit) },
         )

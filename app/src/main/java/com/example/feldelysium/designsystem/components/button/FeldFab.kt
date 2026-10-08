@@ -2,12 +2,13 @@ package com.example.feldelysium.designsystem.components.button
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.FeldIcon
 import com.example.feldelysium.designsystem.components.FeldIconId
+import com.example.feldelysium.designsystem.components.rememberFeldHaptics
 import com.example.feldelysium.designsystem.material.FeldPaper
 import com.example.feldelysium.designsystem.material.PaperSpec
 import com.example.feldelysium.designsystem.material.paperMaterial
@@ -30,6 +32,7 @@ import com.example.feldelysium.designsystem.shape.RoughShape
 import com.example.feldelysium.designsystem.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeldFab(
     onClick: () -> Unit,
@@ -38,6 +41,7 @@ fun FeldFab(
     size: Dp = 56.dp,
     cornerFraction: Float = 0.45f,
     contentDescription: String? = null,
+    onLongClick: (() -> Unit)? = null,
     spec: PaperSpec = FeldPaper.DryButtonRust,
     content: @Composable () -> Unit = {
         FeldIcon(
@@ -47,6 +51,7 @@ fun FeldFab(
         )
     }
 ) {
+    val haptics = rememberFeldHaptics()
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val press by animateFloatAsState(if (pressed) 1f else 0f, tween(60), label = "press")
@@ -76,11 +81,20 @@ fun FeldFab(
             }
             .paperMaterial(shape = shape, spec = spec, press = { press })
             .semantics { contentDescription?.let { this.contentDescription = it } }
-            .clickable(
+            .combinedClickable(
                 interactionSource = interaction,
                 indication = null,
                 role = Role.Button,
-                onClick = onClick,
+                onClick = {
+                    haptics.tick()
+                    onClick()
+                },
+                onLongClick = onLongClick?.let { longClick ->
+                    {
+                        haptics.thud()
+                        longClick()
+                    }
+                },
             ),
         contentAlignment = Alignment.Center,
     ) {
@@ -88,21 +102,12 @@ fun FeldFab(
     }
 }
 
-@Preview(
-    widthDp = 120,
-    heightDp = 120,
-    showBackground = true,
-    backgroundColor = 0xFF0B1011
-)
+@Preview(widthDp = 220, heightDp = 120, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldFabPreview() {
     DiscoDialogueTheme {
-        Box(Modifier.wrapContentSize()) {
-            FeldFab(
-                onClick = {},
-                seed = 3,
-                contentDescription = "Add entry"
-            )
+        Box(Modifier.padding(24.dp)) {
+            FeldFab(onClick = {}, seed = 3, contentDescription = "Add entry")
         }
     }
 }

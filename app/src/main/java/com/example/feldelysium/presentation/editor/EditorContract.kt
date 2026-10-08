@@ -61,6 +61,7 @@ sealed class EditorEvent {
     data object OpenSpeakerPicker : EditorEvent()
     data object CloseSpeakerPicker : EditorEvent()
     data object RequestChangeSpeaker : EditorEvent()
+    data object AddEntryWithRandomSpeaker : EditorEvent()
 
     data object NavigateToPlayback : EditorEvent()
     data class RenameScene(val name: String) : EditorEvent()
