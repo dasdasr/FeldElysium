@@ -76,7 +76,6 @@ fun PlaybackScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val navController = rememberNavController()
 
     val eggs = LocalEasterEggs.current
     var openReported by rememberSaveable { mutableStateOf(false) }

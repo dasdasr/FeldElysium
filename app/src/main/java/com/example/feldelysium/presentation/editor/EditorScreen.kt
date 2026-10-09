@@ -2,14 +2,14 @@ package com.example.feldelysium.presentation.editor
 
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme.colorScheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,22 +30,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
-import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
-import com.example.feldelysium.designsystem.components.input.FeldTapOutsideDismiss
-import com.example.feldelysium.designsystem.components.navigation.FeldToolbar
-import com.example.feldelysium.designsystem.components.navigation.FeldToolbarItem
-import com.example.feldelysium.designsystem.components.button.FeldButton
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldFab
 import com.example.feldelysium.designsystem.components.card.FeldEntryCard
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldTapOutsideDismiss
+import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
+import com.example.feldelysium.designsystem.components.navigation.FeldToolbar
+import com.example.feldelysium.designsystem.components.navigation.FeldToolbarItem
 import com.example.feldelysium.designsystem.components.toast.FeldToastHost
 import com.example.feldelysium.designsystem.components.toast.rememberFeldToastState
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
+import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggScreen
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
@@ -288,18 +291,18 @@ fun EditorScreen(
 }
 
 @Composable
-private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-    ) {
-        Text(
-            "NO DIALOGUE ENTRIES YET.",
-            style = typography.labelSmall,
-            color = colorScheme.onSurface.copy(alpha = 0.6f),
+private fun EmptyState(
+    onImport: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Image(
+            painter = painterResource(R.drawable.empty_editor_text),
+            contentDescription = "Nothing on tape yet",
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .markerFilmMaterial(FeldMarker.Chalk, seed = 7),
         )
-        FeldButton("Bulk paste", onClick = onImport)
-        Spacer(Modifier.height(14.dp))
     }
 }

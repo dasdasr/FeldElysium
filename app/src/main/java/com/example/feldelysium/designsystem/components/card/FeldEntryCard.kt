@@ -96,7 +96,7 @@ fun FeldEntryCard(
     LaunchedEffect(isDragging) {
         if (isDragging) {
             while (true) {
-                delay(350)
+                delay(350.milliseconds)
                 tick++
             }
         } else {
@@ -104,7 +104,6 @@ fun FeldEntryCard(
         }
     }
 
-    val seedShift = if (isDragging) (tick % 3) - 1 else 0
     val jitter = if (isDragging) 2f + Random(seed * 31 + tick).nextFloat() * 4f else 0f
     val rough = remember(jitter) {
         baseRough.copy(roughness = baseRough.roughness + jitter.dp)

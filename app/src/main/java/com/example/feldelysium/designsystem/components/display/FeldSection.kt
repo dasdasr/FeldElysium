@@ -32,7 +32,6 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 fun FeldSection(
     title: String,
     modifier: Modifier = Modifier,
-    seed: Int = rememberSeed(),
     count: String? = null,
     expanded: Boolean? = null,
     onToggle: (() -> Unit)? = null,

@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.foundation.material.agsl.NOISE_LIB
 import com.example.feldelysium.designsystem.foundation.material.agsl.STICKER_TAPE_AGSL
 import kotlin.math.abs
 import kotlin.math.max

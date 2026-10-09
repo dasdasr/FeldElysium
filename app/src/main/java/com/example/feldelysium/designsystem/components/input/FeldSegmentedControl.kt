@@ -32,6 +32,7 @@ import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import kotlin.math.abs
+import androidx.compose.ui.unit.IntOffset
 
 private val TrackRough = RoughStyle(
     roughness = 0.7.dp,
@@ -91,7 +92,7 @@ fun FeldSegmentedControl(
 
         Box(
             Modifier
-                .offset(x = segmentWidth * position)
+                .offset { IntOffset((segmentWidth * position).roundToPx(), 0) }
                 .width(segmentWidth)
                 .fillMaxHeight()
                 .paperMaterial(pillShape, FeldPaper.DryButtonCream),

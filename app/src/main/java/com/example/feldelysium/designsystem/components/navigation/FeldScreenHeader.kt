@@ -78,7 +78,6 @@ fun FeldScreenHeader(
     onTitleChange: ((String) -> Unit)? = null,
     onDiamondClick: (() -> Unit)? = null,
     titlePlaceholder: String = "Untitled scene",
-    seed: Int = rememberSeed(),
     titleSpec: DistressedTitleSpec = FeldDistressedTitles.Large,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontSize = 52.sp,

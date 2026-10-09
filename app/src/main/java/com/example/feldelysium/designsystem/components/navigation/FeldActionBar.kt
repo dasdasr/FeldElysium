@@ -52,8 +52,8 @@ fun FeldActionBar(
             )
             if (hasConfirm) {
                 FeldButton(
-                    text = confirmText!!,
-                    onClick = onConfirm!!,
+                    text = confirmText,
+                    onClick = onConfirm,
                     modifier = Modifier.weight(1f),
                     spec = FeldButtonDefaults.Orange,
                     enabled = confirmEnabled,

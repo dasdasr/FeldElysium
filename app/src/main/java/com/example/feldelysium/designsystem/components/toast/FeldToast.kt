@@ -31,6 +31,7 @@ import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private val ToastRough = RoughStyle(roughness = 1.dp, corner = 3.dp, tornChance = 0.15f)
 
@@ -90,7 +91,7 @@ fun FeldToastHost(state: FeldToastState, modifier: Modifier = Modifier) {
     LaunchedEffect(message?.id) {
         message ?: return@LaunchedEffect
         last = message
-        delay(message.durationMillis)
+        delay(message.durationMillis.milliseconds)
         state.dismiss(message.id)
     }
 

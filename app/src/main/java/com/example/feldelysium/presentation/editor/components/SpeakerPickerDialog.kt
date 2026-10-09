@@ -92,22 +92,24 @@ fun SpeakerPickerDialog(
     onSpeakerSelected: (Speaker) -> Unit,
     onCreateCustom: () -> Unit,
     onEditCustom: (Speaker) -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit, modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
     var collapsed by remember { mutableStateOf(setOf<SpeakerType>()) }
 
     val q = query.trim()
-    val groups = listOf(
-        SpeakerType.SKILL to "Skills",
-        SpeakerType.NPC to "NPCs",
-        SpeakerType.CUSTOM to "Custom",
-    ).map { (type, title) ->
-        val items = speakers
-            .filter { it.type == type }
-            .filter { q.isEmpty() || it.name.contains(q, ignoreCase = true) }
-        SpeakerGroup(type, title, items)
-    }.filter { it.items.isNotEmpty() }
+    val groups = remember(speakers) {
+        listOf(
+            SpeakerType.SKILL to "Skills",
+            SpeakerType.NPC to "NPCs",
+            SpeakerType.CUSTOM to "Custom",
+        ).map { (type, title) ->
+            val items = speakers
+                .filter { it.type == type }
+                .filter { q.isEmpty() || it.name.contains(q, ignoreCase = true) }
+            SpeakerGroup(type, title, items)
+        }.filter { it.items.isNotEmpty() }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
