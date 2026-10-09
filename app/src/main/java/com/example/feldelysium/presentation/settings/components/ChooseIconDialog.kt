@@ -116,7 +116,7 @@ fun ChooseIconDialog(
             )
         },
     ) {
-        tiles.chunked(Columns).forEachIndexed { r, rowTiles ->
+        tiles.chunked(Columns).forEachIndexed { _, rowTiles ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -42,7 +42,6 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 object FeldRough {
-    val Card = RoughStyle()
     val Field = RoughStyle(
         roughness = 0.8.dp,
         step = 48.dp,
@@ -68,7 +67,12 @@ fun FeldTextField(
     enabled: Boolean = true,
     textStyle: TextStyle? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+    contentPadding: PaddingValues = PaddingValues(
+        start = 16.dp,
+        end = 16.dp,
+        top = 16.dp,
+        bottom = 16.dp
+    ),
     focusAnimation: Boolean = true,
     counterInside: Boolean = true,
     time: () -> Float = { 0f },

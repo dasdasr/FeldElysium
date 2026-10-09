@@ -3,11 +3,6 @@ package com.example.feldelysium.eggs.ui
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOutCubic
@@ -43,6 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -62,12 +57,15 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
@@ -89,6 +87,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 private val Ink = Color(0xFF131616)
 private val InkDeep = Color(0xFF0B0E0E)
@@ -188,7 +187,7 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
     val seed = remember(toast.id) { toast.id.toInt() * 31 + view.text.hashCode() }
 
     LaunchedEffect(toast.id) {
-        delay(toast.durationMillis)
+        delay(toast.durationMillis.milliseconds)
         onDismiss(toast.id)
     }
 
@@ -287,7 +286,6 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
         fade = 0f, glow = 0f, blotch = 0.05f, grain = 0.04f,
     )
     val fill = accentBrush(accent, seed, d)
-    val bandBrush = wornBrush(accent, seed + 3, d, wear = 0.3f, scale = 12f)
 
     val body = chamferRectPoints(
         Rect(0f, 0f, w, h),

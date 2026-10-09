@@ -44,6 +44,7 @@ import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.core.net.toUri
 
 @Composable
 fun FeldBackgroundRow(
@@ -126,7 +127,7 @@ private fun VideoThumbnail(uri: String, modifier: Modifier = Modifier) {
         value = withContext(Dispatchers.IO) {
             val retriever = MediaMetadataRetriever()
             try {
-                retriever.setDataSource(context, Uri.parse(uri))
+                retriever.setDataSource(context, uri.toUri())
                 val bitmap: Bitmap? =
                     retriever.getFrameAtTime(0L, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
                 bitmap?.asImageBitmap()
