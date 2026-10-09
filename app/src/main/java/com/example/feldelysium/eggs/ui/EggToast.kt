@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -93,8 +94,8 @@ private val Cream = Color(0xFFE9DFC9)
 private val CreamDim = Color(0xFF8F8B7E)
 private val TextCream = Color(0xFFEFE8D6)
 
-private val PadStart = 26.dp
-private val PadTop = 40.dp
+private val PadStart = 22.dp
+private val PadTop = 32.dp
 private val PadBottom = 24.dp
 private val ToastHeadroom = 120.dp
 private val ToastFadeDistance = 100.dp
@@ -232,30 +233,28 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
                 .fillMaxWidth()
                 .toastCard(seed, accent),
         ) {
-            Row(
-                Modifier.padding(start = 22.dp, end = 14.dp, top = 10.dp, bottom = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                Modifier.padding(start = 18.dp, end = 20.dp, top = 8.dp, bottom = 10.dp),
             ) {
-                FeldSpeakerDiamond(
-                    color = accent,
-                    size = 26.dp,
-                    seed = seed,
-                    modifier = Modifier
-                        .padding(top = 2.dp)
-                        .scale(scaleX = 1f, scaleY = 1.3f),
-                )
-                Spacer(Modifier.width(10.dp))
-                Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    FeldSpeakerDiamond(
+                        color = accent,
+                        size = 22.dp,
+                        seed = seed,
+                    )
+                    Spacer(Modifier.width(4.dp))
                     FeldTitleTag(
                         text = filmSkillLabel(view.skill.name, seed),
                         seed = seed,
                         textStyle = MaterialTheme.typography.titleMedium.copy(
                             fontSize = 20.sp,
-                            letterSpacing = 0.4.sp
-                        )
+                            letterSpacing = 0.4.sp,
+                        ),
                     )
-                    Text(
-                        text = buildAnnotatedString {
+                }
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = buildAnnotatedString {
 //                            view.check?.let {
 //                                withStyle(
 //                                    SpanStyle(
@@ -264,14 +263,12 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
 //                                    )
 //                                ) { append("$it ") }
 //                            }
-                            append(view.text)
-                        },
-                        color = TextCream,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 3,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
+                        append(view.text)
+                    },
+                    color = TextCream,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 3,
+                )
             }
         }
     }
@@ -283,89 +280,69 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
     val h = size.height
     val rnd = Random(seed)
 
-    val body = roughRectPoints(Rect(0f, 0f, w, h), 15 * d, 1.5f * d, 0.14f, rnd).toPath()
-    val band = roughRectPoints(
-        Rect(-3 * d, -2 * d, 15 * d, h + 2 * d),
-        10 * d,
-        1.1f * d,
-        0.08f,
-        rnd
+    val body = chamferRectPoints(
+        Rect(0f, 0f, w, h),
+        cutTL = 3 * d, cutTR = 6 * d, cutBR = 5 * d, cutBL = 3 * d,
+        step = 18 * d, jitter = 0.5f * d, rnd = rnd,
     ).toPath()
-    val rightBand = roughRectPoints(
-        Rect(w - 5 * d, 9 * d, w + 0.5f * d, h - 15 * d),
-        9 * d,
-        0.8f * d,
-        0.10f,
-        rnd
-    ).toPath()
-
-    val frays = ArrayList<Pair<Offset, Offset>>()
-    var x = 8 * d
-    while (x < w - 12 * d) {
-        val len = (5 + rnd.nextFloat() * 30) * d
-        if (rnd.nextFloat() < 0.75f)
-            frays.add(
-                Offset(x, 0.8f * d) to Offset(
-                    min(x + len, w - 8 * d),
-                    0.8f * d + rnd.nextFloat() * 0.8f * d
-                )
-            )
-        x += len + (4 + rnd.nextFloat() * 26) * d
-    }
-    var y = 8 * d
-    while (y < h - 14 * d) {
-        val len = (5 + rnd.nextFloat() * 24) * d
-        if (rnd.nextFloat() < 0.7f)
-            frays.add(
-                Offset(w - 0.8f * d, y) to Offset(
-                    w - 0.8f * d - rnd.nextFloat() * 0.8f * d,
-                    min(y + len, h - 10 * d)
-                )
-            )
-        y += len + (4 + rnd.nextFloat() * 22) * d
-    }
 
     class Speck(val at: Offset, val s: Float, val light: Boolean, val a: Float)
-
-    val specks = List(120) {
+    val specks = List(45) {
         Speck(
             Offset(rnd.nextFloat() * w, rnd.nextFloat() * h),
-            (0.6f + rnd.nextFloat() * 1.6f) * d,
-            rnd.nextFloat() < 0.55f,
-            0.05f + rnd.nextFloat() * 0.12f,
+            (0.5f + rnd.nextFloat() * 1.0f) * d,
+            rnd.nextFloat() < 0.5f,
+            0.03f + rnd.nextFloat() * 0.06f,
         )
     }
-    val scratches = List(6) {
-        val p = Offset(rnd.nextFloat() * w * 0.8f + 20 * d, rnd.nextFloat() * h)
-        p to (p + Offset((10 + rnd.nextFloat() * 36) * d, (rnd.nextFloat() - 0.5f) * 8 * d))
+    val scratches = List(4) {
+        val p = Offset(rnd.nextFloat() * w * 0.5f + 20 * d, rnd.nextFloat() * h)
+        p to (p + Offset((40 + rnd.nextFloat() * 90) * d, (rnd.nextFloat() - 0.5f) * 3 * d))
     }
-    val bandSpecks = List(28) { Offset(rnd.nextFloat() * 15 * d, rnd.nextFloat() * h) }
-    val stripe = lerp(accent, Color.Black, 0.3f)
+    val hairlineA = Offset(14 * d, 0.7f * d) to Offset(w * 0.42f, 0.9f * d)
+    val hairlineB = Offset(w * 0.50f, 0.8f * d) to Offset(w * 0.86f, 0.6f * d)
+    val bottomWear = Offset(w * 0.2f, h - 0.8f * d) to
+            Offset(w * 0.55f, h - 0.6f * d)
 
     onDrawBehind {
-        drawPath(body, Ink.copy(alpha = ToastBgAlpha))
+        drawPath(body, Ink.copy(alpha = 0.94f))
         specks.forEach {
             drawRect(
                 if (it.light) CreamDim.copy(alpha = it.a) else Color.Black.copy(alpha = it.a * 3f),
                 it.at, Size(it.s, it.s * 0.6f),
             )
         }
-        scratches.forEach { (a, b) -> drawLine(Cream.copy(alpha = 0.06f), a, b, 1f * d) }
-        frays.forEach { (a, b) -> drawLine(Color(0xFFA39E8C).copy(alpha = 0.55f), a, b, 1.2f * d) }
-        drawPath(body, Color(0xFF2A2D2B), style = Stroke(1f * d))
+        scratches.forEach { (a, b) -> drawLine(Cream.copy(alpha = 0.05f), a, b, 0.8f * d) }
+        drawLine(Cream.copy(alpha = 0.35f), hairlineA.first, hairlineA.second, 1f * d)
+        drawLine(Cream.copy(alpha = 0.30f), hairlineB.first, hairlineB.second, 1f * d)
 
-        drawPath(band, accent)
-        clipPath(band) {
-            drawRect(stripe, Offset(8 * d, 0f), Size(2 * d, h))
-            bandSpecks.forEach {
-                drawRect(
-                    Color.Black.copy(alpha = 0.3f),
-                    it,
-                    Size(1.4f * d, 1.4f * d)
-                )
-            }
+        drawLine(
+            Cream.copy(alpha = 0.25f),
+            bottomWear.first,
+            bottomWear.second,
+            1f * d,
+        )
+
+        listOf(0.34f, 0.5f, 0.66f).forEach { fy ->
+            val c = Offset(w - 14 * d, h * fy)
+            val r = 3f * d
+            drawPath(
+                Path().apply {
+                    moveTo(c.x, c.y - r)
+                    lineTo(c.x + r, c.y)
+                    lineTo(c.x, c.y + r)
+                    lineTo(c.x - r, c.y)
+                    close()
+                },
+                CreamDim.copy(alpha = 0.55f),
+            )
         }
-        drawPath(rightBand, accent)
+
+        clipPath(body) {
+            drawRect(accent, Offset.Zero, Size(9 * d, h))
+            drawRect(accent, Offset(w - 3 * d, 0f), Size(3 * d, h))
+        }
+        drawPath(body, Color(0xFF2A2D2B), style = Stroke(0.8f * d))
     }
 }
 
@@ -460,7 +437,7 @@ private fun inkArc(
         val sn = sin(r).toFloat()
         val n = Offset(ry * cs, rx * sn).let { it / it.getDistance() }
         val taper = min(1f, min(u * 14f, (1f - u) * 9f)).coerceAtLeast(0.15f)
-        val w = (1.2f + 2.6f * noise(u, 9f, 23f)) * d * taper
+        val w = (1.2f + 2f * noise(u, 9f, 23f)) * d * taper
         val p = Offset(c.x + rx * cs, c.y + ry * sn) + n * ((rnd.nextFloat() - 0.5f) * 0.5f * d)
         Rib(p - n * (w / 2f), p + n * (w / 2f), u)
     }
@@ -662,6 +639,32 @@ private fun roughRectPoints(
     edge(r.topRight, r.bottomRight, Offset(-1f, 0f))
     edge(r.bottomRight, r.bottomLeft, Offset(0f, -1f))
     edge(r.bottomLeft, r.topLeft, Offset(1f, 0f))
+    return out
+}
+
+private fun chamferRectPoints(
+    r: Rect,
+    cutTL: Float, cutTR: Float, cutBR: Float, cutBL: Float,
+    step: Float,
+    jitter: Float,
+    rnd: Random,
+): List<Offset> {
+    val corners = listOf(
+        Offset(r.left + cutTL, r.top), Offset(r.right - cutTR, r.top),
+        Offset(r.right, r.top + cutTR), Offset(r.right, r.bottom - cutBR),
+        Offset(r.right - cutBR, r.bottom), Offset(r.left + cutBL, r.bottom),
+        Offset(r.left, r.bottom - cutBL), Offset(r.left, r.top + cutTL),
+    )
+    val out = ArrayList<Offset>()
+    for (i in corners.indices) {
+        val a = corners[i]
+        val b = corners[(i + 1) % corners.size]
+        val n = max(1, ((b - a).getDistance() / step).roundToInt())
+        for (k in 0 until n) {
+            val p = a + (b - a) * (k / n.toFloat())
+            out.add(p + Offset((rnd.nextFloat() - 0.5f) * jitter, (rnd.nextFloat() - 0.5f) * jitter))
+        }
+    }
     return out
 }
 
