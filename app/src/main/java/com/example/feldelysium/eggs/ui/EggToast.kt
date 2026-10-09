@@ -71,6 +71,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.foundation.material.accentBrush
+import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.domain.model.AttributeGroup
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
@@ -234,15 +236,15 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
                 .toastCard(seed, accent),
         ) {
             Column(
-                Modifier.padding(start = 18.dp, end = 20.dp, top = 8.dp, bottom = 10.dp),
+                Modifier.padding(start = 18.dp, end = 20.dp, top = 8.dp, bottom = 6.dp),
             ) {
+                Spacer(Modifier.width(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     FeldSpeakerDiamond(
                         color = accent,
                         size = 22.dp,
                         seed = seed,
                     )
-                    Spacer(Modifier.width(4.dp))
                     FeldTitleTag(
                         text = filmSkillLabel(view.skill.name, seed),
                         seed = seed,
@@ -280,10 +282,17 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
     val h = size.height
     val rnd = Random(seed)
 
+    val bgBrush = accentBrush(
+        Ink.copy(alpha = 0.94f), seed + 5, d,
+        fade = 0f, glow = 0f, blotch = 0.05f, grain = 0.04f,
+    )
+    val fill = accentBrush(accent, seed, d)
+    val bandBrush = wornBrush(accent, seed + 3, d, wear = 0.3f, scale = 12f)
+
     val body = chamferRectPoints(
         Rect(0f, 0f, w, h),
         cutTL = 3 * d, cutTR = 6 * d, cutBR = 5 * d, cutBL = 3 * d,
-        step = 18 * d, jitter = 0.5f * d, rnd = rnd,
+        step = 10 * d, jitter = 0.9f * d, rnd = rnd,
     ).toPath()
 
     class Speck(val at: Offset, val s: Float, val light: Boolean, val a: Float)
@@ -305,11 +314,12 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
             Offset(w * 0.55f, h - 0.6f * d)
 
     onDrawBehind {
-        drawPath(body, Ink.copy(alpha = 0.94f))
+        drawPath(body, bgBrush)
         specks.forEach {
-            drawRect(
+            drawCircle(
                 if (it.light) CreamDim.copy(alpha = it.a) else Color.Black.copy(alpha = it.a * 3f),
-                it.at, Size(it.s, it.s * 0.6f),
+                it.s * 0.5f,
+                it.at,
             )
         }
         scratches.forEach { (a, b) -> drawLine(Cream.copy(alpha = 0.05f), a, b, 0.8f * d) }
@@ -323,7 +333,7 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
             1f * d,
         )
 
-        listOf(0.34f, 0.5f, 0.66f).forEach { fy ->
+        listOf(0.26f, 0.40f, 0.54f).forEach { fy ->
             val c = Offset(w - 14 * d, h * fy)
             val r = 3f * d
             drawPath(
@@ -339,8 +349,8 @@ private fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCac
         }
 
         clipPath(body) {
-            drawRect(accent, Offset.Zero, Size(9 * d, h))
-            drawRect(accent, Offset(w - 3 * d, 0f), Size(3 * d, h))
+            drawRect(fill, Offset.Zero, Size(9 * d, h))
+            drawRect(fill, Offset(w - 3 * d, 0f), Size(3 * d, h))
         }
         drawPath(body, Color(0xFF2A2D2B), style = Stroke(0.8f * d))
     }
@@ -536,9 +546,11 @@ private fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) 
             val cardH = cardB - cardT
 
             val R = 12 * d
-            val rx = 58 * d
-            val ry = cardH * 0.62f
-            val cx = cardL + 36 * d
+            val arcR = cardH * 0.67f
+            val rx = arcR
+            val ry = arcR
+            val overhang = PadStart.toPx() - 3 * d
+            val cx = cardL - overhang + arcR
             val topY = cardT - R + 3 * d
             val cy = topY + ry
             val sinEnd = ((cardB + 3 * d - cy) / ry).coerceIn(-1f, 1f)
@@ -556,9 +568,12 @@ private fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) 
                 )
             }
 
+            val fill = accentBrush(accent, seed + 2, d)
+            val arcBrush = wornBrush(Cream, seed + 7, d, wear = 0.5f)
+
             onDrawBehind {
                 val rv = reveal.value
-                segs.forEach { if (it.frac <= rv) drawPath(it.path, Cream.copy(alpha = it.alpha)) }
+                segs.forEach { if (it.frac <= rv) drawPath(it.path, arcBrush) }
 
                 val appear = min(1f, rv * 6f)
                 if (ripple.value < 1f)
@@ -569,7 +584,7 @@ private fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) 
                         style = Stroke(1.5f * d)
                     )
                 val s = pulse.value
-                drawCircle(accent, R * s * appear, c)
+                drawCircle(fill, R * s * appear, c)
                 drawCircle(InkDeep, (R - 3.8f * d) * s * appear, c)
                 drawCircle(Color(0xFFF3ECDD), 4.6f * d * (1f + (s - 1f) * 1.8f) * appear, c)
 

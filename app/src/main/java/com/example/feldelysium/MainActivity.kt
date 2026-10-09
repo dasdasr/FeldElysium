@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
     private val eggsVm: EggsViewModel by viewModels()
 
     companion object {
-        private const val SHOW_PLAYGROUND = true
+        private const val SHOW_PLAYGROUND = false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

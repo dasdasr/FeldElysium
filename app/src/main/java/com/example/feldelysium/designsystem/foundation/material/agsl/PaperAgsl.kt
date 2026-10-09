@@ -80,9 +80,15 @@ layout(color) uniform half4 inkColor;
 ${NOISE_LIB}
 half4 main(float2 p) {
     float2 sp = p + seed * 53.0;
-    float n = noise(sp / grainScale);
-    n = clamp((n - 0.5) * contrast + 0.5, 0.0, 1.0);
-    float a = mix(minAlpha, 1.0, n) * float(inkColor.a);
-    return half4(half3(float3(inkColor.rgb) * a), half(a));
+    float wearAmt = 1.0 - minAlpha;
+    float big = fbm(sp / grainScale);
+    float fine = noise(sp / (grainScale * 0.1));
+    float t = 0.72 - 0.30 * wearAmt;
+    float edgeW = 0.06 / max(contrast, 0.5);
+    float keep = 1.0 - smoothstep(t, t + edgeW, big);
+    keep *= 1.0 - step(0.80, fine) * 0.85;
+    float3 c = float3(inkColor.rgb) * (0.85 + 0.3 * noise(sp / (grainScale * 0.3)));
+    float a = keep * float(inkColor.a);
+    return half4(half3(c * a), half(a));
 }
 """
