@@ -34,6 +34,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
@@ -93,7 +94,7 @@ fun SettingsScreen(
         ) {
             FeldSettingsSection(title = "Playback") {
                 FeldSettingSwitchRow(
-                    icon = Icons.Filled.AspectRatio,
+                    icon = FeldIconId.Aspect,
                     title = "Cinema frame",
                     subtitle = "Keep playback inside a 16:9 frame",
                     checked = settings.lockAspectRatio16x9,
@@ -104,7 +105,7 @@ fun SettingsScreen(
                 )
                 FeldSettingsDivider()
                 FeldSettingRow(
-                    icon = Icons.Filled.ViewDay,
+                    icon = FeldIconId.Grid,
                     title = "Status line",
                     subtitle = "Reals, time and day",
                     showChevron = true,
@@ -112,7 +113,7 @@ fun SettingsScreen(
                 )
                 FeldSettingsDivider()
                 FeldSettingValueRow(
-                    icon = Icons.Filled.TextFields,
+                    icon = FeldIconId.DialogueStyle,
                     title = "Typeface",
                     subtitle = "Dialogue text in playback",
                     value = PlaybackFontName,
@@ -132,7 +133,7 @@ fun SettingsScreen(
             FeldSettingsSection(title = "Coming soon") {
                 SoonTap("Autoplay") {
                     FeldSettingSwitchRow(
-                        icon = Icons.Filled.PlayArrow,
+                        icon = FeldIconId.Play,
                         title = "Autoplay",
                         subtitle = "Play scene automatically",
                         checked = false,
@@ -145,7 +146,7 @@ fun SettingsScreen(
 
                 SoonTap("Line delay") {
                     FeldSettingValueRow(
-                        icon = Icons.Filled.Timer,
+                        icon = FeldIconId.Timer,
                         title = "Line delay",
                         subtitle = "Time between lines (seconds)",
                         value = "x",
@@ -157,7 +158,7 @@ fun SettingsScreen(
 
                 SoonTap("Status icons") {
                     FeldSettingRow(
-                        icon = Icons.Filled.Tune,
+                        icon = FeldIconId.Settings,
                         title = "Status icons",
                         subtitle = "Tap the icons right in playback",
                         enabled = false,

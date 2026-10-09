@@ -43,10 +43,9 @@ import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 object FeldRough {
     val Field = RoughStyle(
-        roughness = 0.8.dp,
-        step = 48.dp,
-        corner = 4.dp,
-        tornChance = 0.1f,
+        roughness = 0.6.dp, step = 44.dp, corner = 3.dp,
+        cornerVariation = 0.2f, cornerJitter = 0.2f,
+        tornChance = 0.03f, jerkChance = 0.04f,
     )
 }
 

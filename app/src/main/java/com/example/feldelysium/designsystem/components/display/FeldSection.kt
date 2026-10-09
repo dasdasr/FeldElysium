@@ -87,13 +87,13 @@ private fun FeldSectionPreview() {
         ) {
             FeldSection("Skills", count = "5", expanded = true, onToggle = {}) {
                 FeldSettingValueRow(
-                    icon = Icons.Filled.Tune,
+                    icon = FeldIconId.Aspect,
                     title = "Logic",
                     value = "Reason. Question. Understand.",
                     onClick = {},
                 )
                 FeldSettingValueRow(
-                    icon = Icons.Filled.Tune,
+                    icon = FeldIconId.Aspect,
                     title = "Empathy",
                     value = "Feel. Connect. Care.",
                     onClick = {},
