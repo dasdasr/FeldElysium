@@ -19,20 +19,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
 fun FeldSettingRow(
-    icon: ImageVector,
+    icon: FeldIconId,
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
@@ -60,12 +61,7 @@ fun FeldSettingRow(
                 .alpha(if (enabled) 1f else 0.4f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = FeldPalette.Muted,
-                modifier = Modifier.size(24.dp),
-            )
+            FeldIcon(icon)
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
                 Text(
@@ -107,7 +103,7 @@ fun FeldSettingRow(
 
 @Composable
 fun FeldSettingValueRow(
-    icon: ImageVector,
+    icon: FeldIconId,
     title: String,
     value: String,
     modifier: Modifier = Modifier,
@@ -138,7 +134,7 @@ fun FeldSettingValueRow(
 
 @Composable
 fun FeldSettingSwitchRow(
-    icon: ImageVector,
+    icon: FeldIconId,
     title: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -183,20 +179,20 @@ private fun FeldSettingRowPreview() {
     DiscoDialogueTheme {
         Column {
             FeldSettingSwitchRow(
-                icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                icon = FeldIconId.Aspect,
                 title = "Cinema frame",
                 subtitle = "Keep playback inside 16:9",
                 checked = true,
                 onCheckedChange = {},
             )
             FeldSettingValueRow(
-                icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                icon = FeldIconId.Aspect,
                 title = "Typeface",
                 value = "Sina Nova Regular",
                 onClick = {},
             )
             FeldSettingRow(
-                icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                icon = FeldIconId.Aspect,
                 title = "Autoplay",
                 subtitle = "Play scene automatically",
                 enabled = false,

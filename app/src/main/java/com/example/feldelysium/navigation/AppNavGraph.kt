@@ -8,7 +8,6 @@ import com.example.feldelysium.presentation.editor.EditorScreen
 import com.example.feldelysium.presentation.playback.PlaybackScreen
 import com.example.feldelysium.presentation.settings.SettingsScreen
 
-/** SceneViewModel is Activity-scoped and obtained inside screens, so it is not passed through the nav graph. */
 @Composable
 fun AppNavGraph() {
     val navController = rememberNavController()

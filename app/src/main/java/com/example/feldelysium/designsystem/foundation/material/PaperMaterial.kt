@@ -91,6 +91,30 @@ object FeldPaper {
         inkWidth = 1.4.dp,
     )
 
+    val Entry = Panel.copy(
+        wear = 0.16f,
+        edgeWear = 0.5f,
+        edgeBand = 10.dp,
+        chipSize = 6.dp,
+        chipCoverage = 0.4f,
+        innerWear = 0.05f,
+        maxLoss = 0.35f,
+        scuffTint = 0.22f,
+
+        mottleSize = 44.dp,
+        mottleStrength = 0.15f,
+        grainSize = 1.1.dp,
+        grainStrength = 0.015f,
+        colorGrain = 0f,
+        toothStrength = 0.02f,
+        speckleStrength = 0.006f,
+
+        inkWidth = 0.9.dp,
+        inkGrainSize = 26.dp,
+        inkMinAlpha = 0.85f,
+        inkContrast = 1.2f,
+    )
+
     val DryButtonCream = PaperSpec(
         base = Color(0xFFDCCFB5),
         scuff = Color(0xFFB7A88D),
@@ -307,6 +331,7 @@ fun Modifier.paperMaterialMorph(
 
             fun f(name: String, a: Float, b: Float) =
                 paper.setFloatUniform(name, lerp(a, b, t))
+
             fun px(name: String, a: Dp, b: Dp) =
                 paper.setFloatUniform(name, lerp(a.toPx(), b.toPx(), t))
 

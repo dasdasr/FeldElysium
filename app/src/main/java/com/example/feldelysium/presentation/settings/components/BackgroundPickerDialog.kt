@@ -49,6 +49,7 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
@@ -151,7 +152,7 @@ private fun MediaPane(
         if (video) {
             FeldDivider()
             FeldSettingRow(
-                icon = Icons.Filled.VolumeOff,
+                icon = FeldIconId.Voice,
                 title = "Mute sound",
                 subtitle = "Mute video sound.",
                 role = Role.Switch,
@@ -166,7 +167,7 @@ private fun MediaPane(
             )
             FeldDivider()
             FeldSettingRow(
-                icon = Icons.Filled.FitScreen,
+                icon = FeldIconId.Aspect,
                 title = "Fill screen",
                 subtitle = "Crop videos to fit the screen.",
                 role = Role.Switch,
@@ -183,7 +184,7 @@ private fun MediaPane(
 
         FeldDivider()
         FeldSettingRow(
-            icon = Icons.Filled.VideoLibrary,
+            icon = FeldIconId.Voice,
             title = "Video",
             subtitle = "Add custom video",
             showChevron = true,
@@ -192,7 +193,7 @@ private fun MediaPane(
         )
         FeldDivider()
         FeldSettingRow(
-            icon = Icons.Filled.AddPhotoAlternate,
+            icon = FeldIconId.FastAdd,
             title = "Image",
             subtitle = "Add custom image",
             showChevron = true,

@@ -50,7 +50,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.DistressedTitleSpec
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
@@ -59,6 +58,7 @@ import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.DistressSpec
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
@@ -78,7 +78,7 @@ fun FeldScreenHeader(
     onTitleChange: ((String) -> Unit)? = null,
     onDiamondClick: (() -> Unit)? = null,
     titlePlaceholder: String = "Untitled scene",
-    titleSpec: DistressedTitleSpec = FeldDistressedTitles.Large,
+    titleSpec: DistressSpec = FeldDistressedTitles.Large,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontSize = 52.sp,
         lineHeight = 54.sp,
@@ -196,7 +196,7 @@ private fun EditableTitle(
     text: String,
     onTextChange: (String) -> Unit,
     placeholder: String,
-    spec: DistressedTitleSpec,
+    spec: DistressSpec,
     style: TextStyle,
 ) {
     val haptics = rememberFeldHaptics()

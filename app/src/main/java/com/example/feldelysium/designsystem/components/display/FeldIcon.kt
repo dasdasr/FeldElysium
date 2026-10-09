@@ -31,12 +31,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
+import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 
 enum class FeldIconId {
     Back, More, MoreHoriz, Import, Play, Reorder, Edit, Delete, Drag, Add, Close, Chevron,
-    DialogueStyle, Font, Palette, Grid, FastAdd, Timer, Voice, Image, Aspect, PlaybackText, Settings,
+    DialogueStyle, Font, Palette, Grid, FastAdd, Timer, Voice, Image, Aspect, PlaybackText,
+    Settings,
 }
 
 @Composable
@@ -45,6 +48,7 @@ fun FeldIcon(
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current,
     size: Dp = 24.dp,
+    film: Boolean = false,
 ) {
     val v: ImageVector = when (id) {
         FeldIconId.Back -> Icons.AutoMirrored.Filled.ArrowBack
@@ -71,7 +75,19 @@ fun FeldIcon(
         FeldIconId.PlaybackText -> Icons.Default.Subtitles
         FeldIconId.Settings -> Icons.Default.Settings
     }
-    Icon(v, contentDescription = null, modifier = modifier.size(size), tint = tint)
+    Icon(
+        v,
+        contentDescription = null,
+        modifier = modifier
+            .size(size)
+            .then(
+                if (film) Modifier.markerFilmMaterial(
+                    FeldMarker.Chalk,
+                    id.ordinal
+                ) else Modifier
+            ),
+        tint = tint,
+    )
 }
 
 @Composable

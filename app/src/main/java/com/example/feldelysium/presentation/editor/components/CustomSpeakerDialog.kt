@@ -23,6 +23,7 @@ import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
@@ -115,7 +116,7 @@ fun CustomSpeakerDialog(
                 colors = palette,
                 selected = color,
                 onSelect = { color = it },
-                columns = 7,
+                columns = 9,
                 minRows = 2,
             )
         }
@@ -124,7 +125,7 @@ fun CustomSpeakerDialog(
         val res = iconRes
         val uri = iconUri
         FeldSettingRow(
-            icon = Icons.Filled.Image,
+            icon = FeldIconId.Image,
             title = "Icon",
             subtitle = if (res != null || uri != null) "Selected" else "Optional",
             showChevron = true,
