@@ -76,6 +76,7 @@ fun BulkImportDialog(
     FeldDialog(
         title = "Paste dialogue",
         eyebrow = "Quick add",
+        subtitle = "Known names: any case. New ones: CAPS.",
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
@@ -146,20 +147,29 @@ private class SpeakerHeaderTransformation(
 
     override fun filter(text: AnnotatedString): TransformedText {
         val source = text.text
-        val styled = buildAnnotatedString {
-            append(source)
-            var offset = 0
-            for (line in source.split('\n')) {
-                val name = ParseBulkImportUseCase.SPEAKER_LINE.matchEntire(line)?.groups?.get(1)
-                if (name != null) {
-                    val color = colors[name.value.trim().uppercase()] ?: newSpeakerColor
-                    addStyle(
-                        SpanStyle(color = color, fontWeight = FontWeight.SemiBold),
-                        offset + name.range.first,
-                        offset + name.range.last + 2,
-                    )
+        val shown = StringBuilder(source)
+        val spans = mutableListOf<Triple<Int, Int, Color>>()
+        var offset = 0
+        for (line in source.split('\n')) {
+            val name = ParseBulkImportUseCase.SPEAKER_LINE.matchEntire(line)?.groups?.get(1)
+            if (name != null) {
+                val trimmed = name.value.trim()
+                val key = trimmed.uppercase()
+                val color = colors[key] ?: if (trimmed == key) newSpeakerColor else null
+                if (color != null) {
+                    val start = offset + name.range.first
+                    val end = offset + name.range.last + 1
+                    val upper = name.value.uppercase()
+                    if (upper.length == name.value.length) shown.replace(start, end, upper)
+                    spans += Triple(start, end + 1, color)
                 }
-                offset += line.length + 1
+            }
+            offset += line.length + 1
+        }
+        val styled = buildAnnotatedString {
+            append(shown.toString())
+            spans.forEach { (start, end, color) ->
+                addStyle(SpanStyle(color = color, fontWeight = FontWeight.SemiBold), start, end)
             }
         }
         return TransformedText(styled, OffsetMapping.Identity)

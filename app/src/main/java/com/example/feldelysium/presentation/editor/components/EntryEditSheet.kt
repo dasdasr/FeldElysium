@@ -136,6 +136,7 @@ fun EntryEditSheet(
                     onValueChange = { text = it },
                     placeholder = "Dialogue text",
                     minLines = 4,
+                    maxLines = 12,
                     maxLength = 500,
                 )
             }
