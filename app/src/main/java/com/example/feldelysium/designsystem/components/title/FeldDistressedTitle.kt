@@ -21,11 +21,9 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Immutable
@@ -34,10 +32,10 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
-import com.example.feldelysium.designsystem.material.FeldTape
-import com.example.feldelysium.designsystem.material.agsl.NOISE_LIB
-import com.example.feldelysium.designsystem.material.stickerTapeMaterial
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.material.FeldTape
+import com.example.feldelysium.designsystem.foundation.material.agsl.NOISE_LIB
+import com.example.feldelysium.designsystem.foundation.material.stickerTapeMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable

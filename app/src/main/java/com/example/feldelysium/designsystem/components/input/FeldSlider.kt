@@ -23,9 +23,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.material.DryPaperSpec
-import com.example.feldelysium.designsystem.material.dryPaperMaterial
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
+import com.example.feldelysium.designsystem.foundation.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 private val ThumbSpec = DryPaperSpec(
     base = Color(0xFFDCCFB5),

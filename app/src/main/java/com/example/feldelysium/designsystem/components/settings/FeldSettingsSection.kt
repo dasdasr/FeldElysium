@@ -19,11 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.FeldDivider
-import com.example.feldelysium.designsystem.components.FeldIcon
-import com.example.feldelysium.designsystem.components.FeldIconId
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 private val SectionTagStyle: TextStyle
     @Composable get() = MaterialTheme.typography.labelLarge.copy(

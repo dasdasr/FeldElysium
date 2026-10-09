@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.display
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement

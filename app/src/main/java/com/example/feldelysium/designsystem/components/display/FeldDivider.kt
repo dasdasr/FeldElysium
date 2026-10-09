@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.display
 
 import android.graphics.RuntimeShader
 import android.os.Build
@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.material.agsl.INK_AGSL
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlin.random.Random
 

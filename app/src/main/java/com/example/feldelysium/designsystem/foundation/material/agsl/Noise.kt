@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.material.agsl
+package com.example.feldelysium.designsystem.foundation.material.agsl
 
 internal const val NOISE_LIB = """
 float hash(float2 p) {

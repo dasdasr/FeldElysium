@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable

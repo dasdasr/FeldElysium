@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.designsystem.components.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
 import com.example.feldelysium.designsystem.components.input.FeldTextField

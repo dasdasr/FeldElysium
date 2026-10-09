@@ -44,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
-import com.example.feldelysium.designsystem.components.FeldDivider
-import com.example.feldelysium.designsystem.components.FeldPalette
-import com.example.feldelysium.designsystem.components.FeldSwitch
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
@@ -54,10 +54,10 @@ import com.example.feldelysium.designsystem.components.input.FeldSegmentedContro
 import com.example.feldelysium.designsystem.components.input.FeldSlider
 import com.example.feldelysium.designsystem.components.input.swatchSpec
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 
 private val Presets = listOf(

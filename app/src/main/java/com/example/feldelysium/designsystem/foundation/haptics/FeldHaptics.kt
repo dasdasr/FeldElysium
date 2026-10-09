@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.foundation.haptics
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

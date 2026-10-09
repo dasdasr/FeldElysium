@@ -27,12 +27,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.FeldTape
-import com.example.feldelysium.designsystem.material.PaperSpec
-import com.example.feldelysium.designsystem.material.StickerTapeSpec
-import com.example.feldelysium.designsystem.seed.rememberSeed
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.FeldTape
+import com.example.feldelysium.designsystem.foundation.material.PaperSpec
+import com.example.feldelysium.designsystem.foundation.material.StickerTapeSpec
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable

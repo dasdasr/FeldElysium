@@ -14,11 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.FeldDiamond
-import com.example.feldelysium.designsystem.components.FeldIcon
-import com.example.feldelysium.designsystem.components.FeldIconId
-import com.example.feldelysium.designsystem.components.FeldPalette
-import com.example.feldelysium.designsystem.components.feldClickable
+import com.example.feldelysium.designsystem.components.display.FeldDiamond
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable

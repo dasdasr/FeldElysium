@@ -35,9 +35,9 @@ import com.example.feldelysium.designsystem.components.input.FeldRough
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.card.FeldDialogCard
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.shape.RoughStyle
-import com.example.feldelysium.eggs.EggToastPlayground
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.eggs.ui.EggToastPlayground
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -58,13 +58,8 @@ fun DesignSystemPlayground(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                text = "DESIGN SYSTEM PLAYGROUND",
-                style = MaterialTheme.typography.labelSmall,
-                color = colorScheme.primary,
-            )
-
             EggToastPlayground(
+                text = text,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp),

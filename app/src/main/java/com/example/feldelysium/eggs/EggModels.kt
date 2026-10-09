@@ -1,5 +1,6 @@
 package com.example.feldelysium.eggs
 
+import com.example.feldelysium.domain.model.Speaker
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -8,66 +9,67 @@ enum class EggRarity { Frequent, Rare, Secret, UltraRare }
 
 enum class CheckResult(val label: String) { Success("Success"), Failure("Failure") }
 
-object Difficulty {
-    const val Trivial = "Trivial"
-    const val Easy = "Easy"
-    const val Medium = "Medium"
-    const val Challenging = "Challenging"
-    const val Formidable = "Formidable"
-    const val Legendary = "Legendary"
-    const val Heroic = "Heroic"
-    const val Godly = "Godly"
-    const val Impossible = "Impossible"
+enum class Difficulty(val label: String) {
+    None("None"),
+    Trivial("Trivial"),
+    Easy("Easy"),
+    Medium("Medium"),
+    Challenging("Challenging"),
+    Formidable("Formidable"),
+    Legendary("Legendary"),
+    Heroic("Heroic"),
+    Godly("Godly"),
+    Impossible("Impossible"),
 }
 
 data class EggReply(
-    val skill: String,
+    val skill: Speaker,
     val text: String,
-    val difficulty: String? = null,
+    val difficulty: Difficulty? = null,
     val result: CheckResult? = null,
-    val scope: String? = null,
+    val scope: Enum<*>? = null,
 ) {
     val header: String
-        get() = if (difficulty == null && result == null) skill.uppercase() else buildString {
+        get() = if (difficulty == null && result == null) skill.name.uppercase() else buildString {
             append('[')
-            if (difficulty != null) append(difficulty).append(": ")
-            append(skill)
+            if (difficulty != null) append(difficulty.label).append(": ")
+            append(skill.name)
             if (result != null) append(" — ").append(result.label)
             append(']')
         }
 }
 
-fun say(skill: String, text: String, scope: String? = null) =
+fun say(skill: Speaker, text: String, scope: Enum<*>? = null) =
     EggReply(skill = skill, text = text, scope = scope)
 
 fun skillCheck(
-    skill: String,
+    skill: Speaker,
     text: String,
-    difficulty: String? = null,
+    difficulty: Difficulty = Difficulty.None,
     result: CheckResult = CheckResult.Success,
-    scope: String? = null,
+    scope: Enum<*>? = null,
 ) = EggReply(skill = skill, text = text, difficulty = difficulty, result = result, scope = scope)
 
-data class AppEvent(val key: String, val value: String?, val atMillis: Long)
+data class AppEvent(val key: EggEvent, val value: String?, val atMillis: Long)
 
 class EggContext(
     val event: AppEvent,
     private val history: List<AppEvent>,
-    private val sessionCounts: Map<String, Int>,
+    private val sessionCounts: Map<EggEvent, Int>,
     val hour: Int,
     val minute: Int,
     val epochDay: Long,
 ) {
-    fun count(key: String, within: Duration, value: String? = null): Int {
+    fun count(key: EggEvent, within: Duration, value: String? = null): Int {
         val from = event.atMillis - within.inWholeMilliseconds
         return history.count {
             it.key == key && it.atMillis >= from && (value == null || it.value.equals(value, true))
         }
     }
 
-    fun sessionCount(key: String): Int = sessionCounts[key] ?: 0
+    fun sessionCount(key: EggEvent): Int = sessionCounts[key] ?: 0
 
-    fun endsWith(keys: List<String>, within: Duration): Boolean {
+    fun endsWith(keys: List<EggEvent>, within: Duration): Boolean {
         if (keys.isEmpty() || history.size < keys.size) return false
         val tail = history.takeLast(keys.size)
         return tail.map { it.key } == keys &&
@@ -77,24 +79,29 @@ class EggContext(
 
 typealias EggTrigger = (EggContext) -> Boolean
 
-fun onEvent(key: String, value: String? = null): EggTrigger = { ctx ->
-    ctx.event.key == key && (value == null || ctx.event.value.equals(value, true))
+fun onEvent(key: EggEvent, value: Enum<*>? = null): EggTrigger = { ctx ->
+    ctx.event.key == key && (value == null || ctx.event.value.equals(value.name, true))
 }
 
-fun burst(key: String, count: Int, within: Duration, value: String? = null): EggTrigger = { ctx ->
-    onEvent(key, value)(ctx) && ctx.count(key, within, value) >= count
-}
+//fun onEvent(key: EggEvent, value: String): EggTrigger = { ctx ->
+//ctx.event.key == key && ctx.event.value .equals(value , true)
+//}
 
-fun inOrder(vararg keys: String, within: Duration = 20.seconds): EggTrigger = { ctx ->
+fun burst(key: EggEvent, count: Int, within: Duration, value: Enum<*>? = null): EggTrigger =
+    { ctx ->
+        onEvent(key, value)(ctx) && ctx.count(key, within, value?.name) >= count
+    }
+
+fun inOrder(vararg keys: EggEvent, within: Duration = 20.seconds): EggTrigger = { ctx ->
     ctx.endsWith(keys.toList(), within)
 }
 
-fun timeBetween(fromHour: Int, toHour: Int, key: String = "app.open"): EggTrigger = { ctx ->
+fun timeBetween(fromHour: Int, toHour: Int, key: EggEvent = EggEvent.AppOpen): EggTrigger = { ctx ->
     ctx.event.key == key && if (fromHour <= toHour) ctx.hour in fromHour until toHour
     else ctx.hour >= fromHour || ctx.hour < toHour
 }
 
-fun whenValue(key: String, predicate: (String) -> Boolean): EggTrigger = { ctx ->
+fun whenValue(key: EggEvent, predicate: (String) -> Boolean): EggTrigger = { ctx ->
     ctx.event.key == key && ctx.event.value?.let(predicate) == true
 }
 

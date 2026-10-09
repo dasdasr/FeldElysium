@@ -19,7 +19,12 @@ class EasterEggs(
     private val random: Random = Random.Default,
     private val now: () -> Long = { System.currentTimeMillis() },
 ) {
-    class ActiveToast(val id: Long, val eggId: String, val reply: EggReply, val durationMillis: Long)
+    class ActiveToast(
+        val id: Long,
+        val eggId: String,
+        val reply: EggReply,
+        val durationMillis: Long
+    )
 
     private val _toast = MutableStateFlow<ActiveToast?>(null)
     val toast: StateFlow<ActiveToast?> = _toast.asStateFlow()
@@ -28,7 +33,7 @@ class EasterEggs(
     val suppressed: StateFlow<Boolean> = _suppressed.asStateFlow()
 
     private val history = ArrayDeque<AppEvent>()
-    private val sessionCounts = HashMap<String, Int>()
+    private val sessionCounts = HashMap<EggEvent, Int>()
     private val shownInSession = HashMap<String, Int>()
     private val lastShownAt = HashMap<String, Long>()
     private val lastRollAt = HashMap<String, Long>()
@@ -63,7 +68,9 @@ class EasterEggs(
         if (_toast.value?.id == id) _toast.value = null
     }
 
-    fun report(key: String, value: String? = null): Boolean {
+    fun report(key: EggEvent, value: Enum<*>): Boolean = report(key, value.name)
+
+    fun report(key: EggEvent, value: String? = null): Boolean {
         val t = now()
         val event = AppEvent(key, value, t)
 
@@ -138,7 +145,10 @@ class EasterEggs(
         if (available.isEmpty()) return null
 
         val value = ctx.event.value
-        val scoped = available.filter { it.value.scope != null && it.value.scope.equals(value, true) }
+        val scoped = available.filter { reply ->
+            val scope = reply.value.scope
+            scope != null && scope.name.equals(value, ignoreCase = true)
+        }
         val generic = available.filter { it.value.scope == null }
 
         val pool = when {

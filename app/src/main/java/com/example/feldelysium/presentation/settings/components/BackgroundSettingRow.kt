@@ -38,11 +38,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
-import com.example.feldelysium.designsystem.components.FeldPalette
-import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
-import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
-import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.Dispatchers

@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.feldelysium.designsystem.components.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog

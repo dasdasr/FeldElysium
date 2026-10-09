@@ -22,15 +22,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.FeldIcon
-import com.example.feldelysium.designsystem.components.FeldIconId
-import com.example.feldelysium.designsystem.components.rememberFeldHaptics
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.PaperSpec
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.seed.rememberSeed
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.PaperSpec
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @OptIn(ExperimentalFoundationApi::class)

@@ -25,12 +25,12 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.seed.rememberSeed
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import kotlin.math.abs
 
 private val TrackRough = RoughStyle(

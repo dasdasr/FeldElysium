@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.components
+package com.example.feldelysium.designsystem.components.navigation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,9 +50,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.designsystem.components.DistressedTitleSpec
+import com.example.feldelysium.designsystem.components.FeldDistressedTitle
+import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
-import com.example.feldelysium.designsystem.seed.rememberSeed
-import com.example.feldelysium.eggs.LocalEasterEggs
+import com.example.feldelysium.designsystem.components.display.FeldDiamond
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
+import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -67,6 +76,7 @@ fun FeldScreenHeader(
     onNav: () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     onTitleChange: ((String) -> Unit)? = null,
+    onDiamondClick: (() -> Unit)? = null,
     titlePlaceholder: String = "Untitled scene",
     seed: Int = rememberSeed(),
     titleSpec: DistressedTitleSpec = FeldDistressedTitles.Large,
@@ -78,7 +88,6 @@ fun FeldScreenHeader(
     divider: Boolean = true,
 ) {
     val haptics = rememberFeldHaptics()
-    val eggs = LocalEasterEggs.current
 
     Column(modifier
         .fillMaxWidth()
@@ -99,7 +108,7 @@ fun FeldScreenHeader(
                         .size(width = 22.dp, height = 24.dp)
                         .feldClickable(onClick = {
                             haptics.tick()
-                            eggs?.report("header.diamond", eyebrow)
+                            onDiamondClick?.invoke()
                         }),
                     contentAlignment = Alignment.Center,
                 ) {

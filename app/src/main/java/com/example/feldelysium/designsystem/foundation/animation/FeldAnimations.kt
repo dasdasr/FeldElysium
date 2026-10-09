@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.animation
+package com.example.feldelysium.designsystem.foundation.animation
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Easing

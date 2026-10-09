@@ -19,10 +19,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.feldelysium.designsystem.components.feldClickable
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.designsystem.material.DryPaperSpec
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 @Composable
 fun FeldTextButton(

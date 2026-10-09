@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.material
+package com.example.feldelysium.designsystem.foundation.material
 
 import android.graphics.RuntimeShader
 import android.os.Build
@@ -8,18 +8,17 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.graphics.lerp as lerpColor
-import com.example.feldelysium.designsystem.material.agsl.INK_AGSL
-import com.example.feldelysium.designsystem.material.agsl.PAPER_AGSL
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.buildInkLayers
-import com.example.feldelysium.designsystem.shape.drawInk
+import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
+import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.buildInkLayers
+import com.example.feldelysium.designsystem.foundation.shape.drawInk
 import kotlin.math.PI
 import kotlin.math.sin
 
