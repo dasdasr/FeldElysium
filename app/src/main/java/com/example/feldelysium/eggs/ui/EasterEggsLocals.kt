@@ -1,8 +1,9 @@
-package com.example.feldelysium.eggs
+package com.example.feldelysium.eggs.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.example.feldelysium.eggs.EasterEggs
 
 val LocalEasterEggs = staticCompositionLocalOf<EasterEggs?> { null }
 

@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.shape
+package com.example.feldelysium.designsystem.foundation.shape
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset

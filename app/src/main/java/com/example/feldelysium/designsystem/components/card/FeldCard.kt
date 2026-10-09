@@ -21,15 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.animation.FeldAnimationValues
-import com.example.feldelysium.designsystem.animation.FeldAnimations
-import com.example.feldelysium.designsystem.animation.feldAnimate
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.PaperSpec
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.seed.rememberSeed
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.animation.FeldAnimationValues
+import com.example.feldelysium.designsystem.foundation.animation.FeldAnimations
+import com.example.feldelysium.designsystem.foundation.animation.feldAnimate
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.PaperSpec
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable

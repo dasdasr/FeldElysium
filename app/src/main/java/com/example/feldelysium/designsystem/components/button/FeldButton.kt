@@ -35,9 +35,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.material.DryPaperSpec
-import com.example.feldelysium.designsystem.material.dryPaperMaterial
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
+import com.example.feldelysium.designsystem.foundation.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 object FeldButtonDefaults {

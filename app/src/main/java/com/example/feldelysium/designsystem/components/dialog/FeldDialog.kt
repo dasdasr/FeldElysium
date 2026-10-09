@@ -21,18 +21,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.feldelysium.designsystem.components.FeldDiamond
+import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
-import com.example.feldelysium.designsystem.components.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
-import com.example.feldelysium.designsystem.components.FeldIconId
-import com.example.feldelysium.designsystem.components.FeldPalette
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.card.FeldCard
-import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 @Composable
 fun FeldDialog(

@@ -14,10 +14,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.example.feldelysium.designsystem.seed.ProvideSeedScope
-import com.example.feldelysium.eggs.EggToastHost
+import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
+import com.example.feldelysium.eggs.EggEvent
+import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.EggsViewModel
-import com.example.feldelysium.eggs.LocalEasterEggs
+import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
 import com.example.feldelysium.presentation.shared.DesignSystemPlayground
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
     private val eggsVm: EggsViewModel by viewModels()
 
     companion object {
-        private const val SHOW_PLAYGROUND = false
+        private const val SHOW_PLAYGROUND = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(eggs) {
                         if (savedInstanceState == null) {
                             eggs.awaitReady()
-                            eggs.report("app.open")
+                            eggs.report(EggEvent.AppOpen)
                         }
                     }
 

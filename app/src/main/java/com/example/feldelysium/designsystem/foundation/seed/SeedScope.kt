@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.seed
+package com.example.feldelysium.designsystem.foundation.seed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider

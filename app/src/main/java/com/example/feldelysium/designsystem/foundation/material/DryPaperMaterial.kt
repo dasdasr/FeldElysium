@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.material
+package com.example.feldelysium.designsystem.foundation.material
 
 import android.graphics.RuntimeShader
 import android.os.Build
@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.material.agsl.DRY_PAPER_AGSL
+import com.example.feldelysium.designsystem.foundation.material.agsl.DRY_PAPER_AGSL
 
 @Immutable
 data class DryPaperSpec(

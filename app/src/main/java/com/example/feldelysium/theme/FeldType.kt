@@ -29,7 +29,7 @@ val FeldTypography = Typography(
         letterSpacing = 1.2.sp,
     ),
     bodyMedium = TextStyle(
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         fontFamily = SinaNova,
         lineHeight = 20.sp,
         fontWeight = FontWeight.Normal,
@@ -45,21 +45,21 @@ val FeldTypography = Typography(
     labelLarge = TextStyle(
         fontFamily = BebasNeue,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
+        fontSize = 20.sp,
         lineHeight = 24.sp,
-        letterSpacing = 1.6.sp,
+        letterSpacing = 1.2.sp,
     ),
     labelMedium = TextStyle(
         fontFamily = BebasNeue,
         fontWeight = FontWeight.Normal,
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         lineHeight = 20.sp,
-        letterSpacing = 1.2.sp,
+        letterSpacing = 1.sp,
     ),
     labelSmall = TextStyle(
         fontSize = 12.sp,
         fontFamily = SinaNova,
-        letterSpacing = 1.5.sp,
+        letterSpacing = 0.5.sp,
         fontWeight = FontWeight.Bold
     )
 )

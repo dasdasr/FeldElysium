@@ -34,14 +34,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
-import com.example.feldelysium.designsystem.components.FeldScreenHeader
-import com.example.feldelysium.designsystem.components.rememberFeldHaptics
+import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
+import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsSection
-import com.example.feldelysium.eggs.LocalEasterEggs
+import com.example.feldelysium.eggs.EggEvent
+import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.presentation.settings.components.BackgroundPickerDialog
 import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
 import com.example.feldelysium.presentation.settings.components.PlaybackUiTextDialog
@@ -97,7 +98,7 @@ fun SettingsScreen(
                     subtitle = "Keep playback inside a 16:9 frame",
                     checked = settings.lockAspectRatio16x9,
                     onCheckedChange = {
-                        eggs?.report("switch.toggle", "Cinema frame")
+                        eggs?.report(EggEvent.SwitchToggle, "Cinema frame")
                         vm.dispatch(SettingsEvent.SetLockAspectRatio16x9(it))
                     },
                 )
@@ -176,7 +177,7 @@ fun SettingsScreen(
             onDayChange = { vm.dispatch(SettingsEvent.SetPlaybackDay(it)) },
             onReset = {
                 haptics.thud()
-                if (settings.playbackTextIsDefault()) eggs?.report("settings.reset", "nochange")
+                if (settings.playbackTextIsDefault()) eggs?.report(EggEvent.ResetUnchanged)
                 vm.dispatch(SettingsEvent.ResetPlaybackUiText)
             },
             onDismiss = { showPlaybackUiText = false },
@@ -200,7 +201,7 @@ fun SettingsScreen(
             onVideoFill = { vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it)) },
             onReset = {
                 haptics.thud()
-                if (settings.backgroundIsDefault()) eggs?.report("settings.reset", "nochange")
+                if (settings.backgroundIsDefault()) eggs?.report(EggEvent.ResetUnchanged)
                 vm.dispatch(SettingsEvent.ResetBackground)
             },
             onDismiss = { showBackground = false },
@@ -224,7 +225,7 @@ private fun SoonTap(
         Modifier.clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-        ) { eggs?.report("soon.tap", title) }
+        ) { eggs?.report(EggEvent.SoonTap, title) }
     ) { content() }
 }
 

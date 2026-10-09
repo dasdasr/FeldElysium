@@ -1,4 +1,4 @@
-package com.example.feldelysium.designsystem.material.agsl
+package com.example.feldelysium.designsystem.foundation.material.agsl
 
 internal const val DRY_PAPER_AGSL = """
 uniform float2 size;

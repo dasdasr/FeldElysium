@@ -24,11 +24,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.designsystem.components.FeldPalette
-import com.example.feldelysium.designsystem.components.FeldSwitch
-import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.components.input.FeldSwitch
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable

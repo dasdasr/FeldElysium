@@ -52,7 +52,8 @@ import com.example.feldelysium.presentation.playback.components.DialogueHistoryL
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
 import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.eggs.LocalEasterEggs
+import com.example.feldelysium.eggs.EggEvent
+import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
@@ -82,7 +83,7 @@ fun PlaybackScreen(
     LaunchedEffect(eggs) {
         if (eggs != null && !openReported) {
             eggs.awaitReady()
-            eggs.report("app.open")
+            eggs.report(EggEvent.AppOpen)
             openReported = true
         }
     }

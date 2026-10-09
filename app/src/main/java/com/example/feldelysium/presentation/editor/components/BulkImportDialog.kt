@@ -23,7 +23,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldTextField
@@ -116,7 +116,7 @@ private fun FormatHint() {
             color = FeldPalette.Muted,
         )
         Text(
-            text = "  →  ",
+            text = "  ->  ",
             style = MaterialTheme.typography.labelSmall,
             color = FeldPalette.Muted,
         )

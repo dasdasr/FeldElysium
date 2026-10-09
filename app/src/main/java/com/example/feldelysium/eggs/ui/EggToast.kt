@@ -1,4 +1,4 @@
-package com.example.feldelysium.eggs
+package com.example.feldelysium.eggs.ui
 
 import android.view.Gravity
 import android.view.ViewGroup
@@ -70,6 +70,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.domain.model.AttributeGroup
+import com.example.feldelysium.domain.model.Speaker
+import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.eggs.CheckResult
+import com.example.feldelysium.eggs.Difficulty
+import com.example.feldelysium.eggs.EasterEggs
+import com.example.feldelysium.eggs.EggReply
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.asin
@@ -93,27 +100,15 @@ private val ToastHeadroom = 120.dp
 private val ToastFadeDistance = 100.dp
 private const val ToastBgAlpha = 0.90f
 
-private fun skillColor(skill: String): Color = when (skill.lowercase()) {
-    "logic", "encyclopedia", "rhetoric", "drama", "conceptualization", "visual calculus" -> Color(
-        0xFF4FB3A9
-    )
-
-    "volition", "inland empire", "empathy", "authority", "esprit de corps", "suggestion" -> Color(
-        0xFF8E7FCB
-    )
-
-    "endurance", "pain threshold", "physical instrument", "electrochemistry", "shivers", "half light" -> Color(
-        0xFFC9564B
-    )
-
-    "hand/eye coordination", "perception", "reaction speed", "savoir faire", "interfacing", "composure" -> Color(
-        0xFFD8B54A
-    )
-
-    else -> Color(0xFF4FB3A9)
+private fun skillColor(skill: Speaker): Color = when (skill.attributeGroup) {
+    AttributeGroup.INTELLECT -> Color(0xFF4FB3A9)
+    AttributeGroup.PSYCHE -> Color(0xFF8E7FCB)
+    AttributeGroup.PHYSIQUE -> Color(0xFFC9564B)
+    AttributeGroup.MOTORICS -> Color(0xFFD8B54A)
+    else -> Color(skill.colorArgb)
 }
 
-private class ToastView(val skill: String, val text: String, val check: String?)
+private class ToastView(val skill: Speaker, val text: String, val check: String?)
 
 private fun EggReply.toView() = ToastView(
     skill = skill,
@@ -146,8 +141,8 @@ fun EggToastHost(eggs: EasterEggs, modifier: Modifier = Modifier) {
                     enter = fadeIn(tween(160)) + slideInVertically(tween(260)) { it / 2 },
                     exit = fadeOut(tween(200)) + slideOutVertically(tween(220)) { it / 2 },
                 ) {
-                    current?.let { t ->
-                        key(t.id) { EggToast(t, eggs::dismiss) }
+                    current?.let { toast ->
+                        key(toast.id) { EggToast(toast, eggs::dismiss) }
                     }
                 }
             }
@@ -201,7 +196,7 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
         Modifier
             .widthIn(max = 520.dp)
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 8.dp)
             .graphicsLayer {
                 translationX = drag.value.x
                 translationY = drag.value.y
@@ -238,7 +233,7 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
                 .toastCard(seed, accent),
         ) {
             Row(
-                Modifier.padding(start = 22.dp, end = 28.dp, top = 10.dp, bottom = 12.dp),
+                Modifier.padding(start = 22.dp, end = 14.dp, top = 10.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FeldSpeakerDiamond(
@@ -252,7 +247,7 @@ private fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
                 Spacer(Modifier.width(10.dp))
                 Column(Modifier.weight(1f)) {
                     FeldTitleTag(
-                        text = filmSkillLabel(view.skill, seed),
+                        text = filmSkillLabel(view.skill.name, seed),
                         seed = seed,
                         textStyle = MaterialTheme.typography.titleMedium.copy(
                             fontSize = 20.sp,
@@ -673,7 +668,7 @@ private fun roughRectPoints(
 private fun filmSkillLabel(skill: String, seed: Int): String {
     val random = Random(seed + 91)
 
-    return if (random.nextFloat() < 0.25f) {
+    return if (random.nextFloat() < 0.015f) {
         "$skill     ▶"
     } else {
         skill
@@ -682,6 +677,7 @@ private fun filmSkillLabel(skill: String, seed: Int): String {
 
 @Composable
 fun EggToastPlayground(
+    text: String,
     modifier: Modifier = Modifier,
 ) {
     val toast = remember {
@@ -689,9 +685,9 @@ fun EggToastPlayground(
             id = 1L,
             eggId = "playground",
             reply = EggReply(
-                skill = "Logic",
-                text = "Something about this place doesn't add up.",
-                difficulty = "Medium",
+                skill = PredefinedSpeakers.LOGIC,
+                text = text,
+                difficulty = Difficulty.Medium,
                 result = CheckResult.Success,
             ),
             durationMillis = Long.MAX_VALUE,
