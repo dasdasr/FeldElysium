@@ -3,6 +3,8 @@ package com.example.feldelysium.presentation.editor.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +24,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
+import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.domain.model.Speaker
@@ -60,22 +63,26 @@ fun BulkImportDialog(
 ) {
     val transformation = remember(speakers) {
         val colors = buildMap<String, Color> {
-            (PredefinedSpeakers.ALL + speakers).forEach { put(it.name.uppercase(), Color(it.colorArgb)) }
+            (PredefinedSpeakers.ALL + speakers).forEach {
+                put(
+                    it.name.uppercase(),
+                    Color(it.colorArgb)
+                )
+            }
         }
         SpeakerHeaderTransformation(colors)
     }
 
     FeldDialog(
-        title = "Bulk import",
-        eyebrow = "Import",
+        title = "Paste dialogue",
+        eyebrow = "Quick add",
+        subtitle = "Known names: any case. New ones: CAPS.",
         onDismiss = onDismiss,
-        seed = 18,
         footer = {
             FeldDialogActions(
                 confirmLabel = "Import",
                 onConfirm = onConfirm,
                 onCancel = onDismiss,
-                seed = 16,
             )
         },
     ) {
@@ -88,7 +95,6 @@ fun BulkImportDialog(
             minLines = 8,
             textStyle = ImportTextStyle,
             visualTransformation = transformation,
-            seed = 2,
         )
         if (preview != null) {
             Spacer(Modifier.height(12.dp))
@@ -103,14 +109,17 @@ fun BulkImportDialog(
 
 @Composable
 private fun FormatHint() {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.padding(start = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Text(
             text = "FORMAT",
             style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.4.sp),
             color = FeldPalette.Muted,
         )
         Text(
-            text = "  →  ",
+            text = "  ->  ",
             style = MaterialTheme.typography.labelSmall,
             color = FeldPalette.Muted,
         )
@@ -138,20 +147,29 @@ private class SpeakerHeaderTransformation(
 
     override fun filter(text: AnnotatedString): TransformedText {
         val source = text.text
-        val styled = buildAnnotatedString {
-            append(source)
-            var offset = 0
-            for (line in source.split('\n')) {
-                val name = ParseBulkImportUseCase.SPEAKER_LINE.matchEntire(line)?.groups?.get(1)
-                if (name != null) {
-                    val color = colors[name.value.trim().uppercase()] ?: newSpeakerColor
-                    addStyle(
-                        SpanStyle(color = color, fontWeight = FontWeight.SemiBold),
-                        offset + name.range.first,
-                        offset + name.range.last + 2,
-                    )
+        val shown = StringBuilder(source)
+        val spans = mutableListOf<Triple<Int, Int, Color>>()
+        var offset = 0
+        for (line in source.split('\n')) {
+            val name = ParseBulkImportUseCase.SPEAKER_LINE.matchEntire(line)?.groups?.get(1)
+            if (name != null) {
+                val trimmed = name.value.trim()
+                val key = trimmed.uppercase()
+                val color = colors[key] ?: if (trimmed == key) newSpeakerColor else null
+                if (color != null) {
+                    val start = offset + name.range.first
+                    val end = offset + name.range.last + 1
+                    val upper = name.value.uppercase()
+                    if (upper.length == name.value.length) shown.replace(start, end, upper)
+                    spans += Triple(start, end + 1, color)
                 }
-                offset += line.length + 1
+            }
+            offset += line.length + 1
+        }
+        val styled = buildAnnotatedString {
+            append(shown.toString())
+            spans.forEach { (start, end, color) ->
+                addStyle(SpanStyle(color = color, fontWeight = FontWeight.SemiBold), start, end)
             }
         }
         return TransformedText(styled, OffsetMapping.Identity)

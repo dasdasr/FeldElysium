@@ -26,12 +26,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.FeldTape
-import com.example.feldelysium.designsystem.material.PaperSpec
-import com.example.feldelysium.designsystem.material.StickerTapeSpec
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.FeldTape
+import com.example.feldelysium.designsystem.foundation.material.PaperSpec
+import com.example.feldelysium.designsystem.foundation.material.StickerTapeSpec
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
@@ -40,10 +44,10 @@ fun FeldDialogCard(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     onClose: (() -> Unit)? = null,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     tagSeed: Int = seed + 1,
-    spec: PaperSpec = FeldPaper.Panel,
-    rough: RoughStyle = RoughStyle(),
+    spec: PaperSpec = FeldPaper.Panel,rough:
+    RoughStyle = entryRough(seed),
     tapeSpec: StickerTapeSpec = FeldTape.Cream,
     contentPadding: PaddingValues = PaddingValues(start = 18.dp, end = 18.dp, bottom = 18.dp),
     tagStart: Dp = 6.dp,
@@ -94,16 +98,10 @@ fun FeldDialogCard(
                     .align(Alignment.TopEnd)
                     .padding(top = tagLift + 8.dp, end = 10.dp)
                     .size(36.dp)
-                    .clip(CircleShape)
-                    .clickable(role = Role.Button, onClick = onClose),
+                    .feldClickable(role = Role.Button, onClick = onClose),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = colorScheme.onSurface,
-                    modifier = Modifier.size(20.dp),
-                )
+                FeldIcon(FeldIconId.Close, size = 20.dp,)
             }
         }
     }

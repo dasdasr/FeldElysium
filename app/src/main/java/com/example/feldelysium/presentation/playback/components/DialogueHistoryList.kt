@@ -26,9 +26,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import com.example.feldelysium.presentation.playback.PlaybackMotion
-import com.example.feldelysium.presentation.playback.PlaybackScrollPolicy
-import com.example.feldelysium.presentation.playback.scrollDeltaForHeightIncrease
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope

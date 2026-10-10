@@ -23,7 +23,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +42,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.feldelysium.R
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
@@ -47,6 +52,9 @@ import com.example.feldelysium.presentation.playback.components.DialogueHistoryL
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
 import com.example.feldelysium.data.settings.AppSettings
+import com.example.feldelysium.eggs.EggEvent
+import com.example.feldelysium.eggs.ui.LocalEasterEggs
+import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
@@ -68,6 +76,17 @@ fun PlaybackScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val eggs = LocalEasterEggs.current
+    var openReported by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(eggs) {
+        if (eggs != null && !openReported) {
+            eggs.awaitReady()
+            eggs.report(EggEvent.AppOpen)
+            openReported = true
+        }
+    }
+
     val activity = LocalContext.current as ComponentActivity
     val sceneVm: SceneViewModel = viewModel(activity)
     val settingsVm: SettingsViewModel = viewModel(activity)

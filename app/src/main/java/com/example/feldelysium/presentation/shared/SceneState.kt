@@ -14,7 +14,6 @@ data class SceneState(
     val scene: DialogueScene = DialogueScene(),
     val customSpeakers: List<Speaker> = emptyList()
 ) {
-    /** Merged list: predefined first (deterministic ordering), then custom. */
     val allSpeakers: List<Speaker>
         get() = PredefinedSpeakers.ALL + customSpeakers
 

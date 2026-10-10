@@ -42,7 +42,10 @@ class ParseBulkImportUseCase {
         }
 
         for (line in rawText.lines()) {
-            val match = SPEAKER_LINE.matchEntire(line)
+            val match = SPEAKER_LINE.matchEntire(line)?.takeIf {
+                val name = it.groupValues[1].trim()
+                nameIndex.containsKey(name.uppercase()) || name == name.uppercase()
+            }
             if (match != null) {
                 flushEntry()
                 val rawName = match.groupValues[1].trim()
@@ -79,6 +82,6 @@ class ParseBulkImportUseCase {
     }
 
     companion object {
-        val SPEAKER_LINE = Regex("""^\s*([A-Z][A-Z0-9 /\-]+):\s*(.*)$""")
+        val SPEAKER_LINE = Regex("""^\s*([A-Za-z][A-Za-z0-9 /\-]+):\s*(.*)$""")
     }
 }

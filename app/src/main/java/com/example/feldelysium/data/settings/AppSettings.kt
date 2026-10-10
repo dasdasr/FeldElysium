@@ -15,6 +15,6 @@ data class AppSettings(
     val backgroundVideoFill: Boolean = true,
 ) {
     companion object {
-        const val DEFAULT_BACKGROUND_COLOR = 0xFF00B140L
+        const val DEFAULT_BACKGROUND_COLOR = 0xFF000000L
     }
 }

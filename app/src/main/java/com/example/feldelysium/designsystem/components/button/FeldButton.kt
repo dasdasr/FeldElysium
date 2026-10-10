@@ -35,8 +35,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.material.DryPaperSpec
-import com.example.feldelysium.designsystem.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
+import com.example.feldelysium.designsystem.foundation.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 object FeldButtonDefaults {
@@ -53,7 +54,7 @@ fun FeldButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: DryPaperSpec = FeldButtonDefaults.Cream,
     contentColor: Color = FeldButtonDefaults.InkDark,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge.copy(
@@ -72,7 +73,6 @@ fun FeldButton(
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val hovered by interaction.collectIsHoveredAsState()
     val press by animateFloatAsState(
         targetValue = if (pressed) 1f else 0f,
         animationSpec = tween(pressMillis),
