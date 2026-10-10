@@ -65,6 +65,8 @@ import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
+import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.distressMaterial
@@ -75,6 +77,7 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlin.math.abs
+import kotlin.math.exp
 import kotlin.random.Random
 
 private const val SWAY_STIFFNESS = 140f
@@ -133,7 +136,9 @@ fun FeldEntryCard(
     speakerColor: Color,
     text: String,
     modifier: Modifier = Modifier,
+    decalSpec: DecalSpec = DecalSpec.Entry,
     number: Int? = null,
+    ambient: Float? = null,
     seed: Int = rememberSeed(),
     isDragging: Boolean = false,
     dragModifier: Modifier = Modifier,
@@ -159,13 +164,13 @@ fun FeldEntryCard(
         label = "hold",
     )
     val pulse = if (isDragging) {
-        rememberInfiniteTransition(label = "grab").animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(tween(950), RepeatMode.Restart),
-            label = "pulse",
+        rememberInfiniteTransition(label = "beat").animateFloat(
+            0f, 1f, infiniteRepeatable(tween(1150, easing = LinearEasing), RepeatMode.Restart), label = "pulse",
         )
     } else null
+    val ringBrush = remember(speakerColor, seed, density) {
+        wornBrush(speakerColor, seed + 2, density, wear = 0.4f, scale = 10f)
+    }
 
     val sway = remember { SwayState() }
     LaunchedEffect(isDragging) {
@@ -199,6 +204,11 @@ fun FeldEntryCard(
         wornBrush(speakerColor, seed, density, wear = 0.6f, scale = 7f)
     }
     val rough = remember(seed) { entryRough(seed) }
+
+    val baseCtx = LocalFeldDecalContext.current
+    val decalCtx = remember(baseCtx, number, speakerName) {
+        baseCtx.copy(lineNumber = number, speakerName = speakerName)
+    }
 
     FeldCard(
         modifier = modifier
@@ -238,6 +248,10 @@ fun FeldEntryCard(
                 }
             }
             .then(dragModifier),
+        ambient = ambient,
+        decalSpec = decalSpec,
+        decalContext = decalCtx,
+        decalInset = 7.dp,
         spec = FeldPaper.Entry,
         rough = rough,
         contentPadding = PaddingValues(0.dp),
@@ -263,14 +277,18 @@ fun FeldEntryCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier
-                            .size(22.dp)
-                            .drawBehind { drawDiamondCharge(speakerColor, hold, pulse?.value) },
+                        modifier = Modifier.size(22.dp)
+                            .drawBehind { drawDiamondBeat(ringBrush, hold, pulse?.value) },
                         contentAlignment = Alignment.Center,
                     ) {
-                        FeldHandDiamond(speakerColor, seed, 22.dp)
+                        FeldHandDiamond(
+                            speakerColor, seed, 22.dp,
+                            modifier = Modifier.graphicsLayer {
+                                val s = beatScale(pulse?.value)
+                                scaleX = s; scaleY = s
+                            },
+                        )
                     }
-
                     Spacer(Modifier.width(14.dp))
 
                     Column(Modifier.weight(1f)) {
@@ -333,6 +351,7 @@ private fun StampNumber(
     modifier: Modifier = Modifier,
 ) {
     val look = remember(seed) { StampLook(seed) }
+    if (!look.visible) return
 
     Text(
         text = look.format(number),
@@ -358,6 +377,7 @@ private class StampLook(seed: Int) {
     val dy = (r.nextFloat() - 0.5f) * 2f
     val tracking = 0.6f + r.nextFloat() * 1.2f
     private val kind = r.nextInt(4)
+    val visible = r.nextFloat() > 0.15f
 
     fun format(n: Int): String {
         val s = n.toString().padStart(2, '0')
@@ -399,36 +419,38 @@ fun FeldHandDiamond(
     }
 }
 
-private fun DrawScope.drawDiamondCharge(color: Color, hold: Float, pulse: Float?) {
+private fun gauss(t: Float, c: Float, w: Float): Float { val x = (t - c) / w; return exp(-x * x) }
+
+private fun beatScale(t: Float?): Float =
+    if (t == null) 1f else 1f + 0.18f * gauss(t, 0.07f, 0.05f) + 0.11f * gauss(t, 0.34f, 0.06f)
+
+private fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     val stroke = 1.5.dp.toPx()
     val r = size.minDimension / 2f + 6.dp.toPx()
-
     fun diamond(rad: Float) = Path().apply {
-        moveTo(center.x, center.y - rad)
-        lineTo(center.x + rad, center.y)
-        lineTo(center.x, center.y + rad)
-        lineTo(center.x - rad, center.y)
-        close()
+        moveTo(center.x, center.y - rad); lineTo(center.x + rad, center.y)
+        lineTo(center.x, center.y + rad); lineTo(center.x - rad, center.y); close()
     }
-
     if (hold > 0.01f) {
-        val measure = PathMeasure().apply { setPath(diamond(r), false) }
+        val m = PathMeasure().apply { setPath(diamond(r), false) }
         val seg = Path()
-        measure.getSegment(0f, measure.length * hold, seg, true)
-        drawPath(
-            seg, color.copy(alpha = 0.85f),
-            style = Stroke(stroke, cap = StrokeCap.Round, join = StrokeJoin.Round),
-        )
+        m.getSegment(0f, m.length * hold, seg, true)
+        drawPath(seg, brush, alpha = 0.9f,
+            style = Stroke(stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
     }
-    if (pulse != null) {
-        drawPath(
-            diamond(r), color.copy(alpha = 0.9f),
-            style = Stroke(stroke, join = StrokeJoin.Round),
-        )
-        drawPath(
-            diamond(r + 8.dp.toPx() * pulse), color.copy(alpha = 0.5f * (1f - pulse)),
-            style = Stroke(stroke, join = StrokeJoin.Round),
-        )
+    if (t != null) {
+        val s = beatScale(t)
+        drawPath(diamond(r * (1f + (s - 1f) * 0.6f)), brush, alpha = 0.9f,
+            style = Stroke(stroke, join = StrokeJoin.Round))
+        fun ring(start: Float, len: Float, reach: Float, a: Float) {
+            val p = (t - start) / len
+            if (p !in 0f..1f) return
+            val e = 1f - (1f - p) * (1f - p) * (1f - p)
+            drawPath(diamond(r + reach.dp.toPx() * e), brush, alpha = a * (1f - p) * (1f - p),
+                style = Stroke(stroke * (1.2f - 0.6f * p), join = StrokeJoin.Round))
+        }
+        ring(0.02f, 0.55f, 14f, 0.7f)
+        ring(0.30f, 0.55f, 10f, 0.45f)
     }
 }
 

@@ -1,0 +1,151 @@
+package com.example.feldelysium.designsystem.foundation.decal
+
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.LayoutDirection
+import java.util.Collections.rotate
+import kotlin.math.floor
+import kotlin.math.pow
+import kotlin.random.Random
+
+internal class DecalPlan(val items: List<Placement>, val leak: Leak?)
+
+internal fun DrawScope.drawDecals(plan: DecalPlan) {
+    plan.leak?.let { with(it) { draw() } }
+    for (p in plan.items) {
+        val c = p.bounds.center
+        val e = p.decal.extent
+        withTransform({
+            rotate(p.rotation, c)
+            if (p.mirror) scale(-1f, 1f, c)
+            translate(c.x - e.width / 2f, c.y - e.height / 2f)
+        }) { with(p.decal) { draw(p.color, p.alpha) } }
+    }
+}
+
+private val Mirrorable = setOf(DecalKind.Text, DecalKind.DataBlock, DecalKind.Counter, DecalKind.FilmStrip)
+private val UseLimit = mapOf(DecalKind.DataBlock to 1, DecalKind.Ruler to 1)
+
+internal fun planDecals(
+    seed: Int, size: Size, ambient: Float, spec: DecalSpec, ctx: DecalContext,
+    density: Density, measurer: TextMeasurer, leftInsetPx: Float,
+): DecalPlan {
+    val a = ambient.coerceIn(0f, 1f)
+    if (a <= 0f || size.width < 40f || size.height < 20f) return DecalPlan(emptyList(), null)
+
+    val d = density.density
+    val rng = Random(seed * 7919 + 0xDEC41)
+
+    val leak = if (size.width > 60f * d && rng.nextFloat() < spec.leakChance * a)
+        Leak(size = size, rightSide = leftInsetPx > 0f || rng.nextBoolean(), color = spec.leakColor,
+            strength = 0.08f + 0.10f * a, seed = seed.mod(97).toFloat())
+    else null
+
+    val areaDp = size.width * size.height / (d * d)
+    val x = a.pow(1.5f) + areaDp / 20000f * a * a * 3f
+    val budget = floor(x + rng.nextFloat()).toInt().coerceAtMost(spec.maxDecals)
+    if (budget == 0) return DecalPlan(emptyList(), leak)
+
+    val safe = Rect(leftInsetPx, 0f, size.width, size.height)
+    val used = HashMap<DecalKind, Int>()
+    val taken = ArrayList<Rect>()
+    val out = ArrayList<Placement>()
+
+    var attempts = 0
+    while (out.size < budget && attempts++ < budget * 4) {
+        val kind = pickKind(rng, spec, a, used, size, d) ?: break
+        val decal = buildDecal(kind, rng, ctx, spec, density, LayoutDirection.Ltr, measurer, size) ?: continue
+        val spot = findSpot(rng, spec, decal, safe, taken, d, a) ?: continue
+        used[kind] = (used[kind] ?: 0) + 1
+        taken += spot.bounds
+        val cap = spec.alphaCap[kind] ?: 0.1f
+        out += Placement(
+            decal, spot.bounds, spot.rotation,
+            mirror = kind in Mirrorable && rng.nextFloat() < 0.2f,
+            color = spec.tones[rng.nextInt(spec.tones.size)],
+            alpha = cap * (0.45f + 0.55f * rng.nextFloat()) * (0.5f + 0.5f * a),
+        )
+    }
+    return DecalPlan(out, leak)
+}
+
+private fun pickKind(
+    rng: Random, spec: DecalSpec, a: Float, used: Map<DecalKind, Int>, size: Size, d: Float,
+): DecalKind? {
+    val wDp = size.width / d
+    val hDp = size.height / d
+    val strips = (used[DecalKind.Perforation] ?: 0) + (used[DecalKind.FilmStrip] ?: 0)
+    val w = spec.weights.mapValues { (k, base) ->
+        var v = base
+        if ((used[k] ?: 0) >= (UseLimit[k] ?: Int.MAX_VALUE)) v = 0f
+        when (k) {
+            DecalKind.Perforation, DecalKind.FilmStrip -> if (strips >= 1 || hDp < 30f) v = 0f else v *= a
+            DecalKind.DataBlock -> if (wDp < 200f || hDp < 80f) v = 0f else v *= a
+            DecalKind.Sprite -> if (spec.atlas == null) v = 0f
+            else -> {}
+        }
+        v
+    }
+    val total = w.values.sum()
+    if (total <= 0f) return null
+    var t = rng.nextFloat() * total
+    for ((k, v) in w) { t -= v; if (t <= 0f && v > 0f) return k }
+    return w.entries.lastOrNull { it.value > 0f }?.key
+}
+
+private class Spot(val bounds: Rect, val rotation: Float)
+
+private fun findSpot(
+    rng: Random, spec: DecalSpec, decal: Decal, safe: Rect, taken: List<Rect>, d: Float, a: Float,
+): Spot? {
+    val w = decal.extent.width
+    val h = decal.extent.height
+    val gap = spec.gap.value * d
+    val edge = spec.edgeMarginDp
+    val strip = decal as? StripDecal
+
+    for (i in 0 until 10) {
+        val center = strip == null && spec.allowCenter && a > 0.7f && rng.nextFloat() < (a - 0.7f) * 2f
+        val side = when {
+            strip == null -> rng.nextInt(4)
+            strip.vertical -> 2 + rng.nextInt(2)
+            else -> rng.nextInt(2)
+        }
+        val vertical = !center && side >= 2
+        val bw = if (vertical) h else w
+        val bh = if (vertical) w else h
+        if (bw > safe.width || bh > safe.height) continue
+
+        fun snap(r: Float) = if (strip == null && rng.nextFloat() < 0.5f) (if (r < 0.5f) 0f else 1f) else r
+        val m = if (strip != null) 1.5f * d
+        else (edge.start + rng.nextFloat() * (edge.endInclusive - edge.start)) * d
+        val rx = snap(rng.nextFloat())
+        val ry = snap(rng.nextFloat())
+
+        val px: Float
+        val py: Float
+        when {
+            center -> { px = safe.left + (safe.width - bw) * rng.nextFloat(); py = (safe.height - bh) * rng.nextFloat() }
+            side == 0 -> { px = safe.left + (safe.width - bw) * rx; py = safe.top + m }
+            side == 1 -> { px = safe.left + (safe.width - bw) * rx; py = safe.bottom - bh - m }
+            side == 2 -> { px = safe.left + m; py = safe.top + (safe.height - bh) * ry }
+            else -> { px = safe.right - bw - m; py = safe.top + (safe.height - bh) * ry }
+        }
+        val x = px.coerceIn(safe.left, safe.right - bw)
+        val y = py.coerceIn(safe.top, safe.bottom - bh)
+        val rect = Rect(x, y, x + bw, y + bh)
+        if (taken.any { it.inflate(gap).overlaps(rect) }) continue
+
+        val rotation = when {
+            vertical -> if (rng.nextBoolean()) 90f else 270f
+            center -> (rng.nextFloat() - 0.5f) * 6f
+            else -> 0f
+        }
+        return Spot(rect, rotation)
+    }
+    return null
+}

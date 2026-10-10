@@ -1,4 +1,4 @@
-package com.example.feldelysium.presentation.shared
+package com.example.feldelysium.playground
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
