@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.example.feldelysium.designsystem.foundation.decal.DecalLayer
+import com.example.feldelysium.designsystem.foundation.decal.DecalPlan
+import com.example.feldelysium.designsystem.foundation.decal.drawDecals
 import androidx.compose.ui.graphics.lerp as lerpColor
 import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
@@ -95,15 +98,15 @@ object FeldPaper {
         wear = 0.16f,
         edgeWear = 0.5f,
         edgeBand = 10.dp,
-        chipSize = 6.dp,
+        chipSize = 4.dp,
         chipCoverage = 0.4f,
         innerWear = 0.05f,
         maxLoss = 0.35f,
         scuffTint = 0.22f,
 
-        mottleSize = 44.dp,
+        mottleSize = 24.dp,
         mottleStrength = 0.15f,
-        grainSize = 1.1.dp,
+        grainSize = 0.5.dp,
         grainStrength = 0.015f,
         colorGrain = 0f,
         toothStrength = 0.02f,
@@ -218,8 +221,10 @@ fun Modifier.paperMaterial(
     wear: () -> Float = { spec.wear },
     press: () -> Float = { 0f },
     time: () -> Float = { 0f },
+    decals: DecalLayer? = null,
 ): Modifier = drawWithCache {
     val path = shape.buildPath(size, this)
+    val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
     val inkLayers = if (spec.inkWidth.value > 0f)
         shape.buildInkLayers(path, this, spec.inkWidth.toPx()) else emptyList()
     val sinkBand = spec.sinkBand.toPx()
@@ -275,6 +280,7 @@ fun Modifier.paperMaterial(
 
             clipPath(path) {
                 drawRect(paperBrush)
+                drawDecals(placed)
                 this@onDrawWithContent.drawContent()
             }
             drawInk(inkLayers, inkBrush)
@@ -284,6 +290,7 @@ fun Modifier.paperMaterial(
         onDrawWithContent {
             clipPath(path) {
                 drawRect(spec.base)
+                drawDecals(placed)
                 this@onDrawWithContent.drawContent()
             }
             drawInk(inkLayers, inkBrush)

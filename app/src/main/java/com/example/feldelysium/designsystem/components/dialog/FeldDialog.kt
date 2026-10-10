@@ -31,6 +31,7 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.card.FeldCard
+import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
@@ -41,6 +42,7 @@ fun FeldDialog(
     modifier: Modifier = Modifier,
     eyebrow: String? = null,
     subtitle: String? = null,
+    ambient: Float? = 0.6f,
     seed: Int = rememberSeed(),
     footer: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
@@ -53,6 +55,8 @@ fun FeldDialog(
             modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 24.dp)
                 .fillMaxWidth(),
+            ambient = ambient,
+            decalSpec = DecalSpec.Dialog,
             seed = seed,
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 0.dp),
             revealOnEnter = true,

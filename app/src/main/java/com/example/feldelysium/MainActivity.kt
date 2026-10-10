@@ -13,26 +13,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
 import com.example.feldelysium.eggs.EggEvent
-import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.EggsViewModel
+import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
-import com.example.feldelysium.presentation.shared.DesignSystemPlayground
+import com.example.feldelysium.playground.DesignSystemPlayground
+import com.example.feldelysium.playground.FeldDecalPlaygroundScreen
+import com.example.feldelysium.playground.PlaygroundEntry
+import com.example.feldelysium.playground.PlaygroundHubScreen
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 class MainActivity : ComponentActivity() {
 
     private val eggsVm: EggsViewModel by viewModels()
 
-    companion object {
-        private const val SHOW_PLAYGROUND = false
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
@@ -50,17 +54,43 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    var launchApp by rememberSaveable {
+                        mutableStateOf(false)
+                    }
+
                     CompositionLocalProvider(LocalEasterEggs provides eggs) {
-                        if (SHOW_PLAYGROUND) {
-                            DesignSystemPlayground()
-                        } else {
+                        if (launchApp) {
                             Box(Modifier.fillMaxSize()) {
                                 Surface(
                                     modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.background
-                                ) { AppNavGraph() }
+                                    color = MaterialTheme.colorScheme.background,
+                                ) {
+                                    AppNavGraph()
+                                }
                                 EggToastHost(eggs)
                             }
+                        } else {
+                            PlaygroundHubScreen(
+                                onLaunchApp = { launchApp = true },
+                                playgrounds = listOf(
+                                    PlaygroundEntry(
+                                        id = "decals",
+                                        title = "Decal Playground",
+                                        description = "Test decorative marks, textures and placement.",
+                                        content = {
+                                            FeldDecalPlaygroundScreen()
+                                        },
+                                    ),
+                                    PlaygroundEntry(
+                                        id = "design-system",
+                                        title = "Design System",
+                                        description = "Preview and test reusable UI components.",
+                                        content = {
+                                            DesignSystemPlayground()
+                                        },
+                                    ),
+                                ),
+                            )
                         }
                     }
                 }

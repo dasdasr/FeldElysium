@@ -48,7 +48,7 @@ fun FeldIcon(
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current,
     size: Dp = 24.dp,
-    film: Boolean = false,
+    film: Boolean = true,
 ) {
     val v: ImageVector = when (id) {
         FeldIconId.Back -> Icons.AutoMirrored.Filled.ArrowBack
@@ -83,7 +83,8 @@ fun FeldIcon(
             .then(
                 if (film) Modifier.markerFilmMaterial(
                     FeldMarker.Chalk,
-                    id.ordinal
+                    id.ordinal,
+                    bakeKey = tint
                 ) else Modifier
             ),
         tint = tint,
