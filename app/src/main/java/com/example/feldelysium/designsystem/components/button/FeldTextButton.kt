@@ -19,8 +19,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.feldelysium.designsystem.components.feldClickable
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 @Composable
 fun FeldTextButton(
@@ -46,7 +47,7 @@ fun FeldDialogActions(
     cancelLabel: String = "Cancel",
     onCancel: (() -> Unit)? = null,
     confirmEnabled: Boolean = true,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
 ) {
     Row(
         modifier = modifier
@@ -61,6 +62,7 @@ fun FeldDialogActions(
         FeldButton(
             confirmLabel,
             onClick = { if (confirmEnabled) onConfirm() },
+            spec = if (confirmEnabled) FeldButtonDefaults.Orange else FeldButtonDefaults.Cream,
             modifier = Modifier
                 .weight(1f)
                 .alpha(if (confirmEnabled) 1f else 0.45f),
@@ -81,8 +83,8 @@ private fun Modifier.pullUp(amount: Dp): Modifier = layout { measurable, constra
 fun FeldLabeledBlock(
     label: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
-    overlap: Dp = 6.dp,
+    seed: Int = rememberSeed(),
+    overlap: Dp = 14.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -94,7 +96,7 @@ fun FeldLabeledBlock(
             text = label,
             modifier = Modifier.zIndex(1f),
             seed = seed,
-            distressed = true,
+            distressed = false,
             textStyle = MaterialTheme.typography.labelMedium.copy(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.4.sp,

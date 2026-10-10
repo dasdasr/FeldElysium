@@ -5,17 +5,6 @@ import android.media.AudioAttributes
 import android.media.SoundPool
 import java.io.File
 
-/**
- * Thin wrapper around [SoundPool] for short one-shot sound effects.
- *
- * Lifecycle:
- *   - Constructed in PlaybackViewModel.init
- *   - Released in PlaybackViewModel.onCleared()
- *
- * Loading:
- *   - All [SoundGroup] assets are pre-loaded at construction time.
- *   - A tap that arrives before its sample is ready is played from onLoadComplete.
- */
 class SoundManager(context: Context) {
 
     private val pool: SoundPool = SoundPool.Builder()
@@ -61,10 +50,6 @@ class SoundManager(context: Context) {
         }
     }
 
-    /**
-     * Plays the sound for [group] at [volume] (0.0–1.0).
-     * If the sample is still loading, it plays once loading finishes.
-     */
     fun play(group: SoundGroup, volume: Float = 1f) {
         if (group in readyGroups) {
             pendingGroup = null

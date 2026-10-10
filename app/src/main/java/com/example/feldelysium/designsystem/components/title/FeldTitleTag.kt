@@ -12,16 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.DistressedTitleSpec
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
-import com.example.feldelysium.designsystem.material.FeldTape
-import com.example.feldelysium.designsystem.material.StickerTapeSpec
-import com.example.feldelysium.designsystem.material.stickerTapeMaterial
+import com.example.feldelysium.designsystem.foundation.material.DistressSpec
+import com.example.feldelysium.designsystem.foundation.material.FeldTape
+import com.example.feldelysium.designsystem.foundation.material.StickerTapeSpec
+import com.example.feldelysium.designsystem.foundation.material.stickerTapeMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 private val CompactCream = FeldTape.Cream.copy(
@@ -42,7 +42,7 @@ private val CompactCream = FeldTape.Cream.copy(
 fun FeldTitleTag(
     text: String,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: StickerTapeSpec = CompactCream,
     contentColor: Color = Color(0xFF1B1612),
     textStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(
@@ -50,17 +50,17 @@ fun FeldTitleTag(
     ),
     rotation: Float = -0.6f,
     distressed: Boolean = false,
-    distressedSpec: DistressedTitleSpec = FeldDistressedTitles.Small,
+    distressedSpec: DistressSpec = FeldDistressedTitles.Small,
 ) {
     Box(
         modifier = modifier
             .graphicsLayer { rotationZ = rotation }
             .stickerTapeMaterial(spec, seed)
             .padding(
-                start = spec.edgeInset + 2.dp,
-                end = spec.edgeInset + 10.dp,
-                top = 5.dp,
-                bottom = 5.dp,
+                start = spec.edgeInset,
+                end = spec.edgeInset + 3.dp,
+                top = 1.dp,
+                bottom = 1.dp,
             ),
         contentAlignment = Alignment.Center,
     ) {

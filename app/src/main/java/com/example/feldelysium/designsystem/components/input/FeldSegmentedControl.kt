@@ -25,12 +25,14 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import kotlin.math.abs
+import androidx.compose.ui.unit.IntOffset
 
 private val TrackRough = RoughStyle(
     roughness = 0.7.dp,
@@ -58,8 +60,8 @@ fun FeldSegmentedControl(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
 ) {
+    val seed = rememberSeed()
     val count = options.size.coerceAtLeast(1)
     val trackShape = remember(seed) { RoughShape(seed, TrackRough) }
 
@@ -74,7 +76,7 @@ fun FeldSegmentedControl(
 
     val pillShape = remember(seed, leftRound, rightRound) {
         RoughShape(
-            seed = seed + 1,
+            seed = seed,
             style = PillRough.copy(leftCornerScale = leftRound, rightCornerScale = rightRound),
         )
     }
@@ -90,7 +92,7 @@ fun FeldSegmentedControl(
 
         Box(
             Modifier
-                .offset(x = segmentWidth * position)
+                .offset { IntOffset((segmentWidth * position).roundToPx(), 0) }
                 .width(segmentWidth)
                 .fillMaxHeight()
                 .paperMaterial(pillShape, FeldPaper.DryButtonCream),

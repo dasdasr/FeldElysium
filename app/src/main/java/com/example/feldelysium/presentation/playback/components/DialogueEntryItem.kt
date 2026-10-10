@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import com.example.feldelysium.presentation.playback.PlaybackMotion
 
 private const val NAME_TRACKING_EM = 0.4f / 12f
 private const val HANGING_INDENT_EM = 14f / 12f

@@ -1,5 +1,8 @@
 package com.example.feldelysium.designsystem.components.input
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,32 +11,28 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.feldClickable
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.PaperSpec
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
-
-private val CleanRound = RoughStyle(
-    roughness = 0.dp,
-    irregularity = 0f,
-    slide = 0f,
-    corner = 9.dp,
-    cornerVariation = 0f,
-    cornerJitter = 0f,
-    inset = 0.dp,
-    jerkChance = 0f,
-    tornChance = 0f,
-)
+import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
+import com.example.feldelysium.designsystem.components.card.entryRough
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.PaperSpec
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 
 private val Cream = Color(0xFFE6DCC4)
+private val InkDark = Color(0xFF1B1612)
 
 fun swatchSpec(argb: Long, selected: Boolean = false): PaperSpec {
     val c = Color(argb.toInt())
@@ -41,19 +40,19 @@ fun swatchSpec(argb: Long, selected: Boolean = false): PaperSpec {
         base = c,
         scuff = lerp(c, Color.Black, 0.35f),
         ink = Cream,
-        inkWidth = if (selected) 2.dp else 0.dp,
+        inkWidth = 0.dp,
 
-        wear = 0.5f,
-        edgeWear = 0f,
-        innerWear = 0.5f,
-        scuffTint = 0.45f,
+        wear = 0.4f,
+        edgeWear = 0.2f,
+        innerWear = 0.3f,
+        scuffTint = 0.35f,
         chipSize = 5.dp,
         chipCoverage = 0.5f,
 
-        mottleStrength = 0.5f,
-        grainStrength = 0.06f,
-        toothStrength = 0.05f,
-        speckleStrength = 0.05f,
+        mottleStrength = 0.3f,
+        grainStrength = 0.03f,
+        toothStrength = 0.03f,
+        speckleStrength = 0.03f,
     )
 }
 
@@ -63,8 +62,10 @@ fun FeldColorSwatches(
     selected: Long,
     onSelect: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     columns: Int = colors.size.coerceAtLeast(1),
+    horizontalSpacing: Dp = 5.dp,
+    verticalSpacing: Dp = 5.dp,
     minRows: Int = 1,
 ) {
     val cols = columns.coerceAtLeast(1)
@@ -73,36 +74,70 @@ fun FeldColorSwatches(
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(verticalSpacing),
     ) {
         repeat(totalRows) { r ->
             val rowColors = rows.getOrNull(r).orEmpty()
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(horizontalSpacing),
             ) {
                 repeat(cols) { c ->
                     val argb = rowColors.getOrNull(c)
                     if (argb == null) {
-                        Spacer(
-                            Modifier
-                                .weight(1f)
-                                .aspectRatio(1f),
-                        )
+                        Spacer(Modifier.weight(1f).aspectRatio(1f))
                     } else {
-                        val shape = remember(seed, r, c) {
-                            RoughShape(seed + (r * cols + c) * 5, CleanRound)
-                        }
-                        Box(
-                            Modifier
-                                .weight(1f)
-                                .aspectRatio(1f)
-                                .paperMaterial(shape, swatchSpec(argb, selected = argb == selected))
-                                .feldClickable(role = Role.RadioButton, onClick = { onSelect(argb) }),
+                        Swatch(
+                            argb = argb,
+                            selected = argb == selected,
+                            seed = seed + (r * cols + c) * 5,
+                            onClick = { onSelect(argb) },
+                            modifier = Modifier.weight(1f),
                         )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun Swatch(
+    argb: Long,
+    selected: Boolean,
+    seed: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shape = remember(seed) { RoughShape(seed, entryRough(seed)) }
+    val spec = remember(argb) { swatchSpec(argb) }
+    val color = Color(argb.toInt())
+    val t by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
+        animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium),
+        label = "swatch",
+    )
+
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .graphicsLayer {
+                val s = 1f + 0.25f * t
+                scaleX = s
+                scaleY = s
+                rotationZ = -3f * t
+            }
+            .paperMaterial(shape, spec)
+            .feldClickable(role = Role.RadioButton, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (t > 0.01f) {
+            FeldHandDiamond(
+                color = if (color.luminance() > 0.55f) InkDark else Cream,
+                seed = seed,
+                size = 12.dp,
+                modifier = Modifier.graphicsLayer { alpha = t },
+            )
         }
     }
 }

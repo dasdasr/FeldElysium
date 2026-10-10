@@ -30,23 +30,22 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.FeldPalette
-import com.example.feldelysium.designsystem.material.FeldPaper
-import com.example.feldelysium.designsystem.material.PaperSpec
-import com.example.feldelysium.designsystem.material.paperMaterial
-import com.example.feldelysium.designsystem.shape.RoughShape
-import com.example.feldelysium.designsystem.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.material.PaperSpec
+import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 object FeldRough {
-    val Card = RoughStyle()
     val Field = RoughStyle(
-        roughness = 0.8.dp,
-        step = 48.dp,
-        corner = 4.dp,
-        tornChance = 0.1f,
+        roughness = 0.6.dp, step = 44.dp, corner = 3.dp,
+        cornerVariation = 0.2f, cornerJitter = 0.2f,
+        tornChance = 0.03f, jerkChance = 0.04f,
     )
 }
 
@@ -55,19 +54,25 @@ fun FeldTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Field,
     rough: RoughStyle = FeldRough.Field,
     maxLength: Int? = null,
     showLength: Boolean = true,
     minLines: Int = 1,
+    maxLines: Int = Int.MAX_VALUE,
     singleLine: Boolean = minLines <= 1,
     placeholder: String? = null,
     label: String? = null,
     enabled: Boolean = true,
     textStyle: TextStyle? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    contentPadding: PaddingValues = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+    contentPadding: PaddingValues = PaddingValues(
+        start = 16.dp,
+        end = 16.dp,
+        top = 16.dp,
+        bottom = 16.dp
+    ),
     focusAnimation: Boolean = true,
     counterInside: Boolean = true,
     time: () -> Float = { 0f },
@@ -124,6 +129,7 @@ fun FeldTextField(
                 enabled = enabled,
                 singleLine = singleLine,
                 minLines = minLines,
+                maxLines = maxLines,
                 visualTransformation = visualTransformation,
                 textStyle = baseStyle.copy(color = MaterialTheme.colorScheme.onSurface),
                 cursorBrush = SolidColor(FeldPalette.Orange),

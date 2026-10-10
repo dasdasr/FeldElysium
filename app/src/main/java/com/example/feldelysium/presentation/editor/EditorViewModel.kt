@@ -172,6 +172,16 @@ class EditorViewModel(
 
         EditorEvent.ClearScene ->
             sceneViewModel.dispatch(SceneAction.ClearScene)
+
+        EditorEvent.AddEntryWithRandomSpeaker -> _state.update {
+            val speaker = it.allSpeakers.randomOrNull()
+            if (speaker == null) it.copy(isSpeakerPickerOpen = true)
+            else it.copy(
+                pendingSpeaker = speaker,
+                isSpeakerPickerOpen = false,
+                isEntryEditOpen = true,
+            )
+        }
     }
 
     private fun previewFor(text: String): ImportPreview? {
@@ -186,13 +196,13 @@ class EditorViewModel(
     private fun handleImport() {
         val text = _state.value.importText
         if (text.isBlank()) {
-            notify("Nothing to import.")
+            notify("Paste some lines first")
             return
         }
 
         val result = parseUseCase.execute(text, sceneViewModel.state.value.customSpeakers)
         if (result.entries.isEmpty()) {
-            notify("No lines recognized.")
+            notify("No lines found. Try «NAME: text»")
             return
         }
 

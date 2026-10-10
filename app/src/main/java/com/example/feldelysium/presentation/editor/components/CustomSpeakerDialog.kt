@@ -19,10 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.feldelysium.designsystem.components.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
@@ -78,7 +79,6 @@ fun CustomSpeakerDialog(
         eyebrow = "Custom speaker",
         subtitle = "Name, color and icon of your voice.",
         onDismiss = onDismiss,
-        seed = 19,
         footer = {
             FeldDialogActions(
                 confirmLabel = if (editing) "Save" else "Create",
@@ -96,11 +96,10 @@ fun CustomSpeakerDialog(
                 },
                 onCancel = onDismiss,
                 confirmEnabled = name.isNotBlank(),
-                seed = 17,
             )
         },
     ) {
-        FeldLabeledBlock("Name", seed = 1) {
+        FeldLabeledBlock("Name") {
             FeldTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -108,27 +107,25 @@ fun CustomSpeakerDialog(
                 maxLength = 32,
                 showLength = false,
                 minLines = 1,
-                seed = 2,
             )
         }
-        FeldDivider(seed = 61)
+        FeldDivider()
 
-        FeldLabeledBlock("Color", seed = 3) {
+        FeldLabeledBlock("Color") {
             FeldColorSwatches(
                 colors = palette,
                 selected = color,
                 onSelect = { color = it },
-                columns = 7,
+                columns = 9,
                 minRows = 2,
-                seed = 30,
             )
         }
-        FeldDivider(seed = 62)
+        FeldDivider()
 
         val res = iconRes
         val uri = iconUri
         FeldSettingRow(
-            icon = Icons.Filled.Image,
+            icon = FeldIconId.Image,
             title = "Icon",
             subtitle = if (res != null || uri != null) "Selected" else "Optional",
             showChevron = true,
@@ -155,7 +152,7 @@ fun CustomSpeakerDialog(
                 }
             },
         )
-        FeldDivider(seed = 63)
+        FeldDivider()
     }
 
     if (showIcons) {

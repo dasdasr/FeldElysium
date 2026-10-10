@@ -23,8 +23,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.material.DryPaperSpec
-import com.example.feldelysium.designsystem.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
+import com.example.feldelysium.designsystem.foundation.material.dryPaperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 private val ThumbSpec = DryPaperSpec(
     base = Color(0xFFDCCFB5),
@@ -41,7 +42,7 @@ fun FeldSlider(
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    seed: Int = 0,
+    seed: Int = rememberSeed(),
     onValueChangeFinished: (() -> Unit)? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
