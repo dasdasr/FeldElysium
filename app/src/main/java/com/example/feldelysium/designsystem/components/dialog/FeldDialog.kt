@@ -32,6 +32,7 @@ import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
+import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
@@ -122,6 +123,7 @@ fun FeldDialogFooter(
     cancelLabel: String = "RESET",
     confirmLabel: String = "SAVE",
     seed: Int = rememberSeed(),
+    buttonSpec: DryPaperSpec = FeldButtonDefaults.Orange,
 ) {
     Row(
         modifier = modifier
@@ -146,7 +148,7 @@ fun FeldDialogFooter(
             confirmLabel,
             onClick = onCancel,
             modifier = Modifier.weight(1f),
-            spec = FeldButtonDefaults.Orange,
+            spec = buttonSpec,
             seed = seed,
         )
     }

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
@@ -53,6 +54,7 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
+import com.example.feldelysium.designsystem.components.input.FeldSliderColors
 import com.example.feldelysium.designsystem.components.input.swatchSpec
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
@@ -112,6 +114,7 @@ fun BackgroundPickerDialog(
                 onReset = onReset,
                 onCancel = onDismiss,
                 confirmLabel = "Save",
+                buttonSpec = FeldButtonDefaults.Cream,
             )
         },
     ) {
@@ -161,7 +164,7 @@ private fun MediaPane(
                 trailing = {
                     FeldSwitch(
                         checked = !settings.backgroundVideoSound,
-                        onCheckedChange = null,
+                        onCheckedChange = { },
                     )
                 },
             )
@@ -176,7 +179,7 @@ private fun MediaPane(
                 trailing = {
                     FeldSwitch(
                         checked = settings.backgroundVideoFill,
-                        onCheckedChange = null,
+                        onCheckedChange = { },
                     )
                 },
             )
@@ -343,11 +346,13 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             },
             onValueChangeFinished = { commit() },
             valueRange = 0f..360f,
+            accent = FeldSliderColors.Orange,
         )
         FeldSlider(
             value = bri,
             onValueChange = { bri = it },
             onValueChangeFinished = { commit() },
+            accent = FeldSliderColors.Orange,
         )
         Spacer(Modifier.height(12.dp))
         FeldColorSwatches(

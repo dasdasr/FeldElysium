@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.example.feldelysium.designsystem.foundation.material.MarkerFilmWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggsViewModel
@@ -25,7 +26,7 @@ import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
 import com.example.feldelysium.playground.DesignSystemPlayground
-import com.example.feldelysium.playground.FeldDecalPlaygroundScreen
+import com.example.feldelysium.playground.FeldDecalPlayground
 import com.example.feldelysium.playground.PlaygroundEntry
 import com.example.feldelysium.playground.PlaygroundHubScreen
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DiscoDialogueTheme {
+                MarkerFilmWarmup()
                 ProvideSeedScope {
                     val eggs = eggsVm.eggs
 
@@ -78,7 +80,7 @@ class MainActivity : ComponentActivity() {
                                         title = "Decal Playground",
                                         description = "Test decorative marks, textures and placement.",
                                         content = {
-                                            FeldDecalPlaygroundScreen()
+                                            FeldDecalPlayground()
                                         },
                                     ),
                                     PlaygroundEntry(
