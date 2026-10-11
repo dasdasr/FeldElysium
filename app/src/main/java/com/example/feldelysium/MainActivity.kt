@@ -27,6 +27,7 @@ import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
 import com.example.feldelysium.playground.DesignSystemPlayground
 import com.example.feldelysium.playground.FeldDecalPlayground
+import com.example.feldelysium.playground.FeldShaderPlayground
 import com.example.feldelysium.playground.PlaygroundEntry
 import com.example.feldelysium.playground.PlaygroundHubScreen
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -91,6 +92,12 @@ class MainActivity : ComponentActivity() {
                                             DesignSystemPlayground()
                                         },
                                     ),
+                                    PlaygroundEntry(
+                                        id = "shaders",
+                                        title = "Shaders",
+                                        description = "All shaders: grid and frame set up",
+                                        content = { FeldShaderPlayground() },
+                                    )
                                 ),
                             )
                         }

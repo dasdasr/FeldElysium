@@ -11,6 +11,8 @@ val DiscoText = Color(0xFFE9EAEC)
 val DiscoTextMuted = Color(0xFF8C8E8A)
 
 val DiscoOrange = Color(0xFFDD6224)
+
+val DiscoTeal = Color(0xFF3FA58E)
 val DiscoOrangePressed = Color(0xFFB84E1A)
 val DiscoCream = Color(0xFFDCCFB5)
 val DiscoInk = Color(0xFF1B1612)

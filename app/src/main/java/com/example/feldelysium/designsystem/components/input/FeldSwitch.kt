@@ -85,7 +85,6 @@ private class SideRoundShape(private val l: Float, private val r: Float) : Shape
     }
 }
 
-/** pos: 0 = слева = ON, 1 = справа = OFF. */
 @Composable
 fun FeldSwitch(
     checked: Boolean,
@@ -245,8 +244,11 @@ fun FeldSwitch(
                         translationX = p * travelPx
                         scaleX = 1f + 0.05f * stretch
                         val big = size.height / 2f
-                        val l = lerp(big, smallPx, smooth((p - 0.5f) * 2f))
-                        val r = lerp(smallPx, big, smooth(p * 2f))
+                        val t = smooth(p)
+
+                        val l = lerp(big, smallPx, t)
+                        val r = lerp(smallPx, big, t)
+
                         shape = SideRoundShape(l, r)
                         clip = true
                     }

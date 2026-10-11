@@ -52,7 +52,7 @@ import kotlin.math.abs
 enum class FeldThumb { Diamond, Rectangle, Circle }
 
 object FeldSliderColors {
-    val Teal = Color(0xFF3FA58E)
+    val Teal = FeldPalette.Teal
     val Orange = FeldPalette.Orange
     val Cream = FeldPalette.Cream
 }
