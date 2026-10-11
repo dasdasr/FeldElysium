@@ -33,6 +33,7 @@ import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.theme.disco
 import org.w3c.dom.Text
 import java.time.format.TextStyle
 
@@ -129,7 +130,7 @@ fun PlaygroundHubScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             FeldHandDiamond(
-                                color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.8f),
+                                color = MaterialTheme.disco.accent.copy(alpha = 0.8f),
                                 seed = playground.title.hashCode(),
                                 size = 10.dp
                             )

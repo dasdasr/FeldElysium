@@ -42,6 +42,9 @@ import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldEntryCard
 import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldChip
+import com.example.feldelysium.designsystem.components.input.FeldChipColors
+import com.example.feldelysium.designsystem.components.input.FeldChipShape
 import com.example.feldelysium.designsystem.components.input.FeldSlider
 import com.example.feldelysium.designsystem.components.input.FeldSliderColors
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
@@ -85,6 +88,45 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
+        item { Title("CHIPS") }
+        item {
+            var sel by remember { mutableStateOf(setOf("Logic")) }
+            var shape by remember { mutableStateOf(FeldChipShape.Chamfer) }
+            var outline by remember { mutableStateOf(true) }
+            var leading by remember { mutableStateOf(true) }
+            val names = listOf("Logic", "Empathy", "Drama", "Volition")
+
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FeldChipShape.values().forEach {
+                        FeldChip(
+                            text = it.name,
+                            selected = shape == it,
+                            onClick = { shape = it },
+                            shape = it,
+                            leading = true,
+                        )
+                    }
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    FeldSwitch(outline, { outline = it }); Spacer(Modifier.width(8.dp)); Text("outline", color = Color.White)
+                    Spacer(Modifier.width(16.dp))
+                    FeldSwitch(leading, { leading = it }); Spacer(Modifier.width(8.dp)); Text("diamond", color = Color.White)
+                }
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    names.forEachIndexed { i, n ->
+                        FeldChip(
+                            text = n, selected = n in sel,
+                            onClick = { sel = if (n in sel) sel - n else sel + n },
+                            shape = shape, outline = outline, leading = leading,
+                            accent = listOf(FeldChipColors.Teal, FeldChipColors.Orange, FeldChipColors.Cream, Color(0xFF8F6FD6))[i],
+                            seed = 100 + i,
+                        )
+                    }
+                    FeldChip("Disabled", selected = false, onClick = {}, enabled = false, shape = shape, outline = outline, leading = leading)
+                }
+            }
+        }
         item { Title("DECALS") }
         item {
             Column {
@@ -129,7 +171,11 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf("Entry", "Dialog", "Panel").forEach {
-                        FilterChip(preset == it, { preset = it }, { Text(it) })
+                        FeldChip(
+                            text = it,
+                            selected = preset == it,
+                            onClick = { preset = it },
+                        )
                     }
                 }
                 Row(
@@ -137,10 +183,13 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     DecalKind.values().forEach { k ->
-                        FilterChip(
-                            k in enabled,
-                            { enabled = if (k in enabled) enabled - k else enabled + k },
-                            { Text(k.name) })
+                        FeldChip(
+                            text = k.name,
+                            selected = k in enabled,
+                            onClick = {
+                                enabled = if (k in enabled) enabled - k else enabled + k
+                            },
+                        )
                     }
                 }
             }
@@ -237,7 +286,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 FeldSwitch(stress, { stress = it }); Spacer(Modifier.width(8.dp))
-                Text("stress: 80 film icons (проверь скролл)", color = Color.White)
+                Text("stress: 80 film icons (check scroll)", color = Color.White)
             }
         }
         if (stress) item {

@@ -76,7 +76,7 @@ private val Presets = listOf(
 
 private val PreviewRough = RoughStyle(
     roughness = 0.9.dp,
-    step = 48.dp,
+    step = 12.dp,
     corner = 3.dp,
     tornChance = 0.2f,
 )
@@ -315,27 +315,12 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
     val chipShape = remember { RoughShape(13, PreviewRough.copy(corner = 4.dp)) }
 
     Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Filled.Palette,
-                contentDescription = null,
-                tint = FeldPalette.Muted,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(Modifier.width(16.dp))
-            Text(
-                text = "COLOR",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Spacer(Modifier.width(22.dp))
-            Box(
-                Modifier
-                    .weight(1f)
-                    .height(52.dp)
-                    .paperMaterial(chipShape, swatchSpec(live, selected = true)),
-            )
-        }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .paperMaterial(chipShape, swatchSpec(live, selected = true)),
+        )
 
         Spacer(Modifier.height(12.dp))
         FeldSlider(
@@ -346,13 +331,13 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             },
             onValueChangeFinished = { commit() },
             valueRange = 0f..360f,
-            accent = FeldSliderColors.Orange,
+            accent = FeldSliderColors.Cream,
         )
         FeldSlider(
             value = bri,
             onValueChange = { bri = it },
             onValueChangeFinished = { commit() },
-            accent = FeldSliderColors.Orange,
+            accent = FeldSliderColors.Teal,
         )
         Spacer(Modifier.height(12.dp))
         FeldColorSwatches(
