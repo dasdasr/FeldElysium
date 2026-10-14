@@ -62,7 +62,7 @@ fun FeldDialogActions(
         FeldButton(
             confirmLabel,
             onClick = { if (confirmEnabled) onConfirm() },
-            spec = if (confirmEnabled) FeldButtonDefaults.Orange else FeldButtonDefaults.Cream,
+            spec = if (confirmEnabled) FeldButtonDefaults.OrangeFresh else FeldButtonDefaults.Cream,
             modifier = Modifier
                 .weight(1f)
                 .alpha(if (confirmEnabled) 1f else 0.45f),

@@ -3,8 +3,8 @@ package com.example.feldelysium.presentation.settings
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.withFrameNanos
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,19 +15,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AspectRatio
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.TextFields
-import androidx.compose.material.icons.filled.ViewDay
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,14 +32,18 @@ import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
-import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsSection
+import com.example.feldelysium.designsystem.components.toast.FeldToastHost
+import com.example.feldelysium.designsystem.components.toast.rememberFeldToastState
+import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
+import com.example.feldelysium.presentation.editor.components.ImportConflictDialog
+import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.settings.components.BackgroundPickerDialog
 import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
 import com.example.feldelysium.presentation.settings.components.PlaybackUiTextDialog
@@ -61,9 +61,18 @@ fun SettingsScreen(
     val settings by vm.state.collectAsStateWithLifecycle()
     val haptics = rememberFeldHaptics()
     val eggs = LocalEasterEggs.current
+    val toast = rememberFeldToastState()
+
+    val packVm: SpeakerPackViewModel = viewModel()
+    val pack by packVm.state.collectAsStateWithLifecycle()
+    val speakers by packVm.speakers.collectAsStateWithLifecycle()
+    val tags by packVm.tags.collectAsStateWithLifecycle()
+
     var showPlaybackUiText by remember { mutableStateOf(false) }
     var showBackground by remember { mutableStateOf(false) }
+    var showTags by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
+
     BackHandler(enabled = !leaving) { leaving = true }
     LaunchedEffect(leaving) {
         if (leaving) {
@@ -73,99 +82,146 @@ fun SettingsScreen(
         }
     }
 
-    Column(
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/zip"),
+    ) { uri ->
+        uri?.let { packVm.export(activity.contentResolver.openOutputStream(it)) }
+    }
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let { packVm.prepareImport(activity.contentResolver.openInputStream(it)) }
+    }
+
+    pack.message?.let { m ->
+        LaunchedEffect(m) {
+            toast.show(m)
+            packVm.consumeMessage()
+        }
+    }
+
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding(),
+            .background(MaterialTheme.colorScheme.background),
     ) {
-        FeldScreenHeader(
-            title = "App settings",
-            eyebrow = "Settings",
-            subtitle = "Tune your scenes. Keep the vibe.",
-            onNav = { leaving = true },
-        )
+        Column(Modifier.fillMaxSize().statusBarsPadding()) {
+            FeldScreenHeader(
+                title = "App settings",
+                eyebrow = "Settings",
+                subtitle = "Tune your scenes. Keep the vibe.",
+                onNav = { leaving = true },
+            )
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .navigationBarsPadding(),
-        ) {
-            FeldSettingsSection(title = "Playback") {
-                FeldSettingSwitchRow(
-                    icon = FeldIconId.Aspect,
-                    title = "Cinema frame",
-                    subtitle = "Keep playback inside a 16:9 frame",
-                    checked = settings.lockAspectRatio16x9,
-                    onCheckedChange = {
-                        eggs?.report(EggEvent.SwitchToggle, "Cinema frame")
-                        vm.dispatch(SettingsEvent.SetLockAspectRatio16x9(it))
-                    },
-                )
-                FeldSettingsDivider()
-                FeldSettingRow(
-                    icon = FeldIconId.Grid,
-                    title = "Status line",
-                    subtitle = "Reals, time and day",
-                    showChevron = true,
-                    onClick = { haptics.tick(); showPlaybackUiText = true },
-                )
-                FeldSettingsDivider()
-                FeldSettingValueRow(
-                    icon = FeldIconId.DialogueStyle,
-                    title = "Typeface",
-                    subtitle = "Dialogue text in playback",
-                    value = PlaybackFontName,
-                    onClick = { /* TODO: font picker dialog */ },
-                )
-            }
-
-            FeldSettingsSection(title = "Background") {
-                FeldBackgroundRow(
-                    settings = settings,
-                    currentLabel = backgroundLabel(settings),
-                    freezeVideo = leaving,
-                    onClick = { haptics.tick(); showBackground = true },
-                )
-            }
-
-            FeldSettingsSection(title = "Coming soon") {
-                SoonTap("Autoplay") {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .navigationBarsPadding(),
+            ) {
+                FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
-                        icon = FeldIconId.Play,
-                        title = "Autoplay",
-                        subtitle = "Play scene automatically",
-                        checked = false,
-                        onCheckedChange = {},
-                        enabled = false,
+                        icon = FeldIconId.Aspect,
+                        title = "Cinema frame",
+                        subtitle = "Keep playback inside a 16:9 frame",
+                        checked = settings.lockAspectRatio16x9,
+                        onCheckedChange = {
+                            eggs?.report(EggEvent.SwitchToggle, "Cinema frame")
+                            vm.dispatch(SettingsEvent.SetLockAspectRatio16x9(it))
+                        },
                     )
-                }
-
-                FeldSettingsDivider()
-
-                SoonTap("Line delay") {
-                    FeldSettingValueRow(
-                        icon = FeldIconId.Timer,
-                        title = "Line delay",
-                        subtitle = "Time between lines (seconds)",
-                        value = "x",
-                        enabled = false,
-                    )
-                }
-
-                FeldSettingsDivider()
-
-                SoonTap("Status icons") {
+                    FeldSettingsDivider()
                     FeldSettingRow(
-                        icon = FeldIconId.Settings,
-                        title = "Status icons",
-                        subtitle = "Tap the icons right in playback",
-                        enabled = false,
+                        icon = FeldIconId.Grid,
+                        title = "Status line",
+                        subtitle = "Reals, time and day",
+                        showChevron = true,
+                        onClick = { haptics.tick(); showPlaybackUiText = true },
                     )
+                    FeldSettingsDivider()
+                    FeldSettingValueRow(
+                        icon = FeldIconId.DialogueStyle,
+                        title = "Typeface",
+                        subtitle = "Dialogue text in playback",
+                        value = PlaybackFontName,
+                        onClick = { /* TODO: font picker dialog */ },
+                    )
+                }
+
+                FeldSettingsSection(title = "Background") {
+                    FeldBackgroundRow(
+                        settings = settings,
+                        currentLabel = backgroundLabel(settings),
+                        freezeVideo = leaving,
+                        onClick = { haptics.tick(); showBackground = true },
+                    )
+                }
+
+                FeldSettingsSection(title = "Speakers") {
+                    FeldSettingRow(
+                        icon = FeldIconId.Export,
+                        title = "Export speakers",
+                        subtitle = "Save your speakers and tags to a file",
+                        showChevron = true,
+                        onClick = { haptics.tick(); exportLauncher.launch("speakers.feldpack") },
+                    )
+                    FeldSettingsDivider()
+                    FeldSettingRow(
+                        icon = FeldIconId.Import,
+                        title = "Import speakers",
+                        subtitle = "Add speakers and tags from a pack",
+                        showChevron = true,
+                        onClick = { haptics.tick(); importLauncher.launch(arrayOf("*/*")) },
+                    )
+                    FeldSettingsDivider()
+                    FeldSettingRow(
+                        icon = FeldIconId.Palette,
+                        title = "Tags",
+                        subtitle = "Rename, recolor or delete",
+                        showChevron = true,
+                        onClick = { haptics.tick(); showTags = true },
+                    )
+                }
+
+                FeldSettingsSection(title = "Coming soon") {
+                    SoonTap("Autoplay") {
+                        FeldSettingSwitchRow(
+                            icon = FeldIconId.Play,
+                            title = "Autoplay",
+                            subtitle = "Play scene automatically",
+                            checked = false,
+                            onCheckedChange = {},
+                            enabled = false,
+                        )
+                    }
+
+                    FeldSettingsDivider()
+
+                    SoonTap("Line delay") {
+                        FeldSettingValueRow(
+                            icon = FeldIconId.Timer,
+                            title = "Line delay",
+                            subtitle = "Time between lines (seconds)",
+                            value = "x",
+                            enabled = false,
+                        )
+                    }
+
+                    FeldSettingsDivider()
+
+                    SoonTap("Status icons") {
+                        FeldSettingRow(
+                            icon = FeldIconId.Settings,
+                            title = "Status icons",
+                            subtitle = "Tap the icons right in playback",
+                            enabled = false,
+                        )
+                    }
                 }
             }
         }
+
+        FeldToastHost(toast, Modifier.align(Alignment.BottomCenter).navigationBarsPadding())
     }
 
     if (showPlaybackUiText) {
@@ -191,12 +247,7 @@ fun SettingsScreen(
             onKind = { vm.dispatch(SettingsEvent.SetBackgroundKind(it)) },
             onColor = { vm.dispatch(SettingsEvent.SetBackgroundColor(it)) },
             onMedia = { uri, isVideo ->
-                vm.dispatch(
-                    SettingsEvent.SetBackgroundMedia(
-                        uri,
-                        isVideo
-                    )
-                )
+                vm.dispatch(SettingsEvent.SetBackgroundMedia(uri, isVideo))
             },
             onVideoSound = { vm.dispatch(SettingsEvent.SetBackgroundVideoSound(it)) },
             onVideoFill = { vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it)) },
@@ -206,6 +257,24 @@ fun SettingsScreen(
                 vm.dispatch(SettingsEvent.ResetBackground)
             },
             onDismiss = { showBackground = false },
+        )
+    }
+
+    if (showTags) {
+        ManageTagsDialog(
+            tags = tags,
+            speakers = speakers,
+            onSave = packVm::saveTag,
+            onDelete = packVm::deleteTag,
+            onDismiss = { showTags = false },
+        )
+    }
+
+    pack.pending?.let { pending ->
+        ImportConflictDialog(
+            preview = pending.preview,
+            onConfirm = packVm::confirmImport,
+            onDismiss = packVm::cancelImport,
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.example.feldelysium.designsystem.components.dialog
 
+import android.view.WindowManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,31 +11,42 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.feldelysium.designsystem.components.display.FeldDiamond
+import androidx.compose.ui.window.DialogWindowProvider
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
-import com.example.feldelysium.designsystem.components.display.FeldDivider
-import com.example.feldelysium.designsystem.components.button.FeldIconButton
-import com.example.feldelysium.designsystem.components.display.FeldIconId
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
+import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.card.FeldCard
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
+import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
 fun FeldDialog(
@@ -42,7 +54,8 @@ fun FeldDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     eyebrow: String? = null,
-    subtitle: String? = null,
+    @Suppress("UNUSED_PARAMETER") subtitle: String? = null,
+    headerNote: String? = "Feld Elysium\n// UI system",
     ambient: Float? = 0.6f,
     seed: Int = rememberSeed(),
     footer: @Composable () -> Unit,
@@ -52,6 +65,15 @@ fun FeldDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
+        val view = LocalView.current
+
+        SideEffect {
+            (view.parent as? DialogWindowProvider)?.window?.let { window ->
+                window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+                window.setDimAmount(0.75f)
+            }
+        }
+
         FeldCard(
             modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 24.dp)
@@ -59,52 +81,17 @@ fun FeldDialog(
             ambient = ambient,
             decalSpec = DecalSpec.Dialog,
             seed = seed,
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 0.dp),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 0.dp),
             revealOnEnter = true,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (eyebrow != null) {
-                    FeldDiamond(FeldPalette.Orange, size = 10.dp)
-                    Text(
-                        text = eyebrow.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = FeldPalette.Muted,
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                }
-                Spacer(Modifier.weight(1f))
-                FeldIconButton(FeldIconId.Close, onDismiss)
-            }
-
-            FeldDistressedTitle(
-                text = title,
-                seed = seed + 1,
-                spec = FeldDistressedTitles.Large,
-                textStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontSize = 44.sp,
-                    lineHeight = 46.sp,
-                    letterSpacing = 1.sp,
-                ),
-            )
-
-            if (subtitle != null) {
-                Text(
-                    text = subtitle.uppercase(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = FeldPalette.Muted,
-                    modifier = Modifier.padding(top = 10.dp),
-                )
-            }
-
-            Spacer(Modifier.height(14.dp))
-            FeldDivider(seed = seed + 2)
+            FeldDialogHeader(title, onDismiss, eyebrow, headerNote, seed)
 
             Column(
                 modifier = Modifier
                     .weight(1f, fill = false)
                     .verticalScroll(rememberScrollState()),
             ) {
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(18.dp))
                 content()
                 Spacer(Modifier.height(8.dp))
             }
@@ -112,6 +99,63 @@ fun FeldDialog(
             FeldDivider(seed = seed + 3)
             footer()
         }
+    }
+}
+
+@Composable
+private fun FeldDialogHeader(
+    title: String,
+    onDismiss: () -> Unit,
+    eyebrow: String?,
+    note: String?,
+    seed: Int,
+) {
+    val density = LocalDensity.current.density
+    val underline = remember(seed, density) {
+        wornBrush(FeldPalette.Orange, seed + 4, density, wear = 0.5f, scale = 8f)
+    }
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            FeldIconButton(FeldIconId.Back, onDismiss)
+            if (eyebrow != null) {
+                Text(
+                    eyebrow.uppercase(),
+                    style = FeldDecalType.Base.copy(fontSize = 12.sp, letterSpacing = 1.6.sp),
+                    color = FeldPalette.Cream,
+                    modifier = Modifier.padding(start = 4.dp),
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            if (note != null) {
+                Text(
+                    note.uppercase(),
+                    style = FeldDecalType.Base.copy(
+                        fontSize = 7.sp,
+                        lineHeight = 10.sp,
+                        letterSpacing = 1.2.sp,
+                        textAlign = TextAlign.End,
+                    ),
+                    color = FeldPalette.Muted.copy(alpha = 0.55f),
+                )
+            }
+        }
+        FeldDivider(seed = seed + 2, segment = 160.dp)
+        Spacer(Modifier.height(12.dp))
+        FeldDistressedTitle(
+            text = title,
+            seed = seed + 1,
+            spec = FeldDistressedTitles.Large,
+            textStyle = MaterialTheme.typography.titleLarge.copy(
+                fontSize = 34.sp, lineHeight = 36.sp, letterSpacing = 1.sp,
+            ),
+        )
+        Box(
+            Modifier
+                .padding(top = 2.dp, start = 3.dp)
+                .width(92.dp)
+                .height(3.dp)
+                .drawBehind { drawRect(underline, alpha = 0.95f) },
+        )
     }
 }
 
@@ -151,5 +195,104 @@ fun FeldDialogFooter(
             spec = buttonSpec,
             seed = seed,
         )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldDialogPreview() {
+    DiscoDialogueTheme {
+        FeldDialog(
+            title = "Create Speaker",
+            eyebrow = "NEW IDENTITY",
+            subtitle = "Give this voice a place in the world",
+            onDismiss = {},
+            seed = 42,
+            footer = {
+                FeldDialogFooter(
+                    onCancel = {},
+                    onReset = {},
+                    cancelLabel = "CLEAR",
+                    confirmLabel = "SAVE",
+                    seed = 42,
+                )
+            },
+        ) {
+            Text(
+                text = "Every voice leaves something behind.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "Choose a name, a colour, and a little personality. Make it memorable.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = FeldPalette.Muted,
+            )
+
+            Spacer(Modifier.height(20.dp))
+
+            FeldDivider(seed = 43)
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                text = "IDENTITY RECORD  /  NO. 001",
+                style = MaterialTheme.typography.labelSmall,
+                color = FeldPalette.Orange,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldDialogMinimalPreview() {
+    DiscoDialogueTheme {
+        FeldDialog(
+            title = "Are You Sure?",
+            eyebrow = "UNSAVED CHANGES",
+            onDismiss = {},
+            seed = 12,
+            footer = {
+                FeldDialogFooter(
+                    onCancel = {},
+                    cancelLabel = "DISCARD",
+                    confirmLabel = "KEEP EDITING",
+                    seed = 12,
+                )
+            },
+        ) {
+            Text(
+                text = "Your changes have not been saved.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldDialogFooterPreview() {
+    DiscoDialogueTheme {
+        Column(Modifier.padding(16.dp)) {
+            FeldDialogFooter(
+                onCancel = {},
+                onReset = {},
+                cancelLabel = "RESET",
+                confirmLabel = "SAVE",
+                seed = 1,
+            )
+
+            FeldDialogFooter(
+                onCancel = {},
+                cancelLabel = "CANCEL",
+                confirmLabel = "CONFIRM",
+                seed = 2,
+            )
+        }
     }
 }

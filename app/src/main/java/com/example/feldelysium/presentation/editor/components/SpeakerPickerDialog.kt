@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -45,24 +44,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.feldelysium.designsystem.components.display.FeldDivider
-import com.example.feldelysium.designsystem.components.display.FeldIconId
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.button.FeldTextButton
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.card.entryRough
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.settings.FeldSectionHeader
-import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
-import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.model.groupedByTag
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private val Dark = Color(0xFF1B1612)
@@ -87,32 +85,37 @@ private fun SpeakerPickerDialogPreview() {
         onCreateCustom = {},
         onEditCustom = {},
         onDismiss = {},
+        tags = listOf(SpeakerType.NPC)
     )
 }
 
 @Composable
 fun SpeakerPickerDialog(
     speakers: List<Speaker>,
+    tags: List<SpeakerType>,
     onSpeakerSelected: (Speaker) -> Unit,
     onCreateCustom: () -> Unit,
     onEditCustom: (Speaker) -> Unit,
-    onDismiss: () -> Unit, modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
     var collapsed by remember { mutableStateOf(setOf<SpeakerType>()) }
 
     val q = query.trim()
-    val groups = remember(speakers) {
-        listOf(
-            SpeakerType.SKILL to "Skills",
-            SpeakerType.NPC to "NPCs",
-            SpeakerType.CUSTOM to "Custom",
-        ).map { (type, title) ->
-            val items = speakers
-                .filter { it.type == type }
-                .filter { q.isEmpty() || it.name.contains(q, ignoreCase = true) }
-            SpeakerGroup(type, title, items)
-        }.filter { it.items.isNotEmpty() }
+
+    val groups = remember(speakers, tags, q) {
+        speakers
+            .filter { q.isEmpty() || it.name.contains(q, ignoreCase = true) }
+            .groupedByTag(tags)
+            .map { (tag, items) ->
+                SpeakerGroup(
+                    type = tag,
+                    title = if (tag.isCustom) "Custom" else tag.name,
+                    items = items,
+                )
+            }
+            .filter { it.items.isNotEmpty() }
     }
 
     Dialog(
@@ -275,7 +278,7 @@ private fun SpeakerTable(
             SpeakerRow(
                 speaker = speaker,
                 onClick = { onSelect(speaker) },
-                onEdit = if (speaker.type == SpeakerType.CUSTOM) {
+                onEdit = if (!speaker.isBundled) {
                     { onEdit(speaker) }
                 } else null,
             )
@@ -307,7 +310,9 @@ private fun SpeakerRow(
         )
         if (onEdit != null) {
             Box(
-                Modifier.size(36.dp).feldClickable(onClick = onEdit),
+                Modifier
+                    .size(36.dp)
+                    .feldClickable(onClick = onEdit),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

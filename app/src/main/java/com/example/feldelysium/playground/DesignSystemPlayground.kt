@@ -26,14 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.button.FeldButton
-import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
+import com.example.feldelysium.designsystem.components.button.FeldButton
+import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.card.FeldCard
-import com.example.feldelysium.designsystem.components.input.FeldRough
-import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.card.FeldDialogCard
+import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
@@ -103,7 +102,7 @@ fun DesignSystemPlayground(
                 )
 
                 Text(
-                    text = "Let's be precise. What do you actually remember about that night?",
+                    text = "Messi died. What do you actually remember about him?",
                     style = MaterialTheme.typography.bodyMedium,
                     color = colorScheme.onSurface,
                     modifier = Modifier.padding(top = 6.dp),
@@ -116,8 +115,7 @@ fun DesignSystemPlayground(
                 modifier = Modifier.fillMaxWidth(),
                 seed = 5,
                 spec = FeldPaper.Field,
-                rough = FeldRough.Field,
-                placeholder = "Let's be precise.",
+                placeholder = "Messi died...",
                 maxLength = 500,
                 minLines = 1,
                 enabled = true,

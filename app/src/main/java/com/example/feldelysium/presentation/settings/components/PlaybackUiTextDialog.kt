@@ -6,11 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,12 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
+import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 
 private val Teal = Color(0xFF4FB3A6)
@@ -67,7 +63,7 @@ fun PlaybackUiTextDialog(
         },
     ) {
         PlaybackField(
-            icon = Icons.Filled.MonetizationOn,
+            icon = FeldIconId.More,
             label = "Reals",
             value = moneyText,
             maxLength = 6,
@@ -76,7 +72,7 @@ fun PlaybackUiTextDialog(
         )
         FeldDivider(seed = 51)
         PlaybackField(
-            icon = Icons.Filled.Schedule,
+            icon = FeldIconId.More,
             label = "Time",
             value = timeText,
             maxLength = 5,
@@ -85,7 +81,7 @@ fun PlaybackUiTextDialog(
         )
         FeldDivider(seed = 52)
         PlaybackField(
-            icon = Icons.Filled.CalendarMonth,
+            icon = FeldIconId.More,
             label = "Day",
             value = dayText,
             maxLength = 6,
@@ -97,7 +93,7 @@ fun PlaybackUiTextDialog(
 
 @Composable
 private fun PlaybackField(
-    icon: ImageVector,
+    icon: FeldIconId,
     label: String,
     value: String,
     maxLength: Int,
@@ -110,8 +106,8 @@ private fun PlaybackField(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = icon,
+        FeldIcon(
+            id = icon,
             contentDescription = null,
             tint = Teal,
             modifier = Modifier.size(28.dp),

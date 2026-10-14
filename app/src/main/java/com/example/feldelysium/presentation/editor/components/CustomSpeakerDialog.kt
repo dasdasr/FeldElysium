@@ -1,11 +1,14 @@
 package com.example.feldelysium.presentation.editor.components
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -13,43 +16,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
-import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
+import com.example.feldelysium.designsystem.components.button.FeldFieldButton
+import com.example.feldelysium.designsystem.components.button.FeldTextButton
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
-import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldTextField
-import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.domain.model.Speaker
+import com.example.feldelysium.domain.model.SpeakerColor
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import java.util.UUID
-
-private val SkillColors: List<Long> by lazy {
-    PredefinedSpeakers.ALL
-        .filter { it.type == SpeakerType.SKILL }
-        .map { it.colorArgb }
-        .distinct()
-}
+import kotlin.math.absoluteValue
 
 private val KnownIconResIds: List<Int> by lazy {
     PredefinedSpeakers.ALL.mapNotNull { it.iconResId }.distinct()
-}
-
-@Preview
-@Composable
-private fun CustomSpeakerDialogPreview() {
-    CustomSpeakerDialog(
-        onConfirm = {},
-        onDismiss = {}
-    )
 }
 
 @Composable
@@ -57,27 +41,33 @@ fun CustomSpeakerDialog(
     speaker: Speaker? = null,
     onConfirm: (Speaker) -> Unit,
     onDismiss: () -> Unit,
-    colorChoices: List<Long> = SkillColors,
+    existingTypes: List<SpeakerType> = emptyList(),
+    onManageTags: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null,
     iconResIds: List<Int> = KnownIconResIds,
 ) {
     val editing = speaker != null
+    val canChangeIcon = speaker == null || !speaker.isBundled
+    val seed = rememberSeed()
+    val fileNo = remember { ((speaker?.id ?: seed.toString()).hashCode().absoluteValue % 99) + 1 }
     var name by remember { mutableStateOf(speaker?.name.orEmpty()) }
-    var color by remember {
-        mutableLongStateOf(speaker?.colorArgb ?: Speaker.DEFAULT_CUSTOM_COLOR)
-    }
+    var color by remember { mutableLongStateOf(speaker?.colorArgb ?: SpeakerColor.DEFAULT.argb) }
+    var colorTouched by remember { mutableStateOf(editing) }
+    var type by remember { mutableStateOf(speaker?.type ?: SpeakerType.CUSTOM) }
     var iconRes by remember { mutableStateOf(speaker?.iconResId) }
     var iconUri by remember { mutableStateOf(speaker?.customIconUri) }
     var showIcons by remember { mutableStateOf(false) }
+    var showTags by remember { mutableStateOf(false) }
 
-    val initialColor = remember { color }
-    val palette = remember(colorChoices) {
-        (listOf(Speaker.DEFAULT_CUSTOM_COLOR) + colorChoices + initialColor).distinct()
+    var customColors by remember {
+        mutableStateOf(listOfNotNull(color.takeIf { SpeakerColor.isCustom(it) }))
     }
+    val palette = SpeakerColor.AllArgb + customColors
+    val accent = Color(color)
 
     FeldDialog(
         title = if (editing) "Edit speaker" else "Create speaker",
         eyebrow = "Custom speaker",
-        subtitle = "Name, color and icon of your voice.",
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
@@ -90,8 +80,8 @@ fun CustomSpeakerDialog(
                             colorArgb = color,
                             iconResId = iconRes,
                             customIconUri = iconUri,
-                            type = SpeakerType.CUSTOM,
-                        )
+                            type = type,
+                        ),
                     )
                 },
                 onCancel = onDismiss,
@@ -99,64 +89,81 @@ fun CustomSpeakerDialog(
             )
         },
     ) {
-        FeldLabeledBlock("Name") {
-            FeldTextField(
-                value = name,
-                onValueChange = { name = it },
-                placeholder = "Speaker name",
-                maxLength = 32,
-                showLength = false,
-                minLines = 1,
+        Row(Modifier.fillMaxWidth()) {
+            SpeakerPhotoBlock(
+                iconRes = iconRes,
+                iconUri = iconUri,
+                accent = accent,
+                onClick = if (canChangeIcon) { { showIcons = true } } else { {} },
+                modifier = Modifier.width(132.dp),
+                name = name,
+                number = fileNo,
             )
+            Spacer(Modifier.width(16.dp))
+            Column(Modifier.weight(1f)) {
+                FieldLabel("Name")
+                FeldTextField(
+                    value = name, onValueChange = { name = it },
+                    placeholder = "Speaker name", maxLength = 32, showLength = false,
+                    minHeight = 48.dp,
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
+                )
+
+                Spacer(Modifier.height(14.dp))
+                FieldLabel("Tag", optional = true)
+                FeldFieldButton(
+                    text = type.takeUnless { it.isCustom }?.name,
+                    placeholder = "No tag",
+                    leading = Icons.Filled.LocalOffer,
+                    onClick = { showTags = true },
+                )
+            }
         }
-        FeldDivider()
 
-        FeldLabeledBlock("Color") {
-            FeldColorSwatches(
-                colors = palette,
-                selected = color,
-                onSelect = { color = it },
-                columns = 9,
-                minRows = 2,
-            )
-        }
-        FeldDivider()
-
-        val res = iconRes
-        val uri = iconUri
-        FeldSettingRow(
-            icon = FeldIconId.Image,
-            title = "Icon",
-            subtitle = if (res != null || uri != null) "Selected" else "Optional",
-            showChevron = true,
-            contentPadding = PaddingValues(vertical = 14.dp),
-            onClick = { showIcons = true },
-            trailing = {
-                val thumb = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(2.dp))
-                when {
-                    uri != null -> AsyncImage(
-                        model = uri,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = thumb,
-                    )
-
-                    res != null -> Image(
-                        painter = painterResource(res),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = thumb,
-                    )
-                }
+        Spacer(Modifier.height(20.dp))
+        FieldLabel("Color")
+        FeldColorSwatches(
+            colors = palette,
+            selected = color,
+            onSelect = {
+                color = it
+                colorTouched = true
             },
+            columns = 6,
+            minRows = 2,
+            diamondFraction = 0.5f,
         )
-        FeldDivider()
+
+        Spacer(Modifier.height(22.dp))
+        SpeakerPreview(name = name, color = accent, seed = seed)
+        if (onDelete != null) {
+            Spacer(Modifier.height(10.dp))
+            FeldTextButton("Delete speaker", onClick = onDelete)
+        }
     }
 
-    if (showIcons) {
-        ChooseIconDialog(
+    if (showTags) {
+        ChooseTagDialog(
+            existing = existingTypes,
+            selected = type,
+            onManage = onManageTags,
+            onConfirm = { picked ->
+                type = picked
+                val suggested = picked.colorArgb
+                if (!colorTouched && suggested != null) {
+                    color = suggested
+                    if (SpeakerColor.isCustom(suggested) && suggested !in customColors) {
+                        customColors = customColors + suggested
+                    }
+                }
+                showTags = false
+            },
+            onDismiss = { showTags = false },
+        )
+    }
+
+    if (showIcons && canChangeIcon) {
+        ChooseImageDialog(
             iconResIds = iconResIds,
             selectedResId = iconRes,
             selectedUri = iconUri,

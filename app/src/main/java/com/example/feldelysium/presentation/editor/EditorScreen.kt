@@ -64,6 +64,7 @@ import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.presentation.editor.components.BulkImportDialog
 import com.example.feldelysium.presentation.editor.components.CustomSpeakerDialog
 import com.example.feldelysium.presentation.editor.components.EntryEditSheet
+import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import sh.calvin.reorderable.ReorderableItem
@@ -86,6 +87,7 @@ fun EditorScreen(
     val state by vm.state.collectAsStateWithLifecycle()
 
     var menuEntryId by remember { mutableStateOf<String?>(null) }
+    var showManageTags by remember { mutableStateOf(false) }
 
     val decalCtx = remember(state.sceneName, state.entries.size) {
         DecalContext(
@@ -241,7 +243,7 @@ fun EditorScreen(
                             .padding(16.dp),
                         contentDescription = "Add dialogue entry",
                     )
-                    FeldToastHost(toast, Modifier.align(Alignment.TopCenter))
+                    FeldToastHost(toast, Modifier.align(Alignment.BottomCenter))
                 }
             }
         }
@@ -250,10 +252,19 @@ fun EditorScreen(
     if (state.isSpeakerPickerOpen) {
         SpeakerPickerDialog(
             speakers = state.allSpeakers,
-            onSpeakerSelected = { vm.dispatch(EditorEvent.SelectSpeakerForNewEntry(it)) },
-            onCreateCustom = { vm.dispatch(EditorEvent.RequestCustomSpeaker) },
-            onEditCustom = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
-            onDismiss = { vm.dispatch(EditorEvent.CloseSpeakerPicker) },
+            tags = state.tags,
+            onSpeakerSelected = {
+                vm.dispatch(EditorEvent.SelectSpeakerForNewEntry(it))
+            },
+            onCreateCustom = {
+                vm.dispatch(EditorEvent.RequestCustomSpeaker)
+            },
+            onEditCustom = {
+                vm.dispatch(EditorEvent.RequestEditSpeaker(it))
+            },
+            onDismiss = {
+                vm.dispatch(EditorEvent.CloseSpeakerPicker)
+            },
         )
     }
 
@@ -271,6 +282,14 @@ fun EditorScreen(
         key(state.editingSpeaker?.id ?: "create") {
             CustomSpeakerDialog(
                 speaker = state.editingSpeaker,
+                existingTypes = state.tags,
+                onManageTags = { showManageTags = true },
+                onDelete = state.editingSpeaker?.takeIf { !it.isBundled }?.let { s ->
+                    {
+                        vm.dispatch(EditorEvent.DeleteSpeaker(s.id))
+                        vm.dispatch(EditorEvent.DismissCustomSpeaker)
+                    }
+                },
                 onConfirm = { speaker ->
                     if (state.editingSpeaker != null)
                         vm.dispatch(EditorEvent.ConfirmEditSpeaker(speaker))
@@ -280,6 +299,16 @@ fun EditorScreen(
                 onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) },
             )
         }
+    }
+
+    if (showManageTags) {
+        ManageTagsDialog(
+            tags = state.tags,
+            speakers = state.allSpeakers,
+            onSave = { vm.dispatch(EditorEvent.SaveTag(it)) },
+            onDelete = { vm.dispatch(EditorEvent.DeleteTag(it)) },
+            onDismiss = { showManageTags = false },
+        )
     }
 
     if (state.isEntryEditOpen) {

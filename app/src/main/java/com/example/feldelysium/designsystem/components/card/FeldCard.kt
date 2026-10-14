@@ -145,10 +145,6 @@ private fun FeldCardPreview() {
 
             SampleCard(
                 spec = FeldPaper.Panel.copy(wear = 0.2f),
-                rough = RoughStyle(
-                    roughness = 0.7.dp,
-                    irregularity = 0.4f,
-                ),
             )
 
             SampleCard(
@@ -156,11 +152,6 @@ private fun FeldCardPreview() {
                     wear = 0.6f,
                     chipSize = 6.dp,
                     inkContrast = 3.2f,
-                ),
-                rough = RoughStyle(
-                    roughness = 2.dp,
-                    irregularity = 0.9f,
-                    step = 40.dp,
                 ),
             )
         }
@@ -171,13 +162,11 @@ private fun FeldCardPreview() {
 private fun SampleCard(
     seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Panel,
-    rough: RoughStyle = RoughStyle(),
 ) {
     FeldCard(
         modifier = Modifier.fillMaxWidth(),
         seed = seed,
         spec = spec,
-        rough = rough,
         revealOnEnter = true,
         onClick = {},
     ) {
