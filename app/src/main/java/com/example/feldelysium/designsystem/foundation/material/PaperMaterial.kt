@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.example.feldelysium.designsystem.foundation.decal.DecalLayer
+import com.example.feldelysium.designsystem.foundation.decal.DecalPlan
+import com.example.feldelysium.designsystem.foundation.decal.drawDecals
 import androidx.compose.ui.graphics.lerp as lerpColor
 import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
@@ -86,24 +89,19 @@ object FeldPaper {
         inkContrast = 1.8f,
     )
 
-    val Field = Panel.copy(
-        wear = 0.3f,
-        inkWidth = 1.4.dp,
-    )
-
     val Entry = Panel.copy(
         wear = 0.16f,
         edgeWear = 0.5f,
         edgeBand = 10.dp,
-        chipSize = 6.dp,
+        chipSize = 4.dp,
         chipCoverage = 0.4f,
         innerWear = 0.05f,
         maxLoss = 0.35f,
         scuffTint = 0.22f,
 
-        mottleSize = 44.dp,
+        mottleSize = 24.dp,
         mottleStrength = 0.15f,
-        grainSize = 1.1.dp,
+        grainSize = 0.5.dp,
         grainStrength = 0.015f,
         colorGrain = 0f,
         toothStrength = 0.02f,
@@ -113,6 +111,14 @@ object FeldPaper {
         inkGrainSize = 26.dp,
         inkMinAlpha = 0.85f,
         inkContrast = 1.2f,
+    )
+
+    val Field = Entry.copy(
+        wear = 0.2f,
+        edgeWear = 0.55f,
+        maxLoss = 0.4f,
+        inkWidth = 1.0.dp,
+        inkMinAlpha = 0.8f,
     )
 
     val DryButtonCream = PaperSpec(
@@ -218,8 +224,10 @@ fun Modifier.paperMaterial(
     wear: () -> Float = { spec.wear },
     press: () -> Float = { 0f },
     time: () -> Float = { 0f },
+    decals: DecalLayer? = null,
 ): Modifier = drawWithCache {
     val path = shape.buildPath(size, this)
+    val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
     val inkLayers = if (spec.inkWidth.value > 0f)
         shape.buildInkLayers(path, this, spec.inkWidth.toPx()) else emptyList()
     val sinkBand = spec.sinkBand.toPx()
@@ -275,6 +283,7 @@ fun Modifier.paperMaterial(
 
             clipPath(path) {
                 drawRect(paperBrush)
+                drawDecals(placed)
                 this@onDrawWithContent.drawContent()
             }
             drawInk(inkLayers, inkBrush)
@@ -284,6 +293,7 @@ fun Modifier.paperMaterial(
         onDrawWithContent {
             clipPath(path) {
                 drawRect(spec.base)
+                drawDecals(placed)
                 this@onDrawWithContent.drawContent()
             }
             drawInk(inkLayers, inkBrush)

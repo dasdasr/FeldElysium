@@ -6,17 +6,18 @@ data class Speaker(
     val colorArgb: Long,
     val iconResId: Int? = null,
     val customIconUri: String? = null,
-    val type: SpeakerType,
-    val attributeGroup: AttributeGroup? = null // Only set for SKILL speakers.
+    val type: SpeakerType = SpeakerType.CUSTOM,
+    val isBundled: Boolean = false,
 ) {
-    val soundKey: String?
-        get() = when (type) {
-            SpeakerType.SKILL -> attributeGroup?.soundKey
-            SpeakerType.NPC -> "npc"
-            SpeakerType.CUSTOM -> "default"
-        }
+    val soundKey: String get() = type.soundKey ?: SoundKeys.DEFAULT
 
     companion object {
-        const val DEFAULT_CUSTOM_COLOR: Long = 0xFF_9E_7E_5EL
+        const val DEFAULT_CUSTOM_COLOR: Long = 0xFF4F83D1
     }
+}
+
+fun List<Speaker>.groupedByTag(tagOrder: List<SpeakerType>): List<Pair<SpeakerType, List<Speaker>>> {
+    val byId = groupBy { it.type.id }
+    val types = (tagOrder + map { it.type }).distinctBy { it.id }.filterNot { it.isCustom } + SpeakerType.CUSTOM
+    return types.mapNotNull { t -> byId[t.id]?.let { t to it } }
 }

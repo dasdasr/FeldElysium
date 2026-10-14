@@ -47,6 +47,15 @@ object FeldButtonDefaults {
 
     val Cream = DryPaperSpec(base = Color(0xFFDCCFB5), crack = Color(0xFF5E4F38))
     val Orange = DryPaperSpec(base = Color(0xFFDD6224), crack = Color(0xFF6B2A0C))
+
+    val OrangeFresh = DryPaperSpec(
+        base = Color(0xFFDB6A2C), crack = Color(0xFF7A3414),
+        tearDepth = 1.1.dp, tearScale = 16.dp, tearCoverage = 0.22f, bow = 0.6.dp,
+        crackScale = 22.dp, crackDepth = 7.dp, crackWidth = 0.8.dp,
+        crackStrength = 0.55f, crackCoverage = 0.10f,
+        grainScale = 0.8.dp, grainStrength = 0.075f, fiberStrength = 0.02f,
+        mottleScale = 20.dp, mottleStrength = 0.20f, pressShade = 0.10f,
+    )
 }
 
 @Composable
@@ -137,6 +146,97 @@ private fun FeldButtonPreview() {
                 contentAlignment = Alignment.CenterStart,
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
             )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldDialogActionsPreview() {
+    DiscoDialogueTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            FeldDialogActions(
+                confirmLabel = "Save entry",
+                onConfirm = {},
+                onCancel = {},
+                seed = 1,
+            )
+
+            FeldDialogActions(
+                confirmLabel = "Create speaker",
+                onConfirm = {},
+                cancelLabel = "Back",
+                onCancel = {},
+                seed = 2,
+            )
+
+            FeldDialogActions(
+                confirmLabel = "Import",
+                onConfirm = {},
+                onCancel = {},
+                confirmEnabled = false,
+                seed = 3,
+            )
+
+            FeldDialogActions(
+                confirmLabel = "Delete",
+                onConfirm = {},
+                cancelLabel = "Keep",
+                onCancel = {},
+                seed = 4,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldTextButtonPreview() {
+    DiscoDialogueTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FeldTextButton(text = "Cancel", onClick = {})
+            FeldTextButton(text = "Discard changes", onClick = {})
+            FeldTextButton(text = "Back to editing", onClick = {})
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldLabeledBlockPreview() {
+    DiscoDialogueTheme {
+        Column(Modifier.padding(horizontal = 16.dp)) {
+            FeldLabeledBlock(
+                label = "IDENTIFICATION",
+                seed = 7,
+            ) {
+                Text(
+                    text = "Give this voice a name.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                FeldTextButton(
+                    text = "Choose voice",
+                    onClick = {},
+                )
+            }
+
+            FeldLabeledBlock(
+                label = "PERSONALITY",
+                seed = 12,
+            ) {
+                Text(
+                    text = "A little theatrical. Difficult to ignore.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
     }
 }

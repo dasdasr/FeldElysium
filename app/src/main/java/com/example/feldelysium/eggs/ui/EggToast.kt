@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.domain.model.AttributeGroup
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.eggs.EasterEggs
 import com.example.feldelysium.eggs.EggReply
@@ -52,13 +51,8 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-private fun skillColor(skill: Speaker): Color = when (skill.attributeGroup) {
-    AttributeGroup.INTELLECT -> Color(0xFF4FB3A9)
-    AttributeGroup.PSYCHE -> Color(0xFF8E7FCB)
-    AttributeGroup.PHYSIQUE -> Color(0xFFC9564B)
-    AttributeGroup.MOTORICS -> Color(0xFFD8B54A)
-    else -> Color(skill.colorArgb)
-}
+private fun skillColor(skill: Speaker): Color =
+    Color(skill.colorArgb)
 
 private class ToastView(val skill: Speaker, val text: String, val check: String?)
 

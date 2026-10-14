@@ -154,7 +154,7 @@ fun FeldSettingSwitchRow(
         trailing = {
             FeldSwitch(
                 checked = checked,
-                onCheckedChange = null,
+                onCheckedChange = {  },
                 seed = seed,
             )
         },

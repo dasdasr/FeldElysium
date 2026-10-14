@@ -77,6 +77,7 @@ class SceneViewModel : ViewModel() {
             customSpeakers = current.customSpeakers.filter { it.id != action.speakerId }
         )
 
+
         is SceneAction.RenameScene -> current.copy(
             scene = current.scene.copy(title = action.title)
         )
@@ -84,5 +85,21 @@ class SceneViewModel : ViewModel() {
         SceneAction.ClearScene -> current.copy(
             scene = current.scene.copy(entries = emptyList())
         )
+
+        is SceneAction.SyncSpeakers -> {
+            val byId = action.speakers.associateBy { it.id }
+
+            val updated = current.scene.entries.map { entry ->
+                byId[entry.speaker.id]
+                    ?.takeIf { it != entry.speaker }
+                    ?.let { entry.copy(speaker = it) }
+                    ?: entry
+            }
+
+            if (updated == current.scene.entries) current
+            else current.copy(
+                scene = current.scene.copy(entries = updated)
+            )
+        }
     }
 }

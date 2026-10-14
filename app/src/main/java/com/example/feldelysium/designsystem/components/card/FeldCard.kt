@@ -20,10 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.animation.FeldAnimationValues
 import com.example.feldelysium.designsystem.foundation.animation.FeldAnimations
 import com.example.feldelysium.designsystem.foundation.animation.feldAnimate
+import com.example.feldelysium.designsystem.foundation.decal.DecalContext
+import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
+import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
+import com.example.feldelysium.designsystem.foundation.decal.rememberDecalLayer
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
@@ -38,6 +43,10 @@ fun FeldCard(
     seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Panel,
     rough: RoughStyle = RoughStyle(),
+    ambient: Float? = null,
+    decalSpec: DecalSpec = DecalSpec.Panel,
+    decalContext: DecalContext = LocalFeldDecalContext.current,
+    decalInset: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     revealOnEnter: Boolean = false,
     revealMillis: Int = 500,
@@ -86,6 +95,8 @@ fun FeldCard(
         )
     }
 
+    val decals = rememberDecalLayer(ambient, seed, decalSpec, decalContext, decalInset)
+
     Column(
         modifier = modifier
             .graphicsLayer {
@@ -99,6 +110,7 @@ fun FeldCard(
                 wear = { reveal["wear"] },
                 press = { press },
                 time = time,
+                decals = decals
             )
             .then(
                 if (onClick != null) {
@@ -133,10 +145,6 @@ private fun FeldCardPreview() {
 
             SampleCard(
                 spec = FeldPaper.Panel.copy(wear = 0.2f),
-                rough = RoughStyle(
-                    roughness = 0.7.dp,
-                    irregularity = 0.4f,
-                ),
             )
 
             SampleCard(
@@ -145,11 +153,6 @@ private fun FeldCardPreview() {
                     chipSize = 6.dp,
                     inkContrast = 3.2f,
                 ),
-                rough = RoughStyle(
-                    roughness = 2.dp,
-                    irregularity = 0.9f,
-                    step = 40.dp,
-                ),
             )
         }
     }
@@ -157,15 +160,13 @@ private fun FeldCardPreview() {
 
 @Composable
 private fun SampleCard(
-    seed: Int= rememberSeed(),
+    seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Panel,
-    rough: RoughStyle = RoughStyle(),
 ) {
     FeldCard(
         modifier = Modifier.fillMaxWidth(),
         seed = seed,
         spec = spec,
-        rough = rough,
         revealOnEnter = true,
         onClick = {},
     ) {

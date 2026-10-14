@@ -50,7 +50,6 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
-import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private val SheetRough = RoughStyle(
@@ -124,7 +123,7 @@ fun EntryEditSheet(
             SpeakerHeader(
                 speaker = speaker,
                 onClick = onSpeakerClick,
-                onEdit = if (speaker != null && speaker.type == SpeakerType.CUSTOM && onEditSpeaker != null) {
+                onEdit = if (speaker != null && !speaker.isBundled && onEditSpeaker != null) {
                     { onEditSpeaker(speaker) }
                 } else null,
             )
@@ -199,7 +198,9 @@ private fun SpeakerHeader(
         )
         if (onEdit != null) {
             Box(
-                Modifier.size(40.dp).feldClickable(onClick = onEdit),
+                Modifier
+                    .size(40.dp)
+                    .feldClickable(onClick = onEdit),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

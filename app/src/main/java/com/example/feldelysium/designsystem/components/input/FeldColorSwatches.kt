@@ -12,13 +12,17 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -67,6 +71,7 @@ fun FeldColorSwatches(
     horizontalSpacing: Dp = 5.dp,
     verticalSpacing: Dp = 5.dp,
     minRows: Int = 1,
+    diamondFraction: Float = 0.3f,
 ) {
     val cols = columns.coerceAtLeast(1)
     val rows = colors.chunked(cols)
@@ -85,13 +90,18 @@ fun FeldColorSwatches(
                 repeat(cols) { c ->
                     val argb = rowColors.getOrNull(c)
                     if (argb == null) {
-                        Spacer(Modifier.weight(1f).aspectRatio(1f))
+                        Spacer(
+                            Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                        )
                     } else {
                         Swatch(
                             argb = argb,
                             selected = argb == selected,
                             seed = seed + (r * cols + c) * 5,
                             onClick = { onSelect(argb) },
+                            diamondFraction = diamondFraction,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -108,8 +118,19 @@ private fun Swatch(
     seed: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    diamondFraction: Float = 0.3f,
 ) {
-    val shape = remember(seed) { RoughShape(seed, entryRough(seed)) }
+    val shape = remember(seed) {
+        RoughShape(
+            seed = seed,
+            style = entryRough(seed).copy(
+                corner = 4.dp,
+                cornerJitter = 0.15f,
+                tornChance = 0.03f,
+                forceTorn = -1,
+            )
+        )
+    }
     val spec = remember(argb) { swatchSpec(argb) }
     val color = Color(argb.toInt())
     val t by animateFloatAsState(
@@ -118,9 +139,15 @@ private fun Swatch(
         label = "swatch",
     )
 
+    var swatchSize by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
+
     Box(
         modifier = modifier
             .aspectRatio(1f)
+            .onSizeChanged {
+                swatchSize = with(density) { it.width.toDp() }
+            }
             .graphicsLayer {
                 val s = 1f + 0.25f * t
                 scaleX = s
@@ -135,8 +162,11 @@ private fun Swatch(
             FeldHandDiamond(
                 color = if (color.luminance() > 0.55f) InkDark else Cream,
                 seed = seed,
-                size = 12.dp,
-                modifier = Modifier.graphicsLayer { alpha = t },
+                size = (swatchSize * diamondFraction.coerceIn(0f, 1f))
+                    .coerceAtLeast(0.dp),
+                modifier = Modifier.graphicsLayer {
+                    alpha = t
+                },
             )
         }
     }

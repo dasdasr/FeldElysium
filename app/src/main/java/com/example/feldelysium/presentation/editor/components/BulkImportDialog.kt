@@ -1,15 +1,11 @@
 package com.example.feldelysium.presentation.editor.components
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -20,15 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
-import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldTextField
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
@@ -83,11 +77,10 @@ fun BulkImportDialog(
                 confirmLabel = "Import",
                 onConfirm = onConfirm,
                 onCancel = onDismiss,
+                confirmEnabled = text.isNotBlank(),
             )
         },
     ) {
-        FormatHint()
-        Spacer(Modifier.height(12.dp))
         FeldTextField(
             value = text,
             onValueChange = onText,
@@ -104,38 +97,6 @@ fun BulkImportDialog(
                 color = FeldPalette.Muted,
             )
         }
-    }
-}
-
-@Composable
-private fun FormatHint() {
-    Row(
-        modifier = Modifier.padding(start = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = "FORMAT",
-            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.4.sp),
-            color = FeldPalette.Muted,
-        )
-        Text(
-            text = "  ->  ",
-            style = MaterialTheme.typography.labelSmall,
-            color = FeldPalette.Muted,
-        )
-        Text(
-            text = buildAnnotatedString {
-                withStyle(
-                    SpanStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                ) { append("SPEAKER:") }
-                append(" Text")
-            },
-            style = MaterialTheme.typography.bodySmall,
-            color = FeldPalette.Muted,
-        )
     }
 }
 

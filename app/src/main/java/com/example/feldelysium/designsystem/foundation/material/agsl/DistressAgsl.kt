@@ -38,7 +38,6 @@ ${NOISE_LIB}
 half4 main(float2 p) {
     float2 sp = p + seed * 37.0;
 
-    // 1. Edge wobble: the print is never geometrically clean
     float2 w = float2(fbm(sp / (edgeScale * 3.0)),
                       fbm(sp / (edgeScale * 3.0) + 17.0)) - 0.5;
     float2 q = p + w * edgeRough * 2.0;
@@ -53,22 +52,18 @@ half4 main(float2 p) {
     }
     ring /= 4.0;
 
-    // 2. Ink bleed + eroded edge
     float shape = max(mix(a0, ring, 0.5), ring * (0.6 + bleed));
     float en = fbm(sp / edgeScale);
     float keep = smoothstep(0.30, 0.52, shape + (en - 0.5) * edgeErode);
     float edgeness = 1.0 - smoothstep(0.55, 0.98, ring);
 
-    // 3. Uneven ink density (large soft patches)
     float pn = fbm(sp / patchScale);
     float dens = 1.0 - patchy * smoothstep(0.42, 0.78, pn);
 
-    // 4. Dropouts: clusters of missing ink, mostly near edges
     float dz = smoothstep(0.52, 0.74, fbm(sp / (dropoutScale * 2.2) + 5.0));
     float db = smoothstep(0.50, 0.66, fbm(sp / dropoutScale + w * 1.2 + 9.0));
     float drop = dz * db * dropout * (0.35 + 0.65 * edgeness);
 
-    // 5. Scratches: thin, long, in zones
     float ca = cos(scratchAngle);
     float sa = sin(scratchAngle);
     float2 rp = float2(ca * sp.x + sa * sp.y, -sa * sp.x + ca * sp.y);
@@ -76,20 +71,17 @@ half4 main(float2 p) {
     float sz = smoothstep(0.50, 0.72, fbm(sp / (scratchLen * 0.8) + 3.0));
     float line = smoothstep(0.80, 0.86, sn) * sz * scratch;
 
-    // 6. Round white-out specks (not square pixels)
     float2 sc = sp / speckScale;
     float2 gi = floor(sc);
     float rad = 0.14 + 0.22 * hash(gi + 3.1);
     float spkIn = step(0.90, hash(gi))
                 * (1.0 - smoothstep(rad * 0.55, rad, length(fract(sc) - 0.5))) * speck;
 
-    // 7. Fine toner grain, stronger at the edge
     float gn = smoothstep(0.62, 1.0, noise(sp / grainScale)) * grain * (0.35 + 0.65 * edgeness);
 
     float loss = clamp((drop + line + spkIn + gn) * strength, 0.0, 1.0);
     float inkA = keep * dens * (1.0 - loss);
 
-    // 8. Splatter only near the text
     float wide = 0.0;
     for (int j = 0; j < 6; j++) {
         float ang = float(j) * 1.047198 + 0.3;

@@ -14,6 +14,7 @@ sealed class SceneAction {
     data class AddCustomSpeaker(val speaker: Speaker) : SceneAction()
     data class UpdateCustomSpeaker(val speaker: Speaker) : SceneAction()
     data class RemoveCustomSpeaker(val speakerId: String) : SceneAction()
+    data class SyncSpeakers(val speakers: List<Speaker>) : SceneAction()
 
     data class RenameScene(val title: String) : SceneAction()
     data object ClearScene : SceneAction()

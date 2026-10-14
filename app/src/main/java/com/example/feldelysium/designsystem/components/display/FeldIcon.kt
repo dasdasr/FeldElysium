@@ -39,7 +39,7 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 enum class FeldIconId {
     Back, More, MoreHoriz, Import, Play, Reorder, Edit, Delete, Drag, Add, Close, Chevron,
     DialogueStyle, Font, Palette, Grid, FastAdd, Timer, Voice, Image, Aspect, PlaybackText,
-    Settings,
+    Settings, Export
 }
 
 @Composable
@@ -47,8 +47,9 @@ fun FeldIcon(
     id: FeldIconId,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current,
+    contentDescription: String? = null,
     size: Dp = 24.dp,
-    film: Boolean = false,
+    film: Boolean = true,
 ) {
     val v: ImageVector = when (id) {
         FeldIconId.Back -> Icons.AutoMirrored.Filled.ArrowBack
@@ -74,16 +75,18 @@ fun FeldIcon(
         FeldIconId.Aspect -> Icons.Default.AspectRatio
         FeldIconId.PlaybackText -> Icons.Default.Subtitles
         FeldIconId.Settings -> Icons.Default.Settings
+        FeldIconId.Export -> Icons.Default.ImportExport
     }
     Icon(
         v,
-        contentDescription = null,
+        contentDescription = contentDescription,
         modifier = modifier
             .size(size)
             .then(
                 if (film) Modifier.markerFilmMaterial(
                     FeldMarker.Chalk,
-                    id.ordinal
+                    id.ordinal,
+                    bakeKey = tint
                 ) else Modifier
             ),
         tint = tint,
