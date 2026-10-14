@@ -18,7 +18,8 @@ class ImportSpeakerPackUseCase(private val repo: SpeakerRepository) {
         return try {
             Prepared(pack, repo.previewImport(pack))
         } catch (e: Exception) {
-            pack.discard(); throw e
+            pack.discard()
+            throw e
         }
     }
 

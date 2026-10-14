@@ -38,10 +38,7 @@ class TapOutsideRegistry {
 val LocalTapOutsideRegistry = staticCompositionLocalOf<TapOutsideRegistry?> { null }
 
 @Composable
-fun FeldTapOutsideDismiss(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
+fun FeldTapOutsideDismiss(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val focusManager = LocalFocusManager.current
     val registry = remember { TapOutsideRegistry() }
     var origin by remember { mutableStateOf(Offset.Zero) }

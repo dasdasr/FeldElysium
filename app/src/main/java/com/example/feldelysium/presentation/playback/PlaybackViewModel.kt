@@ -18,10 +18,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PlaybackViewModel(
-    application: Application,
-    private val sceneViewModel: SceneViewModel
-) : AndroidViewModel(application) {
+class PlaybackViewModel(application: Application, private val sceneViewModel: SceneViewModel) :
+    AndroidViewModel(application) {
 
     private val soundManager = SoundManager(application)
     private lateinit var engine: PlaybackEngine
@@ -42,7 +40,9 @@ class PlaybackViewModel(
 
     fun dispatch(event: PlaybackEvent) = when (event) {
         PlaybackEvent.Tap -> advance()
+
         PlaybackEvent.Reset -> reset()
+
         PlaybackEvent.NavigateBack -> viewModelScope.launch {
             _effects.send(PlaybackEffect.NavigateBack)
         }
@@ -55,7 +55,7 @@ class PlaybackViewModel(
         _state.update { current ->
             current.copy(
                 revealedEntries = current.revealedEntries + step.entry,
-                isFinished = step.isLast
+                isFinished = step.isLast,
             )
         }
 

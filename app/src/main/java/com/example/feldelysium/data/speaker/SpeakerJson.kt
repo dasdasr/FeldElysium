@@ -20,25 +20,37 @@ object SpeakerJson {
     fun encode(doc: SpeakerDocument): String = JSONObject().apply {
         put("format", FORMAT)
         put("version", VERSION)
-        put("tags", JSONArray().apply {
-            doc.tags.forEach { t ->
-                put(JSONObject().apply {
-                    put("id", t.id); put("name", t.name)
-                    t.color?.let { put("color", hex(it)) }
-                    t.sound?.let { put("sound", it) }
-                })
-            }
-        })
-        put("speakers", JSONArray().apply {
-            doc.speakers.forEach { s ->
-                put(JSONObject().apply {
-                    put("id", s.id); put("name", s.name)
-                    s.color?.let { put("color", hex(it)) }
-                    s.tagId?.let { put("tag", it) }
-                    s.icon?.let { put("icon", it) }
-                })
-            }
-        })
+        put(
+            "tags",
+            JSONArray().apply {
+                doc.tags.forEach { t ->
+                    put(
+                        JSONObject().apply {
+                            put("id", t.id)
+                            put("name", t.name)
+                            t.color?.let { put("color", hex(it)) }
+                            t.sound?.let { put("sound", it) }
+                        },
+                    )
+                }
+            },
+        )
+        put(
+            "speakers",
+            JSONArray().apply {
+                doc.speakers.forEach { s ->
+                    put(
+                        JSONObject().apply {
+                            put("id", s.id)
+                            put("name", s.name)
+                            s.color?.let { put("color", hex(it)) }
+                            s.tagId?.let { put("tag", it) }
+                            s.icon?.let { put("icon", it) }
+                        },
+                    )
+                }
+            },
+        )
     }.toString(2)
 
     fun decode(text: String, strict: Boolean): SpeakerDocument {
@@ -51,8 +63,11 @@ object SpeakerJson {
             val rawId = t.str("id")
             val name = SpeakerType.normalizeName(t.str("name") ?: rawId.orEmpty())
             val id = SpeakerType.slugOf(rawId ?: name)
-            if (name.isEmpty() || id == "custom") null
-            else TagData(id, name, parseColor(t.str("color")), t.str("sound")?.trim()?.lowercase())
+            if (name.isEmpty() || id == "custom") {
+                null
+            } else {
+                TagData(id, name, parseColor(t.str("color")), t.str("sound")?.trim()?.lowercase())
+            }
         }.distinctBy { it.id }
 
         val speakers = o.optJSONArray("speakers").objects().mapNotNull { s ->
@@ -65,7 +80,8 @@ object SpeakerJson {
                 name,
                 parseColor(s.str("color")),
                 tag,
-                s.str("icon")?.trim()?.takeIf { it.isNotEmpty() })
+                s.str("icon")?.trim()?.takeIf { it.isNotEmpty() },
+            )
         }.distinctBy { it.id }
 
         return SpeakerDocument(tags, speakers)
@@ -86,8 +102,7 @@ object SpeakerJson {
     private fun JSONArray?.objects(): List<JSONObject> =
         if (this == null) emptyList() else (0 until length()).mapNotNull { optJSONObject(it) }
 
-    private fun JSONObject.str(key: String): String? =
-        if (has(key) && !isNull(key)) getString(key) else null
+    private fun JSONObject.str(key: String): String? = if (has(key) && !isNull(key)) getString(key) else null
 }
 
 object SpeakerDocumentSerializer : Serializer<SpeakerDocument> {

@@ -3,12 +3,7 @@ package com.example.feldelysium.domain.model
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class SpeakerType(
-    val id: String,
-    val name: String,
-    val colorArgb: Long? = null,
-    val soundKey: String? = null,
-) {
+data class SpeakerType(val id: String, val name: String, val colorArgb: Long? = null, val soundKey: String? = null) {
     val isCustom: Boolean get() = id == CUSTOM_ID
 
     companion object {
@@ -18,18 +13,12 @@ data class SpeakerType(
         val CUSTOM = SpeakerType(CUSTOM_ID, "Custom")
         val NPC = SpeakerType("npc", "NPC", SpeakerColor.PLAIN.argb, SoundKeys.NPC)
 
-        fun normalizeName(raw: String): String =
-            raw.trim().replace(Regex("\\s+"), " ").take(MAX_NAME)
+        fun normalizeName(raw: String): String = raw.trim().replace(Regex("\\s+"), " ").take(MAX_NAME)
 
-        fun slugOf(name: String): String =
-            name.lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), "-").trim('-')
-                .ifEmpty { "t" + name.hashCode().toString(16) }
+        fun slugOf(name: String): String = name.lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), "-").trim('-')
+            .ifEmpty { "t" + name.hashCode().toString(16) }
 
-        fun create(
-            rawName: String,
-            colorArgb: Long? = null,
-            soundKey: String? = null
-        ): SpeakerType? {
+        fun create(rawName: String, colorArgb: Long? = null, soundKey: String? = null): SpeakerType? {
             val name = normalizeName(rawName)
             if (name.isEmpty()) return null
             val id = slugOf(name)
@@ -40,12 +29,11 @@ data class SpeakerType(
             }
         }
 
-        fun fromStored(id: String, name: String): SpeakerType =
-            when (id) {
-                CUSTOM_ID -> CUSTOM
-                NPC.id -> NPC
-                else -> SpeakerType(id, name)
-            }
+        fun fromStored(id: String, name: String): SpeakerType = when (id) {
+            CUSTOM_ID -> CUSTOM
+            NPC.id -> NPC
+            else -> SpeakerType(id, name)
+        }
     }
 }
 

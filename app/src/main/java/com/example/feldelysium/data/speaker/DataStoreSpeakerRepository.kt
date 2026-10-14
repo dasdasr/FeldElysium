@@ -40,8 +40,8 @@ class DataStoreSpeakerRepository(
     override val tags: Flow<List<SpeakerType>> = store.data
         .map { doc ->
             PredefinedSpeakers.TAGS +
-                    doc.tags.filterNot { PredefinedSpeakers.isBundledTag(it.id) }
-                        .map { it.toType() }
+                doc.tags.filterNot { PredefinedSpeakers.isBundledTag(it.id) }
+                    .map { it.toType() }
         }
         .distinctUntilChanged()
 
@@ -50,7 +50,7 @@ class DataStoreSpeakerRepository(
             val tagMap =
                 (doc.tags.map { it.toType() } + PredefinedSpeakers.TAGS).associateBy { it.id }
             PredefinedSpeakers.ALL +
-                    doc.speakers.filter { it.id !in bundledIds }.map { it.toSpeaker(tagMap) }
+                doc.speakers.filter { it.id !in bundledIds }.map { it.toSpeaker(tagMap) }
         }
         .distinctUntilChanged()
 
@@ -104,7 +104,7 @@ class DataStoreSpeakerRepository(
     override suspend fun exportPack(ids: Set<String>?, output: OutputStream) = withContext(io) {
         val doc = store.data.first()
         val chosen = doc.speakers.filter { ids == null || it.id in ids } +
-                PredefinedSpeakers.ALL.filter { ids != null && it.id in ids }.map { it.toData() }
+            PredefinedSpeakers.ALL.filter { ids != null && it.id in ids }.map { it.toData() }
 
         val tagPool = (doc.tags + PredefinedSpeakers.TAGS.map { it.toData() }).associateBy { it.id }
         val usedTags = chosen.mapNotNull { it.tagId }.distinct().mapNotNull { tagPool[it] }
@@ -121,7 +121,8 @@ class DataStoreSpeakerRepository(
         try {
             PreparedPack(SpeakerPackIO.read(input, temp), temp)
         } catch (e: Exception) {
-            temp.deleteRecursively(); throw e
+            temp.deleteRecursively()
+            throw e
         }
     }
 
@@ -141,86 +142,100 @@ class DataStoreSpeakerRepository(
         )
     }
 
-    override suspend fun importPack(pack: PreparedPack, policy: ImportPolicy): ImportReport =
-        withContext(io) {
-            var added = 0;
-            var replaced = 0;
-            var skipped = 0;
-            var tagsAdded = 0;
-            var tagsUpdated = 0
-            try {
-                store.updateData { doc ->
-                    added = 0; replaced = 0; skipped = 0; tagsAdded = 0; tagsUpdated = 0
+    override suspend fun importPack(pack: PreparedPack, policy: ImportPolicy): ImportReport = withContext(io) {
+        var added = 0
+        var replaced = 0
+        var skipped = 0
+        var tagsAdded = 0
+        var tagsUpdated = 0
+        try {
+            store.updateData { doc ->
+                added = 0
+                replaced = 0
+                skipped = 0
+                tagsAdded = 0
+                tagsUpdated = 0
 
-                    val tags = doc.tags.toMutableList()
-                    pack.document.tags.forEach { t ->
-                        if (PredefinedSpeakers.isBundledTag(t.id)) return@forEach
-                        val i = tags.indexOfFirst { it.id == t.id }
-                        when {
-                            i < 0 -> {
-                                tags += t; tagsAdded++
-                            }
+                val tags = doc.tags.toMutableList()
+                pack.document.tags.forEach { t ->
+                    if (PredefinedSpeakers.isBundledTag(t.id)) return@forEach
+                    val i = tags.indexOfFirst { it.id == t.id }
+                    when {
+                        i < 0 -> {
+                            tags += t
+                            tagsAdded++
+                        }
 
-                            policy == ImportPolicy.REPLACE -> {
-                                tags[i] = t; tagsUpdated++
-                            }
+                        policy == ImportPolicy.REPLACE -> {
+                            tags[i] = t
+                            tagsUpdated++
                         }
                     }
-                    fun tagColor(id: String?): Long? = id?.let { tid ->
-                        tags.firstOrNull { it.id == tid }?.color
-                            ?: PredefinedSpeakers.TAGS.firstOrNull { it.id == tid }?.colorArgb
-                    }
-
-                    fun tagKnown(id: String) =
-                        tags.any { it.id == id } || PredefinedSpeakers.isBundledTag(id)
-
-                    val speakers = doc.speakers.toMutableList()
-                    pack.document.speakers.forEach { s ->
-                        if (s.id in bundledIds) {
-                            skipped++; return@forEach
-                        }
-                        val idx = speakers.indexOfFirst { it.id == s.id }
-                        if (idx >= 0 && policy == ImportPolicy.SKIP) {
-                            skipped++; return@forEach
-                        }
-
-                        s.tagId?.let { tid ->
-                            if (!tagKnown(tid)) {
-                                tags += TagData(
-                                    tid,
-                                    tid.replaceFirstChar { it.uppercase() }
-                                        .take(SpeakerType.MAX_NAME)
-                                )
-                                tagsAdded++
-                            }
-                        }
-                        val newId =
-                            if (idx >= 0 && policy == ImportPolicy.KEEP_BOTH) UUID.randomUUID()
-                                .toString() else s.id
-                        val color = SpeakerColor.snap(
-                            s.color ?: tagColor(s.tagId) ?: SpeakerColor.DEFAULT.argb
-                        )
-                        val data =
-                            SpeakerData(newId, s.name, color, s.tagId, adoptIcon(s.icon, pack))
-
-                        if (idx >= 0 && policy == ImportPolicy.REPLACE) {
-                            speakers[idx] = data; replaced++
-                        } else {
-                            speakers += data; added++
-                        }
-                    }
-                    doc.copy(tags = tags, speakers = speakers)
                 }
-            } finally {
-                pack.discard()
+                fun tagColor(id: String?): Long? = id?.let { tid ->
+                    tags.firstOrNull { it.id == tid }?.color
+                        ?: PredefinedSpeakers.TAGS.firstOrNull { it.id == tid }?.colorArgb
+                }
+
+                fun tagKnown(id: String) = tags.any { it.id == id } || PredefinedSpeakers.isBundledTag(id)
+
+                val speakers = doc.speakers.toMutableList()
+                pack.document.speakers.forEach { s ->
+                    if (s.id in bundledIds) {
+                        skipped++
+                        return@forEach
+                    }
+                    val idx = speakers.indexOfFirst { it.id == s.id }
+                    if (idx >= 0 && policy == ImportPolicy.SKIP) {
+                        skipped++
+                        return@forEach
+                    }
+
+                    s.tagId?.let { tid ->
+                        if (!tagKnown(tid)) {
+                            tags += TagData(
+                                tid,
+                                tid.replaceFirstChar { it.uppercase() }
+                                    .take(SpeakerType.MAX_NAME),
+                            )
+                            tagsAdded++
+                        }
+                    }
+                    val newId =
+                        if (idx >= 0 && policy == ImportPolicy.KEEP_BOTH) {
+                            UUID.randomUUID()
+                                .toString()
+                        } else {
+                            s.id
+                        }
+                    val color = SpeakerColor.snap(
+                        s.color ?: tagColor(s.tagId) ?: SpeakerColor.DEFAULT.argb,
+                    )
+                    val data =
+                        SpeakerData(newId, s.name, color, s.tagId, adoptIcon(s.icon, pack))
+
+                    if (idx >= 0 && policy == ImportPolicy.REPLACE) {
+                        speakers[idx] = data
+                        replaced++
+                    } else {
+                        speakers += data
+                        added++
+                    }
+                }
+                doc.copy(tags = tags, speakers = speakers)
             }
-            pruneIcons()
-            ImportReport(added, replaced, skipped, tagsAdded, tagsUpdated)
+        } finally {
+            pack.discard()
         }
+        pruneIcons()
+        ImportReport(added, replaced, skipped, tagsAdded, tagsUpdated)
+    }
 
     private fun adoptIcon(ref: String?, pack: PreparedPack): String? = when {
         ref == null -> null
+
         ref.startsWith("res:") -> ref.takeIf { resId(ref.removePrefix("res:")) != null }
+
         ref.startsWith("file:") -> {
             val src = File(pack.dir, "icons/" + File(ref.removePrefix("file:")).name)
             if (src.exists()) "file:" + icons.adopt(src) else null
@@ -229,15 +244,15 @@ class DataStoreSpeakerRepository(
         else -> null
     }
 
-    private fun resId(name: String): Int? =
-        appContext.resources.getIdentifier(name, "drawable", appContext.packageName)
-            .takeIf { it != 0 }
+    private fun resId(name: String): Int? = appContext.resources.getIdentifier(name, "drawable", appContext.packageName)
+        .takeIf { it != 0 }
 
-    private fun resName(id: Int): String? =
-        runCatching { appContext.resources.getResourceEntryName(id) }.getOrNull()
+    private fun resName(id: Int): String? = runCatching { appContext.resources.getResourceEntryName(id) }.getOrNull()
 
     private fun Speaker.toData() = SpeakerData(
-        id = id, name = name, color = colorArgb,
+        id = id,
+        name = name,
+        color = colorArgb,
         tagId = type.id.takeUnless { type.isCustom },
         icon = customIconUri?.let { icons.nameOf(it) }?.let { "file:$it" }
             ?: iconResId?.let { resName(it) }?.let { "res:$it" },
@@ -246,7 +261,8 @@ class DataStoreSpeakerRepository(
     private fun SpeakerData.toSpeaker(tagMap: Map<String, SpeakerType>): Speaker {
         val ref = icon
         return Speaker(
-            id = id, name = name,
+            id = id,
+            name = name,
             colorArgb = color ?: SpeakerColor.DEFAULT.argb,
             iconResId = ref?.takeIf { it.startsWith("res:") }
                 ?.let { resId(it.removePrefix("res:")) },

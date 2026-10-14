@@ -55,20 +55,14 @@ data class RoughStyle(
 
 private data class Knot(val p: Offset, val jumpNext: Boolean = false)
 
-class RoughShape(
-    val seed: Int,
-    val style: RoughStyle = RoughStyle(),
-) : Shape {
+class RoughShape(val seed: Int, val style: RoughStyle = RoughStyle()) : Shape {
 
     fun rimPx(density: Density): Float = with(density) {
         style.roughness.toPx() * (1.5f + style.jerkAmp + style.cornerJitter) + style.inset.toPx()
     }
 
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density,
-    ): Outline = Outline.Generic(buildPath(size, density))
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
+        Outline.Generic(buildPath(size, density))
 
     fun buildPath(size: Size, density: Density): Path {
         if (size.minDimension <= 0f) return Path()
@@ -116,8 +110,10 @@ class RoughShape(
             if (torn[i]) r * 0.15f else r
         }
         val cornerScale = floatArrayOf(
-            style.leftCornerScale, style.rightCornerScale,
-            style.rightCornerScale, style.leftCornerScale,
+            style.leftCornerScale,
+            style.rightCornerScale,
+            style.rightCornerScale,
+            style.leftCornerScale,
         )
 
         var perimeter = 0f
@@ -153,8 +149,8 @@ class RoughShape(
                         add(
                             Knot(
                                 base + normal * (dev + jerkOff) + dir * (slide - jw * 0.5f),
-                                jumpNext = true
-                            )
+                                jumpNext = true,
+                            ),
                         )
                         val sign = if (rnd.nextBoolean()) 1f else -1f
                         jerkOff = sign * (0.5f + rnd.nextFloat() * 0.5f) * amp * style.jerkAmp
@@ -185,7 +181,6 @@ class RoughShape(
         }
     }
 }
-
 
 class InkLayer(val path: Path, val alpha: Float)
 
@@ -226,11 +221,7 @@ private class LoopSteps(seed: Int, len: Float, cellPx: Float, private val rampPx
     }
 }
 
-fun RoughShape.buildInkLayers(
-    outline: Path,
-    density: Density,
-    baseWidth: Float,
-): List<InkLayer> {
+fun RoughShape.buildInkLayers(outline: Path, density: Density, baseWidth: Float): List<InkLayer> {
     val measure = PathMeasure().apply { setPath(outline, true) }
     val len = measure.length
     if (len <= 0f) return emptyList()
@@ -300,7 +291,8 @@ private fun Path.catmullRomTo(k: List<Knot>) {
         val p1 = k[i].p
         val p2 = k[i + 1].p
         if (k[i].jumpNext) {
-            lineTo(p2.x, p2.y); continue
+            lineTo(p2.x, p2.y)
+            continue
         }
 
         val prevJump = i > 0 && k[i - 1].jumpNext
@@ -308,9 +300,12 @@ private fun Path.catmullRomTo(k: List<Knot>) {
         val p0 = if (i == 0 || prevJump) p1 else k[i - 1].p
         val p3 = if (i + 2 > k.lastIndex || nextJump) p2 else k[i + 2].p
         cubicTo(
-            p1.x + (p2.x - p0.x) / 6f, p1.y + (p2.y - p0.y) / 6f,
-            p2.x - (p3.x - p1.x) / 6f, p2.y - (p3.y - p1.y) / 6f,
-            p2.x, p2.y,
+            p1.x + (p2.x - p0.x) / 6f,
+            p1.y + (p2.y - p0.y) / 6f,
+            p2.x - (p3.x - p1.x) / 6f,
+            p2.y - (p3.y - p1.y) / 6f,
+            p2.x,
+            p2.y,
         )
     }
 }

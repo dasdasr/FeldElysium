@@ -85,9 +85,7 @@ private fun roundedPolygon(pts: List<Offset>, r: Float): Path = Path().apply {
     close()
 }
 
-private fun chipPath(
-    w: Float, h: Float, shape: FeldChipShape, tip: Float, round: Float, inset: Float,
-): Path {
+private fun chipPath(w: Float, h: Float, shape: FeldChipShape, tip: Float, round: Float, inset: Float): Path {
     val l = inset
     val t = inset
     val r = w - inset
@@ -97,8 +95,12 @@ private fun chipPath(
             val k = tip.coerceAtMost((r - l) / 3f)
             roundedPolygon(
                 listOf(
-                    Offset(l + k, t), Offset(r - k, t), Offset(r, h / 2f),
-                    Offset(r - k, b), Offset(l + k, b), Offset(l, h / 2f),
+                    Offset(l + k, t),
+                    Offset(r - k, t),
+                    Offset(r, h / 2f),
+                    Offset(r - k, b),
+                    Offset(l + k, b),
+                    Offset(l, h / 2f),
                 ),
                 round,
             )
@@ -117,11 +119,18 @@ private fun chipPath(
 enum class FeldChipFill { Diamond, Chamfer }
 
 private fun smooth(x: Float): Float {
-    val t = x.coerceIn(0f, 1f); return t * t * (3f - 2f * t)
+    val t = x.coerceIn(0f, 1f)
+    return t * t * (3f - 2f * t)
 }
 
 private fun revealPath(
-    fillShape: FeldChipFill, body: Path, o: Offset, w: Float, h: Float, t: Float, round: Float,
+    fillShape: FeldChipFill,
+    body: Path,
+    o: Offset,
+    w: Float,
+    h: Float,
+    t: Float,
+    round: Float,
 ): Path = when (fillShape) {
     FeldChipFill.Diamond -> {
         val maxR = maxOf(o.x, w - o.x) + maxOf(o.y, h - o.y)
@@ -131,7 +140,7 @@ private fun revealPath(
                 Offset(o.x, o.y - r),
                 Offset(o.x + r, o.y),
                 Offset(o.x, o.y + r),
-                Offset(o.x - r, o.y)
+                Offset(o.x - r, o.y),
             ),
             r * 0.10f,
         )
@@ -139,8 +148,15 @@ private fun revealPath(
 
     FeldChipFill.Chamfer -> {
         val k = 1.35f * t
-        val m = Matrix().apply { translate(o.x, o.y); scale(k, k); translate(-o.x, -o.y) }
-        Path().apply { addPath(body); transform(m) }
+        val m = Matrix().apply {
+            translate(o.x, o.y)
+            scale(k, k)
+            translate(-o.x, -o.y)
+        }
+        Path().apply {
+            addPath(body)
+            transform(m)
+        }
     }
 }
 
@@ -183,29 +199,38 @@ fun FeldChip(
     val scale by animateFloatAsState(
         if (pressed && enabled) 0.97f else 1f,
         tween(90),
-        label = "chipScale"
+        label = "chipScale",
     )
     val fill = fillState.value
     val flip = smooth((fill - 0.30f) / 0.35f)
 
     val textColor = if (!enabled) DisabledGray else lerp(FeldPalette.Cream, InkDark, flip)
     val diamondColor = if (enabled) accent else DisabledGray
-    val sidePad = if (contentHorizontalPadding != Dp.Unspecified) contentHorizontalPadding
-    else when (shape) {
-        FeldChipShape.Chamfer -> tip + 6.dp
-        FeldChipShape.Pill -> chipHeight / 4
-        FeldChipShape.Rectangle -> 8.dp
+    val sidePad = if (contentHorizontalPadding != Dp.Unspecified) {
+        contentHorizontalPadding
+    } else {
+        when (shape) {
+            FeldChipShape.Chamfer -> tip + 6.dp
+            FeldChipShape.Pill -> chipHeight / 4
+            FeldChipShape.Rectangle -> 8.dp
+        }
     }
 
     Row(
         modifier = modifier
             .defaultMinSize(minHeight = ChipMinHeight)
             .onSizeChanged { chipHeight = with(density) { it.height.toDp() } }
-            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .semantics { this.selected = selected }
             .clickable(
-                interactionSource = interaction, indication = null, enabled = enabled,
-                role = Role.Button, onClick = onClick,
+                interactionSource = interaction,
+                indication = null,
+                enabled = enabled,
+                role = Role.Button,
+                onClick = onClick,
             )
             .padding(1.dp)
             .drawWithCache {
@@ -215,8 +240,12 @@ fun FeldChip(
                 val rim = chipPath(w, h, shape, tip.toPx(), rounding.toPx(), 0.8.dp.toPx())
 
                 val base = accentBrush(
-                    if (enabled) BaseDark else BaseDisabled, seed, density.density,
-                    fade = 0.5f, glow = 0.35f, grain = 0.05f,
+                    if (enabled) BaseDark else BaseDisabled,
+                    seed,
+                    density.density,
+                    fade = 0.5f,
+                    glow = 0.35f,
+                    grain = 0.05f,
                 )
                 val filled =
                     accentBrush(accent, seed + 1, density.density, fade = 0.9f, glow = 0.9f, grain = 0.09f)
@@ -229,18 +258,22 @@ fun FeldChip(
                 )
                 val stroke = Stroke(1.dp.toPx(), join = StrokeJoin.Round)
                 val defaultOrigin =
-                    if (leading || leadingContent != null) Offset(
-                        sidePad.toPx() + h * 0.17f,
-                        h / 2f
-                    )
-                    else Offset(w / 2f, h / 2f)
+                    if (leading || leadingContent != null) {
+                        Offset(
+                            sidePad.toPx() + h * 0.17f,
+                            h / 2f,
+                        )
+                    } else {
+                        Offset(w / 2f, h / 2f)
+                    }
 
                 onDrawWithContent {
                     val t = fillState.value
                     clipPath(body) {
                         drawRect(base)
-                        if (t > 0.999f) drawRect(filled)
-                        else if (t > 0.001f) {
+                        if (t > 0.999f) {
+                            drawRect(filled)
+                        } else if (t > 0.001f) {
                             val o = origin ?: defaultOrigin
                             clipPath(
                                 revealPath(
@@ -250,15 +283,16 @@ fun FeldChip(
                                     w,
                                     h,
                                     t,
-                                    rounding.toPx()
-                                )
+                                    rounding.toPx(),
+                                ),
                             ) { drawRect(filled) }
                         }
                     }
                     drawContent()
                     if (outline) {
                         drawPath(
-                            rim, rimBrush,
+                            rim,
+                            rimBrush,
                             alpha = (if (enabled) 0.85f else 0.45f) * (1f - 0.55f * t),
                             style = stroke,
                         )
@@ -275,10 +309,14 @@ fun FeldChip(
             Canvas(Modifier.size(chipHeight * 0.34f)) {
                 val s = size.minDimension
                 val d = Path().apply {
-                    moveTo(s / 2f, 0f); lineTo(s, s / 2f); lineTo(s / 2f, s); lineTo(
-                    0f,
-                    s / 2f
-                ); close()
+                    moveTo(s / 2f, 0f)
+                    lineTo(s, s / 2f)
+                    lineTo(s / 2f, s)
+                    lineTo(
+                        0f,
+                        s / 2f,
+                    )
+                    close()
                 }
                 drawPath(d, diamondColor, alpha = 1f - flip)
                 drawPath(d, InkDark, alpha = flip)
@@ -314,7 +352,7 @@ private fun FeldChipPreview() {
                 selected = false,
                 onClick = {},
                 shape = FeldChipShape.Rectangle,
-                outline = false
+                outline = false,
             )
         }
     }

@@ -1,6 +1,5 @@
 package com.example.feldelysium.designsystem.foundation.material.agsl
 
-
 internal const val ACCENT_AGSL = """
 uniform float seed;
 uniform float scale;

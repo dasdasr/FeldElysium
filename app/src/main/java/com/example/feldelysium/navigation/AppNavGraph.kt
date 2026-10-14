@@ -14,7 +14,7 @@ fun AppNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Editor.route
+        startDestination = Screen.Editor.route,
     ) {
         composable(Screen.Editor.route) {
             EditorScreen(
@@ -23,19 +23,19 @@ fun AppNavGraph() {
                 },
                 onNavigateToSettings = {
                     navController.navigate(Screen.Settings.route)
-                }
+                },
             )
         }
 
         composable(Screen.Settings.route) {
             SettingsScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
         composable(Screen.Playback.route) {
             PlaybackScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
             )
         }
     }

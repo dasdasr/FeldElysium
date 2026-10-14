@@ -25,14 +25,10 @@ import com.example.feldelysium.domain.model.ImportPreview
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ImportConflictDialog(
-    preview: ImportPreview,
-    onConfirm: (ImportPolicy) -> Unit,
-    onDismiss: () -> Unit,
-) {
+fun ImportConflictDialog(preview: ImportPreview, onConfirm: (ImportPolicy) -> Unit, onDismiss: () -> Unit) {
     var policy by remember { mutableStateOf(ImportPolicy.SKIP) }
     val names = preview.conflicts.take(5).joinToString { it.name } +
-            if (preview.conflicts.size > 5) "…" else ""
+        if (preview.conflicts.size > 5) "…" else ""
 
     FeldDialog(
         title = "Already exists",
@@ -42,7 +38,7 @@ fun ImportConflictDialog(
             FeldDialogActions(
                 confirmLabel = "Import",
                 onConfirm = { onConfirm(policy) },
-                onCancel = onDismiss
+                onCancel = onDismiss,
             )
         },
     ) {
@@ -62,7 +58,7 @@ fun ImportConflictDialog(
                     selected = policy == p,
                     onClick = { policy = p },
                     modifier = Modifier.height(34.dp),
-                    accent = FeldChipColors.Cream
+                    accent = FeldChipColors.Cream,
                 )
             }
         }
@@ -73,13 +69,15 @@ fun ImportConflictDialog(
                 ImportPolicy.REPLACE -> "Existing speakers are overwritten by the pack versions."
                 ImportPolicy.KEEP_BOTH -> "Pack speakers are added as new copies."
             },
-            style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted,
+            style = MaterialTheme.typography.labelSmall,
+            color = FeldPalette.Muted,
             modifier = Modifier.padding(bottom = 4.dp),
         )
         if (preview.bundledSkipped > 0) {
             Text(
                 "${preview.bundledSkipped} built-in speaker(s) in the pack are always skipped.",
-                style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted,
+                style = MaterialTheme.typography.labelSmall,
+                color = FeldPalette.Muted,
             )
         }
     }

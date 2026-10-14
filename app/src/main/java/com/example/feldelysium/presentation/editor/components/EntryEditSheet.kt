@@ -53,9 +53,13 @@ import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private val SheetRough = RoughStyle(
-    roughness = 0.8.dp, step = 44.dp, corner = 4.dp,
-    cornerVariation = 0.2f, cornerJitter = 0.2f,
-    tornChance = 0.03f, jerkChance = 0.04f,
+    roughness = 0.8.dp,
+    step = 44.dp,
+    corner = 4.dp,
+    cornerVariation = 0.2f,
+    cornerJitter = 0.2f,
+    tornChance = 0.03f,
+    jerkChance = 0.04f,
 )
 
 private val SheetBleed = 28.dp
@@ -107,7 +111,10 @@ fun EntryEditSheet(
             spec = FeldPaper.Entry,
             rough = SheetRough,
             contentPadding = PaddingValues(
-                start = 20.dp, end = 20.dp, top = 12.dp, bottom = SheetBleed,
+                start = 20.dp,
+                end = 20.dp,
+                top = 12.dp,
+                bottom = SheetBleed,
             ),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -125,7 +132,9 @@ fun EntryEditSheet(
                 onClick = onSpeakerClick,
                 onEdit = if (speaker != null && !speaker.isBundled && onEditSpeaker != null) {
                     { onEditSpeaker(speaker) }
-                } else null,
+                } else {
+                    null
+                },
             )
 
             Spacer(Modifier.height(8.dp))
@@ -173,11 +182,7 @@ private fun Chevron() {
 }
 
 @Composable
-private fun SpeakerHeader(
-    speaker: Speaker?,
-    onClick: (() -> Unit)?,
-    onEdit: (() -> Unit)?,
-) {
+private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (() -> Unit)?) {
     val color = speaker?.let { Color(it.colorArgb) } ?: FeldPalette.Muted
     Row(
         modifier = Modifier

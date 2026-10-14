@@ -14,11 +14,10 @@ data class ImportPreview(
     val existingTags: List<String>,
 )
 
-data class ImportReport(
-    val added: Int, val replaced: Int, val skipped: Int,
-    val tagsAdded: Int, val tagsUpdated: Int,
-)
+data class ImportReport(val added: Int, val replaced: Int, val skipped: Int, val tagsAdded: Int, val tagsUpdated: Int)
 
 class PreparedPack(val document: SpeakerDocument, val dir: File) {
-    fun discard() { dir.deleteRecursively() }
+    fun discard() {
+        dir.deleteRecursively()
+    }
 }

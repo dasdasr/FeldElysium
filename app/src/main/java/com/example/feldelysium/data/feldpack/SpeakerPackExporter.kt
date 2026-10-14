@@ -9,18 +9,13 @@ import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class SpeakerPackExporter(
-    private val context: Context,
-) {
+class SpeakerPackExporter(private val context: Context) {
     private val json = Json {
         prettyPrint = true
         encodeDefaults = true
     }
 
-    fun export(
-        speakers: List<Speaker>,
-        destination: File,
-    ): File {
+    fun export(speakers: List<Speaker>, destination: File): File {
         require(speakers.map { it.id }.distinct().size == speakers.size) {
             "Speaker IDs must be unique"
         }
@@ -61,14 +56,12 @@ class SpeakerPackExporter(
         return destination
     }
 
-    private fun readIcon(rawUri: String): ByteArray? =
-        runCatching {
-            context.contentResolver
-                .openInputStream(Uri.parse(rawUri))
-                ?.use { it.readBytes() }
-        }.getOrNull()
+    private fun readIcon(rawUri: String): ByteArray? = runCatching {
+        context.contentResolver
+            .openInputStream(Uri.parse(rawUri))
+            ?.use { it.readBytes() }
+    }.getOrNull()
 
-    private fun safeFileName(value: String): String =
-        value.replace(Regex("[^a-zA-Z0-9_-]"), "_")
-            .ifBlank { "speaker" }
+    private fun safeFileName(value: String): String = value.replace(Regex("[^a-zA-Z0-9_-]"), "_")
+        .ifBlank { "speaker" }
 }

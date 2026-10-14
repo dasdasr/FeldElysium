@@ -59,7 +59,6 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
-import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -88,16 +87,18 @@ fun FeldScreenHeader(
 ) {
     val haptics = rememberFeldHaptics()
 
-    Column(modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp)) {
+    Column(
+        modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (navIcon != null) {
                 FeldIconButton(
                     navIcon,
                     onNav,
                     tint = FeldPalette.Muted,
-                    modifier = Modifier.padding(start = 0.dp)
+                    modifier = Modifier.padding(start = 0.dp),
                 )
             }
             if (eyebrow != null) {
@@ -156,7 +157,7 @@ fun FeldScreenHeader(
                     Text(
                         it.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = FeldPalette.Muted
+                        color = FeldPalette.Muted,
                     )
                 }
                 FeldDivider(
@@ -168,7 +169,7 @@ fun FeldScreenHeader(
                     Text(
                         it.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
-                        color = FeldPalette.Muted
+                        color = FeldPalette.Muted,
                     )
                 }
             }
@@ -219,10 +220,12 @@ private fun EditableTitle(
         Modifier
             .fillMaxWidth()
             .onGloballyPositioned {
-                if (editing) registry?.register(
-                    registryKey,
-                    it.boundsInWindow()
-                )
+                if (editing) {
+                    registry?.register(
+                        registryKey,
+                        it.boundsInWindow(),
+                    )
+                }
             },
     ) {
         FeldDistressedTitle(
@@ -235,12 +238,15 @@ private fun EditableTitle(
                 .fillMaxWidth()
                 .alpha(if (editing && blank) 0.35f else 1f)
                 .then(
-                    if (editing) Modifier
-                    else Modifier.feldClickable(onClick = {
-                        haptics.tick()
-                        field = TextFieldValue(text, TextRange(0, text.length))
-                        editing = true
-                    })
+                    if (editing) {
+                        Modifier
+                    } else {
+                        Modifier.feldClickable(onClick = {
+                            haptics.tick()
+                            field = TextFieldValue(text, TextRange(0, text.length))
+                            editing = true
+                        })
+                    },
                 ),
         )
 
@@ -268,8 +274,9 @@ private fun EditableTitle(
                         .fillMaxWidth()
                         .focusRequester(requester)
                         .onFocusChanged {
-                            if (it.isFocused) hadFocus = true
-                            else if (hadFocus) {
+                            if (it.isFocused) {
+                                hadFocus = true
+                            } else if (hadFocus) {
                                 hadFocus = false
                                 editing = false
                             }

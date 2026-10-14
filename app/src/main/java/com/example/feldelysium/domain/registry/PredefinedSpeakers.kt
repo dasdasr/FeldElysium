@@ -7,8 +7,7 @@ import com.example.feldelysium.domain.model.SpeakerType
 
 object PredefinedSpeakers {
 
-    private fun tag(id: String, name: String, color: SpeakerColor) =
-        SpeakerType(id, name, color.argb, id)
+    private fun tag(id: String, name: String, color: SpeakerColor) = SpeakerType(id, name, color.argb, id)
 
     val INTELLECT_TAG = tag("intellect", "Intellect", SpeakerColor.INTELLECT)
     val PSYCHE_TAG = tag("psyche", "Psyche", SpeakerColor.PSYCHE)
@@ -22,13 +21,21 @@ object PredefinedSpeakers {
     fun isBundledTag(id: String) = id in tagIds
 
     private fun skill(id: String, name: String, iconResId: Int?, tag: SpeakerType) = Speaker(
-        id = id, name = name, colorArgb = tag.colorArgb ?: SpeakerColor.DEFAULT.argb,
-        iconResId = iconResId, type = tag, isBundled = true,
+        id = id,
+        name = name,
+        colorArgb = tag.colorArgb ?: SpeakerColor.DEFAULT.argb,
+        iconResId = iconResId,
+        type = tag,
+        isBundled = true,
     )
 
     private fun npc(id: String, name: String, iconResId: Int?) = Speaker(
-        id = id, name = name, colorArgb = SpeakerColor.PLAIN.argb,
-        iconResId = iconResId, type = SpeakerType.NPC, isBundled = true,
+        id = id,
+        name = name,
+        colorArgb = SpeakerColor.PLAIN.argb,
+        iconResId = iconResId,
+        type = SpeakerType.NPC,
+        isBundled = true,
     )
 
     val LOGIC = skill("logic", "Logic", R.drawable.ic_logic, INTELLECT_TAG)
@@ -52,7 +59,7 @@ object PredefinedSpeakers {
         "physical_instrument",
         "Physical Instrument",
         R.drawable.ic_physical_instrument,
-        PHYSIQUE_TAG
+        PHYSIQUE_TAG,
     )
     val ELECTROCHEMISTRY =
         skill("electrochemistry", "Electrochemistry", R.drawable.ic_electrochemistry, PHYSIQUE_TAG)

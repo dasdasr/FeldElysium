@@ -71,6 +71,6 @@ fun FeldSettingsDivider(modifier: Modifier = Modifier) {
 private fun FeldSettingsSectionPreview() {
     FeldSettingsSection(
         title = "SETTINGS",
-        content = { FeldIcon(id = FeldIconId.Settings) }
+        content = { FeldIcon(id = FeldIconId.Settings) },
     )
 }

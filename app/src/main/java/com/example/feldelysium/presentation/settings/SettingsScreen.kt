@@ -52,10 +52,7 @@ private const val PlaybackFontName = "Sina Nova Regular"
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun SettingsScreen(
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
     val vm: SettingsViewModel = viewModel(activity)
     val settings by vm.state.collectAsStateWithLifecycle()
@@ -105,7 +102,11 @@ fun SettingsScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        Column(Modifier.fillMaxSize().statusBarsPadding()) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+        ) {
             FeldScreenHeader(
                 title = "App settings",
                 eyebrow = "Settings",
@@ -136,7 +137,10 @@ fun SettingsScreen(
                         title = "Status line",
                         subtitle = "Reals, time and day",
                         showChevron = true,
-                        onClick = { haptics.tick(); showPlaybackUiText = true },
+                        onClick = {
+                            haptics.tick()
+                            showPlaybackUiText = true
+                        },
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
@@ -153,7 +157,10 @@ fun SettingsScreen(
                         settings = settings,
                         currentLabel = backgroundLabel(settings),
                         freezeVideo = leaving,
-                        onClick = { haptics.tick(); showBackground = true },
+                        onClick = {
+                            haptics.tick()
+                            showBackground = true
+                        },
                     )
                 }
 
@@ -163,7 +170,10 @@ fun SettingsScreen(
                         title = "Export speakers",
                         subtitle = "Save your speakers and tags to a file",
                         showChevron = true,
-                        onClick = { haptics.tick(); exportLauncher.launch("speakers.feldpack") },
+                        onClick = {
+                            haptics.tick()
+                            exportLauncher.launch("speakers.feldpack")
+                        },
                     )
                     FeldSettingsDivider()
                     FeldSettingRow(
@@ -171,7 +181,10 @@ fun SettingsScreen(
                         title = "Import speakers",
                         subtitle = "Add speakers and tags from a pack",
                         showChevron = true,
-                        onClick = { haptics.tick(); importLauncher.launch(arrayOf("*/*")) },
+                        onClick = {
+                            haptics.tick()
+                            importLauncher.launch(arrayOf("*/*"))
+                        },
                     )
                     FeldSettingsDivider()
                     FeldSettingRow(
@@ -179,7 +192,10 @@ fun SettingsScreen(
                         title = "Tags",
                         subtitle = "Rename, recolor or delete",
                         showChevron = true,
-                        onClick = { haptics.tick(); showTags = true },
+                        onClick = {
+                            haptics.tick()
+                            showTags = true
+                        },
                     )
                 }
 
@@ -221,7 +237,12 @@ fun SettingsScreen(
             }
         }
 
-        FeldToastHost(toast, Modifier.align(Alignment.BottomCenter).navigationBarsPadding())
+        FeldToastHost(
+            toast,
+            Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding(),
+        )
     }
 
     if (showPlaybackUiText) {
@@ -286,32 +307,29 @@ private fun backgroundLabel(settings: AppSettings): String = when {
 }
 
 @Composable
-private fun SoonTap(
-    title: String,
-    content: @Composable () -> Unit,
-) {
+private fun SoonTap(title: String, content: @Composable () -> Unit) {
     val eggs = LocalEasterEggs.current
     Box(
         Modifier.clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-        ) { eggs?.report(EggEvent.SoonTap, title) }
+        ) { eggs?.report(EggEvent.SoonTap, title) },
     ) { content() }
 }
 
 private fun AppSettings.playbackTextIsDefault(): Boolean {
     val d = AppSettings()
     return playbackMoney == d.playbackMoney &&
-            playbackTime == d.playbackTime &&
-            playbackDay == d.playbackDay
+        playbackTime == d.playbackTime &&
+        playbackDay == d.playbackDay
 }
 
 private fun AppSettings.backgroundIsDefault(): Boolean {
     val d = AppSettings()
     return backgroundKind == d.backgroundKind &&
-            backgroundColorArgb == d.backgroundColorArgb &&
-            backgroundMediaUri == d.backgroundMediaUri &&
-            backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
-            backgroundVideoSound == d.backgroundVideoSound &&
-            backgroundVideoFill == d.backgroundVideoFill
+        backgroundColorArgb == d.backgroundColorArgb &&
+        backgroundMediaUri == d.backgroundMediaUri &&
+        backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
+        backgroundVideoSound == d.backgroundVideoSound &&
+        backgroundVideoFill == d.backgroundVideoFill
 }

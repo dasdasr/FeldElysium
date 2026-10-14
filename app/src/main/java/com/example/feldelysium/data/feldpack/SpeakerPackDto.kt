@@ -28,7 +28,4 @@ data class SpeakerDto(
 )
 
 @Serializable
-data class TagDto(
-    val id: String,
-    val name: String,
-)
+data class TagDto(val id: String, val name: String)

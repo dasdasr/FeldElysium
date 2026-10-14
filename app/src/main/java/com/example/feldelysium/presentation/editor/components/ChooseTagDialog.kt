@@ -64,14 +64,20 @@ fun ChooseTagDialog(
                 )
             }
             FeldChip(
-                text = "+ New", selected = creating,
+                text = "+ New",
+                selected = creating,
                 onClick = { creating = !creating },
-                modifier = Modifier.height(34.dp), accent = FeldChipColors.Orange,
+                modifier = Modifier.height(34.dp),
+                accent = FeldChipColors.Orange,
             )
             if (onManage != null) {
                 FeldChip(
-                    text = "Edit tags", selected = false, onClick = onManage,
-                    modifier = Modifier.height(34.dp), accent = FeldChipColors.Cream, outline = false,
+                    text = "Edit tags",
+                    selected = false,
+                    onClick = onManage,
+                    modifier = Modifier.height(34.dp),
+                    accent = FeldChipColors.Cream,
+                    outline = false,
                 )
             }
         }
@@ -83,14 +89,18 @@ fun ChooseTagDialog(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 FeldTextField(
-                    value = draft, onValueChange = { draft = it },
+                    value = draft,
+                    onValueChange = { draft = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = "Tag name", maxLength = SpeakerType.MAX_NAME, showLength = false,
+                    placeholder = "Tag name",
+                    maxLength = SpeakerType.MAX_NAME,
+                    showLength = false,
                     minHeight = 44.dp,
                     contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                 )
                 FeldChip(
-                    text = "Add", selected = false,
+                    text = "Add",
+                    selected = false,
                     enabled = draft.isNotBlank(),
                     onClick = {
                         val t = SpeakerType.create(draft)
@@ -99,9 +109,11 @@ fun ChooseTagDialog(
                             if (known == null) created = created + t
                             current = known ?: t
                         }
-                        draft = ""; creating = false
+                        draft = ""
+                        creating = false
                     },
-                    modifier = Modifier.height(34.dp), accent = FeldChipColors.Orange,
+                    modifier = Modifier.height(34.dp),
+                    accent = FeldChipColors.Orange,
                 )
             }
         }

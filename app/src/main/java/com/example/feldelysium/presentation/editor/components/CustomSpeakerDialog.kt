@@ -94,7 +94,11 @@ fun CustomSpeakerDialog(
                 iconRes = iconRes,
                 iconUri = iconUri,
                 accent = accent,
-                onClick = if (canChangeIcon) { { showIcons = true } } else { {} },
+                onClick = if (canChangeIcon) {
+                    { showIcons = true }
+                } else {
+                    {}
+                },
                 modifier = Modifier.width(132.dp),
                 name = name,
                 number = fileNo,
@@ -103,8 +107,11 @@ fun CustomSpeakerDialog(
             Column(Modifier.weight(1f)) {
                 FieldLabel("Name")
                 FeldTextField(
-                    value = name, onValueChange = { name = it },
-                    placeholder = "Speaker name", maxLength = 32, showLength = false,
+                    value = name,
+                    onValueChange = { name = it },
+                    placeholder = "Speaker name",
+                    maxLength = 32,
+                    showLength = false,
                     minHeight = 48.dp,
                     contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
                 )

@@ -32,21 +32,20 @@ class SettingsRepository(private val context: Context) {
         }
     }
 
-    private fun toAppSettings(prefs: Preferences): AppSettings =
-        AppSettings(
-            lockAspectRatio16x9 = prefs[Keys.LOCK_ASPECT_RATIO_16_9] ?: true,
-            playbackMoney = prefs[Keys.PLAYBACK_MONEY] ?: "40.95",
-            playbackTime = prefs[Keys.PLAYBACK_TIME] ?: "16:36",
-            playbackDay = prefs[Keys.PLAYBACK_DAY] ?: "Day 3",
-            backgroundKind = prefs[Keys.BACKGROUND_KIND]
-                ?.let { runCatching { BackgroundKind.valueOf(it) }.getOrNull() }
-                ?: BackgroundKind.COLOR,
-            backgroundColorArgb = prefs[Keys.BACKGROUND_COLOR] ?: AppSettings.DEFAULT_BACKGROUND_COLOR,
-            backgroundMediaUri = prefs[Keys.BACKGROUND_MEDIA_URI] ?: "",
-            backgroundMediaIsVideo = prefs[Keys.BACKGROUND_MEDIA_IS_VIDEO] ?: false,
-            backgroundVideoSound = prefs[Keys.BACKGROUND_VIDEO_SOUND] ?: false,
-            backgroundVideoFill = prefs[Keys.BACKGROUND_VIDEO_FILL] ?: true,
-        )
+    private fun toAppSettings(prefs: Preferences): AppSettings = AppSettings(
+        lockAspectRatio16x9 = prefs[Keys.LOCK_ASPECT_RATIO_16_9] ?: true,
+        playbackMoney = prefs[Keys.PLAYBACK_MONEY] ?: "40.95",
+        playbackTime = prefs[Keys.PLAYBACK_TIME] ?: "16:36",
+        playbackDay = prefs[Keys.PLAYBACK_DAY] ?: "Day 3",
+        backgroundKind = prefs[Keys.BACKGROUND_KIND]
+            ?.let { runCatching { BackgroundKind.valueOf(it) }.getOrNull() }
+            ?: BackgroundKind.COLOR,
+        backgroundColorArgb = prefs[Keys.BACKGROUND_COLOR] ?: AppSettings.DEFAULT_BACKGROUND_COLOR,
+        backgroundMediaUri = prefs[Keys.BACKGROUND_MEDIA_URI] ?: "",
+        backgroundMediaIsVideo = prefs[Keys.BACKGROUND_MEDIA_IS_VIDEO] ?: false,
+        backgroundVideoSound = prefs[Keys.BACKGROUND_VIDEO_SOUND] ?: false,
+        backgroundVideoFill = prefs[Keys.BACKGROUND_VIDEO_FILL] ?: true,
+    )
 
     private object Keys {
         val LOCK_ASPECT_RATIO_16_9 = booleanPreferencesKey("lock_aspect_ratio_16_9")

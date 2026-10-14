@@ -67,7 +67,7 @@ internal object SpeakerPackIO {
         }
         return SpeakerJson.decode(
             json ?: throw PackFormatException("pack.json is missing"),
-            strict = true
+            strict = true,
         )
     }
 

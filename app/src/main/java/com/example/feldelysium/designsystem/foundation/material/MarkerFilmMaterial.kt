@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.RenderEffect as ComposeRenderEffect
 import com.example.feldelysium.designsystem.foundation.material.agsl.MARKER_FILM_AGSL
 import kotlinx.coroutines.delay
+import androidx.compose.ui.graphics.RenderEffect as ComposeRenderEffect
 
 @Immutable
 data class MarkerFilmSpec(
@@ -94,7 +94,13 @@ object FeldMarker {
 }
 
 private object MarkerShader {
-    val shader: RuntimeShader by lazy(LazyThreadSafetyMode.NONE) { RuntimeShader(MARKER_FILM_AGSL) }
+    val shader: RuntimeShader? by lazy(LazyThreadSafetyMode.NONE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RuntimeShader(MARKER_FILM_AGSL)
+        } else {
+            null
+        }
+    }
 }
 
 private data class BakeKey(
@@ -117,14 +123,9 @@ private object BakeCache {
     }
 }
 
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun createMarkerEffect(
-    spec: MarkerFilmSpec,
-    seed: Int,
-    density: Density
-): ComposeRenderEffect {
-    val s = MarkerShader.shader
+private fun createMarkerEffect(spec: MarkerFilmSpec, seed: Int, density: Density): ComposeRenderEffect {
+    val s = MarkerShader.shader ?: error("RuntimeShader unavailable on API 33+")
     with(density) {
         s.setFloatUniform("seed", seed.mod(97).toFloat())
         s.setFloatUniform("coverage", spec.coverage)
@@ -162,34 +163,38 @@ fun Modifier.markerFilmMaterial(
     seed: Int = 0,
     bakeKey: Any? = null,
     bake: Boolean = true,
-): Modifier =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) markerFilmApi33(
+): Modifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    markerFilmApi33(
         spec,
         seed,
         bakeKey,
-        bake
+        bake,
     )
-    else this
+} else {
+    this
+}
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-private fun Modifier.markerFilmApi33(
-    spec: MarkerFilmSpec, seed: Int, bakeKey: Any?, bake: Boolean,
-): Modifier {
+private fun Modifier.markerFilmApi33(spec: MarkerFilmSpec, seed: Int, bakeKey: Any?, bake: Boolean): Modifier {
     val density = LocalDensity.current
     val effect = remember(spec, seed, density.density) { createMarkerEffect(spec, seed, density) }
     val layer = rememberGraphicsLayer()
     var px by remember { mutableStateOf(IntSize.Zero) }
 
     val key = remember(spec, seed, px, density.density, bakeKey) {
-        if (px == IntSize.Zero) null else BakeKey(
-            spec,
-            seed,
-            px.width,
-            px.height,
-            density.density,
-            bakeKey
-        )
+        if (px == IntSize.Zero) {
+            null
+        } else {
+            BakeKey(
+                spec,
+                seed,
+                px.width,
+                px.height,
+                density.density,
+                bakeKey,
+            )
+        }
     }
     var baked by remember(key) { mutableStateOf(key?.let { BakeCache.get(it) }) }
 

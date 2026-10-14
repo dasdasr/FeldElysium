@@ -24,57 +24,57 @@ object EggRegistry {
         skillCheck(
             PredefinedSpeakers.PERCEPTION,
             "Seven taps. The diamond didn't blink. Neither did you.",
-            Difficulty.Medium
+            Difficulty.Medium,
         ),
         skillCheck(LOGIC, "A decorative diamond. Seven taps of evidence.", Difficulty.Easy),
         say(ELECTROCHEMISTRY, "Tap it again. Tap it for me."),
         skillCheck(
             INLAND_EMPIRE,
             "The diamond hums back. Faintly. You pretend not to hear it.",
-            Difficulty.Challenging
+            Difficulty.Challenging,
         ),
         skillCheck(
             VOLITION,
             "You could stop. You won't.",
             Difficulty.Medium,
-            CheckResult.Failure
+            CheckResult.Failure,
         ),
         skillCheck(HALF_LIGHT, "It's watching you. Probably.", Difficulty.Heroic),
         skillCheck(
             PredefinedSpeakers.INTERFACING,
             "Settings. Where machines confess what they can do.",
             Difficulty.Medium,
-            scope = EggScreen.Settings
+            scope = EggScreen.Settings,
         ),
         skillCheck(
             AUTHORITY,
             "You are tuning the tool. Good. Own it.",
             Difficulty.Easy,
-            scope = EggScreen.Settings
+            scope = EggScreen.Settings,
         ),
         skillCheck(
             RHETORIC,
             "Seven taps. A dramatic pause before your next line.",
             Difficulty.Medium,
-            scope = EggScreen.SceneEditor
+            scope = EggScreen.SceneEditor,
         ),
         skillCheck(
             DRAMA,
             "Nobody is watching. Perform anyway.",
             Difficulty.Challenging,
-            scope = EggScreen.SceneEditor
+            scope = EggScreen.SceneEditor,
         ),
         skillCheck(
             EMPATHY,
             "They are all waiting. Every one of them wants to speak.",
             Difficulty.Easy,
-            scope = EggScreen.ChooseSpeaker
+            scope = EggScreen.ChooseSpeaker,
         ),
         skillCheck(
             SUGGESTION,
             "Pick the loudest one. Or the quietest. They'll both talk.",
             Difficulty.Medium,
-            scope = EggScreen.ChooseSpeaker
+            scope = EggScreen.ChooseSpeaker,
         ),
     )
 
@@ -86,7 +86,7 @@ object EggRegistry {
             VOLITION,
             "It's a switch. It has two states. You've seen both.",
             Difficulty.Medium,
-            CheckResult.Failure
+            CheckResult.Failure,
         ),
     )
 
@@ -100,13 +100,13 @@ object EggRegistry {
         skillCheck(
             AUTHORITY,
             "You couldn't decide. So I decided for you.",
-            result = CheckResult.Success
+            result = CheckResult.Success,
         ),
         skillCheck(SUGGESTION, "Don't think. Let the chips fall.", Difficulty.Easy),
         skillCheck(
             INLAND_EMPIRE,
             "The speaker chose you. Not the other way around.",
-            Difficulty.Challenging
+            Difficulty.Challenging,
         ),
     )
 
@@ -119,18 +119,18 @@ object EggRegistry {
         say(
             ELECTROCHEMISTRY,
             "Autoplay. As if you'd ever stop pressing things yourself.",
-            scope = SoonFeature.Autoplay
+            scope = SoonFeature.Autoplay,
         ),
         say(
             LOGIC,
             "A delay between lines. Time is just a number you can set later.",
-            scope = SoonFeature.LineDelay
+            scope = SoonFeature.LineDelay,
         ),
         skillCheck(
             VISUAL_CALCULUS,
             "Icons that you will tap. Eventually. Calculated.",
             Difficulty.Medium,
-            scope = SoonFeature.StatusIcons
+            scope = SoonFeature.StatusIcons,
         ),
     )
 
@@ -163,7 +163,7 @@ object EggRegistry {
             id = "soon.tap",
             rarity = Frequent,
             replies = soonReplies,
-            cooldown = 1.seconds, //20
+            cooldown = 1.seconds, // 20
             trigger = onEvent(EggEvent.SoonTap),
         ),
 

@@ -5,7 +5,7 @@ import com.example.feldelysium.domain.model.DialogueEntry
 data class PlaybackUiState(
     val allEntries: List<DialogueEntry> = emptyList(),
     val revealedEntries: List<DialogueEntry> = emptyList(),
-    val isFinished: Boolean = false
+    val isFinished: Boolean = false,
 )
 
 sealed class PlaybackEvent {

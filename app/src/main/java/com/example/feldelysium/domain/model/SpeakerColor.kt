@@ -14,7 +14,8 @@ enum class SpeakerColor(val argb: Long) {
     PINK(0xFFD06A8B),
     SAND(0xFF9E7E5E),
     TEAL(0xFF3FA89B),
-    GREY(0xFF8C8E8A);
+    GREY(0xFF8C8E8A),
+    ;
 
     companion object {
         val DEFAULT = GREY

@@ -1,6 +1,5 @@
 package com.example.feldelysium.designsystem.components.card
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -11,17 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -46,8 +41,8 @@ fun FeldDialogCard(
     onClose: (() -> Unit)? = null,
     seed: Int = rememberSeed(),
     tagSeed: Int = seed + 1,
-    spec: PaperSpec = FeldPaper.Panel,rough:
-    RoughStyle = entryRough(seed),
+    spec: PaperSpec = FeldPaper.Panel,
+    rough: RoughStyle = entryRough(seed),
     tapeSpec: StickerTapeSpec = FeldTape.Cream,
     contentPadding: PaddingValues = PaddingValues(start = 18.dp, end = 18.dp, bottom = 18.dp),
     tagStart: Dp = 6.dp,
@@ -101,7 +96,7 @@ fun FeldDialogCard(
                     .feldClickable(role = Role.Button, onClick = onClose),
                 contentAlignment = Alignment.Center,
             ) {
-                FeldIcon(FeldIconId.Close, size = 20.dp,)
+                FeldIcon(FeldIconId.Close, size = 20.dp)
             }
         }
     }

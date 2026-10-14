@@ -17,7 +17,10 @@ object FeldDecalType {
     val Base =
         TextStyle(fontFamily = Mono, fontSize = 7.sp, lineHeight = 9.5.sp, letterSpacing = 0.6.sp)
     val Label = TextStyle(
-        fontFamily = Display, fontWeight = FontWeight.Bold,
-        fontSize = 8.sp, lineHeight = 10.sp, letterSpacing = 1.6.sp,
+        fontFamily = Display,
+        fontWeight = FontWeight.Bold,
+        fontSize = 8.sp,
+        lineHeight = 10.sp,
+        letterSpacing = 1.6.sp,
     )
 }

@@ -8,16 +8,12 @@ import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.zip.ZipFile
 
-class SpeakerPackImporter(
-    private val context: Context,
-) {
+class SpeakerPackImporter(private val context: Context) {
     private val json = Json {
         ignoreUnknownKeys = true
     }
 
-    fun import(
-        source: File,
-    ): List<Speaker> {
+    fun import(source: File): List<Speaker> {
         require(source.isFile) {
             "Pack file does not exist"
         }
@@ -60,7 +56,7 @@ class SpeakerPackImporter(
 
             require(
                 pack.speakers.map { it.id }.distinct().size ==
-                        pack.speakers.size,
+                    pack.speakers.size,
             ) {
                 "Duplicate speaker IDs in pack"
             }
@@ -75,11 +71,7 @@ class SpeakerPackImporter(
         }
     }
 
-    private fun restoreIcon(
-        zip: ZipFile,
-        path: String,
-        speakerId: String,
-    ): String? {
+    private fun restoreIcon(zip: ZipFile, path: String, speakerId: String): String? {
         // Only accept files inside the icons/ directory
         if (!path.startsWith(SpeakerPackDto.ICONS_DIRECTORY)) {
             return null

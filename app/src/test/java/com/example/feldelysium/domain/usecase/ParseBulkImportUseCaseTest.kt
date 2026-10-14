@@ -42,7 +42,7 @@ class ParseBulkImportUseCaseTest {
             First.
             STRANGER:
             Second.
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         assertEquals(1, result.newSpeakers.size)

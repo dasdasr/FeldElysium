@@ -65,7 +65,7 @@ fun DialogueEntryItem(
                     color = speakerColor,
                     fontSize = fontSize,
                     letterSpacing = fontSize * NAME_TRACKING_EM,
-                )
+                ),
             ) {
                 append(entry.speaker.name.uppercase())
                 append(" – ")
@@ -74,7 +74,7 @@ fun DialogueEntryItem(
                 SpanStyle(
                     color = BodyColor,
                     fontSize = fontSize,
-                )
+                ),
             ) {
                 append(entry.text)
             }

@@ -94,14 +94,13 @@ private fun ToastScrim(visible: MutableTransitionState<Boolean>) {
                                 0f to Color.Transparent,
                                 0.6f to Color.Black.copy(alpha = 0.40f),
                                 1f to Color.Black.copy(alpha = 0.80f),
-                            )
-                        )
+                            ),
+                        ),
                 )
             }
         }
     }
 }
-
 
 @Composable
 private fun ToastWindow(touchable: Boolean, content: @Composable () -> Unit) {
@@ -119,7 +118,7 @@ private fun ToastWindow(touchable: Boolean, content: @Composable () -> Unit) {
             window?.apply {
                 clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
                 var flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 if (!touchable) flags = flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 addFlags(flags)
                 setDimAmount(0f)
