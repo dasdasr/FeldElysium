@@ -1,31 +1,38 @@
 package com.example.feldelysium.presentation.editor
 
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
 import com.example.feldelysium.presentation.shared.SceneAction
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 class EditorViewModel(
+    application: Application,
     private val sceneViewModel: SceneViewModel,
-    private val parseUseCase: ParseBulkImportUseCase
-) : ViewModel() {
+    private val parseUseCase: ParseBulkImportUseCase,
+) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(EditorUiState())
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
@@ -33,22 +40,56 @@ class EditorViewModel(
     private val _effects = Channel<EditorEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
+    private val repo = SpeakerStorage.repository(application)
+
+    private val speakers = repo.speakers.stateIn(
+        viewModelScope, SharingStarted.Eagerly, PredefinedSpeakers.ALL,
+    )
+    private val tags = repo.tags.stateIn(
+        viewModelScope, SharingStarted.Eagerly, PredefinedSpeakers.TAGS,
+    )
+
+
     init {
+        val prefs = application.getSharedPreferences("speaker_migration", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("scene_custom_speakers_v1", false)) {
+            viewModelScope.launch {
+                val old = sceneViewModel.state.value.customSpeakers
+                old.forEach { repo.save(it) }
+                if (old.isNotEmpty()) prefs.edit().putBoolean("scene_custom_speakers_v1", true).apply()
+            }
+        }
+
+        viewModelScope.launch {
+            sceneViewModel.state.value.customSpeakers.forEach { repo.save(it) }
+        }
+
         sceneViewModel.state
             .onEach { sceneState ->
-                _state.update { editor ->
-                    val speakers = sceneState.allSpeakers
-                    fun Speaker.fresh(): Speaker = speakers.firstOrNull { it.id == id } ?: this
+                _state.update {
+                    it.copy(entries = sceneState.scene.entries, sceneName = sceneState.scene.title)
+                }
+            }
+            .launchIn(viewModelScope)
 
+        speakers
+            .onEach { list ->
+                val byId = list.associateBy { it.id }
+                fun Speaker.fresh(): Speaker = byId[id] ?: this
+
+                _state.update { editor ->
                     editor.copy(
-                        entries = sceneState.scene.entries,
-                        allSpeakers = speakers,
-                        sceneName = sceneState.scene.title,
+                        allSpeakers = list,
                         editingEntry = editor.editingEntry?.let { it.copy(speaker = it.speaker.fresh()) },
                         pendingSpeaker = editor.pendingSpeaker?.fresh(),
                     )
                 }
+                sceneViewModel.dispatch(SceneAction.SyncSpeakers(list))
             }
+            .launchIn(viewModelScope)
+
+        tags
+            .onEach { t -> _state.update { it.copy(tags = t) } }
             .launchIn(viewModelScope)
     }
 
@@ -126,23 +167,33 @@ class EditorViewModel(
             it.copy(editingSpeaker = null, isCustomSpeakerDialogOpen = true)
         }
 
-        is EditorEvent.ConfirmCustomSpeaker -> {
-            sceneViewModel.dispatch(SceneAction.AddCustomSpeaker(event.speaker))
-            _state.update { it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null) }
+        is EditorEvent.ConfirmCustomSpeaker -> viewModelScope.launch {
+            repo.save(event.speaker)
+            _state.update {
+                it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
+            }
         }
 
         is EditorEvent.RequestEditSpeaker -> _state.update {
             it.copy(editingSpeaker = event.speaker, isCustomSpeakerDialogOpen = true)
         }
 
-        is EditorEvent.ConfirmEditSpeaker -> {
-            sceneViewModel.dispatch(SceneAction.UpdateCustomSpeaker(event.speaker))
-            _state.update { it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null) }
+        is EditorEvent.ConfirmEditSpeaker -> viewModelScope.launch {
+            repo.save(event.speaker)
+            _state.update {
+                it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
+            }
         }
 
         EditorEvent.DismissCustomSpeaker -> _state.update {
             it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
         }
+
+        is EditorEvent.SaveTag -> viewModelScope.launch { repo.saveTag(event.tag) }
+
+        is EditorEvent.DeleteTag -> viewModelScope.launch { repo.deleteTag(event.tag.id) }
+
+        is EditorEvent.DeleteSpeaker -> viewModelScope.launch { repo.delete(event.id) }
 
         EditorEvent.OpenImportDialog -> _state.update {
             it.copy(isImportDialogOpen = true, importText = "", importPreview = null)
@@ -186,7 +237,7 @@ class EditorViewModel(
 
     private fun previewFor(text: String): ImportPreview? {
         if (text.isBlank()) return null
-        val result = parseUseCase.execute(text, sceneViewModel.state.value.customSpeakers)
+        val result = parseUseCase.execute(text, customSpeakers())
         return ImportPreview(
             lineCount = result.entries.size,
             newSpeakerCount = result.newSpeakers.size,
@@ -200,16 +251,16 @@ class EditorViewModel(
             return
         }
 
-        val result = parseUseCase.execute(text, sceneViewModel.state.value.customSpeakers)
+        val result = parseUseCase.execute(text, customSpeakers())
         if (result.entries.isEmpty()) {
             notify("No lines found. Try «NAME: text»")
             return
         }
 
-        result.newSpeakers.forEach { speaker ->
-            sceneViewModel.dispatch(SceneAction.AddCustomSpeaker(speaker))
+        viewModelScope.launch {
+            result.newSpeakers.forEach { repo.save(it) }
+            sceneViewModel.dispatch(SceneAction.BulkAddEntries(result.entries))
         }
-        sceneViewModel.dispatch(SceneAction.BulkAddEntries(result.entries))
         _state.update { it.copy(isImportDialogOpen = false, importText = "", importPreview = null) }
     }
 
@@ -217,10 +268,15 @@ class EditorViewModel(
         viewModelScope.launch { _effects.send(EditorEffect.ShowSnackbar(message)) }
     }
 
+    private fun customSpeakers(): List<Speaker> = speakers.value.filterNot { it.isBundled }
+
     companion object {
         fun factory(sceneViewModel: SceneViewModel) = viewModelFactory {
             initializer {
+                val app =
+                    this[androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
                 EditorViewModel(
+                    application = app,
                     sceneViewModel = sceneViewModel,
                     parseUseCase = ParseBulkImportUseCase()
                 )

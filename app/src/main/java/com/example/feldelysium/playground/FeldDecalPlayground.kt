@@ -44,6 +44,7 @@ import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldChip
 import com.example.feldelysium.designsystem.components.input.FeldChipColors
+import com.example.feldelysium.designsystem.components.input.FeldChipFill
 import com.example.feldelysium.designsystem.components.input.FeldChipShape
 import com.example.feldelysium.designsystem.components.input.FeldSlider
 import com.example.feldelysium.designsystem.components.input.FeldSliderColors
@@ -92,6 +93,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         item {
             var sel by remember { mutableStateOf(setOf("Logic")) }
             var shape by remember { mutableStateOf(FeldChipShape.Chamfer) }
+            var fillShape by remember { mutableStateOf(FeldChipFill.Diamond) }
             var outline by remember { mutableStateOf(true) }
             var leading by remember { mutableStateOf(true) }
             val names = listOf("Logic", "Empathy", "Drama", "Volition")
@@ -119,6 +121,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                             text = n, selected = n in sel,
                             onClick = { sel = if (n in sel) sel - n else sel + n },
                             shape = shape, outline = outline, leading = leading,
+                            fillShape = FeldChipFill.Diamond,
                             accent = listOf(FeldChipColors.Teal, FeldChipColors.Orange, FeldChipColors.Cream, Color(0xFF8F6FD6))[i],
                             seed = 100 + i,
                         )

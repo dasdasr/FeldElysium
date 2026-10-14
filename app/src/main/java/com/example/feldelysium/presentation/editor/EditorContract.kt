@@ -2,11 +2,15 @@ package com.example.feldelysium.presentation.editor
 
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
+import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 data class EditorUiState(
     val entries: List<DialogueEntry> = emptyList(),
-    val allSpeakers: List<Speaker> = emptyList(),
+    val allSpeakers: List<Speaker> = PredefinedSpeakers.ALL,
     val sceneName: String = "Untitled Scene",
+
+    val tags: List<SpeakerType> = PredefinedSpeakers.TAGS,
 
     val editingEntry: DialogueEntry? = null,
     val pendingSpeaker: Speaker? = null,
@@ -32,7 +36,8 @@ data class ImportPreview(
             if (lineCount == 0) return "No lines"
             val lines = if (lineCount == 1) "1 line" else "$lineCount lines"
             if (newSpeakerCount == 0) return lines
-            val speakers = if (newSpeakerCount == 1) "1 new speaker" else "$newSpeakerCount new speakers"
+            val speakers =
+                if (newSpeakerCount == 1) "1 new speaker" else "$newSpeakerCount new speakers"
             return "$lines · $speakers"
         }
 }
@@ -52,6 +57,10 @@ sealed class EditorEvent {
     data class RequestEditSpeaker(val speaker: Speaker) : EditorEvent()
     data class ConfirmEditSpeaker(val speaker: Speaker) : EditorEvent()
     data object DismissCustomSpeaker : EditorEvent()
+
+    data class SaveTag(val tag: SpeakerType) : EditorEvent()
+    data class DeleteTag(val tag: SpeakerType) : EditorEvent()
+    data class DeleteSpeaker(val id: String) : EditorEvent()
 
     data object OpenImportDialog : EditorEvent()
     data object CloseImportDialog : EditorEvent()

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -33,6 +34,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui)

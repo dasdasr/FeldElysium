@@ -1,7 +1,5 @@
 package com.example.feldelysium.presentation.editor.components
 
-import android.content.Context
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -39,20 +37,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.util.UUID
 
 private const val Columns = 5
 
@@ -73,7 +70,7 @@ private sealed interface IconTile {
 }
 
 @Composable
-fun ChooseIconDialog(
+fun ChooseImageDialog(
     iconResIds: List<Int>,
     selectedResId: Int?,
     selectedUri: String?,
@@ -84,11 +81,12 @@ fun ChooseIconDialog(
     val scope = rememberCoroutineScope()
     var resId by remember { mutableStateOf(selectedResId) }
     var uri by remember { mutableStateOf(selectedUri) }
+    val iconStore = remember { SpeakerStorage.icons(context) }
 
     val picker = rememberLauncherForActivityResult(PickVisualMedia()) { picked ->
         if (picked != null) {
             scope.launch {
-                val saved = withContext(Dispatchers.IO) { copyIntoApp(context, picked) }
+                val saved = withContext(Dispatchers.IO) { iconStore.copyIn(picked) }
                 if (saved != null) {
                     uri = saved
                     resId = null
@@ -222,12 +220,3 @@ private fun TileBox(
         content = content,
     )
 }
-
-private fun copyIntoApp(context: Context, source: Uri): String? = runCatching {
-    val dir = File(context.filesDir, "speaker_icons").apply { mkdirs() }
-    val out = File(dir, "${UUID.randomUUID()}.img")
-    context.contentResolver.openInputStream(source)?.use { input ->
-        out.outputStream().use { output -> input.copyTo(output) }
-    } ?: return null
-    Uri.fromFile(out).toString()
-}.getOrNull()

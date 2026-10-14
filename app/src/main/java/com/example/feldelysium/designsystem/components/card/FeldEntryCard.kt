@@ -40,8 +40,6 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -62,7 +60,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
@@ -421,10 +418,10 @@ fun FeldHandDiamond(
 
 private fun gauss(t: Float, c: Float, w: Float): Float { val x = (t - c) / w; return exp(-x * x) }
 
-private fun beatScale(t: Float?): Float =
+internal fun beatScale(t: Float?): Float =
     if (t == null) 1f else 1f + 0.18f * gauss(t, 0.07f, 0.05f) + 0.11f * gauss(t, 0.34f, 0.06f)
 
-private fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
+internal fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     val stroke = 1.5.dp.toPx()
     val r = size.minDimension / 2f + 6.dp.toPx()
     fun diamond(rad: Float) = Path().apply {

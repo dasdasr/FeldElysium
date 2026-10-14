@@ -89,11 +89,6 @@ object FeldPaper {
         inkContrast = 1.8f,
     )
 
-    val Field = Panel.copy(
-        wear = 0.3f,
-        inkWidth = 1.4.dp,
-    )
-
     val Entry = Panel.copy(
         wear = 0.16f,
         edgeWear = 0.5f,
@@ -116,6 +111,14 @@ object FeldPaper {
         inkGrainSize = 26.dp,
         inkMinAlpha = 0.85f,
         inkContrast = 1.2f,
+    )
+
+    val Field = Entry.copy(
+        wear = 0.2f,
+        edgeWear = 0.55f,
+        maxLoss = 0.4f,
+        inkWidth = 1.0.dp,
+        inkMinAlpha = 0.8f,
     )
 
     val DryButtonCream = PaperSpec(

@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -291,7 +290,7 @@ private fun buildDemos(): List<ShaderDemo> {
     return listOf(
         ShaderDemo(
             id = "paper", title = "PAPER_AGSL", fn = "paperMaterial", family = "SURFACE",
-            note = "Основная панель: износ краёв, пятна, зерно, ink-кант. База для карточек/кнопок.",
+            note = "Main panel: worn edges, stains, grain, ink outline. Base for cards and buttons",
             params = paperAll, swatches = DarkSw,
         ) { v, c, seed, m ->
             Box(
@@ -302,7 +301,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "ink", title = "INK_AGSL", fn = "paperMaterial (ink edge)", family = "SURFACE",
-            note = "Только рваная линия по периметру. Тут всё остальное выключено.",
+            note = "Ragged ink outline only",
             params = (paperParams(panel).filter { it.key.startsWith("ink") } + roughParams())
                 .map { if (it.key == "inkWidth") it.copy(default = 2f) else it },
             swatches = listOf(Swatch("panel", Color(0xFF0C1212))),
@@ -316,7 +315,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "dry", title = "DRY_PAPER_AGSL", fn = "dryPaperMaterial", family = "SURFACE",
-            note = "Сухая бумага с трещинами у края (кнопки Cream/Rust). Похожа на PAPER: общие mottle/grain/fiber.",
+            note = "Cracked dry paper for cream/rust buttons. Shares grain, mottling, and fibers with PAPER, i don't like it",
             params = dryParams(dry),
             swatches = listOf(Swatch("cream", FeldPalette.Cream), Swatch("rust", Color(0xFFE45720))),
         ) { v, c, seed, m ->
@@ -337,7 +336,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "tape", title = "STICKER_TAPE_AGSL", fn = "stickerTapeMaterial", family = "SURFACE",
-            note = "Рваная лента с наслоением в углу. Самый специфичный: рваный край можно вынести общим куском.",
+            note = "Torn tape with a layered corner. Reusable torn edges",
             params = tapeParams(tape),
             swatches = listOf(Swatch("cream", tape.base), Swatch("grey", Color(0xFFB9B4A8)), Swatch("rust", Color(0xFFC77B4A))),
         ) { v, c, seed, m ->
@@ -364,7 +363,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "segment", title = "SEGMENT_PAINT_AGSL", fn = "segmentPaint (local wrapper)", family = "BRUSH",
-            note = "Полоса краски с дырками. По сути WORN + тон ACCENT с формой полосы: кандидат на слияние.",
+            note = "Chippinkossed paint stripe. WORN + ACCENT in a stripe shape",
             params = listOf(p("smear", -1f..1f, 0f)), swatches = BrushSw, tileHeight = 110.dp,
         ) { v, c, seed, m ->
             Box(m, contentAlignment = Alignment.Center) {
@@ -374,7 +373,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "track", title = "SLIDER_TRACK_AGSL", fn = "sliderTrack (local wrapper)", family = "BRUSH",
-            note = "Дорожка слайдера: заливка + тёмный камень. Заливка ≈ ACCENT + зерно.",
+            note = "Slider track: textured fill on dark stone. Basically ACCENT + grain",
             params = listOf(p("progress", 0f..1f, 0.6f), pd("fadeW", 0f..60f, 18.dp), pd("trackHeight", 4f..28f, 10.dp)),
             swatches = BrushSw, tileHeight = 100.dp,
         ) { v, c, seed, m ->
@@ -385,7 +384,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "leak", title = "LEAK_AGSL", fn = "Leak (decal)", family = "OVERLAY",
-            note = "Засветка у края для декалей. Очень дешёвый, ничего с ним не пересекается.",
+            note = "Edge light leak for decals. Cheap and standalone",
             params = listOf(p("strength", 0f..0.5f, 0.13f), p("right (0/1)", 0f..1f, 1f)),
             swatches = listOf(Swatch("orange", FeldPalette.Orange), Swatch("red", Color(0xFFD0422A)), Swatch("cream", FeldPalette.Cream)),
         ) { v, c, seed, m ->
@@ -396,7 +395,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "marker", title = "MARKER_FILM_AGSL", fn = "markerFilmMaterial", family = "INK MASK",
-            note = "Плёнка-маркер по альфе контента (иконки, текст). Живой, без запекания. Почти дублирует DISTRESS.",
+            note = "Live marker texture applied to content alpha (icons, text). Mostly overlaps with DISTRESS.",
             params = markerParams(marker), swatches = InkSw,
         ) { v, c, seed, m ->
             val spec = MarkerFilmSpec(
@@ -424,7 +423,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "distress", title = "DISTRESS_AGSL", fn = "distressMaterial", family = "INK MASK",
-            note = "Потёртость по альфе (штамп, заголовки). Тот же конвейер, что у MARKER_FILM, плюс царапины/dropout.",
+            note = "Distress texture for stamps and headlines. Like MARKER FILM, but with scratches and dropouts",
             params = distressParams(distress),
             swatches = listOf(Swatch("as text", Color.Unspecified), Swatch("cream", FeldPalette.Cream), Swatch("orange", FeldPalette.Orange)),
         ) { v, c, seed, m ->
@@ -448,7 +447,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "accent", title = "ACCENT_AGSL", fn = "accentBrush", family = "BRUSH",
-            note = "Живая заливка: тон выцветает/светится пятнами. Использует пикер слайдера.",
+            note = "Live fill with faded, glowing patches",
             params = listOf(p("fade", 0f..1.5f, 0.9f), p("glow", 0f..1.5f, 0.9f), p("blotch", 0f..0.3f, 0f), p("grain", 0f..0.3f, 0.07f)),
             swatches = BrushSw,
         ) { v, c, seed, m ->
@@ -459,7 +458,7 @@ private fun buildDemos(): List<ShaderDemo> {
 
         ShaderDemo(
             id = "worn", title = "WORN_AGSL", fn = "wornBrush", family = "BRUSH",
-            note = "Заливка с дырами/выкрошенностью (ромбики, полоска спикера). Близка к SEGMENT_PAINT.",
+            note = "Chippik fill for diamonds and speaker bars. Similar to SEGMENT PAINT",
             params = listOf(p("wear", 0f..1f, 0.5f), p("scale", 4f..80f, 26f)),
             swatches = BrushSw,
         ) { v, c, seed, m ->
