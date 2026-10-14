@@ -108,12 +108,12 @@ fun FeldFab(
             .then(
                 if (isFilm) {
                     Modifier.shadow(
-                    elevation = 6.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    clip = false,
-                    ambientColor = Color.Black,
-                    spotColor = Color.Black,
-                )
+                        elevation = 6.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        clip = false,
+                        ambientColor = Color.Black,
+                        spotColor = Color.Black,
+                    )
                 } else {
                     Modifier
                 },

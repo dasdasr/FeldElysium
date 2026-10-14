@@ -121,7 +121,7 @@ class DataStoreSpeakerRepository(
         try {
             PreparedPack(SpeakerPackIO.read(input, temp), temp)
         } catch (e: Exception) {
-            temp.deleteRecursively();
+            temp.deleteRecursively()
             throw e
         }
     }
@@ -150,10 +150,10 @@ class DataStoreSpeakerRepository(
         var tagsUpdated = 0
         try {
             store.updateData { doc ->
-                added = 0;
-                replaced = 0;
-                skipped = 0;
-                tagsAdded = 0;
+                added = 0
+                replaced = 0
+                skipped = 0
+                tagsAdded = 0
                 tagsUpdated = 0
 
                 val tags = doc.tags.toMutableList()
@@ -162,12 +162,12 @@ class DataStoreSpeakerRepository(
                     val i = tags.indexOfFirst { it.id == t.id }
                     when {
                         i < 0 -> {
-                            tags += t;
+                            tags += t
                             tagsAdded++
                         }
 
                         policy == ImportPolicy.REPLACE -> {
-                            tags[i] = t;
+                            tags[i] = t
                             tagsUpdated++
                         }
                     }
@@ -182,12 +182,12 @@ class DataStoreSpeakerRepository(
                 val speakers = doc.speakers.toMutableList()
                 pack.document.speakers.forEach { s ->
                     if (s.id in bundledIds) {
-                        skipped++;
+                        skipped++
                         return@forEach
                     }
                     val idx = speakers.indexOfFirst { it.id == s.id }
                     if (idx >= 0 && policy == ImportPolicy.SKIP) {
-                        skipped++;
+                        skipped++
                         return@forEach
                     }
 
@@ -204,7 +204,7 @@ class DataStoreSpeakerRepository(
                     val newId =
                         if (idx >= 0 && policy == ImportPolicy.KEEP_BOTH) {
                             UUID.randomUUID()
-                            .toString()
+                                .toString()
                         } else {
                             s.id
                         }
@@ -215,10 +215,10 @@ class DataStoreSpeakerRepository(
                         SpeakerData(newId, s.name, color, s.tagId, adoptIcon(s.icon, pack))
 
                     if (idx >= 0 && policy == ImportPolicy.REPLACE) {
-                        speakers[idx] = data;
+                        speakers[idx] = data
                         replaced++
                     } else {
-                        speakers += data;
+                        speakers += data
                         added++
                     }
                 }

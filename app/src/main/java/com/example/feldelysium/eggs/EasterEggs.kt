@@ -72,9 +72,9 @@ class EasterEggs(
         history.addLast(event)
         while (history.size > 64 ||
             (history.isNotEmpty() && t - history.first().atMillis > 10.minutes.inWholeMilliseconds)
-            ) {
-                history.removeFirst()
-            }
+        ) {
+            history.removeFirst()
+        }
         sessionCounts[key] = (sessionCounts[key] ?: 0) + 1
 
         if (_suppressed.value || !ready.isCompleted) return false

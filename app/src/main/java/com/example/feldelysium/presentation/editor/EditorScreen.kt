@@ -150,7 +150,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                             label = "Playback",
                             enabled = state.entries.isNotEmpty(),
                             onClick = {
-                                haptics.confirm();
+                                haptics.confirm()
                                 vm.dispatch(EditorEvent.NavigateToPlayback)
                             },
                         ),
@@ -202,7 +202,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                                 )
                                             },
                                             onMore = {
-                                                haptics.tick();
+                                                haptics.tick()
                                                 menuEntryId = entry.id
                                             },
                                         )
@@ -240,7 +240,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
 
                     FeldFab(
                         onClick = {
-                            haptics.tick();
+                            haptics.tick()
                             vm.dispatch(EditorEvent.RequestAddEntry)
                         },
                         onLongClick = {
@@ -284,7 +284,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
             preview = state.importPreview,
             onText = { vm.dispatch(EditorEvent.ImportTextChanged(it)) },
             onConfirm = {
-                haptics.confirm();
+                haptics.confirm()
                 vm.dispatch(EditorEvent.ConfirmImport)
             },
             onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) },

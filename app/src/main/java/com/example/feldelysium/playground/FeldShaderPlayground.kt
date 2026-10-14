@@ -236,12 +236,12 @@ private fun Modifier.segmentPaintDemo(base: Color, smear: Float, seed: Int): Mod
         }
         val b = ShaderBrush(s)
         onDrawWithContent {
-            drawRect(b);
+            drawRect(b)
             drawContent()
         }
     } else {
         onDrawWithContent {
-            drawRect(base);
+            drawRect(base)
             drawContent()
         }
     }
@@ -264,15 +264,15 @@ private fun Modifier.sliderTrackDemo(fill: Color, seed: Int, progress: Float, fa
         onDrawWithContent { drawRect(b) }
     } else {
         onDrawWithContent {
-        drawRoundRect(Color(0xFF1F2322), cornerRadius = CornerRadius(size.height / 2f))
-    }
+            drawRoundRect(Color(0xFF1F2322), cornerRadius = CornerRadius(size.height / 2f))
+        }
     }
 }
 
 private fun Modifier.leakDemo(color: Color, strength: Float, right: Boolean, seed: Int): Modifier = drawWithCache {
     val leak = Leak(size, right, color, strength, seed.mod(97).toFloat())
     onDrawWithContent {
-        with(leak) { draw() };
+        with(leak) { draw() }
         drawContent()
     }
 }
@@ -571,7 +571,7 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
     val values = remember {
         demos.associate { d ->
             d.id to mutableStateMapOf<String, Float>().apply {
-                putAll(d.fixed);
+                putAll(d.fixed)
                 d.params.forEach { put(it.key, it.default) }
             }
         }
@@ -611,9 +611,9 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
                 itemsIndexed(demos, key = { _, d -> d.id }) { i, d ->
                     Column(
                         Modifier.clickable {
-                        index = i;
-                        grid = false
-                    }
+                            index = i
+                            grid = false
+                        },
                     ) {
                         Box(
                             Modifier.fillMaxWidth().height(
@@ -694,7 +694,7 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
                     ) {
                         OutlinedButton({
                             d.params.forEach { vm[it.key] = it.default }
-                            colorIdx[d.id] = 0;
+                            colorIdx[d.id] = 0
                             seeds[d.id] = 1
                         }) { Text("RESET") }
                         OutlinedButton({ seeds[d.id] = seed - 1 }) { Text("seed −") }

@@ -159,7 +159,7 @@ fun FeldSegmentedControl(
                             role = Role.Tab
                             this.selected = isSelected
                             onClick {
-                                onSelect(i);
+                                onSelect(i)
                                 true
                             }
                         }

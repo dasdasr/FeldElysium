@@ -105,10 +105,10 @@ fun FeldIcon(
             .then(
                 if (film) {
                     Modifier.markerFilmMaterial(
-                    FeldMarker.Chalk,
-                    id.ordinal,
-                    bakeKey = tint,
-                )
+                        FeldMarker.Chalk,
+                        id.ordinal,
+                        bakeKey = tint,
+                    )
                 } else {
                     Modifier
                 },
@@ -123,10 +123,10 @@ fun FeldDiamond(color: Color, modifier: Modifier = Modifier, size: Dp = 28.dp, o
         val w = this.size.width
         val h = this.size.height
         val path = Path().apply {
-            moveTo(w / 2f, 0f);
-            lineTo(w, h / 2f);
-            lineTo(w / 2f, h);
-            lineTo(0f, h / 2f);
+            moveTo(w / 2f, 0f)
+            lineTo(w, h / 2f)
+            lineTo(w / 2f, h)
+            lineTo(0f, h / 2f)
             close()
         }
         if (outline) {

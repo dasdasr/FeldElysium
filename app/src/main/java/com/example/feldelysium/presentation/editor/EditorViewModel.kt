@@ -232,10 +232,10 @@ class EditorViewModel(
                 it.copy(isSpeakerPickerOpen = true)
             } else {
                 it.copy(
-                pendingSpeaker = speaker,
-                isSpeakerPickerOpen = false,
-                isEntryEditOpen = true,
-            )
+                    pendingSpeaker = speaker,
+                    isSpeakerPickerOpen = false,
+                    isEntryEditOpen = true,
+                )
             }
         }
     }

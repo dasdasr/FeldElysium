@@ -78,7 +78,7 @@ fun FeldMenu(
                     Modifier
                         .fillMaxWidth()
                         .feldClickable(onClick = {
-                            onDismiss();
+                            onDismiss()
                             item.onClick()
                         })
                         .padding(horizontal = 16.dp, vertical = 12.dp),

@@ -292,7 +292,7 @@ fun FeldEntryCard(
                             22.dp,
                             modifier = Modifier.graphicsLayer {
                                 val s = beatScale(pulse?.value)
-                                scaleX = s;
+                                scaleX = s
                                 scaleY = s
                             },
                         )
@@ -418,7 +418,7 @@ fun FeldHandDiamond(color: Color, seed: Int, size: Dp = 22.dp, modifier: Modifie
 }
 
 private fun gauss(t: Float, c: Float, w: Float): Float {
-    val x = (t - c) / w;
+    val x = (t - c) / w
     return exp(-x * x)
 }
 
@@ -429,10 +429,10 @@ internal fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     val stroke = 1.5.dp.toPx()
     val r = size.minDimension / 2f + 6.dp.toPx()
     fun diamond(rad: Float) = Path().apply {
-        moveTo(center.x, center.y - rad);
+        moveTo(center.x, center.y - rad)
         lineTo(center.x + rad, center.y)
-        lineTo(center.x, center.y + rad);
-        lineTo(center.x - rad, center.y);
+        lineTo(center.x, center.y + rad)
+        lineTo(center.x - rad, center.y)
         close()
     }
     if (hold > 0.01f) {

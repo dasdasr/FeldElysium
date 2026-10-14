@@ -39,9 +39,9 @@ fun rememberSeed(key: Any? = null): Int {
 
 private fun mix(a: Int, b: Int): Int {
     var h = a xor (b * -0x61c88647)
-    h = h xor (h ushr 16);
+    h = h xor (h ushr 16)
     h *= 0x85ebca6bL.toInt()
-    h = h xor (h ushr 13);
+    h = h xor (h ushr 13)
     h *= 0xc2b2ae35L.toInt()
     return h xor (h ushr 16)
 }

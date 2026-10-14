@@ -117,7 +117,7 @@ fun FeldSlider(
                 .semantics {
                     progressBarRangeInfo = ProgressBarRangeInfo(value, valueRange)
                     setProgress { v ->
-                        onValueChange(v.coerceIn(valueRange));
+                        onValueChange(v.coerceIn(valueRange))
                         true
                     }
                 }
@@ -138,12 +138,12 @@ fun FeldSlider(
                             val c = ev.changes.firstOrNull { it.id == down.id } ?: break
                             if (c.isConsumed && !drag) break
                             if (!c.pressed) {
-                                if (!drag) setFromX(c.position.x);
+                                if (!drag) setFromX(c.position.x)
                                 break
                             }
                             if (!drag && abs(c.position.x - down.position.x) > viewConfiguration.touchSlop) drag = true
                             if (drag) {
-                                setFromX(c.position.x);
+                                setFromX(c.position.x)
                                 c.consume()
                             }
                         }
@@ -166,7 +166,7 @@ fun FeldSlider(
                     .graphicsLayer {
                         translationX = fractionState.value * (widthPx - thumbW).coerceAtLeast(0f)
                         val s = 1f + 0.12f * pressState.value
-                        scaleX = s;
+                        scaleX = s
                         scaleY = s
                     }
                     .sliderThumb(thumb, seed + 5) { pressState.value },
@@ -207,10 +207,10 @@ private fun Modifier.sliderThumb(kind: FeldThumb, seed: Int, press: () -> Float)
     val path = Path().apply {
         when (kind) {
             FeldThumb.Diamond -> {
-                moveTo(w / 2f, 0f);
-                lineTo(w, h / 2f);
-                lineTo(w / 2f, h);
-                lineTo(0f, h / 2f);
+                moveTo(w / 2f, 0f)
+                lineTo(w, h / 2f)
+                lineTo(w / 2f, h)
+                lineTo(0f, h / 2f)
                 close()
             }
 

@@ -222,9 +222,9 @@ private fun EditableTitle(
             .onGloballyPositioned {
                 if (editing) {
                     registry?.register(
-                    registryKey,
-                    it.boundsInWindow(),
-                )
+                        registryKey,
+                        it.boundsInWindow(),
+                    )
                 }
             },
     ) {
@@ -242,10 +242,10 @@ private fun EditableTitle(
                         Modifier
                     } else {
                         Modifier.feldClickable(onClick = {
-                        haptics.tick()
-                        field = TextFieldValue(text, TextRange(0, text.length))
-                        editing = true
-                    })
+                            haptics.tick()
+                            field = TextFieldValue(text, TextRange(0, text.length))
+                            editing = true
+                        })
                     },
                 ),
         )

@@ -159,11 +159,11 @@ fun Modifier.markerFilmMaterial(
     bake: Boolean = true,
 ): Modifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
     markerFilmApi33(
-    spec,
-    seed,
-    bakeKey,
-    bake,
-)
+        spec,
+        seed,
+        bakeKey,
+        bake,
+    )
 } else {
     this
 }
@@ -181,13 +181,13 @@ private fun Modifier.markerFilmApi33(spec: MarkerFilmSpec, seed: Int, bakeKey: A
             null
         } else {
             BakeKey(
-            spec,
-            seed,
-            px.width,
-            px.height,
-            density.density,
-            bakeKey,
-        )
+                spec,
+                seed,
+                px.width,
+                px.height,
+                density.density,
+                bakeKey,
+            )
         }
     }
     var baked by remember(key) { mutableStateOf(key?.let { BakeCache.get(it) }) }
