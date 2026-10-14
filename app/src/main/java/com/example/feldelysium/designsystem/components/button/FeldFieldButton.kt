@@ -58,8 +58,11 @@ fun FeldFieldButton(
             .heightIn(min = minHeight)
             .paperMaterial(shape, spec, press = { press })
             .clickable(
-                interactionSource = interaction, indication = null,
-                enabled = enabled, role = Role.Button, onClick = onClick,
+                interactionSource = interaction,
+                indication = null,
+                enabled = enabled,
+                role = Role.Button,
+                onClick = onClick,
             )
             .padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -72,12 +75,15 @@ fun FeldFieldButton(
             text = text ?: placeholder,
             style = MaterialTheme.typography.bodyLarge,
             color = if (text == null) FeldPalette.Muted.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onSurface,
-            maxLines = 1, overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
         Icon(
-            Icons.AutoMirrored.Filled.KeyboardArrowRight, null,
-            tint = FeldPalette.Muted, modifier = Modifier.size(20.dp),
+            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            null,
+            tint = FeldPalette.Muted,
+            modifier = Modifier.size(20.dp),
         )
     }
 }

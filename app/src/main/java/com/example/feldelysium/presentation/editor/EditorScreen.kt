@@ -72,11 +72,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun EditorScreen(
-    onNavigateToPlayback: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
     val haptics = rememberFeldHaptics()
     val toast = rememberFeldToastState()
@@ -103,10 +99,12 @@ fun EditorScreen(
         vm.effects.collect { effect ->
             when (effect) {
                 EditorEffect.NavigateToPlayback -> onNavigateToPlayback()
+
                 is EditorEffect.ShowSnackbar ->
                     toast.show(effect.message)
 
-                EditorEffect.LaunchGalleryPicker -> { /* TODO */
+                EditorEffect.LaunchGalleryPicker -> {
+                    /* TODO */
                 }
             }
         }
@@ -139,7 +137,7 @@ fun EditorScreen(
                     onTitleChange = {
                         vm.dispatch(EditorEvent.RenameScene(it.take(60)))
                     },
-                    onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) }
+                    onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
                 )
 
                 FeldToolbar(
@@ -151,12 +149,15 @@ fun EditorScreen(
                             icon = FeldIconId.Play,
                             label = "Playback",
                             enabled = state.entries.isNotEmpty(),
-                            onClick = { haptics.confirm(); vm.dispatch(EditorEvent.NavigateToPlayback) },
+                            onClick = {
+                                haptics.confirm()
+                                vm.dispatch(EditorEvent.NavigateToPlayback)
+                            },
                         ),
                         FeldToolbarItem(
                             FeldIconId.Settings,
                             "Settings",
-                            onClick = onNavigateToSettings
+                            onClick = onNavigateToSettings,
                         ),
                     ),
                 )
@@ -172,7 +173,10 @@ fun EditorScreen(
                             state = lazyListState,
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, top = 12.dp, bottom = 96.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 12.dp,
+                                bottom = 96.dp,
                             ),
                             verticalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
@@ -194,10 +198,13 @@ fun EditorScreen(
                                             dragModifier = Modifier.longPressDraggableHandle(),
                                             onClick = {
                                                 vm.dispatch(
-                                                    EditorEvent.RequestEditEntry(entry)
+                                                    EditorEvent.RequestEditEntry(entry),
                                                 )
                                             },
-                                            onMore = { haptics.tick(); menuEntryId = entry.id },
+                                            onMore = {
+                                                haptics.tick()
+                                                menuEntryId = entry.id
+                                            },
                                         )
                                         FeldMenu(
                                             expanded = menuEntryId == entry.id,
@@ -207,20 +214,20 @@ fun EditorScreen(
                                                 FeldMenuItem("Edit") {
                                                     vm.dispatch(
                                                         EditorEvent.RequestEditEntry(
-                                                            entry
-                                                        )
+                                                            entry,
+                                                        ),
                                                     )
                                                 },
                                                 FeldMenuItem("Delete", destructive = true) {
                                                     haptics.thud()
                                                     eggs?.report(
                                                         EggEvent.EntryDelete,
-                                                        entry.speaker.name
+                                                        entry.speaker.name,
                                                     )
                                                     vm.dispatch(
                                                         EditorEvent.DeleteEntry(
-                                                            entry.id
-                                                        )
+                                                            entry.id,
+                                                        ),
                                                     )
                                                 },
                                             ),
@@ -232,7 +239,10 @@ fun EditorScreen(
                     }
 
                     FeldFab(
-                        onClick = { haptics.tick(); vm.dispatch(EditorEvent.RequestAddEntry) },
+                        onClick = {
+                            haptics.tick()
+                            vm.dispatch(EditorEvent.RequestAddEntry)
+                        },
                         onLongClick = {
                             haptics.thud()
                             eggs?.report(EggEvent.FabLongPress)
@@ -273,7 +283,10 @@ fun EditorScreen(
             text = state.importText,
             preview = state.importPreview,
             onText = { vm.dispatch(EditorEvent.ImportTextChanged(it)) },
-            onConfirm = { haptics.confirm(); vm.dispatch(EditorEvent.ConfirmImport) },
+            onConfirm = {
+                haptics.confirm()
+                vm.dispatch(EditorEvent.ConfirmImport)
+            },
             onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) },
         )
     }
@@ -291,10 +304,11 @@ fun EditorScreen(
                     }
                 },
                 onConfirm = { speaker ->
-                    if (state.editingSpeaker != null)
+                    if (state.editingSpeaker != null) {
                         vm.dispatch(EditorEvent.ConfirmEditSpeaker(speaker))
-                    else
+                    } else {
                         vm.dispatch(EditorEvent.ConfirmCustomSpeaker(speaker))
+                    }
                 },
                 onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) },
             )
@@ -333,10 +347,7 @@ fun EditorScreen(
 }
 
 @Composable
-private fun EmptyState(
-    onImport: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.feldClickable(onClick = onImport),
         contentAlignment = Alignment.Center,

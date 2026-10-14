@@ -103,13 +103,7 @@ fun FeldDialog(
 }
 
 @Composable
-private fun FeldDialogHeader(
-    title: String,
-    onDismiss: () -> Unit,
-    eyebrow: String?,
-    note: String?,
-    seed: Int,
-) {
+private fun FeldDialogHeader(title: String, onDismiss: () -> Unit, eyebrow: String?, note: String?, seed: Int) {
     val density = LocalDensity.current.density
     val underline = remember(seed, density) {
         wornBrush(FeldPalette.Orange, seed + 4, density, wear = 0.5f, scale = 8f)
@@ -146,7 +140,9 @@ private fun FeldDialogHeader(
             seed = seed + 1,
             spec = FeldDistressedTitles.Large,
             textStyle = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 34.sp, lineHeight = 36.sp, letterSpacing = 1.sp,
+                fontSize = 34.sp,
+                lineHeight = 36.sp,
+                letterSpacing = 1.sp,
             ),
         )
         Box(

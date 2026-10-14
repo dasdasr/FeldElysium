@@ -40,12 +40,10 @@ import com.example.feldelysium.eggs.ui.EggToastPlayground
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
 @Composable
-fun DesignSystemPlayground(
-    modifier: Modifier = Modifier,
-) {
+fun DesignSystemPlayground(modifier: Modifier = Modifier) {
     var text by remember {
         mutableStateOf(
-            "Let's be precise. What do you actually remember about that night?"
+            "Let's be precise. What do you actually remember about that night?",
         )
     }
 
@@ -127,14 +125,18 @@ fun DesignSystemPlayground(
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 FeldButton("Cancel", {}, Modifier.weight(1f), seed = 21)
                 FeldButton(
-                    "Save", {}, Modifier.weight(1f),
+                    "Save",
+                    {},
+                    Modifier.weight(1f),
                     seed = 8,
                     spec = FeldButtonDefaults.Orange,
                     icon = { Icon(Icons.Default.Check, null, Modifier.size(20.dp)) },
                 )
             }
             FeldButton(
-                "Delete line", {}, Modifier.fillMaxWidth(),
+                "Delete line",
+                {},
+                Modifier.fillMaxWidth(),
                 seed = 4,
                 spec = FeldButtonDefaults.Orange,
                 minHeight = 72.dp,

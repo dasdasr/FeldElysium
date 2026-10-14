@@ -157,22 +157,30 @@ fun FeldEntryCard(
         targetValue = if (charging) 1f else 0f,
         animationSpec = if (charging) {
             tween((longPressMs - 120).coerceAtLeast(100), delayMillis = 120, easing = LinearEasing)
-        } else tween(140),
+        } else {
+            tween(140)
+        },
         label = "hold",
     )
     val pulse = if (isDragging) {
         rememberInfiniteTransition(label = "beat").animateFloat(
-            0f, 1f, infiniteRepeatable(tween(1150, easing = LinearEasing), RepeatMode.Restart), label = "pulse",
+            0f,
+            1f,
+            infiniteRepeatable(tween(1150, easing = LinearEasing), RepeatMode.Restart),
+            label = "pulse",
         )
-    } else null
+    } else {
+        null
+    }
     val ringBrush = remember(speakerColor, seed, density) {
         wornBrush(speakerColor, seed + 2, density, wear = 0.4f, scale = 10f)
     }
 
     val sway = remember { SwayState() }
     LaunchedEffect(isDragging) {
-        if (!isDragging) sway.lastY = Float.NaN
-        else {
+        if (!isDragging) {
+            sway.lastY = Float.NaN
+        } else {
             val raw = ((sway.grabX - sway.width / 2f) / (sway.width / 2f)).coerceIn(-1f, 1f)
             sway.dir = raw * 0.75f + if (raw >= 0f) 0.25f else -0.25f
         }
@@ -187,8 +195,8 @@ fun FeldEntryCard(
             val fresh = isDragging && now - sway.velocityStamp < SWAY_VELOCITY_TTL_NANOS
             val velocity = if (fresh) sway.velocityY else 0f
             val torque = -SWAY_STIFFNESS * sway.angle -
-                    SWAY_DAMPING * angularVelocity +
-                    SWAY_GAIN * velocity * sway.dir
+                SWAY_DAMPING * angularVelocity +
+                SWAY_GAIN * velocity * sway.dir
 
             angularVelocity += torque * dt
             sway.angle = (sway.angle + angularVelocity * dt)
@@ -258,13 +266,13 @@ fun FeldEntryCard(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min),
             ) {
                 Box(
                     Modifier
                         .width(7.dp)
                         .fillMaxHeight()
-                        .drawBehind { drawTab(barBrush, seed) }
+                        .drawBehind { drawTab(barBrush, seed) },
                 )
 
                 Row(
@@ -279,10 +287,13 @@ fun FeldEntryCard(
                         contentAlignment = Alignment.Center,
                     ) {
                         FeldHandDiamond(
-                            speakerColor, seed, 22.dp,
+                            speakerColor,
+                            seed,
+                            22.dp,
                             modifier = Modifier.graphicsLayer {
                                 val s = beatScale(pulse?.value)
-                                scaleX = s; scaleY = s
+                                scaleX = s
+                                scaleY = s
                             },
                         )
                     }
@@ -296,7 +307,7 @@ fun FeldEntryCard(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.padding(
-                                end = if (onMore != null) 26.dp else 0.dp
+                                end = if (onMore != null) 26.dp else 0.dp,
                             ),
                         )
 
@@ -341,12 +352,7 @@ fun FeldEntryCard(
 }
 
 @Composable
-private fun StampNumber(
-    number: Int,
-    seed: Int,
-    color: Color,
-    modifier: Modifier = Modifier,
-) {
+private fun StampNumber(number: Int, seed: Int, color: Color, modifier: Modifier = Modifier) {
     val look = remember(seed) { StampLook(seed) }
     if (!look.visible) return
 
@@ -388,12 +394,7 @@ private class StampLook(seed: Int) {
 }
 
 @Composable
-fun FeldHandDiamond(
-    color: Color,
-    seed: Int,
-    size: Dp = 22.dp,
-    modifier: Modifier = Modifier,
-) {
+fun FeldHandDiamond(color: Color, seed: Int, size: Dp = 22.dp, modifier: Modifier = Modifier) {
     val density = LocalDensity.current.density
     val brush = remember(color, seed, density) {
         wornBrush(color, seed + 1, density, wear = 0.4f, scale = 10f)
@@ -416,7 +417,10 @@ fun FeldHandDiamond(
     }
 }
 
-private fun gauss(t: Float, c: Float, w: Float): Float { val x = (t - c) / w; return exp(-x * x) }
+private fun gauss(t: Float, c: Float, w: Float): Float {
+    val x = (t - c) / w
+    return exp(-x * x)
+}
 
 internal fun beatScale(t: Float?): Float =
     if (t == null) 1f else 1f + 0.18f * gauss(t, 0.07f, 0.05f) + 0.11f * gauss(t, 0.34f, 0.06f)
@@ -425,26 +429,41 @@ internal fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     val stroke = 1.5.dp.toPx()
     val r = size.minDimension / 2f + 6.dp.toPx()
     fun diamond(rad: Float) = Path().apply {
-        moveTo(center.x, center.y - rad); lineTo(center.x + rad, center.y)
-        lineTo(center.x, center.y + rad); lineTo(center.x - rad, center.y); close()
+        moveTo(center.x, center.y - rad)
+        lineTo(center.x + rad, center.y)
+        lineTo(center.x, center.y + rad)
+        lineTo(center.x - rad, center.y)
+        close()
     }
     if (hold > 0.01f) {
         val m = PathMeasure().apply { setPath(diamond(r), false) }
         val seg = Path()
         m.getSegment(0f, m.length * hold, seg, true)
-        drawPath(seg, brush, alpha = 0.9f,
-            style = Stroke(stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        drawPath(
+            seg,
+            brush,
+            alpha = 0.9f,
+            style = Stroke(stroke, cap = StrokeCap.Round, join = StrokeJoin.Round),
+        )
     }
     if (t != null) {
         val s = beatScale(t)
-        drawPath(diamond(r * (1f + (s - 1f) * 0.6f)), brush, alpha = 0.9f,
-            style = Stroke(stroke, join = StrokeJoin.Round))
+        drawPath(
+            diamond(r * (1f + (s - 1f) * 0.6f)),
+            brush,
+            alpha = 0.9f,
+            style = Stroke(stroke, join = StrokeJoin.Round),
+        )
         fun ring(start: Float, len: Float, reach: Float, a: Float) {
             val p = (t - start) / len
             if (p !in 0f..1f) return
             val e = 1f - (1f - p) * (1f - p) * (1f - p)
-            drawPath(diamond(r + reach.dp.toPx() * e), brush, alpha = a * (1f - p) * (1f - p),
-                style = Stroke(stroke * (1.2f - 0.6f * p), join = StrokeJoin.Round))
+            drawPath(
+                diamond(r + reach.dp.toPx() * e),
+                brush,
+                alpha = a * (1f - p) * (1f - p),
+                style = Stroke(stroke * (1.2f - 0.6f * p), join = StrokeJoin.Round),
+            )
         }
         ring(0.02f, 0.55f, 14f, 0.7f)
         ring(0.30f, 0.55f, 10f, 0.45f)
@@ -479,18 +498,31 @@ private fun FeldEntryCardPreview() {
     DiscoDialogueTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             FeldEntryCard(
-                "Logic", Color(0xFF4FB3A6),
+                "Logic",
+                Color(0xFF4FB3A6),
                 "This is impossible. He is not from Revachol. He is not even from this isola, and nobody here has ever heard of a place like that.",
-                number = 1, seed = 1, onClick = {}, onMore = {},
+                number = 1,
+                seed = 1,
+                onClick = {},
+                onMore = {},
             )
             FeldEntryCard(
-                "Empathy", Color(0xFFD06A8B), "He looks lonely.",
-                number = 2, seed = 2, onClick = {}, onMore = {},
+                "Empathy",
+                Color(0xFFD06A8B),
+                "He looks lonely.",
+                number = 2,
+                seed = 2,
+                onClick = {},
+                onMore = {},
             )
             FeldEntryCard(
-                "Drama", Color(0xFF8F6FD6),
+                "Drama",
+                Color(0xFF8F6FD6),
                 "Oh, what a magnificent entrance. The orange clothes. The ridiculous hair.",
-                number = 3, seed = 3, isDragging = true, onMore = {},
+                number = 3,
+                seed = 3,
+                isDragging = true,
+                onMore = {},
             )
         }
     }

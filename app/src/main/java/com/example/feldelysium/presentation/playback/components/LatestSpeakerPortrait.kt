@@ -33,10 +33,7 @@ private fun LatestSpeakerPortraitPreview() {
 }
 
 @Composable
-fun LatestSpeakerPortrait(
-    speaker: Speaker?,
-    modifier: Modifier = Modifier,
-) {
+fun LatestSpeakerPortrait(speaker: Speaker?, modifier: Modifier = Modifier) {
     if (speaker == null) return
     if (speaker.customIconUri == null && speaker.iconResId == null) return
 
@@ -65,6 +62,7 @@ fun LatestSpeakerPortrait(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize(),
                 )
+
                 speaker.iconResId != null -> Image(
                     painter = painterResource(id = speaker.iconResId),
                     contentDescription = speaker.name,

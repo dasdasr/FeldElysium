@@ -22,7 +22,13 @@ class DecalLayer internal constructor(
     private val style: TextStyle,
 ) {
     internal fun plan(size: Size, density: Density): DecalPlan = planDecals(
-        seed, size, ambient, spec, context, density, measurer,
+        seed,
+        size,
+        ambient,
+        spec,
+        context,
+        density,
+        measurer,
         with(density) { leftInset.toPx() },
     )
 }
@@ -38,7 +44,10 @@ fun rememberDecalLayer(
 ): DecalLayer? {
     val measurer = rememberTextMeasurer(cacheSize = 8)
     return remember(ambient, seed, spec, context, leftInset, style, measurer) {
-        if (ambient == null || ambient <= 0f) null
-        else DecalLayer(ambient, seed, spec, context, leftInset, measurer, style)
+        if (ambient == null || ambient <= 0f) {
+            null
+        } else {
+            DecalLayer(ambient, seed, spec, context, leftInset, measurer, style)
+        }
     }
 }

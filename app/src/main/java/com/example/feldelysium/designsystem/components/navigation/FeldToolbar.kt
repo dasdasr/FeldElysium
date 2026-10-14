@@ -28,11 +28,7 @@ data class FeldToolbarItem(
 )
 
 @Composable
-fun FeldToolbar(
-    items: List<FeldToolbarItem>,
-    modifier: Modifier = Modifier,
-    seed: Int = rememberSeed(),
-) {
+fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, seed: Int = rememberSeed()) {
     Column(modifier.fillMaxWidth()) {
         Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
             items.forEachIndexed { i, item ->
@@ -43,7 +39,7 @@ fun FeldToolbar(
                         modifier = Modifier.padding(vertical = 14.dp),
                     )
                 }
-                val tint = 	colorScheme.onSurface.copy(alpha = if (item.enabled) 0.9f else 0.35f)
+                val tint = colorScheme.onSurface.copy(alpha = if (item.enabled) 0.9f else 0.35f)
                 Column(
                     modifier = Modifier
                         .weight(1f)

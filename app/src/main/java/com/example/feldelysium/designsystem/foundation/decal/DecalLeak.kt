@@ -1,13 +1,13 @@
 package com.example.feldelysium.designsystem.foundation.decal
 
 import android.graphics.RuntimeShader
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import android.os.Build
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.toArgb
 
 private const val LEAK_AGSL = """
 uniform float2 size;
@@ -31,13 +31,15 @@ half4 main(float2 p) {
 internal class Leak(size: Size, rightSide: Boolean, color: Color, strength: Float, seed: Float) {
     private val brush: Brush =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ShaderBrush(RuntimeShader(LEAK_AGSL).apply {
-                setFloatUniform("size", size.width.toFloat(), size.height.toFloat())
-                setFloatUniform("seed", seed)
-                setFloatUniform("strength", strength)
-                setFloatUniform("side", if (rightSide) 1f else 0f)
-                setColorUniform("tint", color.toArgb())
-            })
+            ShaderBrush(
+                RuntimeShader(LEAK_AGSL).apply {
+                    setFloatUniform("size", size.width.toFloat(), size.height.toFloat())
+                    setFloatUniform("seed", seed)
+                    setFloatUniform("strength", strength)
+                    setFloatUniform("side", if (rightSide) 1f else 0f)
+                    setColorUniform("tint", color.toArgb())
+                },
+            )
         } else {
             val c = color.copy(alpha = strength * 0.7f)
             if (rightSide) {

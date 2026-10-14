@@ -18,10 +18,7 @@ data class SeedScope(val base: Int) {
 val LocalSeedScope = staticCompositionLocalOf { SeedScope(0) }
 
 @Composable
-fun ProvideSeedScope(
-    sessionSeed: Int = rememberSaveable { Random.nextInt() },
-    content: @Composable () -> Unit,
-) {
+fun ProvideSeedScope(sessionSeed: Int = rememberSaveable { Random.nextInt() }, content: @Composable () -> Unit) {
     val scope = remember(sessionSeed) { SeedScope(sessionSeed) }
     CompositionLocalProvider(LocalSeedScope provides scope, content = content)
 }
@@ -42,7 +39,9 @@ fun rememberSeed(key: Any? = null): Int {
 
 private fun mix(a: Int, b: Int): Int {
     var h = a xor (b * -0x61c88647)
-    h = h xor (h ushr 16); h *= 0x85ebca6bL.toInt()
-    h = h xor (h ushr 13); h *= 0xc2b2ae35L.toInt()
+    h = h xor (h ushr 16)
+    h *= 0x85ebca6bL.toInt()
+    h = h xor (h ushr 13)
+    h *= 0xc2b2ae35L.toInt()
     return h xor (h ushr 16)
 }

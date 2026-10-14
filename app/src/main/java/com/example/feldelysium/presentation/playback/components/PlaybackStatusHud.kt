@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.DeviceFontFamilyName
 import androidx.compose.ui.text.font.Font
@@ -49,12 +49,7 @@ private val RobotoCondensedLight = FontFamily(
 )
 
 @Composable
-fun PlaybackStatusHud(
-    money: String,
-    time: String,
-    day: String,
-    modifier: Modifier = Modifier,
-) {
+fun PlaybackStatusHud(money: String, time: String, day: String, modifier: Modifier = Modifier) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val density = LocalDensity.current
         val smallFont = with(density) { (maxWidth * SMALL_FONT_WIDTH_FRACTION).toSp() }
@@ -107,11 +102,7 @@ fun PlaybackStatusHud(
 }
 
 @Composable
-private fun StatusLabel(
-    text: String,
-    fontSize: TextUnit,
-    brightness: Float,
-) {
+private fun StatusLabel(text: String, fontSize: TextUnit, brightness: Float) {
     Text(
         text = text,
         maxLines = 1,

@@ -61,7 +61,8 @@ fun ManageTagsDialog(
         if (list.none { !PredefinedSpeakers.isBundledTag(it.id) }) {
             Text(
                 "You have no tags yet. Create one while choosing a tag for a speaker.",
-                style = MaterialTheme.typography.bodySmall, color = FeldPalette.Muted,
+                style = MaterialTheme.typography.bodySmall,
+                color = FeldPalette.Muted,
                 modifier = Modifier.padding(bottom = 12.dp),
             )
         }
@@ -75,7 +76,9 @@ fun ManageTagsDialog(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FeldHandDiamond(
-                    tag.colorArgb?.let { Color(it) } ?: FeldPalette.Muted, tag.id.hashCode(), 14.dp,
+                    tag.colorArgb?.let { Color(it) } ?: FeldPalette.Muted,
+                    tag.id.hashCode(),
+                    14.dp,
                 )
                 Spacer(Modifier.width(12.dp))
                 Text(
@@ -86,23 +89,28 @@ fun ManageTagsDialog(
                 )
                 Text(
                     "${counts[tag.id] ?: 0}",
-                    style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = FeldPalette.Muted,
                 )
                 Spacer(Modifier.width(12.dp))
                 if (builtIn) {
                     Text(
                         "BUILT-IN",
                         style = MaterialTheme.typography.labelSmall,
-                        color = FeldPalette.Muted
+                        color = FeldPalette.Muted,
                     )
                 } else {
                     FeldIcon(
-                        FeldIconId.Edit, tint = FeldPalette.Muted, size = 20.dp,
+                        FeldIconId.Edit,
+                        tint = FeldPalette.Muted,
+                        size = 20.dp,
                         modifier = Modifier.feldClickable { editing = tag },
                     )
                     Spacer(Modifier.width(14.dp))
                     FeldIcon(
-                        FeldIconId.Delete, tint = FeldPalette.Orange, size = 20.dp,
+                        FeldIconId.Delete,
+                        tint = FeldPalette.Orange,
+                        size = 20.dp,
                         modifier = Modifier.feldClickable { deleting = tag },
                     )
                 }
@@ -114,7 +122,10 @@ fun ManageTagsDialog(
         EditTagDialog(
             tag = tag,
             takenNames = tags.filter { it.id != tag.id }.map { it.name.lowercase() }.toSet(),
-            onSave = { onSave(it); editing = null },
+            onSave = {
+                onSave(it)
+                editing = null
+            },
             onDismiss = { editing = null },
         )
     }
@@ -128,14 +139,20 @@ fun ManageTagsDialog(
             footer = {
                 FeldDialogActions(
                     confirmLabel = "Delete",
-                    onConfirm = { onDelete(tag); deleting = null },
+                    onConfirm = {
+                        onDelete(tag)
+                        deleting = null
+                    },
                     onCancel = { deleting = null },
                 )
             },
         ) {
             Text(
-                if (n == 0) "This tag is not used by any speaker."
-                else "$n speaker(s) will lose this tag and move to Custom. Their colors stay.",
+                if (n == 0) {
+                    "This tag is not used by any speaker."
+                } else {
+                    "$n speaker(s) will lose this tag and move to Custom. Their colors stay."
+                },
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -176,42 +193,53 @@ private fun EditTagDialog(
     ) {
         FieldLabel("Name")
         FeldTextField(
-            value = name, onValueChange = { name = it },
-            maxLength = SpeakerType.MAX_NAME, showLength = false, minHeight = 48.dp,
+            value = name,
+            onValueChange = { name = it },
+            maxLength = SpeakerType.MAX_NAME,
+            showLength = false,
+            minHeight = 48.dp,
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
         )
         if (clean.lowercase() in takenNames) {
             Text(
                 "A tag with this name already exists",
                 style = MaterialTheme.typography.labelSmall,
-                color = FeldPalette.Orange
+                color = FeldPalette.Orange,
             )
         }
 
         Spacer(Modifier.height(18.dp))
         FieldLabel("Default color", optional = true)
         FeldChip(
-            text = "None", selected = color == null,
-            onClick = { color = null }, modifier = Modifier.height(30.dp), accent = FeldChipColors.Cream,
+            text = "None",
+            selected = color == null,
+            onClick = { color = null },
+            modifier = Modifier.height(30.dp),
+            accent = FeldChipColors.Cream,
         )
         Spacer(Modifier.height(10.dp))
         FeldColorSwatches(
-            colors = palette, selected = color ?: 0L, onSelect = { color = it },
-            columns = 6, minRows = 2,
+            colors = palette,
+            selected = color ?: 0L,
+            onSelect = { color = it },
+            columns = 6,
+            minRows = 2,
         )
 
         Spacer(Modifier.height(18.dp))
         FieldLabel("Sound")
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             SoundKeys.All.forEach { key ->
                 val on = (sound ?: SoundKeys.DEFAULT) == key
                 FeldChip(
-                    text = key, selected = on,
+                    text = key,
+                    selected = on,
                     onClick = { sound = key.takeUnless { it == SoundKeys.DEFAULT } },
-                    modifier = Modifier.height(30.dp), accent = FeldChipColors.Orange,
+                    modifier = Modifier.height(30.dp),
+                    accent = FeldChipColors.Orange,
                 )
             }
         }

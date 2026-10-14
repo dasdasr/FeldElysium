@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
-import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -38,9 +35,11 @@ fun FeldSection(
     distressedTag: Boolean = true,
     content: @Composable ColumnScope.() -> Unit = {},
 ) {
-    Column(modifier
-        .fillMaxWidth()
-        .animateContentSize()) {
+    Column(
+        modifier
+            .fillMaxWidth()
+            .animateContentSize(),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,7 +82,7 @@ private fun FeldSectionPreview() {
     DiscoDialogueTheme {
         Column(
             Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             FeldSection("Skills", count = "5", expanded = true, onToggle = {}) {
                 FeldSettingValueRow(

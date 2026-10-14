@@ -104,11 +104,7 @@ internal class TextDecal(private val layout: TextLayoutResult) : Decal {
 
 internal enum class GlyphShape { Diamond, DiamondFilled, Triangle, TriangleDown, Play, Cross, Register }
 
-internal class GlyphDecal(
-    private val shape: GlyphShape,
-    private val side: Float,
-    private val stroke: Float,
-) : Decal {
+internal class GlyphDecal(private val shape: GlyphShape, private val side: Float, private val stroke: Float) : Decal {
     override val extent = Size(side, side)
     override fun DrawScope.draw(color: Color, alpha: Float) {
         val c = color.copy(alpha = alpha)
@@ -132,13 +128,18 @@ internal class GlyphDecal(
                 ),
                 fill = shape == GlyphShape.DiamondFilled,
             )
+
             GlyphShape.Triangle -> poly(pts = listOf(Offset(s / 2, 0f), Offset(s, s), Offset(0f, s)), fill = false)
+
             GlyphShape.TriangleDown -> poly(pts = listOf(Offset(0f, 0f), Offset(s, 0f), Offset(s / 2, s)), fill = false)
+
             GlyphShape.Play -> poly(pts = listOf(Offset(0f, 0f), Offset(s, s / 2), Offset(0f, s)), fill = true)
+
             GlyphShape.Cross -> {
                 drawLine(c, Offset(s / 2, 0f), Offset(s / 2, s), stroke)
                 drawLine(c, Offset(0f, s / 2), Offset(s, s / 2), stroke)
             }
+
             GlyphShape.Register -> {
                 drawCircle(c, s * 0.32f, Offset(s / 2, s / 2), style = line)
                 drawLine(c, Offset(s / 2, 0f), Offset(s / 2, s), stroke)
@@ -165,18 +166,21 @@ internal class MarkDecal(
                 lineTo(w * (0.35f + j[2]), h * (0.95f + j[3]))
                 lineTo(w * (0.95f + j[4]), h * (0.05f + j[5]))
             }
+
             MarkShape.Underline -> {
                 moveTo(0f, h * (0.6f + j[0]))
                 quadraticBezierTo(w * 0.5f, h * (0.35f + j[1]), w, h * (0.7f + j[2]))
                 moveTo(w * 0.1f, h * (0.9f + j[3]))
                 quadraticBezierTo(w * 0.5f, h * (0.75f + j[4]), w * 0.9f, h * (0.95f + j[5]))
             }
+
             MarkShape.Circle -> arcTo(
                 Rect(w * j[0], h * j[1], w * (1f + j[2]), h * (1f + j[3])),
                 startAngleDegrees = -200f + j[4] * 60f,
                 sweepAngleDegrees = 390f,
                 forceMoveTo = true,
             )
+
             MarkShape.Arrow -> {
                 moveTo(0f, h * (0.5f + j[0]))
                 quadraticBezierTo(w * 0.5f, h * (0.5f + j[1]), w, h * 0.5f)
@@ -184,6 +188,7 @@ internal class MarkDecal(
                 lineTo(w, h * 0.5f)
                 lineTo(w * 0.78f, h * (0.88f + j[3]))
             }
+
             MarkShape.Cross -> {
                 moveTo(w * (0.05f + j[0]), h * 0.05f)
                 lineTo(w * 0.95f, h * (0.95f + j[1]))
@@ -199,11 +204,8 @@ internal class MarkDecal(
     }
 }
 
-internal class SpriteDecal(
-    private val bitmap: ImageBitmap,
-    private val src: IntRect,
-    override val extent: Size,
-) : Decal {
+internal class SpriteDecal(private val bitmap: ImageBitmap, private val src: IntRect, override val extent: Size) :
+    Decal {
     override fun DrawScope.draw(color: Color, alpha: Float) {
         drawImage(
             image = bitmap,

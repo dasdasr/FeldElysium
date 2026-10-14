@@ -1,6 +1,5 @@
 package com.example.feldelysium
 
-import android.graphics.Color as AndroidColor
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -13,9 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.feldelysium.designsystem.foundation.material.MarkerFilmWarmup
@@ -31,6 +30,7 @@ import com.example.feldelysium.playground.FeldShaderPlayground
 import com.example.feldelysium.playground.PlaygroundEntry
 import com.example.feldelysium.playground.PlaygroundHubScreen
 import com.example.feldelysium.theme.DiscoDialogueTheme
+import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
 
@@ -97,7 +97,7 @@ class MainActivity : ComponentActivity() {
                                         title = "Shaders",
                                         description = "All shaders: grid and frame set up",
                                         content = { FeldShaderPlayground() },
-                                    )
+                                    ),
                                 ),
                             )
                         }

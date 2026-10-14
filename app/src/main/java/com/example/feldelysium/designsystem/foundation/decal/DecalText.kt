@@ -16,8 +16,9 @@ internal object DecalText {
             add("REC. ${pad(rng.nextInt(60), 4)}-${'A' + rng.nextInt(4)}")
             add("END")
             if (c.sceneName.isNotBlank()) add("${c.sceneName.uppercase().take(18)} • ${c.date}")
-            if (c.segmentFrom != null && c.segmentTo != null)
+            if (c.segmentFrom != null && c.segmentTo != null) {
                 add("SEG ${pad(c.segmentFrom, 4)}-${pad(c.segmentTo, 4)}")
+            }
             c.speakerName?.let { add("VOICE: ${it.uppercase().take(14)}") }
             c.appVersion?.let { add("FELD V$it") }
         }
@@ -38,16 +39,24 @@ internal object DecalText {
 
     fun counter(rng: Random, c: DecalContext): String = when (rng.nextInt(4)) {
         0 -> rng.nextInt(10, 99).toString()
+
         1 -> c.lineNumber?.let { n ->
             "L.${pad(n, 2)}" + (c.lineCount?.let { "/${pad(it, 2)}" } ?: "")
         } ?: "№ ${pad(rng.nextInt(99), 4)}"
+
         2 -> "REC. ${pad(rng.nextInt(60), 4)}-B"
+
         else -> "${pad(rng.nextInt(99), 2)}:${pad(rng.nextInt(60), 2)}"
     }
 
     fun strip(rng: Random, c: DecalContext): String = when (rng.nextInt(3)) {
         0 -> "FELD • PLAYBACK • DEVICE"
+
         1 -> "REEL ${1 + rng.nextInt(6)} • ${c.date}"
-        else -> { val s = rng.nextInt(10, 90); (0..3).joinToString("    ") { (s + it).toString() } }
+
+        else -> {
+            val s = rng.nextInt(10, 90)
+            (0..3).joinToString("    ") { (s + it).toString() }
+        }
     }
 }

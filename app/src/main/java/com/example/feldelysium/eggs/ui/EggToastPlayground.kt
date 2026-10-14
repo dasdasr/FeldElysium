@@ -13,10 +13,7 @@ import com.example.feldelysium.eggs.EasterEggs
 import com.example.feldelysium.eggs.EggReply
 
 @Composable
-fun EggToastPlayground(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
+fun EggToastPlayground(text: String, modifier: Modifier = Modifier) {
     val toast = remember {
         EasterEggs.ActiveToast(
             id = 1L,

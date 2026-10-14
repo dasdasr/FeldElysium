@@ -1,9 +1,9 @@
 package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.translate
@@ -18,10 +18,7 @@ private const val TAPE_TEXTURE_ASPECT = TAPE_TEXTURE_HEIGHT_PX / TAPE_TEXTURE_WI
 
 // Tile manually to keep the texture scroll seamless.
 @Composable
-fun TapeBackground(
-    offsetPx: Float,
-    modifier: Modifier = Modifier,
-) {
+fun TapeBackground(offsetPx: Float, modifier: Modifier = Modifier) {
     val painter = painterResource(id = R.drawable.seamless_tape)
     Canvas(modifier = modifier) {
         val tileHeight = size.width * TAPE_TEXTURE_ASPECT

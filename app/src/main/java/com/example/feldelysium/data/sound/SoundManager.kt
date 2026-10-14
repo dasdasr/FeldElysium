@@ -13,7 +13,7 @@ class SoundManager(context: Context) {
             AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build()
+                .build(),
         )
         .build()
 

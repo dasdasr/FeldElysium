@@ -20,8 +20,14 @@ private val DefaultAlphaCap = mapOf(
 )
 
 private val DarkTones = listOf(
-    FeldPalette.Muted, FeldPalette.Muted, FeldPalette.Muted, FeldPalette.Muted, FeldPalette.Muted,
-    FeldPalette.Cream, FeldPalette.Orange, FeldPalette.Line,
+    FeldPalette.Muted,
+    FeldPalette.Muted,
+    FeldPalette.Muted,
+    FeldPalette.Muted,
+    FeldPalette.Muted,
+    FeldPalette.Cream,
+    FeldPalette.Orange,
+    FeldPalette.Line,
 )
 
 @Immutable
@@ -40,16 +46,27 @@ data class DecalSpec(
     companion object {
         val Entry = DecalSpec(
             weights = mapOf(
-                DecalKind.Ruler to 0.6f, DecalKind.Text to 3f, DecalKind.Glyph to 1.5f,
-                DecalKind.Mark to 1f, DecalKind.Perforation to 0.5f, DecalKind.FilmStrip to 0.6f,
+                DecalKind.Ruler to 0.6f,
+                DecalKind.Text to 3f,
+                DecalKind.Glyph to 1.5f,
+                DecalKind.Mark to 1f,
+                DecalKind.Perforation to 0.5f,
+                DecalKind.FilmStrip to 0.6f,
             ),
-            maxDecals = 2, allowCenter = false, leakChance = 0.15f,
+            maxDecals = 2,
+            allowCenter = false,
+            leakChance = 0.15f,
         )
         val Dialog = DecalSpec(
             weights = mapOf(
-                DecalKind.Ruler to 0.8f, DecalKind.Perforation to 0.8f, DecalKind.FilmStrip to 1.2f,
-                DecalKind.Text to 3f, DecalKind.DataBlock to 2f, DecalKind.Counter to 1.5f,
-                DecalKind.Glyph to 2f, DecalKind.Mark to 1.5f,
+                DecalKind.Ruler to 0.8f,
+                DecalKind.Perforation to 0.8f,
+                DecalKind.FilmStrip to 1.2f,
+                DecalKind.Text to 3f,
+                DecalKind.DataBlock to 2f,
+                DecalKind.Counter to 1.5f,
+                DecalKind.Glyph to 2f,
+                DecalKind.Mark to 1.5f,
             ),
             maxDecals = 4,
         )

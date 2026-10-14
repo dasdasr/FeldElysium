@@ -65,11 +65,7 @@ import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private val Dark = Color(0xFF1B1612)
 
-private data class SpeakerGroup(
-    val type: SpeakerType,
-    val title: String,
-    val items: List<Speaker>,
-)
+private data class SpeakerGroup(val type: SpeakerType, val title: String, val items: List<Speaker>)
 
 @Preview
 @Composable
@@ -85,7 +81,7 @@ private fun SpeakerPickerDialogPreview() {
         onCreateCustom = {},
         onEditCustom = {},
         onDismiss = {},
-        tags = listOf(SpeakerType.NPC)
+        tags = listOf(SpeakerType.NPC),
     )
 }
 
@@ -169,8 +165,11 @@ fun SpeakerPickerDialog(
                             title = group.title,
                             seed = 40 + gi,
                             onClick = {
-                                collapsed = if (group.type in collapsed) collapsed - group.type
-                                else collapsed + group.type
+                                collapsed = if (group.type in collapsed) {
+                                    collapsed - group.type
+                                } else {
+                                    collapsed + group.type
+                                }
                             },
                             trailing = {
                                 Text(
@@ -179,8 +178,11 @@ fun SpeakerPickerDialog(
                                     color = FeldPalette.Muted,
                                 )
                                 Icon(
-                                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp
-                                    else Icons.Filled.KeyboardArrowDown,
+                                    imageVector = if (expanded) {
+                                        Icons.Filled.KeyboardArrowUp
+                                    } else {
+                                        Icons.Filled.KeyboardArrowDown
+                                    },
                                     contentDescription = null,
                                     tint = FeldPalette.Muted,
                                     modifier = Modifier
@@ -258,12 +260,7 @@ private fun SearchField(value: String, onValueChange: (String) -> Unit) {
 }
 
 @Composable
-private fun SpeakerTable(
-    items: List<Speaker>,
-    seed: Int,
-    onSelect: (Speaker) -> Unit,
-    onEdit: (Speaker) -> Unit,
-) {
+private fun SpeakerTable(items: List<Speaker>, seed: Int, onSelect: (Speaker) -> Unit, onEdit: (Speaker) -> Unit) {
     val rough = remember(seed) { entryRough(seed) }
     FeldCard(
         modifier = Modifier
@@ -280,18 +277,16 @@ private fun SpeakerTable(
                 onClick = { onSelect(speaker) },
                 onEdit = if (!speaker.isBundled) {
                     { onEdit(speaker) }
-                } else null,
+                } else {
+                    null
+                },
             )
         }
     }
 }
 
 @Composable
-private fun SpeakerRow(
-    speaker: Speaker,
-    onClick: () -> Unit,
-    onEdit: (() -> Unit)? = null,
-) {
+private fun SpeakerRow(speaker: Speaker, onClick: () -> Unit, onEdit: (() -> Unit)? = null) {
     val color = Color(speaker.colorArgb)
     Row(
         modifier = Modifier
@@ -316,14 +311,18 @@ private fun SpeakerRow(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    Icons.Outlined.Edit, "Edit",
-                    tint = FeldPalette.Muted, modifier = Modifier.size(18.dp),
+                    Icons.Outlined.Edit,
+                    "Edit",
+                    tint = FeldPalette.Muted,
+                    modifier = Modifier.size(18.dp),
                 )
             }
         }
         Icon(
-            Icons.AutoMirrored.Filled.KeyboardArrowRight, null,
-            tint = FeldPalette.Muted, modifier = Modifier.size(22.dp),
+            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            null,
+            tint = FeldPalette.Muted,
+            modifier = Modifier.size(22.dp),
         )
     }
 }
@@ -334,9 +333,13 @@ private fun CreateSpeakerButton(onClick: () -> Unit) {
         RoughShape(
             33,
             RoughStyle(
-                roughness = 0.8.dp, step = 36.dp, corner = 2.dp,
-                cornerVariation = 0.3f, cornerJitter = 0.3f,
-                tornChance = 0.08f, jerkChance = 0.08f,
+                roughness = 0.8.dp,
+                step = 36.dp,
+                corner = 2.dp,
+                cornerVariation = 0.3f,
+                cornerJitter = 0.3f,
+                tornChance = 0.08f,
+                jerkChance = 0.08f,
             ),
         )
     }

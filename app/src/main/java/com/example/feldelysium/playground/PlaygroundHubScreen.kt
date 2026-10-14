@@ -14,11 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,11 +29,9 @@ import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
-import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.theme.disco
 import org.w3c.dom.Text
-import java.time.format.TextStyle
 
 data class PlaygroundEntry(
     val id: String,
@@ -45,10 +41,7 @@ data class PlaygroundEntry(
 )
 
 @Composable
-fun PlaygroundHubScreen(
-    playgrounds: List<PlaygroundEntry>,
-    onLaunchApp: () -> Unit,
-) {
+fun PlaygroundHubScreen(playgrounds: List<PlaygroundEntry>, onLaunchApp: () -> Unit) {
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
 
     val selected = playgrounds.find { it.id == selectedId }
@@ -57,7 +50,7 @@ fun PlaygroundHubScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
+                .statusBarsPadding(),
         ) {
             Button(
                 onClick = { selectedId = null },
@@ -93,7 +86,7 @@ fun PlaygroundHubScreen(
                             FeldHandDiamond(
                                 color = MaterialTheme.colorScheme.primary,
                                 seed = rememberSeed(),
-                                size = 14.dp
+                                size = 14.dp,
                             )
                             Spacer(Modifier.width(6.dp))
                             FeldDistressedTitle(
@@ -132,7 +125,7 @@ fun PlaygroundHubScreen(
                             FeldHandDiamond(
                                 color = MaterialTheme.disco.accent.copy(alpha = 0.8f),
                                 seed = playground.title.hashCode(),
-                                size = 10.dp
+                                size = 10.dp,
                             )
                             Spacer(Modifier.width(6.dp))
                             FeldDistressedTitle(

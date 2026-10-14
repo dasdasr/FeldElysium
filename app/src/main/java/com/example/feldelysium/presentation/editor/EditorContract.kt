@@ -27,10 +27,7 @@ data class EditorUiState(
     val isChangingSpeaker: Boolean = false,
 )
 
-data class ImportPreview(
-    val lineCount: Int,
-    val newSpeakerCount: Int,
-) {
+data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
     val caption: String
         get() {
             if (lineCount == 0) return "No lines"

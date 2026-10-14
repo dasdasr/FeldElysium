@@ -19,12 +19,7 @@ class EasterEggs(
     private val random: Random = Random.Default,
     private val now: () -> Long = { System.currentTimeMillis() },
 ) {
-    class ActiveToast(
-        val id: Long,
-        val eggId: String,
-        val reply: EggReply,
-        val durationMillis: Long
-    )
+    class ActiveToast(val id: Long, val eggId: String, val reply: EggReply, val durationMillis: Long)
 
     private val _toast = MutableStateFlow<ActiveToast?>(null)
     val toast: StateFlow<ActiveToast?> = _toast.asStateFlow()
@@ -77,7 +72,9 @@ class EasterEggs(
         history.addLast(event)
         while (history.size > 64 ||
             (history.isNotEmpty() && t - history.first().atMillis > 10.minutes.inWholeMilliseconds)
-        ) history.removeFirst()
+        ) {
+            history.removeFirst()
+        }
         sessionCounts[key] = (sessionCounts[key] ?: 0) + 1
 
         if (_suppressed.value || !ready.isCompleted) return false
@@ -201,6 +198,5 @@ class EasterEggs(
         )
     }
 
-    private fun epochDayOf(millis: Long): Long =
-        (millis + TimeZone.getDefault().getOffset(millis)) / 86_400_000L
+    private fun epochDayOf(millis: Long): Long = (millis + TimeZone.getDefault().getOffset(millis)) / 86_400_000L
 }

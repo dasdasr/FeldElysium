@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
@@ -73,7 +72,9 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
     var stress by remember { mutableStateOf(false) }
 
     val base = when (preset) {
-        "Dialog" -> DecalSpec.Dialog; "Panel" -> DecalSpec.Panel; else -> DecalSpec.Entry
+        "Dialog" -> DecalSpec.Dialog
+        "Panel" -> DecalSpec.Panel
+        else -> DecalSpec.Entry
     }
     val spec = base.copy(
         weights = enabled.associateWith { base.weights[it] ?: 1f },
@@ -99,7 +100,10 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
             val names = listOf("Logic", "Empathy", "Drama", "Volition")
 
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     FeldChipShape.values().forEach {
                         FeldChip(
                             text = it.name,
@@ -111,22 +115,48 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                     }
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    FeldSwitch(outline, { outline = it }); Spacer(Modifier.width(8.dp)); Text("outline", color = Color.White)
+                    FeldSwitch(
+                        outline,
+                        { outline = it },
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("outline", color = Color.White)
                     Spacer(Modifier.width(16.dp))
-                    FeldSwitch(leading, { leading = it }); Spacer(Modifier.width(8.dp)); Text("diamond", color = Color.White)
+                    FeldSwitch(
+                        leading,
+                        { leading = it },
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("diamond", color = Color.White)
                 }
-                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Row(
+                    Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
                     names.forEachIndexed { i, n ->
                         FeldChip(
                             text = n, selected = n in sel,
                             onClick = { sel = if (n in sel) sel - n else sel + n },
                             shape = shape, outline = outline, leading = leading,
                             fillShape = FeldChipFill.Diamond,
-                            accent = listOf(FeldChipColors.Teal, FeldChipColors.Orange, FeldChipColors.Cream, Color(0xFF8F6FD6))[i],
+                            accent = listOf(
+                                FeldChipColors.Teal,
+                                FeldChipColors.Orange,
+                                FeldChipColors.Cream,
+                                Color(0xFF8F6FD6),
+                            )[i],
                             seed = 100 + i,
                         )
                     }
-                    FeldChip("Disabled", selected = false, onClick = {}, enabled = false, shape = shape, outline = outline, leading = leading)
+                    FeldChip(
+                        "Disabled",
+                        selected = false,
+                        onClick = {},
+                        enabled = false,
+                        shape = shape,
+                        outline = outline,
+                        leading = leading,
+                    )
                 }
             }
         }
@@ -163,7 +193,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     OutlinedButton({ seed-- }) { Text("seed −") }
                     Text("seed $seed", color = Color.White)
@@ -171,7 +201,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                 }
                 Row(
                     Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     listOf("Entry", "Dialog", "Panel").forEach {
                         FeldChip(
@@ -183,7 +213,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                 }
                 Row(
                     Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     DecalKind.values().forEach { k ->
                         FeldChip(
@@ -206,9 +236,9 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                 Triple(
                     "Drama",
                     Color(0xFF8F6FD6),
-                    "Oh, what a magnificent entrance. The orange clothes."
+                    "Oh, what a magnificent entrance. The orange clothes.",
                 ),
-            )
+            ),
         ) { i, (n, c, t) ->
             FeldEntryCard(
                 n, c, t, number = i + 1, seed = seed + i, ambient = ambient,
@@ -217,7 +247,8 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                FeldSwitch(dragging, { dragging = it }); Spacer(Modifier.width(8.dp))
+                FeldSwitch(dragging, { dragging = it })
+                Spacer(Modifier.width(8.dp))
                 Text("drag state (heartbeat diamond)", color = Color.White)
             }
         }
@@ -227,23 +258,28 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
             FeldCard(
                 Modifier
                     .fillMaxWidth()
-                    .height(200.dp), seed = seed + 10,
-                ambient = ambient, decalSpec = spec
+                    .height(200.dp),
+                seed = seed + 10,
+                ambient = ambient,
+                decalSpec = spec,
             ) { Text("PANEL 200dp", color = FeldPalette.Muted) }
         }
         item {
             FeldCard(
                 Modifier
                     .fillMaxWidth()
-                    .height(380.dp), seed = seed + 11,
-                ambient = ambient, decalSpec = spec
+                    .height(380.dp),
+                seed = seed + 11,
+                ambient = ambient,
+                decalSpec = spec,
             ) { Text("DIALOG 380dp", color = FeldPalette.Muted) }
         }
 
         item { Title("MARKER FILM") }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                FeldSwitch(bake, { bake = it }); Spacer(Modifier.width(8.dp))
+                FeldSwitch(bake, { bake = it })
+                Spacer(Modifier.width(8.dp))
                 Text("bake to bitmap", color = Color.White)
             }
         }
@@ -252,11 +288,11 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                 listOf(
                     "Chalk" to FeldMarker.Chalk,
                     "Ink" to FeldMarker.Ink,
-                    "Dry" to FeldMarker.Dry
+                    "Dry" to FeldMarker.Dry,
                 ).forEachIndexed { i, (name, s) ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         Text(
                             name.uppercase(),
@@ -267,19 +303,21 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                                     s,
                                     seed + i,
                                     bakeKey = name,
-                                    bake = bake
+                                    bake = bake,
                                 )
-                                .padding(8.dp)
+                                .padding(8.dp),
                         )
                         FeldIconId.values().take(6).forEach {
                             FeldIcon(
-                                it, tint = Color.White, size = 28.dp,
+                                it,
+                                tint = Color.White,
+                                size = 28.dp,
                                 modifier = Modifier.markerFilmMaterial(
                                     s,
                                     seed + it.ordinal,
                                     bakeKey = name,
-                                    bake = bake
-                                )
+                                    bake = bake,
+                                ),
                             )
                         }
                     }
@@ -288,21 +326,26 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                FeldSwitch(stress, { stress = it }); Spacer(Modifier.width(8.dp))
+                FeldSwitch(stress, { stress = it })
+                Spacer(Modifier.width(8.dp))
                 Text("stress: 80 film icons (check scroll)", color = Color.White)
             }
         }
-        if (stress) item {
-            Box(Modifier.height(240.dp)) {
-                LazyVerticalGrid(GridCells.Fixed(8), userScrollEnabled = true) {
-                    items(80) { i ->
-                        val id = FeldIconId.values()[i % FeldIconId.values().size]
-                        FeldIcon(
-                            id, tint = Color.White, size = 28.dp,
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .markerFilmMaterial(FeldMarker.Chalk, i, bakeKey = id, bake = bake)
-                        )
+        if (stress) {
+            item {
+                Box(Modifier.height(240.dp)) {
+                    LazyVerticalGrid(GridCells.Fixed(8), userScrollEnabled = true) {
+                        items(80) { i ->
+                            val id = FeldIconId.values()[i % FeldIconId.values().size]
+                            FeldIcon(
+                                id,
+                                tint = Color.White,
+                                size = 28.dp,
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .markerFilmMaterial(FeldMarker.Chalk, i, bakeKey = id, bake = bake),
+                            )
+                        }
                     }
                 }
             }
@@ -314,25 +357,25 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                 Text(
                     "REEL NO. 4/SIDE B/SEGMENT 0023-0045",
                     style = FeldDecalType.Base.copy(fontSize = 12.sp, lineHeight = 16.sp),
-                    color = FeldPalette.Muted
+                    color = FeldPalette.Muted,
                 )
                 Text(
                     "TECHNICAL REVIEW: OK - J.M. 10/26/83",
                     style = FeldDecalType.Base.copy(
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
                     ),
-                    color = FeldPalette.Muted
+                    color = FeldPalette.Muted,
                 )
                 Text(
                     "FELD • PLAYBACK • DEVICE",
                     style = FeldDecalType.Label.copy(fontSize = 16.sp),
-                    color = FeldPalette.Cream
+                    color = FeldPalette.Cream,
                 )
                 Text(
                     "REC. 0024-B   73   74",
                     style = FeldDecalType.Label.copy(fontSize = 22.sp),
-                    color = FeldPalette.Orange
+                    color = FeldPalette.Orange,
                 )
             }
         }
@@ -341,20 +384,14 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Title(t: String) =
-    Text(
-        t,
-        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
-        color = FeldPalette.Muted
-    )
+private fun Title(t: String) = Text(
+    t,
+    style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 2.sp),
+    color = FeldPalette.Muted,
+)
 
 @Composable
-private fun LabeledSlider(
-    label: String,
-    v: Float,
-    range: ClosedFloatingPointRange<Float>,
-    onChange: (Float) -> Unit
-) {
+private fun LabeledSlider(label: String, v: Float, range: ClosedFloatingPointRange<Float>, onChange: (Float) -> Unit) {
     Column {
         Text(label, color = Color.White, style = MaterialTheme.typography.labelSmall)
         Slider(v, onChange, valueRange = range)

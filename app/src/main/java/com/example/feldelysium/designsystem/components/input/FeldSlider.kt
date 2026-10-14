@@ -103,8 +103,9 @@ fun FeldSlider(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text((label ?: "").uppercase(), style = MaterialTheme.typography.labelMedium, color = FeldPalette.Muted)
-                if (valueText != null)
+                if (valueText != null) {
                     Text(valueText(value), style = MaterialTheme.typography.labelMedium, color = FeldPalette.Cream)
+                }
             }
         }
 
@@ -115,7 +116,10 @@ fun FeldSlider(
                 .onSizeChanged { widthPx = it.width }
                 .semantics {
                     progressBarRangeInfo = ProgressBarRangeInfo(value, valueRange)
-                    setProgress { v -> onValueChange(v.coerceIn(valueRange)); true }
+                    setProgress { v ->
+                        onValueChange(v.coerceIn(valueRange))
+                        true
+                    }
                 }
                 .pointerInput(valueRange, thumbW) {
                     awaitEachGesture {
@@ -133,9 +137,15 @@ fun FeldSlider(
                             val ev = awaitPointerEvent()
                             val c = ev.changes.firstOrNull { it.id == down.id } ?: break
                             if (c.isConsumed && !drag) break
-                            if (!c.pressed) { if (!drag) setFromX(c.position.x); break }
+                            if (!c.pressed) {
+                                if (!drag) setFromX(c.position.x)
+                                break
+                            }
                             if (!drag && abs(c.position.x - down.position.x) > viewConfiguration.touchSlop) drag = true
-                            if (drag) { setFromX(c.position.x); c.consume() }
+                            if (drag) {
+                                setFromX(c.position.x)
+                                c.consume()
+                            }
                         }
                         pressed = false
                         currentFinished?.invoke()
@@ -156,7 +166,8 @@ fun FeldSlider(
                     .graphicsLayer {
                         translationX = fractionState.value * (widthPx - thumbW).coerceAtLeast(0f)
                         val s = 1f + 0.12f * pressState.value
-                        scaleX = s; scaleY = s
+                        scaleX = s
+                        scaleY = s
                     }
                     .sliderThumb(thumb, seed + 5) { pressState.value },
             )
@@ -164,50 +175,47 @@ fun FeldSlider(
     }
 }
 
-private fun Modifier.sliderTrack(
-    fill: Color,
-    off: Color,
-    seed: Int,
-    thumbW: Float,
-    fraction: () -> Float,
-): Modifier = drawWithCache {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val shader = RuntimeShader(SLIDER_TRACK_AGSL).apply {
-            setFloatUniform("size", size.width, size.height)
-            setFloatUniform("seed", seed.mod(97).toFloat())
-            setFloatUniform("u", density)
-            setFloatUniform("fadeW", 18.dp.toPx())
-            setColorUniform("fillColor", fill.toArgb())
-            setColorUniform("offColor", off.toArgb())
-        }
-        val brush = ShaderBrush(shader)
-        onDrawWithContent {
-            shader.setFloatUniform("fillX", thumbW / 2f + fraction() * (size.width - thumbW))
-            drawRect(brush)
-        }
-    } else {
-        onDrawWithContent {
-            val r = CornerRadius(size.height / 2f)
-            drawRoundRect(off, cornerRadius = r)
-            val x = thumbW / 2f + fraction() * (size.width - thumbW)
-            clipRect(right = x) { drawRoundRect(fill, cornerRadius = r) }
+private fun Modifier.sliderTrack(fill: Color, off: Color, seed: Int, thumbW: Float, fraction: () -> Float): Modifier =
+    drawWithCache {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val shader = RuntimeShader(SLIDER_TRACK_AGSL).apply {
+                setFloatUniform("size", size.width, size.height)
+                setFloatUniform("seed", seed.mod(97).toFloat())
+                setFloatUniform("u", density)
+                setFloatUniform("fadeW", 18.dp.toPx())
+                setColorUniform("fillColor", fill.toArgb())
+                setColorUniform("offColor", off.toArgb())
+            }
+            val brush = ShaderBrush(shader)
+            onDrawWithContent {
+                shader.setFloatUniform("fillX", thumbW / 2f + fraction() * (size.width - thumbW))
+                drawRect(brush)
+            }
+        } else {
+            onDrawWithContent {
+                val r = CornerRadius(size.height / 2f)
+                drawRoundRect(off, cornerRadius = r)
+                val x = thumbW / 2f + fraction() * (size.width - thumbW)
+                clipRect(right = x) { drawRoundRect(fill, cornerRadius = r) }
+            }
         }
     }
-}
 
-private fun Modifier.sliderThumb(
-    kind: FeldThumb,
-    seed: Int,
-    press: () -> Float,
-): Modifier = drawWithCache {
+private fun Modifier.sliderThumb(kind: FeldThumb, seed: Int, press: () -> Float): Modifier = drawWithCache {
     val w = size.width
     val h = size.height
     val path = Path().apply {
         when (kind) {
             FeldThumb.Diamond -> {
-                moveTo(w / 2f, 0f); lineTo(w, h / 2f); lineTo(w / 2f, h); lineTo(0f, h / 2f); close()
+                moveTo(w / 2f, 0f)
+                lineTo(w, h / 2f)
+                lineTo(w / 2f, h)
+                lineTo(0f, h / 2f)
+                close()
             }
+
             FeldThumb.Circle -> addOval(androidx.compose.ui.geometry.Rect(0f, 0f, w, h))
+
             FeldThumb.Rectangle -> addRoundRect(RoundRect(0f, 0f, w, h, CornerRadius(3.dp.toPx())))
         }
     }
@@ -237,12 +245,27 @@ private fun FeldSliderPreview() {
         var b by remember { mutableFloatStateOf(0.45f) }
         var c by remember { mutableFloatStateOf(0.8f) }
         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            FeldSlider(a, { a = it }, accent = FeldSliderColors.Teal, label = "Volume",
-                valueText = { "${(it * 100).toInt()}%" })
-            FeldSlider(b, { b = it }, accent = FeldSliderColors.Orange, label = "Brightness",
-                valueText = { "${(it * 100).toInt()}%" })
-            FeldSlider(c, { c = it }, accent = FeldSliderColors.Cream, label = "Progress",
-                thumb = FeldThumb.Circle)
+            FeldSlider(
+                a,
+                { a = it },
+                accent = FeldSliderColors.Teal,
+                label = "Volume",
+                valueText = { "${(it * 100).toInt()}%" },
+            )
+            FeldSlider(
+                b,
+                { b = it },
+                accent = FeldSliderColors.Orange,
+                label = "Brightness",
+                valueText = { "${(it * 100).toInt()}%" },
+            )
+            FeldSlider(
+                c,
+                { c = it },
+                accent = FeldSliderColors.Cream,
+                label = "Progress",
+                thumb = FeldThumb.Circle,
+            )
         }
     }
 }

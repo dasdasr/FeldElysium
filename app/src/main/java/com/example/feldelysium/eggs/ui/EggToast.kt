@@ -51,8 +51,7 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
-private fun skillColor(skill: Speaker): Color =
-    Color(skill.colorArgb)
+private fun skillColor(skill: Speaker): Color = Color(skill.colorArgb)
 
 private class ToastView(val skill: Speaker, val text: String, val check: String?)
 
@@ -63,24 +62,27 @@ private fun EggReply.toView() = ToastView(
 )
 
 @Composable
-internal fun EggToast(
-    toast: EasterEggs.ActiveToast,
-    onDismiss: (Long) -> Unit,
-) {
+internal fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) {
     val view = remember(toast.id) { toast.reply.toView() }
     val accent = skillColor(view.skill)
     val seed = remember(toast.id) { toast.id.toInt() * 31 + view.text.hashCode() }
 
     val deadline = remember(toast.id) {
-        if (toast.durationMillis >= Long.MAX_VALUE / 2) Long.MAX_VALUE
-        else SystemClock.elapsedRealtime() + toast.durationMillis
+        if (toast.durationMillis >= Long.MAX_VALUE / 2) {
+            Long.MAX_VALUE
+        } else {
+            SystemClock.elapsedRealtime() + toast.durationMillis
+        }
     }
     var held by remember(toast.id) { mutableStateOf(false) }
 
     LaunchedEffect(toast.id, held) {
         if (held) return@LaunchedEffect
-        val left = if (deadline == Long.MAX_VALUE) Long.MAX_VALUE
-        else deadline - SystemClock.elapsedRealtime()
+        val left = if (deadline == Long.MAX_VALUE) {
+            Long.MAX_VALUE
+        } else {
+            deadline - SystemClock.elapsedRealtime()
+        }
         delay(left.coerceAtLeast(ToastReleaseGraceMs).milliseconds)
         onDismiss(toast.id)
     }
@@ -192,16 +194,23 @@ internal fun List<Offset>.toPath(): Path = Path().apply {
 
 internal fun chamferRectPoints(
     r: Rect,
-    cutTL: Float, cutTR: Float, cutBR: Float, cutBL: Float,
+    cutTL: Float,
+    cutTR: Float,
+    cutBR: Float,
+    cutBL: Float,
     step: Float,
     jitter: Float,
     rnd: Random,
 ): List<Offset> {
     val corners = listOf(
-        Offset(r.left + cutTL, r.top), Offset(r.right - cutTR, r.top),
-        Offset(r.right, r.top + cutTR), Offset(r.right, r.bottom - cutBR),
-        Offset(r.right - cutBR, r.bottom), Offset(r.left + cutBL, r.bottom),
-        Offset(r.left, r.bottom - cutBL), Offset(r.left, r.top + cutTL),
+        Offset(r.left + cutTL, r.top),
+        Offset(r.right - cutTR, r.top),
+        Offset(r.right, r.top + cutTR),
+        Offset(r.right, r.bottom - cutBR),
+        Offset(r.right - cutBR, r.bottom),
+        Offset(r.left + cutBL, r.bottom),
+        Offset(r.left, r.bottom - cutBL),
+        Offset(r.left, r.top + cutTL),
     )
     val out = ArrayList<Offset>()
     for (i in corners.indices) {

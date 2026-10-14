@@ -10,30 +10,44 @@ import androidx.compose.ui.unit.sp
 import kotlin.random.Random
 
 internal fun buildDecal(
-    kind: DecalKind, rng: Random, ctx: DecalContext, spec: DecalSpec,
-    density: Density, ld: LayoutDirection, measurer: TextMeasurer, cardSize: Size,
+    kind: DecalKind,
+    rng: Random,
+    ctx: DecalContext,
+    spec: DecalSpec,
+    density: Density,
+    ld: LayoutDirection,
+    measurer: TextMeasurer,
+    cardSize: Size,
 ): Decal? {
     val d = density.density
     fun r(lo: Float, hi: Float) = lo + rng.nextFloat() * (hi - lo)
 
-    fun layout(s: String, base: TextStyle, sizeSp: Float): TextLayoutResult =
-        measurer.measure(
-            s, base.copy(fontSize = sizeSp.sp, lineHeight = (sizeSp * 1.35f).sp),
-            softWrap = false, layoutDirection = ld, density = density,
-        )
+    fun layout(s: String, base: TextStyle, sizeSp: Float): TextLayoutResult = measurer.measure(
+        s,
+        base.copy(fontSize = sizeSp.sp, lineHeight = (sizeSp * 1.35f).sp),
+        softWrap = false,
+        layoutDirection = ld,
+        density = density,
+    )
 
     return when (kind) {
         DecalKind.Ruler -> RulerDecal(
-            r(60f, 120f) * d, 8f * d, r(3f, 4.5f) * d,
-            if (rng.nextBoolean()) 5 else 4, 0.7f * d
+            r(60f, 120f) * d,
+            8f * d,
+            r(3f, 4.5f) * d,
+            if (rng.nextBoolean()) 5 else 4,
+            0.7f * d,
         )
 
         DecalKind.Perforation, DecalKind.FilmStrip -> {
             val vertical = cardSize.height / d >= 140f && rng.nextBoolean()
             val edge = if (vertical) cardSize.height else cardSize.width
             val hole = 2.4f * d
-            val text = if (kind == DecalKind.FilmStrip)
-                layout(DecalText.strip(rng, ctx), FeldDecalType.Base, r(5.5f, 6.5f)) else null
+            val text = if (kind == DecalKind.FilmStrip) {
+                layout(DecalText.strip(rng, ctx), FeldDecalType.Base, r(5.5f, 6.5f))
+            } else {
+                null
+            }
             val thick = if (text != null) hole * 2 + text.size.height + 3f * d else hole
             var len = edge * r(0.45f, 0.85f)
             if (text != null) len = maxOf(len, text.size.width + 14f * d)
@@ -44,8 +58,11 @@ internal fun buildDecal(
         DecalKind.Text -> {
             val label = rng.nextFloat() < 0.4f
             TextDecal(
-                if (label) layout(DecalText.text(rng, ctx), FeldDecalType.Label, r(7f, 8.5f))
-                else layout(DecalText.text(rng, ctx), FeldDecalType.Base, r(6f, 8f)),
+                if (label) {
+                    layout(DecalText.text(rng, ctx), FeldDecalType.Label, r(7f, 8.5f))
+                } else {
+                    layout(DecalText.text(rng, ctx), FeldDecalType.Base, r(6f, 8f))
+                },
             )
         }
 
@@ -53,19 +70,20 @@ internal fun buildDecal(
             layout(
                 DecalText.dataBlock(rng, ctx),
                 FeldDecalType.Base,
-                r(5.8f, 6.8f)
-            )
+                r(5.8f, 6.8f),
+            ),
         )
 
         DecalKind.Counter -> TextDecal(
             layout(
                 DecalText.counter(rng, ctx),
                 FeldDecalType.Label,
-                r(8f, 11f)
-            )
+                r(8f, 11f),
+            ),
         )
 
         DecalKind.Glyph -> GlyphDecal(GlyphShape.values().random(rng), r(7f, 11f) * d, 0.7f * d)
+
         DecalKind.Mark -> {
             val shape = MarkShape.values().random(rng)
             val big = shape == MarkShape.Circle
