@@ -4,7 +4,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -132,14 +131,18 @@ private fun FeldButtonPreview() {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 FeldButton("Cancel", {}, Modifier.weight(1f), seed = 21)
                 FeldButton(
-                    "Save", {}, Modifier.weight(1f),
+                    "Save",
+                    {},
+                    Modifier.weight(1f),
                     seed = 8,
                     spec = FeldButtonDefaults.Orange,
                     icon = { Icon(Icons.Default.Check, null, Modifier.size(20.dp)) },
                 )
             }
             FeldButton(
-                "Delete line", {}, Modifier.fillMaxWidth(),
+                "Delete line",
+                {},
+                Modifier.fillMaxWidth(),
                 seed = 3,
                 spec = FeldButtonDefaults.Orange,
                 minHeight = 72.dp,

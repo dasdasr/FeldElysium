@@ -68,7 +68,8 @@ fun discoSwitchColors() = SwitchDefaults.colors(
 private val LocalDiscoColors = staticCompositionLocalOf { DiscoExtraColors() }
 
 val MaterialTheme.disco: DiscoExtraColors
-    @Composable @ReadOnlyComposable get() = LocalDiscoColors.current
+    @Composable @ReadOnlyComposable
+    get() = LocalDiscoColors.current
 
 @Composable
 fun DiscoDialogueTheme(content: @Composable () -> Unit) {
@@ -76,7 +77,7 @@ fun DiscoDialogueTheme(content: @Composable () -> Unit) {
         MaterialTheme(
             colorScheme = DiscoColorScheme,
             typography = FeldTypography,
-            content = content
+            content = content,
         )
     }
 }

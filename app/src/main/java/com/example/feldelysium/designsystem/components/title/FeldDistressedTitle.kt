@@ -93,24 +93,34 @@ private fun FeldDistressedTitlePreview() {
         ) {
             val tape = FeldTape.Cream
             val largeStyle = MaterialTheme.typography.titleLarge.copy(
-                fontSize = 52.sp, lineHeight = 54.sp, letterSpacing = 1.sp,
+                fontSize = 52.sp,
+                lineHeight = 54.sp,
+                letterSpacing = 1.sp,
             )
             Box(
                 Modifier
                     .stickerTapeMaterial(tape, seed = 3)
-                    .padding(horizontal = tape.edgeInset + 16.dp, vertical = 12.dp)
+                    .padding(horizontal = tape.edgeInset + 16.dp, vertical = 12.dp),
             ) { FeldDistressedTitle("Choose speaker", seed = 5) }
 
             Box(
                 Modifier
                     .stickerTapeMaterial(tape, seed = 9)
-                    .padding(horizontal = tape.edgeInset + 16.dp, vertical = 12.dp)
+                    .padding(horizontal = tape.edgeInset + 16.dp, vertical = 12.dp),
             ) { FeldDistressedTitle("Entry edit", seed = 12) }
 
-            FeldDistressedTitle("The final interview", seed = 2,
-                spec = FeldDistressedTitles.Large, textStyle = largeStyle)
-            FeldDistressedTitle("App settings", seed = 7,
-                spec = FeldDistressedTitles.Large, textStyle = largeStyle)
+            FeldDistressedTitle(
+                "The final interview",
+                seed = 2,
+                spec = FeldDistressedTitles.Large,
+                textStyle = largeStyle,
+            )
+            FeldDistressedTitle(
+                "App settings",
+                seed = 7,
+                spec = FeldDistressedTitles.Large,
+                textStyle = largeStyle,
+            )
         }
     }
 }

@@ -35,11 +35,31 @@ import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
-
 enum class FeldIconId {
-    Back, More, MoreHoriz, Import, Play, Reorder, Edit, Delete, Drag, Add, Close, Chevron,
-    DialogueStyle, Font, Palette, Grid, FastAdd, Timer, Voice, Image, Aspect, PlaybackText,
-    Settings, Export
+    Back,
+    More,
+    MoreHoriz,
+    Import,
+    Play,
+    Reorder,
+    Edit,
+    Delete,
+    Drag,
+    Add,
+    Close,
+    Chevron,
+    DialogueStyle,
+    Font,
+    Palette,
+    Grid,
+    FastAdd,
+    Timer,
+    Voice,
+    Image,
+    Aspect,
+    PlaybackText,
+    Settings,
+    Export,
 }
 
 @Composable
@@ -83,31 +103,37 @@ fun FeldIcon(
         modifier = modifier
             .size(size)
             .then(
-                if (film) Modifier.markerFilmMaterial(
+                if (film) {
+                    Modifier.markerFilmMaterial(
                     FeldMarker.Chalk,
                     id.ordinal,
-                    bakeKey = tint
-                ) else Modifier
+                    bakeKey = tint,
+                )
+                } else {
+                    Modifier
+                },
             ),
         tint = tint,
     )
 }
 
 @Composable
-fun FeldDiamond(
-    color: Color,
-    modifier: Modifier = Modifier,
-    size: Dp = 28.dp,
-    outline: Boolean = false,
-) {
+fun FeldDiamond(color: Color, modifier: Modifier = Modifier, size: Dp = 28.dp, outline: Boolean = false) {
     Canvas(modifier.size(size)) {
         val w = this.size.width
         val h = this.size.height
         val path = Path().apply {
-            moveTo(w / 2f, 0f); lineTo(w, h / 2f); lineTo(w / 2f, h); lineTo(0f, h / 2f); close()
+            moveTo(w / 2f, 0f);
+            lineTo(w, h / 2f);
+            lineTo(w / 2f, h);
+            lineTo(0f, h / 2f);
+            close()
         }
-        if (outline) drawPath(path, color, style = Stroke(1.5.dp.toPx()))
-        else drawPath(path, color)
+        if (outline) {
+            drawPath(path, color, style = Stroke(1.5.dp.toPx()))
+        } else {
+            drawPath(path, color)
+        }
     }
 }
 

@@ -110,7 +110,7 @@ fun FeldCard(
                 wear = { reveal["wear"] },
                 press = { press },
                 time = time,
-                decals = decals
+                decals = decals,
             )
             .then(
                 if (onClick != null) {
@@ -121,7 +121,7 @@ fun FeldCard(
                     )
                 } else {
                     Modifier
-                }
+                },
             )
             .padding(contentPadding),
         content = content,
@@ -159,10 +159,7 @@ private fun FeldCardPreview() {
 }
 
 @Composable
-private fun SampleCard(
-    seed: Int = rememberSeed(),
-    spec: PaperSpec = FeldPaper.Panel,
-) {
+private fun SampleCard(seed: Int = rememberSeed(), spec: PaperSpec = FeldPaper.Panel) {
     FeldCard(
         modifier = Modifier.fillMaxWidth(),
         seed = seed,

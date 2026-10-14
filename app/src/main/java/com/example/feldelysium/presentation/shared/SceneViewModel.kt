@@ -24,33 +24,32 @@ class SceneViewModel : ViewModel() {
     fun dispatch(action: SceneAction) = _state.update { reduce(it, action) }
 
     private fun reduce(current: SceneState, action: SceneAction): SceneState = when (action) {
-
         is SceneAction.AddEntry -> current.copy(
-            scene = current.scene.copy(entries = current.scene.entries + action.entry)
+            scene = current.scene.copy(entries = current.scene.entries + action.entry),
         )
 
         is SceneAction.DeleteEntry -> current.copy(
             scene = current.scene.copy(
-                entries = current.scene.entries.filter { it.id != action.entryId }
-            )
+                entries = current.scene.entries.filter { it.id != action.entryId },
+            ),
         )
 
         is SceneAction.UpdateEntry -> current.copy(
             scene = current.scene.copy(
                 entries = current.scene.entries.map {
                     if (it.id == action.entry.id) action.entry else it
-                }
-            )
+                },
+            ),
         )
 
         is SceneAction.ReorderEntries -> current.copy(
-            scene = current.scene.copy(entries = action.entries)
+            scene = current.scene.copy(entries = action.entries),
         )
 
         is SceneAction.BulkAddEntries -> current.copy(
             scene = current.scene.copy(
-                entries = current.scene.entries + action.entries
-            )
+                entries = current.scene.entries + action.entries,
+            ),
         )
 
         is SceneAction.AddCustomSpeaker -> {
@@ -60,30 +59,32 @@ class SceneViewModel : ViewModel() {
 
         is SceneAction.UpdateCustomSpeaker -> {
             val updated = action.speaker.copy(type = SpeakerType.CUSTOM)
-            if (current.customSpeakers.none { it.id == updated.id }) current
-            else current.copy(
+            if (current.customSpeakers.none { it.id == updated.id }) {
+                current
+            } else {
+                current.copy(
                 customSpeakers = current.customSpeakers.map {
                     if (it.id == updated.id) updated else it
                 },
                 scene = current.scene.copy(
                     entries = current.scene.entries.map { entry ->
                         if (entry.speaker.id == updated.id) entry.copy(speaker = updated) else entry
-                    }
-                )
+                    },
+                ),
             )
+            }
         }
 
         is SceneAction.RemoveCustomSpeaker -> current.copy(
-            customSpeakers = current.customSpeakers.filter { it.id != action.speakerId }
+            customSpeakers = current.customSpeakers.filter { it.id != action.speakerId },
         )
 
-
         is SceneAction.RenameScene -> current.copy(
-            scene = current.scene.copy(title = action.title)
+            scene = current.scene.copy(title = action.title),
         )
 
         SceneAction.ClearScene -> current.copy(
-            scene = current.scene.copy(entries = emptyList())
+            scene = current.scene.copy(entries = emptyList()),
         )
 
         is SceneAction.SyncSpeakers -> {
@@ -96,10 +97,13 @@ class SceneViewModel : ViewModel() {
                     ?: entry
             }
 
-            if (updated == current.scene.entries) current
-            else current.copy(
-                scene = current.scene.copy(entries = updated)
+            if (updated == current.scene.entries) {
+                current
+            } else {
+                current.copy(
+                scene = current.scene.copy(entries = updated),
             )
+            }
         }
     }
 }

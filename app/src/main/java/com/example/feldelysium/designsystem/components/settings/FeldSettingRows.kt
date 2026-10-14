@@ -46,7 +46,9 @@ fun FeldSettingRow(
 ) {
     val clickable = if (enabled && onClick != null) {
         Modifier.feldClickable(role = role, onClick = onClick)
-    } else Modifier
+    } else {
+        Modifier
+    }
 
     Row(
         modifier = modifier
@@ -154,7 +156,7 @@ fun FeldSettingSwitchRow(
         trailing = {
             FeldSwitch(
                 checked = checked,
-                onCheckedChange = {  },
+                onCheckedChange = { },
                 seed = seed,
             )
         },

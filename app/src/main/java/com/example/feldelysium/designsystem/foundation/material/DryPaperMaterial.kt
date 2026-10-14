@@ -36,46 +36,43 @@ data class DryPaperSpec(
     val pressShade: Float = 0.06f,
 )
 
-fun Modifier.dryPaperMaterial(
-    spec: DryPaperSpec,
-    seed: Int = 0,
-    press: () -> Float = { 0f },
-): Modifier = drawWithCache {
-    val rim = 1.dp.toPx()
+fun Modifier.dryPaperMaterial(spec: DryPaperSpec, seed: Int = 0, press: () -> Float = { 0f }): Modifier =
+    drawWithCache {
+        val rim = 1.dp.toPx()
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val shader = RuntimeShader(DRY_PAPER_AGSL).apply {
-            setFloatUniform("size", size.width, size.height)
-            setFloatUniform("seed", seed.mod(97).toFloat())
-            setFloatUniform("rim", rim)
-            setFloatUniform("tearDepth", spec.tearDepth.toPx())
-            setFloatUniform("tearScale", spec.tearScale.toPx())
-            setFloatUniform("tearCoverage", spec.tearCoverage)
-            setFloatUniform("bow", spec.bow.toPx())
-            setFloatUniform("crackScale", spec.crackScale.toPx())
-            setFloatUniform("crackDepth", spec.crackDepth.toPx())
-            setFloatUniform("crackWidth", spec.crackWidth.toPx())
-            setFloatUniform("crackStrength", spec.crackStrength)
-            setFloatUniform("crackCoverage", spec.crackCoverage)
-            setFloatUniform("grainScale", spec.grainScale.toPx())
-            setFloatUniform("grainStrength", spec.grainStrength)
-            setFloatUniform("fiberStrength", spec.fiberStrength)
-            setFloatUniform("mottleScale", spec.mottleScale.toPx())
-            setFloatUniform("mottleStrength", spec.mottleStrength)
-            setFloatUniform("pressShade", spec.pressShade)
-            setColorUniform("baseColor", spec.base.toArgb())
-            setColorUniform("crackColor", spec.crack.toArgb())
-        }
-        val brush = ShaderBrush(shader)
-        onDrawWithContent {
-            shader.setFloatUniform("press", press())
-            drawRect(brush)
-            drawContent()
-        }
-    } else {
-        onDrawWithContent {
-            drawRect(spec.base)
-            drawContent()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val shader = RuntimeShader(DRY_PAPER_AGSL).apply {
+                setFloatUniform("size", size.width, size.height)
+                setFloatUniform("seed", seed.mod(97).toFloat())
+                setFloatUniform("rim", rim)
+                setFloatUniform("tearDepth", spec.tearDepth.toPx())
+                setFloatUniform("tearScale", spec.tearScale.toPx())
+                setFloatUniform("tearCoverage", spec.tearCoverage)
+                setFloatUniform("bow", spec.bow.toPx())
+                setFloatUniform("crackScale", spec.crackScale.toPx())
+                setFloatUniform("crackDepth", spec.crackDepth.toPx())
+                setFloatUniform("crackWidth", spec.crackWidth.toPx())
+                setFloatUniform("crackStrength", spec.crackStrength)
+                setFloatUniform("crackCoverage", spec.crackCoverage)
+                setFloatUniform("grainScale", spec.grainScale.toPx())
+                setFloatUniform("grainStrength", spec.grainStrength)
+                setFloatUniform("fiberStrength", spec.fiberStrength)
+                setFloatUniform("mottleScale", spec.mottleScale.toPx())
+                setFloatUniform("mottleStrength", spec.mottleStrength)
+                setFloatUniform("pressShade", spec.pressShade)
+                setColorUniform("baseColor", spec.base.toArgb())
+                setColorUniform("crackColor", spec.crack.toArgb())
+            }
+            val brush = ShaderBrush(shader)
+            onDrawWithContent {
+                shader.setFloatUniform("press", press())
+                drawRect(brush)
+                drawContent()
+            }
+        } else {
+            onDrawWithContent {
+                drawRect(spec.base)
+                drawContent()
+            }
         }
     }
-}

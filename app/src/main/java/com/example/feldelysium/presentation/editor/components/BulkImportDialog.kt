@@ -60,7 +60,7 @@ fun BulkImportDialog(
             (PredefinedSpeakers.ALL + speakers).forEach {
                 put(
                     it.name.uppercase(),
-                    Color(it.colorArgb)
+                    Color(it.colorArgb),
                 )
             }
         }
@@ -100,9 +100,7 @@ fun BulkImportDialog(
     }
 }
 
-private class SpeakerHeaderTransformation(
-    private val colors: Map<String, Color>,
-) : VisualTransformation {
+private class SpeakerHeaderTransformation(private val colors: Map<String, Color>) : VisualTransformation {
 
     private val newSpeakerColor = Color(Speaker.DEFAULT_CUSTOM_COLOR)
 

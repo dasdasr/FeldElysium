@@ -23,10 +23,7 @@ import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 
 @Composable
-fun PlaybackBackground(
-    settings: AppSettings,
-    modifier: Modifier = Modifier,
-) {
+fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val mediaOk = remember(settings.backgroundMediaUri) {
         settings.backgroundMediaUri.isNotBlank() && runCatching {
@@ -94,7 +91,10 @@ fun BackgroundVideo(
                 factory = { ctx ->
                     VideoView(ctx).apply {
                         setVideoURI(Uri.parse(uri))
-                        setOnErrorListener { _, _, _ -> onError(); true }
+                        setOnErrorListener { _, _, _ ->
+                            onError();
+                            true
+                        }
                         setOnPreparedListener { mp ->
                             mp.isLooping = true
                             mp.setVolume(0f, 0f)

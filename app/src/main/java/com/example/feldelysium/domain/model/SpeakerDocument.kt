@@ -1,11 +1,6 @@
 package com.example.feldelysium.domain.model
 
-data class TagData(
-    val id: String,
-    val name: String,
-    val color: Long? = null,
-    val sound: String? = null,
-)
+data class TagData(val id: String, val name: String, val color: Long? = null, val sound: String? = null)
 
 data class SpeakerData(
     val id: String,
@@ -15,7 +10,4 @@ data class SpeakerData(
     val icon: String? = null,
 )
 
-data class SpeakerDocument(
-    val tags: List<TagData> = emptyList(),
-    val speakers: List<SpeakerData> = emptyList(),
-)
+data class SpeakerDocument(val tags: List<TagData> = emptyList(), val speakers: List<SpeakerData> = emptyList())

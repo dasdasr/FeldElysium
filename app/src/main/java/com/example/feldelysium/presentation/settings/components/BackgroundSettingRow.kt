@@ -2,7 +2,6 @@ package com.example.feldelysium.presentation.settings.components
 
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
@@ -44,7 +44,6 @@ import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import androidx.core.net.toUri
 
 @Composable
 fun FeldBackgroundRow(

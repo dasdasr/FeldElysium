@@ -16,7 +16,6 @@ import androidx.compose.ui.util.lerp
 import com.example.feldelysium.designsystem.foundation.decal.DecalLayer
 import com.example.feldelysium.designsystem.foundation.decal.DecalPlan
 import com.example.feldelysium.designsystem.foundation.decal.drawDecals
-import androidx.compose.ui.graphics.lerp as lerpColor
 import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
@@ -24,6 +23,7 @@ import com.example.feldelysium.designsystem.foundation.shape.buildInkLayers
 import com.example.feldelysium.designsystem.foundation.shape.drawInk
 import kotlin.math.PI
 import kotlin.math.sin
+import androidx.compose.ui.graphics.lerp as lerpColor
 
 @Immutable
 data class PaperSpec(
@@ -228,8 +228,11 @@ fun Modifier.paperMaterial(
 ): Modifier = drawWithCache {
     val path = shape.buildPath(size, this)
     val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
-    val inkLayers = if (spec.inkWidth.value > 0f)
-        shape.buildInkLayers(path, this, spec.inkWidth.toPx()) else emptyList()
+    val inkLayers = if (spec.inkWidth.value > 0f) {
+        shape.buildInkLayers(path, this, spec.inkWidth.toPx())
+    } else {
+        emptyList()
+    }
     val sinkBand = spec.sinkBand.toPx()
     val seed = shape.seed.mod(97).toFloat()
     val rim = shape.rimPx(this)
@@ -309,8 +312,11 @@ fun Modifier.paperMaterialMorph(
     wearBump: Float = 0.15f,
 ): Modifier = drawWithCache {
     val path = shape.buildPath(size, this)
-    val inkLayers = if (from.inkWidth.value > 0f)
-        shape.buildInkLayers(path, this, from.inkWidth.toPx()) else emptyList()
+    val inkLayers = if (from.inkWidth.value > 0f) {
+        shape.buildInkLayers(path, this, from.inkWidth.toPx())
+    } else {
+        emptyList()
+    }
     val seed = shape.seed.mod(97).toFloat()
     val rim = shape.rimPx(this)
 
@@ -339,11 +345,9 @@ fun Modifier.paperMaterialMorph(
             val t = progress().coerceIn(0f, 1f)
             val bump = sin(PI.toFloat() * t)
 
-            fun f(name: String, a: Float, b: Float) =
-                paper.setFloatUniform(name, lerp(a, b, t))
+            fun f(name: String, a: Float, b: Float) = paper.setFloatUniform(name, lerp(a, b, t))
 
-            fun px(name: String, a: Dp, b: Dp) =
-                paper.setFloatUniform(name, lerp(a.toPx(), b.toPx(), t))
+            fun px(name: String, a: Dp, b: Dp) = paper.setFloatUniform(name, lerp(a.toPx(), b.toPx(), t))
 
             f("wear", from.wear, to.wear)
             paper.setFloatUniform("wear", lerp(from.wear, to.wear, t) + bump * wearBump)

@@ -16,78 +16,45 @@ import androidx.compose.runtime.remember
 import kotlin.random.Random
 
 @Immutable
-data class FeldAnimationValues(
-    val values: Map<String, Float>,
-) {
-    operator fun get(key: String): Float {
-        return values[key] ?: 0f
-    }
+data class FeldAnimationValues(val values: Map<String, Float>) {
+    operator fun get(key: String): Float = values[key] ?: 0f
 
-    fun getOrDefault(
-        key: String,
-        default: Float,
-    ): Float {
-        return values[key] ?: default
-    }
+    fun getOrDefault(key: String, default: Float): Float = values[key] ?: default
 
     companion object {
-        operator fun invoke(
-            vararg values: Pair<String, Float>,
-        ): FeldAnimationValues {
-            return FeldAnimationValues(values.toMap())
-        }
+        operator fun invoke(vararg values: Pair<String, Float>): FeldAnimationValues =
+            FeldAnimationValues(values.toMap())
     }
 }
 
 @Immutable
-data class FeldAnimationState(
-    val values: Map<String, Float>,
-) {
-    operator fun get(key: String): Float {
-        return values[key] ?: 0f
-    }
+data class FeldAnimationState(val values: Map<String, Float>) {
+    operator fun get(key: String): Float = values[key] ?: 0f
 
-    fun getOrDefault(
-        key: String,
-        default: Float,
-    ): Float {
-        return values[key] ?: default
-    }
+    fun getOrDefault(key: String, default: Float): Float = values[key] ?: default
 }
 
 @Stable
 fun interface FeldAnimation {
     @Composable
-    operator fun invoke(
-        values: FeldAnimationValues,
-    ): FeldAnimationState
+    operator fun invoke(values: FeldAnimationValues): FeldAnimationState
 }
 
 @Stable
 fun interface FeldInteractionAnimation {
     @Composable
-    operator fun invoke(
-        values: FeldAnimationValues,
-        active: Boolean,
-    ): FeldAnimationState
+    operator fun invoke(values: FeldAnimationValues, active: Boolean): FeldAnimationState
 }
 
 @Composable
-fun feldAnimate(
-    values: FeldAnimationValues,
-    animation: FeldAnimation,
-): FeldAnimationState {
-    return animation(values)
-}
+fun feldAnimate(values: FeldAnimationValues, animation: FeldAnimation): FeldAnimationState = animation(values)
 
 @Composable
 fun feldAnimate(
     values: FeldAnimationValues,
     animation: FeldInteractionAnimation,
     active: Boolean,
-): FeldAnimationState {
-    return animation(values, active)
-}
+): FeldAnimationState = animation(values, active)
 
 object FeldAnimations {
 
@@ -148,8 +115,8 @@ object FeldAnimations {
             val factors = remember(values, multiplier, seed) {
                 values.values.keys.associateWith {
                     multiplier.start +
-                            random.nextFloat() *
-                            (multiplier.endInclusive - multiplier.start)
+                        random.nextFloat() *
+                        (multiplier.endInclusive - multiplier.start)
                 }
             }
 
@@ -251,27 +218,25 @@ object FeldAnimations {
 
     object Change {
 
-        fun smooth(
-            durationMillis: Int = 220,
-            easing: Easing = FastOutSlowInEasing,
-        ): FeldAnimation = FeldAnimation { values ->
+        fun smooth(durationMillis: Int = 220, easing: Easing = FastOutSlowInEasing): FeldAnimation =
+            FeldAnimation { values ->
 
-            val animated = values.values.mapValues { (_, value) ->
+                val animated = values.values.mapValues { (_, value) ->
 
-                val animatedValue by animateFloatAsState(
-                    targetValue = value,
-                    animationSpec = tween(
-                        durationMillis = durationMillis,
-                        easing = easing,
-                    ),
-                    label = "feldChange",
-                )
+                    val animatedValue by animateFloatAsState(
+                        targetValue = value,
+                        animationSpec = tween(
+                            durationMillis = durationMillis,
+                            easing = easing,
+                        ),
+                        label = "feldChange",
+                    )
 
-                animatedValue
+                    animatedValue
+                }
+
+                FeldAnimationState(animated)
             }
-
-            FeldAnimationState(animated)
-        }
     }
 
     object SpringAnim {
@@ -302,10 +267,4 @@ object FeldAnimations {
 
 private val RevealEasing = FastOutSlowInEasing
 
-private fun lerp(
-    start: Float,
-    end: Float,
-    fraction: Float,
-): Float {
-    return start + (end - start) * fraction
-}
+private fun lerp(start: Float, end: Float, fraction: Float): Float = start + (end - start) * fraction

@@ -59,25 +59,27 @@ import kotlin.math.min
 
 private val OnSpec = FeldPaper.DryButtonRust
 private val OffSpec = FeldPaper.DryButtonRust.copy(
-    base = Color(0xFF222A29), scuff = Color(0xFF141A1A),
-    mottleStrength = 0.06f, scuffTint = 0.25f,
+    base = Color(0xFF222A29),
+    scuff = Color(0xFF141A1A),
+    mottleStrength = 0.06f,
+    scuffTint = 0.25f,
 )
 private val RimSpec = FeldPaper.Panel.copy(
-    wear = 0.18f, ink = Color(0xFF8C8E8A), inkWidth = 1.2.dp, inkMinAlpha = 0.75f,
+    wear = 0.18f,
+    ink = Color(0xFF8C8E8A),
+    inkWidth = 1.2.dp,
+    inkMinAlpha = 0.75f,
 )
 
 private val Settle = spring<Float>(dampingRatio = 0.62f, stiffness = 520f)
 
 private fun smooth(x: Float): Float {
-    val t = x.coerceIn(0f, 1f); return t * t * (3f - 2f * t)
+    val t = x.coerceIn(0f, 1f);
+    return t * t * (3f - 2f * t)
 }
 
 private class SideRoundShape(private val l: Float, private val r: Float) : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
         val max = min(size.width, size.height) / 2f
         val cl = CornerRadius(l.coerceIn(0f, max))
         val cr = CornerRadius(r.coerceIn(0f, max))
@@ -120,18 +122,32 @@ fun FeldSwitch(
 
     val trackShape = remember(seed, height) {
         RoughShape(
-            seed, RoughStyle(
-                roughness = 0.4.dp, step = 18.dp, corner = height / 2, inset = 0.dp,
-                cornerVariation = 0f, cornerJitter = 0f, tornChance = 0f, jerkChance = 0.03f,
-            )
+            seed,
+            RoughStyle(
+                roughness = 0.4.dp,
+                step = 18.dp,
+                corner = height / 2,
+                inset = 0.dp,
+                cornerVariation = 0f,
+                cornerJitter = 0f,
+                tornChance = 0f,
+                jerkChance = 0.03f,
+            ),
         )
     }
     val thumbShape = remember(seed) {
         RoughShape(
-            seed + 1, RoughStyle(
-                roughness = 0.35.dp, step = 14.dp, corner = 1.5.dp, inset = 0.dp,
-                cornerVariation = 0.2f, cornerJitter = 0.1f, tornChance = 0f, jerkChance = 0.04f,
-            )
+            seed + 1,
+            RoughStyle(
+                roughness = 0.35.dp,
+                step = 14.dp,
+                corner = 1.5.dp,
+                inset = 0.dp,
+                cornerVariation = 0.2f,
+                cornerJitter = 0.1f,
+                tornChance = 0f,
+                jerkChance = 0.04f,
+            ),
         )
     }
 
@@ -146,7 +162,10 @@ fun FeldSwitch(
         }
     }
 
-    val gestures = if (!enabled) Modifier else Modifier.pointerInput(travelPx) {
+    val gestures = if (!enabled) {
+        Modifier
+    } else {
+        Modifier.pointerInput(travelPx) {
         awaitEachGesture {
             val down = awaitFirstDown(requireUnconsumed = false)
             pressed = true
@@ -175,7 +194,8 @@ fun FeldSwitch(
                     val dx = c.positionChange().x
                     total += dx
                     if (!drag && abs(total) > viewConfiguration.touchSlop) {
-                        drag = true; dragging = true
+                        drag = true;
+                        dragging = true
                         scope.launch(start = CoroutineStart.UNDISPATCHED) { pos.stop() }
                     }
                     if (drag) {
@@ -188,10 +208,12 @@ fun FeldSwitch(
                 }
             }
             if (!finished && drag) {
-                dragging = false; settle(0f)
+                dragging = false;
+                settle(0f)
             }
             pressed = false
         }
+    }
     }
 
     val labelStyle =
@@ -202,7 +224,8 @@ fun FeldSwitch(
             .size(width, height)
             .graphicsLayer {
                 val s = 1f - 0.03f * press
-                scaleX = s; scaleY = s
+                scaleX = s;
+                scaleY = s
                 alpha = if (enabled) 1f else 0.45f
             }
             .drawBehind {
@@ -211,16 +234,19 @@ fun FeldSwitch(
                     val r = size.height * 1.4f
                     val c = Offset(
                         inset.toPx() + travelPx / 2f + pos.value * travelPx,
-                        size.height / 2f
+                        size.height / 2f,
                     )
                     drawCircle(
                         Brush.radialGradient(
                             listOf(
                                 FeldPalette.Orange.copy(alpha = a),
-                                Color.Transparent
-                            ), c, r
+                                Color.Transparent,
+                            ),
+                            c,
+                            r,
                         ),
-                        radius = r, center = c,
+                        radius = r,
+                        center = c,
                     )
                 }
             }
@@ -228,13 +254,18 @@ fun FeldSwitch(
             .semantics(mergeDescendants = true) {
                 role = Role.Switch
                 toggleableState = ToggleableState(checked)
-                onClick { onCheckedChange(!checked); true }
+                onClick {
+                    onCheckedChange(!checked);
+                    true
+                }
             }
             .then(gestures),
     ) {
-        Box(Modifier
-            .matchParentSize()
-            .padding(inset)) {
+        Box(
+            Modifier
+                .matchParentSize()
+                .padding(inset),
+        ) {
             Box(
                 Modifier
                     .fillMaxHeight()
@@ -253,15 +284,20 @@ fun FeldSwitch(
                         clip = true
                     }
                     .paperMaterialMorph(
-                        shape = thumbShape, from = OnSpec, to = OffSpec,
-                        progress = { pos.value }, wearBump = 0.05f,
+                        shape = thumbShape,
+                        from = OnSpec,
+                        to = OffSpec,
+                        progress = { pos.value },
+                        wearBump = 0.05f,
                     ),
             )
         }
 
-        Row(Modifier
-            .matchParentSize()
-            .padding(inset)) {
+        Row(
+            Modifier
+                .matchParentSize()
+                .padding(inset),
+        ) {
             SwitchLabel("ON", labelStyle, { lerp(0.35f, 1f, 1f - pos.value) }, Modifier.weight(1f))
             SwitchLabel("OFF", labelStyle, { lerp(0.35f, 1f, pos.value) }, Modifier.weight(1f))
         }
@@ -274,7 +310,7 @@ private fun SwitchLabel(text: String, style: TextStyle, alpha: () -> Float, modi
         modifier
             .fillMaxHeight()
             .graphicsLayer { this.alpha = alpha() },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(text, style = style, color = FeldPalette.Cream)
     }

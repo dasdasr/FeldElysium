@@ -29,15 +29,19 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             is SettingsEvent.SetLockAspectRatio16x9 -> update {
                 it.copy(lockAspectRatio16x9 = event.enabled)
             }
+
             is SettingsEvent.SetPlaybackMoney -> update {
                 it.copy(playbackMoney = event.value)
             }
+
             is SettingsEvent.SetPlaybackTime -> update {
                 it.copy(playbackTime = event.value)
             }
+
             is SettingsEvent.SetPlaybackDay -> update {
                 it.copy(playbackDay = event.value)
             }
+
             SettingsEvent.ResetPlaybackUiText -> update {
                 val defaults = AppSettings()
                 it.copy(
@@ -46,12 +50,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     playbackDay = defaults.playbackDay,
                 )
             }
+
             is SettingsEvent.SetBackgroundKind -> update {
                 it.copy(backgroundKind = event.kind)
             }
+
             is SettingsEvent.SetBackgroundColor -> update {
                 it.copy(backgroundColorArgb = event.argb, backgroundKind = BackgroundKind.COLOR)
             }
+
             is SettingsEvent.SetBackgroundMedia -> {
                 persistRead(event.uri)
                 update {
@@ -62,12 +69,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     )
                 }
             }
+
             is SettingsEvent.SetBackgroundVideoSound -> update {
                 it.copy(backgroundVideoSound = event.enabled)
             }
+
             is SettingsEvent.SetBackgroundVideoFill -> update {
                 it.copy(backgroundVideoFill = event.enabled)
             }
+
             SettingsEvent.ResetBackground -> update {
                 val d = AppSettings()
                 it.copy(

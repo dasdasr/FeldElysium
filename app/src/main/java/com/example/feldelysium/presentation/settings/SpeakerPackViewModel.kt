@@ -22,10 +22,7 @@ import java.io.OutputStream
 
 class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
 
-    data class UiState(
-        val pending: ImportSpeakerPackUseCase.Prepared? = null,
-        val message: String? = null,
-    )
+    data class UiState(val pending: ImportSpeakerPackUseCase.Prepared? = null, val message: String? = null)
 
     private val repo = SpeakerStorage.repository(app)
     private val useCase = ImportSpeakerPackUseCase(repo)
@@ -34,14 +31,22 @@ class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
     val state: StateFlow<UiState> = _state.asStateFlow()
 
     val speakers = repo.speakers.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(5_000), PredefinedSpeakers.ALL,
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        PredefinedSpeakers.ALL,
     )
     val tags = repo.tags.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(5_000), PredefinedSpeakers.TAGS,
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        PredefinedSpeakers.TAGS,
     )
 
-    fun saveTag(tag: SpeakerType) { viewModelScope.launch { repo.saveTag(tag) } }
-    fun deleteTag(tag: SpeakerType) { viewModelScope.launch { repo.deleteTag(tag.id) } }
+    fun saveTag(tag: SpeakerType) {
+        viewModelScope.launch { repo.saveTag(tag) }
+    }
+    fun deleteTag(tag: SpeakerType) {
+        viewModelScope.launch { repo.deleteTag(tag.id) }
+    }
 
     fun export(output: OutputStream?, ids: Set<String>? = null) {
         if (output == null) return
@@ -56,8 +61,11 @@ class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             try {
                 val prepared = input.use { useCase.prepare(it) }
-                if (prepared.needsDecision) _state.update { it.copy(pending = prepared) }
-                else say(report(useCase.apply(prepared)))
+                if (prepared.needsDecision) {
+                    _state.update { it.copy(pending = prepared) }
+                } else {
+                    say(report(useCase.apply(prepared)))
+                }
             } catch (e: PackFormatException) {
                 say(e.message ?: "Not a speaker pack")
             } catch (_: Exception) {

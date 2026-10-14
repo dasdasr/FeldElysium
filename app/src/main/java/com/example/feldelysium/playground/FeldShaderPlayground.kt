@@ -113,8 +113,7 @@ private class ShaderDemo(
     val content: @Composable (Values, Color, Int, Modifier) -> Unit,
 )
 
-private fun p(key: String, range: ClosedFloatingPointRange<Float>, default: Float) =
-    Param(key, key, range, default)
+private fun p(key: String, range: ClosedFloatingPointRange<Float>, default: Float) = Param(key, key, range, default)
 
 private fun pd(key: String, range: ClosedFloatingPointRange<Float>, default: Dp) =
     Param(key, "$key dp", range, default.value)
@@ -137,9 +136,12 @@ private fun paperParams(s: PaperSpec) = listOf(
 private fun roughParams(): List<Param> {
     val r = RoughStyle()
     return listOf(
-        pd("roughness", 0f..4f, r.roughness), p("irregularity", 0f..1f, r.irregularity),
-        pd("corner", 0f..30f, r.corner), p("tornChance", 0f..1f, r.tornChance),
-        p("jerkChance", 0f..1f, r.jerkChance), p("press", 0f..1f, 0f),
+        pd("roughness", 0f..4f, r.roughness),
+        p("irregularity", 0f..1f, r.irregularity),
+        pd("corner", 0f..30f, r.corner),
+        p("tornChance", 0f..1f, r.tornChance),
+        p("jerkChance", 0f..1f, r.jerkChance),
+        p("press", 0f..1f, 0f),
     )
 }
 
@@ -161,8 +163,11 @@ private fun paperSpec(v: Values, base: Color) = PaperSpec(
 private fun roughShape(v: Values, seed: Int) = RoughShape(
     seed,
     RoughStyle(
-        roughness = v.dp("roughness"), irregularity = v["irregularity"], corner = v.dp("corner"),
-        tornChance = v["tornChance"], jerkChance = v["jerkChance"],
+        roughness = v.dp("roughness"),
+        irregularity = v["irregularity"],
+        corner = v.dp("corner"),
+        tornChance = v["tornChance"],
+        jerkChance = v["jerkChance"],
     ),
 )
 
@@ -230,13 +235,19 @@ private fun Modifier.segmentPaintDemo(base: Color, smear: Float, seed: Int): Mod
             setColorUniform("holeColor", Bg.toArgb())
         }
         val b = ShaderBrush(s)
-        onDrawWithContent { drawRect(b); drawContent() }
-    } else onDrawWithContent { drawRect(base); drawContent() }
+        onDrawWithContent {
+            drawRect(b);
+            drawContent()
+        }
+    } else {
+        onDrawWithContent {
+            drawRect(base);
+            drawContent()
+        }
+    }
 }
 
-private fun Modifier.sliderTrackDemo(
-    fill: Color, seed: Int, progress: Float, fadeW: Dp,
-): Modifier = drawWithCache {
+private fun Modifier.sliderTrackDemo(fill: Color, seed: Int, progress: Float, fadeW: Dp): Modifier = drawWithCache {
     val thumbW = 26.dp.toPx()
     val fillX = thumbW / 2f + progress * (size.width - thumbW)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -251,27 +262,37 @@ private fun Modifier.sliderTrackDemo(
         }
         val b = ShaderBrush(s)
         onDrawWithContent { drawRect(b) }
-    } else onDrawWithContent {
+    } else {
+        onDrawWithContent {
         drawRoundRect(Color(0xFF1F2322), cornerRadius = CornerRadius(size.height / 2f))
+    }
     }
 }
 
-private fun Modifier.leakDemo(color: Color, strength: Float, right: Boolean, seed: Int): Modifier =
-    drawWithCache {
-        val leak = Leak(size, right, color, strength, seed.mod(97).toFloat())
-        onDrawWithContent { with(leak) { draw() }; drawContent() }
+private fun Modifier.leakDemo(color: Color, strength: Float, right: Boolean, seed: Int): Modifier = drawWithCache {
+    val leak = Leak(size, right, color, strength, seed.mod(97).toFloat())
+    onDrawWithContent {
+        with(leak) { draw() };
+        drawContent()
     }
+}
 
 private val DarkSw = listOf(
-    Swatch("panel", Color(0xFF0C1212)), Swatch("cream", FeldPalette.Cream),
-    Swatch("rust", Color(0xFFE45720)), Swatch("teal", Teal),
+    Swatch("panel", Color(0xFF0C1212)),
+    Swatch("cream", FeldPalette.Cream),
+    Swatch("rust", Color(0xFFE45720)),
+    Swatch("teal", Teal),
 )
 private val InkSw = listOf(
-    Swatch("chalk", Color(0xFFEDE9DD)), Swatch("ink", Color(0xFF14110F)),
-    Swatch("orange", FeldPalette.Orange), Swatch("teal", Teal),
+    Swatch("chalk", Color(0xFFEDE9DD)),
+    Swatch("ink", Color(0xFF14110F)),
+    Swatch("orange", FeldPalette.Orange),
+    Swatch("teal", Teal),
 )
 private val BrushSw = listOf(
-    Swatch("teal", Teal), Swatch("orange", FeldPalette.Orange), Swatch("cream", FeldPalette.Cream),
+    Swatch("teal", Teal),
+    Swatch("orange", FeldPalette.Orange),
+    Swatch("cream", FeldPalette.Cream),
     Swatch("purple", Color(0xFF8F6FD6)),
 )
 
@@ -289,9 +310,13 @@ private fun buildDemos(): List<ShaderDemo> {
 
     return listOf(
         ShaderDemo(
-            id = "paper", title = "PAPER_AGSL", fn = "paperMaterial", family = "SURFACE",
+            id = "paper",
+            title = "PAPER_AGSL",
+            fn = "paperMaterial",
+            family = "SURFACE",
             note = "Main panel: worn edges, stains, grain, ink outline. Base for cards and buttons",
-            params = paperAll, swatches = DarkSw,
+            params = paperAll,
+            swatches = DarkSw,
         ) { v, c, seed, m ->
             Box(
                 m.padding(18.dp).paperMaterial(roughShape(v, seed), paperSpec(v, c), press = { v["press"] }),
@@ -300,7 +325,10 @@ private fun buildDemos(): List<ShaderDemo> {
         },
 
         ShaderDemo(
-            id = "ink", title = "INK_AGSL", fn = "paperMaterial (ink edge)", family = "SURFACE",
+            id = "ink",
+            title = "INK_AGSL",
+            fn = "paperMaterial (ink edge)",
+            family = "SURFACE",
             note = "Ragged ink outline only",
             params = (paperParams(panel).filter { it.key.startsWith("ink") } + roughParams())
                 .map { if (it.key == "inkWidth") it.copy(default = 2f) else it },
@@ -314,7 +342,10 @@ private fun buildDemos(): List<ShaderDemo> {
         },
 
         ShaderDemo(
-            id = "dry", title = "DRY_PAPER_AGSL", fn = "dryPaperMaterial", family = "SURFACE",
+            id = "dry",
+            title = "DRY_PAPER_AGSL",
+            fn = "dryPaperMaterial",
+            family = "SURFACE",
             note = "Cracked dry paper for cream/rust buttons. Shares grain, mottling, and fibers with PAPER, i don't like it",
             params = dryParams(dry),
             swatches = listOf(Swatch("cream", FeldPalette.Cream), Swatch("rust", Color(0xFFE45720))),
@@ -329,16 +360,26 @@ private fun buildDemos(): List<ShaderDemo> {
                 fiberStrength = v["fiberStrength"], mottleScale = v.dp("mottleScale"),
                 mottleStrength = v["mottleStrength"], pressShade = v["pressShade"],
             )
-            Box(m.padding(22.dp).dryPaperMaterial(spec, seed, press = { v["press"] }), contentAlignment = Alignment.Center) {
+            Box(
+                m.padding(22.dp).dryPaperMaterial(spec, seed, press = { v["press"] }),
+                contentAlignment = Alignment.Center,
+            ) {
                 Text("DRY", style = MaterialTheme.typography.titleLarge, color = FeldPalette.Ink)
             }
         },
 
         ShaderDemo(
-            id = "tape", title = "STICKER_TAPE_AGSL", fn = "stickerTapeMaterial", family = "SURFACE",
+            id = "tape",
+            title = "STICKER_TAPE_AGSL",
+            fn = "stickerTapeMaterial",
+            family = "SURFACE",
             note = "Torn tape with a layered corner. Reusable torn edges",
             params = tapeParams(tape),
-            swatches = listOf(Swatch("cream", tape.base), Swatch("grey", Color(0xFFB9B4A8)), Swatch("rust", Color(0xFFC77B4A))),
+            swatches = listOf(
+                Swatch("cream", tape.base),
+                Swatch("grey", Color(0xFFB9B4A8)),
+                Swatch("rust", Color(0xFFC77B4A)),
+            ),
         ) { v, c, seed, m ->
             val spec = StickerTapeSpec(
                 base = c, stain = lerp(c, Color.Black, 0.4f), rim = lerp(c, Color.White, 0.4f),
@@ -355,16 +396,23 @@ private fun buildDemos(): List<ShaderDemo> {
             )
             Box(m, contentAlignment = Alignment.Center) {
                 Box(
-                    Modifier.fillMaxWidth().height(96.dp).stickerTapeMaterial(spec, seed).padding(horizontal = spec.edgeInset),
+                    Modifier.fillMaxWidth().height(
+                        96.dp,
+                    ).stickerTapeMaterial(spec, seed).padding(horizontal = spec.edgeInset),
                     contentAlignment = Alignment.Center,
                 ) { Text("TAPE", style = MaterialTheme.typography.titleLarge, color = FeldPalette.Ink) }
             }
         },
 
         ShaderDemo(
-            id = "segment", title = "SEGMENT_PAINT_AGSL", fn = "segmentPaint (local wrapper)", family = "BRUSH",
+            id = "segment",
+            title = "SEGMENT_PAINT_AGSL",
+            fn = "segmentPaint (local wrapper)",
+            family = "BRUSH",
             note = "Chippinkossed paint stripe. WORN + ACCENT in a stripe shape",
-            params = listOf(p("smear", -1f..1f, 0f)), swatches = BrushSw, tileHeight = 110.dp,
+            params = listOf(p("smear", -1f..1f, 0f)),
+            swatches = BrushSw,
+            tileHeight = 110.dp,
         ) { v, c, seed, m ->
             Box(m, contentAlignment = Alignment.Center) {
                 Box(Modifier.fillMaxWidth(0.82f).height(44.dp).segmentPaintDemo(c, v["smear"], seed))
@@ -372,31 +420,59 @@ private fun buildDemos(): List<ShaderDemo> {
         },
 
         ShaderDemo(
-            id = "track", title = "SLIDER_TRACK_AGSL", fn = "sliderTrack (local wrapper)", family = "BRUSH",
+            id = "track",
+            title = "SLIDER_TRACK_AGSL",
+            fn = "sliderTrack (local wrapper)",
+            family = "BRUSH",
             note = "Slider track: textured fill on dark stone. Basically ACCENT + grain",
-            params = listOf(p("progress", 0f..1f, 0.6f), pd("fadeW", 0f..60f, 18.dp), pd("trackHeight", 4f..28f, 10.dp)),
-            swatches = BrushSw, tileHeight = 100.dp,
+            params = listOf(
+                p("progress", 0f..1f, 0.6f),
+                pd("fadeW", 0f..60f, 18.dp),
+                pd("trackHeight", 4f..28f, 10.dp),
+            ),
+            swatches = BrushSw,
+            tileHeight = 100.dp,
         ) { v, c, seed, m ->
             Box(m, contentAlignment = Alignment.Center) {
-                Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp).height(v.dp("trackHeight")).sliderTrackDemo(c, seed, v["progress"], v.dp("fadeW")))
+                Box(
+                    Modifier.fillMaxWidth().padding(
+                        horizontal = 16.dp,
+                    ).height(v.dp("trackHeight")).sliderTrackDemo(c, seed, v["progress"], v.dp("fadeW")),
+                )
             }
         },
 
         ShaderDemo(
-            id = "leak", title = "LEAK_AGSL", fn = "Leak (decal)", family = "OVERLAY",
+            id = "leak",
+            title = "LEAK_AGSL",
+            fn = "Leak (decal)",
+            family = "OVERLAY",
             note = "Edge light leak for decals. Cheap and standalone",
             params = listOf(p("strength", 0f..0.5f, 0.13f), p("right (0/1)", 0f..1f, 1f)),
-            swatches = listOf(Swatch("orange", FeldPalette.Orange), Swatch("red", Color(0xFFD0422A)), Swatch("cream", FeldPalette.Cream)),
+            swatches = listOf(
+                Swatch("orange", FeldPalette.Orange),
+                Swatch("red", Color(0xFFD0422A)),
+                Swatch("cream", FeldPalette.Cream),
+            ),
         ) { v, c, seed, m ->
-            Box(m.padding(14.dp).background(Color(0xFF0C1212)).leakDemo(c, v["strength"], v["right (0/1)"] > 0.5f, seed), contentAlignment = Alignment.Center) {
+            Box(
+                m.padding(
+                    14.dp,
+                ).background(Color(0xFF0C1212)).leakDemo(c, v["strength"], v["right (0/1)"] > 0.5f, seed),
+                contentAlignment = Alignment.Center,
+            ) {
                 Caption("LEAK")
             }
         },
 
         ShaderDemo(
-            id = "marker", title = "MARKER_FILM_AGSL", fn = "markerFilmMaterial", family = "INK MASK",
+            id = "marker",
+            title = "MARKER_FILM_AGSL",
+            fn = "markerFilmMaterial",
+            family = "INK MASK",
             note = "Live marker texture applied to content alpha (icons, text). Mostly overlaps with DISTRESS.",
-            params = markerParams(marker), swatches = InkSw,
+            params = markerParams(marker),
+            swatches = InkSw,
         ) { v, c, seed, m ->
             val spec = MarkerFilmSpec(
                 color = c, coverage = v["coverage"], unevenness = v["unevenness"],
@@ -422,10 +498,17 @@ private fun buildDemos(): List<ShaderDemo> {
         },
 
         ShaderDemo(
-            id = "distress", title = "DISTRESS_AGSL", fn = "distressMaterial", family = "INK MASK",
+            id = "distress",
+            title = "DISTRESS_AGSL",
+            fn = "distressMaterial",
+            family = "INK MASK",
             note = "Distress texture for stamps and headlines. Like MARKER FILM, but with scratches and dropouts",
             params = distressParams(distress),
-            swatches = listOf(Swatch("as text", Color.Unspecified), Swatch("cream", FeldPalette.Cream), Swatch("orange", FeldPalette.Orange)),
+            swatches = listOf(
+                Swatch("as text", Color.Unspecified),
+                Swatch("cream", FeldPalette.Cream),
+                Swatch("orange", FeldPalette.Orange),
+            ),
         ) { v, c, seed, m ->
             val spec = DistressSpec(
                 color = c, strength = v["strength"], edgeSoftness = v.dp("edgeSoftness"),
@@ -439,16 +522,26 @@ private fun buildDemos(): List<ShaderDemo> {
             )
             Box(m, contentAlignment = Alignment.Center) {
                 Text(
-                    "DISTRESS 07", style = MaterialTheme.typography.headlineLarge, color = Color.White,
+                    "DISTRESS 07",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = Color.White,
                     modifier = Modifier.distressMaterial(spec, seed).padding(12.dp),
                 )
             }
         },
 
         ShaderDemo(
-            id = "accent", title = "ACCENT_AGSL", fn = "accentBrush", family = "BRUSH",
+            id = "accent",
+            title = "ACCENT_AGSL",
+            fn = "accentBrush",
+            family = "BRUSH",
             note = "Live fill with faded, glowing patches",
-            params = listOf(p("fade", 0f..1.5f, 0.9f), p("glow", 0f..1.5f, 0.9f), p("blotch", 0f..0.3f, 0f), p("grain", 0f..0.3f, 0.07f)),
+            params = listOf(
+                p("fade", 0f..1.5f, 0.9f),
+                p("glow", 0f..1.5f, 0.9f),
+                p("blotch", 0f..0.3f, 0f),
+                p("grain", 0f..0.3f, 0.07f),
+            ),
             swatches = BrushSw,
         ) { v, c, seed, m ->
             val d = LocalDensity.current.density
@@ -457,7 +550,10 @@ private fun buildDemos(): List<ShaderDemo> {
         },
 
         ShaderDemo(
-            id = "worn", title = "WORN_AGSL", fn = "wornBrush", family = "BRUSH",
+            id = "worn",
+            title = "WORN_AGSL",
+            fn = "wornBrush",
+            family = "BRUSH",
             note = "Chippik fill for diamonds and speaker bars. Similar to SEGMENT PAINT",
             params = listOf(p("wear", 0f..1f, 0.5f), p("scale", 4f..80f, 26f)),
             swatches = BrushSw,
@@ -475,7 +571,8 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
     val values = remember {
         demos.associate { d ->
             d.id to mutableStateMapOf<String, Float>().apply {
-                putAll(d.fixed); d.params.forEach { put(it.key, it.default) }
+                putAll(d.fixed);
+                d.params.forEach { put(it.key, it.default) }
             }
         }
     }
@@ -495,7 +592,11 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
         ) {
             Text("SHADERS", style = MaterialTheme.typography.titleMedium, color = Color.White)
             Spacer(Modifier.weight(1f))
-            Text(if (grid) "ALL" else "ONE + TUNE", style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted)
+            Text(
+                if (grid) "ALL" else "ONE + TUNE",
+                style = MaterialTheme.typography.labelSmall,
+                color = FeldPalette.Muted,
+            )
             Spacer(Modifier.width(10.dp))
             FeldSwitch(grid, { grid = it })
         }
@@ -508,12 +609,35 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 itemsIndexed(demos, key = { _, d -> d.id }) { i, d ->
-                    Column(Modifier.clickable { index = i; grid = false }) {
-                        Box(Modifier.fillMaxWidth().height(d.tileHeight).clip(RoundedCornerShape(4.dp)).background(TileBg)) {
-                            d.content(Values(values.getValue(d.id)), colorOf(d), seeds[d.id] ?: 1, Modifier.fillMaxSize())
+                    Column(
+                        Modifier.clickable {
+                        index = i;
+                        grid = false
+                    }
+                    ) {
+                        Box(
+                            Modifier.fillMaxWidth().height(
+                                d.tileHeight,
+                            ).clip(RoundedCornerShape(4.dp)).background(TileBg),
+                        ) {
+                            d.content(
+                                Values(values.getValue(d.id)),
+                                colorOf(d),
+                                seeds[d.id] ?: 1,
+                                Modifier.fillMaxSize(),
+                            )
                         }
-                        Text(d.title, style = MaterialTheme.typography.labelMedium, color = Color.White, modifier = Modifier.padding(top = 6.dp))
-                        Text("${d.family} · ${d.fn}", style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted)
+                        Text(
+                            d.title,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(top = 6.dp),
+                        )
+                        Text(
+                            "${d.family} · ${d.fn}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = FeldPalette.Muted,
+                        )
                     }
                 }
             }
@@ -529,11 +653,20 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
                 }
                 Column(Modifier.weight(1f).padding(horizontal = 8.dp)) {
                     Text(d.title, style = MaterialTheme.typography.titleMedium, color = Color.White)
-                    Text("${index + 1}/${demos.size} · ${d.family} · ${d.fn}", style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted)
+                    Text(
+                        "${index + 1}/${demos.size} · ${d.family} · ${d.fn}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = FeldPalette.Muted,
+                    )
                 }
                 FeldIconButton(FeldIconId.Chevron, { index = (index + 1) % demos.size })
             }
-            Text(d.note, style = MaterialTheme.typography.bodySmall, color = FeldPalette.Muted, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp))
+            Text(
+                d.note,
+                style = MaterialTheme.typography.bodySmall,
+                color = FeldPalette.Muted,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+            )
 
             Box(
                 Modifier.weight(1f).fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)
@@ -541,7 +674,10 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
             ) { d.content(Values(vm), colorOf(d), seed, Modifier.fillMaxSize()) }
 
             Row(
-                Modifier.fillMaxWidth().clickable { panelOpen = !panelOpen }.padding(horizontal = 16.dp, vertical = 8.dp),
+                Modifier.fillMaxWidth().clickable { panelOpen = !panelOpen }.padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp,
+                ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("PARAMS ${d.params.size}", style = MaterialTheme.typography.labelMedium, color = FeldPalette.Cream)
@@ -558,15 +694,24 @@ fun FeldShaderPlayground(modifier: Modifier = Modifier) {
                     ) {
                         OutlinedButton({
                             d.params.forEach { vm[it.key] = it.default }
-                            colorIdx[d.id] = 0; seeds[d.id] = 1
+                            colorIdx[d.id] = 0;
+                            seeds[d.id] = 1
                         }) { Text("RESET") }
                         OutlinedButton({ seeds[d.id] = seed - 1 }) { Text("seed −") }
                         Text("$seed", color = Color.White)
                         OutlinedButton({ seeds[d.id] = seed + 1 }) { Text("seed +") }
                         OutlinedButton({
                             val text = buildString {
-                                appendLine("// ${d.title}, color=${d.swatches.getOrNull(colorIdx[d.id] ?: 0)?.name}, seed=$seed")
-                                d.params.forEach { appendLine("${it.key} = ${"%.3f".format(vm[it.key] ?: it.default)}") }
+                                appendLine(
+                                    "// ${d.title}, color=${d.swatches.getOrNull(
+                                        colorIdx[d.id] ?: 0,
+                                    )?.name}, seed=$seed",
+                                )
+                                d.params.forEach {
+                                    appendLine(
+                                        "${it.key} = ${"%.3f".format(vm[it.key] ?: it.default)}",
+                                    )
+                                }
                             }
                             clipboard.setText(AnnotatedString(text))
                         }) { Text("COPY") }

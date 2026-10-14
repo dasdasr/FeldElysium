@@ -158,7 +158,10 @@ fun FeldSegmentedControl(
                         .semantics(mergeDescendants = true) {
                             role = Role.Tab
                             this.selected = isSelected
-                            onClick { onSelect(i); true }
+                            onClick {
+                                onSelect(i);
+                                true
+                            }
                         }
                         .pointerInput(i, selected) {
                             detectTapGestures(

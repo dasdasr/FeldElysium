@@ -7,9 +7,9 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,13 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddPhotoAlternate
-import androidx.compose.material.icons.filled.FitScreen
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material.icons.filled.VolumeOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,22 +40,22 @@ import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
-import com.example.feldelysium.designsystem.components.display.FeldDivider
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
+import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
 import com.example.feldelysium.designsystem.components.input.FeldSliderColors
+import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.input.swatchSpec
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 
 private val Presets = listOf(
@@ -132,7 +127,6 @@ fun BackgroundPickerDialog(
         }
     }
 }
-
 
 @Suppress("ParamsComparedByRef")
 @Composable
@@ -274,8 +268,7 @@ private fun MediaPreview(settings: AppSettings) {
     }
 }
 
-private fun hsvOf(argb: Long): FloatArray =
-    FloatArray(3).also { android.graphics.Color.colorToHSV(argb.toInt(), it) }
+private fun hsvOf(argb: Long): FloatArray = FloatArray(3).also { android.graphics.Color.colorToHSV(argb.toInt(), it) }
 
 private fun colorOf(hue: Float, sat: Float, bri: Float): Long =
     HSVToColor(floatArrayOf(hue, sat, bri)).toLong() and 0xFFFFFFFFL
@@ -293,9 +286,12 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
         val idx = pending.indexOf(argb)
         when {
             idx >= 0 -> repeat(idx + 1) { pending.removeFirst() }
+
             argb != last -> {
                 val hsv = hsvOf(argb)
-                hue = hsv[0]; sat = hsv[1]; bri = hsv[2]
+                hue = hsv[0]
+                sat = hsv[1]
+                bri = hsv[2]
                 last = argb
                 pending.clear()
             }

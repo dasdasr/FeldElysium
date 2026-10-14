@@ -61,8 +61,11 @@ data class DistressSpec(
 }
 
 fun Modifier.distressMaterial(spec: DistressSpec, seed: Int = 0): Modifier =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) distressShader(spec, seed)
-    else this
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        distressShader(spec, seed)
+    } else {
+        this
+    }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun Modifier.distressShader(spec: DistressSpec, seed: Int): Modifier = composed {

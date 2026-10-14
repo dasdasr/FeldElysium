@@ -18,14 +18,11 @@ internal object FeldPalette {
 }
 
 @Composable
-internal fun Modifier.feldClickable(
-    enabled: Boolean = true,
-    role: Role = Role.Button,
-    onClick: () -> Unit,
-): Modifier = clickable(
-    interactionSource = remember { MutableInteractionSource() },
-    indication = null,
-    enabled = enabled,
-    role = role,
-    onClick = onClick,
-)
+internal fun Modifier.feldClickable(enabled: Boolean = true, role: Role = Role.Button, onClick: () -> Unit): Modifier =
+    clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        enabled = enabled,
+        role = role,
+        onClick = onClick,
+    )
