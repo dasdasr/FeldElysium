@@ -19,10 +19,7 @@ import com.example.feldelysium.designsystem.components.display.FeldDiamond
 
 // TODO: CHange to torn texture
 @Composable
-fun FeldFooterBand(
-    sceneName: String,
-    modifier: Modifier = Modifier,
-) {
+fun FeldFooterBand(sceneName: String, modifier: Modifier = Modifier) {
     val ink = Color(0xFF1B1612)
     Row(
         modifier = modifier

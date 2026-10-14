@@ -1,6 +1,5 @@
 package com.example.feldelysium.presentation.editor
 
-
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
@@ -43,12 +42,15 @@ class EditorViewModel(
     private val repo = SpeakerStorage.repository(application)
 
     private val speakers = repo.speakers.stateIn(
-        viewModelScope, SharingStarted.Eagerly, PredefinedSpeakers.ALL,
+        viewModelScope,
+        SharingStarted.Eagerly,
+        PredefinedSpeakers.ALL,
     )
     private val tags = repo.tags.stateIn(
-        viewModelScope, SharingStarted.Eagerly, PredefinedSpeakers.TAGS,
+        viewModelScope,
+        SharingStarted.Eagerly,
+        PredefinedSpeakers.TAGS,
     )
-
 
     init {
         val prefs = application.getSharedPreferences("speaker_migration", Context.MODE_PRIVATE)
@@ -94,7 +96,6 @@ class EditorViewModel(
     }
 
     fun dispatch(event: EditorEvent) = when (event) {
-
         EditorEvent.RequestAddEntry -> _state.update {
             it.copy(isSpeakerPickerOpen = true)
         }
@@ -123,7 +124,7 @@ class EditorViewModel(
                 it.copy(
                     pendingSpeaker = event.speaker,
                     isSpeakerPickerOpen = false,
-                    isEntryEditOpen = true
+                    isEntryEditOpen = true,
                 )
             }
         }
@@ -138,7 +139,7 @@ class EditorViewModel(
             val entry = DialogueEntry(
                 id = UUID.randomUUID().toString(),
                 speaker = speaker,
-                text = event.text.trim()
+                text = event.text.trim(),
             )
             sceneViewModel.dispatch(SceneAction.AddEntry(entry))
             _state.update { it.copy(pendingSpeaker = null, isEntryEditOpen = false) }
@@ -210,6 +211,7 @@ class EditorViewModel(
         EditorEvent.ConfirmImport -> handleImport()
 
         EditorEvent.OpenSpeakerPicker -> _state.update { it.copy(isSpeakerPickerOpen = true) }
+
         EditorEvent.CloseSpeakerPicker -> _state.update {
             it.copy(isSpeakerPickerOpen = false, isChangingSpeaker = false)
         }
@@ -226,12 +228,15 @@ class EditorViewModel(
 
         EditorEvent.AddEntryWithRandomSpeaker -> _state.update {
             val speaker = it.allSpeakers.randomOrNull()
-            if (speaker == null) it.copy(isSpeakerPickerOpen = true)
-            else it.copy(
+            if (speaker == null) {
+                it.copy(isSpeakerPickerOpen = true)
+            } else {
+                it.copy(
                 pendingSpeaker = speaker,
                 isSpeakerPickerOpen = false,
                 isEntryEditOpen = true,
             )
+            }
         }
     }
 
@@ -278,7 +283,7 @@ class EditorViewModel(
                 EditorViewModel(
                     application = app,
                     sceneViewModel = sceneViewModel,
-                    parseUseCase = ParseBulkImportUseCase()
+                    parseUseCase = ParseBulkImportUseCase(),
                 )
             }
         }

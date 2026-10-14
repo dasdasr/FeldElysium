@@ -31,8 +31,14 @@ private val Mirrorable = setOf(DecalKind.Text, DecalKind.DataBlock, DecalKind.Co
 private val UseLimit = mapOf(DecalKind.DataBlock to 1, DecalKind.Ruler to 1)
 
 internal fun planDecals(
-    seed: Int, size: Size, ambient: Float, spec: DecalSpec, ctx: DecalContext,
-    density: Density, measurer: TextMeasurer, leftInsetPx: Float,
+    seed: Int,
+    size: Size,
+    ambient: Float,
+    spec: DecalSpec,
+    ctx: DecalContext,
+    density: Density,
+    measurer: TextMeasurer,
+    leftInsetPx: Float,
 ): DecalPlan {
     val a = ambient.coerceIn(0f, 1f)
     if (a <= 0f || size.width < 40f || size.height < 20f) return DecalPlan(emptyList(), null)
@@ -40,10 +46,17 @@ internal fun planDecals(
     val d = density.density
     val rng = Random(seed * 7919 + 0xDEC41)
 
-    val leak = if (size.width > 60f * d && rng.nextFloat() < spec.leakChance * a)
-        Leak(size = size, rightSide = leftInsetPx > 0f || rng.nextBoolean(), color = spec.leakColor,
-            strength = 0.08f + 0.10f * a, seed = seed.mod(97).toFloat())
-    else null
+    val leak = if (size.width > 60f * d && rng.nextFloat() < spec.leakChance * a) {
+        Leak(
+            size = size,
+            rightSide = leftInsetPx > 0f || rng.nextBoolean(),
+            color = spec.leakColor,
+            strength = 0.08f + 0.10f * a,
+            seed = seed.mod(97).toFloat(),
+        )
+    } else {
+        null
+    }
 
     val areaDp = size.width * size.height / (d * d)
     val x = a.pow(1.5f) + areaDp / 20000f * a * a * 3f
@@ -64,7 +77,9 @@ internal fun planDecals(
         taken += spot.bounds
         val cap = spec.alphaCap[kind] ?: 0.1f
         out += Placement(
-            decal, spot.bounds, spot.rotation,
+            decal,
+            spot.bounds,
+            spot.rotation,
             mirror = kind in Mirrorable && rng.nextFloat() < 0.2f,
             color = spec.tones[rng.nextInt(spec.tones.size)],
             alpha = cap * (0.45f + 0.55f * rng.nextFloat()) * (0.5f + 0.5f * a),
@@ -74,7 +89,12 @@ internal fun planDecals(
 }
 
 private fun pickKind(
-    rng: Random, spec: DecalSpec, a: Float, used: Map<DecalKind, Int>, size: Size, d: Float,
+    rng: Random,
+    spec: DecalSpec,
+    a: Float,
+    used: Map<DecalKind, Int>,
+    size: Size,
+    d: Float,
 ): DecalKind? {
     val wDp = size.width / d
     val hDp = size.height / d
@@ -93,14 +113,23 @@ private fun pickKind(
     val total = w.values.sum()
     if (total <= 0f) return null
     var t = rng.nextFloat() * total
-    for ((k, v) in w) { t -= v; if (t <= 0f && v > 0f) return k }
+    for ((k, v) in w) {
+        t -= v;
+        if (t <= 0f && v > 0f) return k
+    }
     return w.entries.lastOrNull { it.value > 0f }?.key
 }
 
 private class Spot(val bounds: Rect, val rotation: Float)
 
 private fun findSpot(
-    rng: Random, spec: DecalSpec, decal: Decal, safe: Rect, taken: List<Rect>, d: Float, a: Float,
+    rng: Random,
+    spec: DecalSpec,
+    decal: Decal,
+    safe: Rect,
+    taken: List<Rect>,
+    d: Float,
+    a: Float,
 ): Spot? {
     val w = decal.extent.width
     val h = decal.extent.height
@@ -121,19 +150,37 @@ private fun findSpot(
         if (bw > safe.width || bh > safe.height) continue
 
         fun snap(r: Float) = if (strip == null && rng.nextFloat() < 0.5f) (if (r < 0.5f) 0f else 1f) else r
-        val m = if (strip != null) 1.5f * d
-        else (edge.start + rng.nextFloat() * (edge.endInclusive - edge.start)) * d
+        val m = if (strip != null) {
+            1.5f * d
+        } else {
+            (edge.start + rng.nextFloat() * (edge.endInclusive - edge.start)) * d
+        }
         val rx = snap(rng.nextFloat())
         val ry = snap(rng.nextFloat())
 
         val px: Float
         val py: Float
         when {
-            center -> { px = safe.left + (safe.width - bw) * rng.nextFloat(); py = (safe.height - bh) * rng.nextFloat() }
-            side == 0 -> { px = safe.left + (safe.width - bw) * rx; py = safe.top + m }
-            side == 1 -> { px = safe.left + (safe.width - bw) * rx; py = safe.bottom - bh - m }
-            side == 2 -> { px = safe.left + m; py = safe.top + (safe.height - bh) * ry }
-            else -> { px = safe.right - bw - m; py = safe.top + (safe.height - bh) * ry }
+            center -> {
+                px = safe.left + (safe.width - bw) * rng.nextFloat();
+                py = (safe.height - bh) * rng.nextFloat()
+            }
+            side == 0 -> {
+                px = safe.left + (safe.width - bw) * rx;
+                py = safe.top + m
+            }
+            side == 1 -> {
+                px = safe.left + (safe.width - bw) * rx;
+                py = safe.bottom - bh - m
+            }
+            side == 2 -> {
+                px = safe.left + m;
+                py = safe.top + (safe.height - bh) * ry
+            }
+            else -> {
+                px = safe.right - bw - m;
+                py = safe.top + (safe.height - bh) * ry
+            }
         }
         val x = px.coerceIn(safe.left, safe.right - bw)
         val y = py.coerceIn(safe.top, safe.bottom - bh)

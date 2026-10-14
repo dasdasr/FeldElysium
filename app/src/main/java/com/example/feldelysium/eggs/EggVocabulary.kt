@@ -1,8 +1,15 @@
 package com.example.feldelysium.eggs
 
 enum class EggEvent {
-    AppOpen, HeaderDiamond, SwitchToggle, ResetUnchanged,
-    FabLongPress, SoonTap, EntryAdd, EntryEdit, EntryDelete,
+    AppOpen,
+    HeaderDiamond,
+    SwitchToggle,
+    ResetUnchanged,
+    FabLongPress,
+    SoonTap,
+    EntryAdd,
+    EntryEdit,
+    EntryDelete,
 }
 
 enum class EggScreen { Settings, SceneEditor, ChooseSpeaker }

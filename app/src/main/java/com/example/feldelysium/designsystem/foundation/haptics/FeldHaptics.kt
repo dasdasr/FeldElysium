@@ -12,7 +12,7 @@ class FeldHaptics(private val feedback: HapticFeedback) {
     fun tick() = feedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
 
     fun toggle(on: Boolean) = feedback.performHapticFeedback(
-        if (on) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
+        if (on) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff,
     )
 
     fun confirm() = feedback.performHapticFeedback(HapticFeedbackType.Confirm)

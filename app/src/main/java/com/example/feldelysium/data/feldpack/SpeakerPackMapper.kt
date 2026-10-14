@@ -5,19 +5,18 @@ import com.example.feldelysium.domain.model.SpeakerColor
 import com.example.feldelysium.domain.model.SpeakerType
 import java.util.Locale
 
-internal fun Speaker.toDto(iconPath: String?): SpeakerDto =
-    SpeakerDto(
-        id = id,
-        name = name,
-        color = "%08X".format(
-            Locale.ROOT,
-            colorArgb and 0xFFFFFFFFL,
-        ),
-        tag = type
-            .takeIf { it != SpeakerType.CUSTOM }
-            ?.let { TagDto(id = it.id, name = it.name) },
-        icon = iconPath,
-    )
+internal fun Speaker.toDto(iconPath: String?): SpeakerDto = SpeakerDto(
+    id = id,
+    name = name,
+    color = "%08X".format(
+        Locale.ROOT,
+        colorArgb and 0xFFFFFFFFL,
+    ),
+    tag = type
+        .takeIf { it != SpeakerType.CUSTOM }
+        ?.let { TagDto(id = it.id, name = it.name) },
+    icon = iconPath,
+)
 
 internal fun SpeakerDto.toSpeaker(iconUri: String?): Speaker {
     val normalizedHex = color

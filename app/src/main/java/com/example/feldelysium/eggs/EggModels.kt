@@ -2,7 +2,6 @@ package com.example.feldelysium.eggs
 
 import com.example.feldelysium.domain.model.Speaker
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 enum class EggRarity { Frequent, Rare, Secret, UltraRare }
@@ -30,17 +29,20 @@ data class EggReply(
     val scope: Enum<*>? = null,
 ) {
     val header: String
-        get() = if (difficulty == null && result == null) skill.name.uppercase() else buildString {
+        get() = if (difficulty == null && result == null) {
+            skill.name.uppercase()
+        } else {
+            buildString {
             append('[')
             if (difficulty != null) append(difficulty.label).append(": ")
             append(skill.name)
             if (result != null) append(" — ").append(result.label)
             append(']')
         }
+        }
 }
 
-fun say(skill: Speaker, text: String, scope: Enum<*>? = null) =
-    EggReply(skill = skill, text = text, scope = scope)
+fun say(skill: Speaker, text: String, scope: Enum<*>? = null) = EggReply(skill = skill, text = text, scope = scope)
 
 fun skillCheck(
     skill: Speaker,
@@ -73,7 +75,7 @@ class EggContext(
         if (keys.isEmpty() || history.size < keys.size) return false
         val tail = history.takeLast(keys.size)
         return tail.map { it.key } == keys &&
-                event.atMillis - tail.first().atMillis <= within.inWholeMilliseconds
+            event.atMillis - tail.first().atMillis <= within.inWholeMilliseconds
     }
 }
 
@@ -83,22 +85,24 @@ fun onEvent(key: EggEvent, value: Enum<*>? = null): EggTrigger = { ctx ->
     ctx.event.key == key && (value == null || ctx.event.value.equals(value.name, true))
 }
 
-//fun onEvent(key: EggEvent, value: String): EggTrigger = { ctx ->
-//ctx.event.key == key && ctx.event.value .equals(value , true)
-//}
+// fun onEvent(key: EggEvent, value: String): EggTrigger = { ctx ->
+// ctx.event.key == key && ctx.event.value .equals(value , true)
+// }
 
-fun burst(key: EggEvent, count: Int, within: Duration, value: Enum<*>? = null): EggTrigger =
-    { ctx ->
-        onEvent(key, value)(ctx) && ctx.count(key, within, value?.name) >= count
-    }
+fun burst(key: EggEvent, count: Int, within: Duration, value: Enum<*>? = null): EggTrigger = { ctx ->
+    onEvent(key, value)(ctx) && ctx.count(key, within, value?.name) >= count
+}
 
 fun inOrder(vararg keys: EggEvent, within: Duration = 20.seconds): EggTrigger = { ctx ->
     ctx.endsWith(keys.toList(), within)
 }
 
 fun timeBetween(fromHour: Int, toHour: Int, key: EggEvent = EggEvent.AppOpen): EggTrigger = { ctx ->
-    ctx.event.key == key && if (fromHour <= toHour) ctx.hour in fromHour until toHour
-    else ctx.hour >= fromHour || ctx.hour < toHour
+    ctx.event.key == key && if (fromHour <= toHour) {
+        ctx.hour in fromHour until toHour
+    } else {
+        ctx.hour >= fromHour || ctx.hour < toHour
+    }
 }
 
 fun whenValue(key: EggEvent, predicate: (String) -> Boolean): EggTrigger = { ctx ->
@@ -110,10 +114,16 @@ fun allOf(vararg triggers: EggTrigger): EggTrigger = { ctx -> triggers.all { it(
 fun anyOf(vararg triggers: EggTrigger): EggTrigger = { ctx -> triggers.any { it(ctx) } }
 
 private fun EggRarity.defaultCooldown(): Duration = when (this) {
-    EggRarity.Frequent -> Duration.ZERO //20.seconds
-    EggRarity.Rare -> Duration.ZERO //1.minutes
-    EggRarity.Secret -> Duration.ZERO //1.minutes
-    EggRarity.UltraRare -> Duration.ZERO //1.minutes
+    EggRarity.Frequent -> Duration.ZERO
+
+    // 20.seconds
+    EggRarity.Rare -> Duration.ZERO
+
+    // 1.minutes
+    EggRarity.Secret -> Duration.ZERO
+
+    // 1.minutes
+    EggRarity.UltraRare -> Duration.ZERO // 1.minutes
 }
 
 data class Egg(

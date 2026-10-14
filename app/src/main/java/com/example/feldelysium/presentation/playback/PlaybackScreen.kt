@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,19 +42,18 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.example.feldelysium.R
+import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
-import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
-import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
-import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
+import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
+import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
+import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
@@ -72,11 +71,7 @@ private const val BOTTOM_BAR_WIDTH_PX = 770f
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun PlaybackScreen(
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-
+fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     val eggs = LocalEasterEggs.current
     var openReported by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(eggs) {
@@ -129,7 +124,7 @@ fun PlaybackScreen(
         day = settings.playbackDay,
         onTap = { vm.dispatch(PlaybackEvent.Tap) },
         onBackClick = { vm.dispatch(PlaybackEvent.NavigateBack) },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -151,7 +146,7 @@ fun PlaybackScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 PlaybackStage(
                     state = state,
@@ -161,7 +156,7 @@ fun PlaybackScreenContent(
                     money = money,
                     time = time,
                     day = day,
-                    modifier = Modifier.aspectRatio(16f / 9f, matchHeightConstraintsFirst = false)
+                    modifier = Modifier.aspectRatio(16f / 9f, matchHeightConstraintsFirst = false),
                 )
             }
         } else {
@@ -173,7 +168,7 @@ fun PlaybackScreenContent(
                 money = money,
                 time = time,
                 day = day,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }
@@ -195,8 +190,8 @@ private fun PlaybackStage(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = onTap
-            )
+                onClick = onTap,
+            ),
     ) {
         val tapeWidth = maxWidth * (TAPE_WIDTH_PX / REFERENCE_WIDTH_PX)
         val tapeRightMargin = maxWidth * (TAPE_RIGHT_MARGIN_PX / REFERENCE_WIDTH_PX)
@@ -215,14 +210,14 @@ private fun PlaybackStage(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(tapeWidth + tapeRightMargin)
-                .align(Alignment.CenterEnd)
+                .align(Alignment.CenterEnd),
         ) {
             DialogueHistoryList(
                 entries = state.revealedEntries,
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(tapeWidth)
-                    .align(Alignment.CenterStart)
+                    .align(Alignment.CenterStart),
             )
         }
 
@@ -231,24 +226,24 @@ private fun PlaybackStage(
             modifier = Modifier
                 .offset(
                     x = portraitLeft - portraitBackdropInset,
-                    y = portraitTop - portraitBackdropInset
+                    y = portraitTop - portraitBackdropInset,
                 )
                 .size(
                     width = portraitWidth + portraitBackdropInset * 2,
-                    height = portraitHeight + portraitBackdropInset * 2
-                )
+                    height = portraitHeight + portraitBackdropInset * 2,
+                ),
         )
 
         IconButton(
             onClick = onBackClick,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 8.dp, top = 8.dp)
+                .padding(start = 8.dp, top = 8.dp),
         ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 "Back",
-                tint = ChromaKeyGreen.copy(alpha = 0.0f)
+                tint = ChromaKeyGreen.copy(alpha = 0.0f),
             )
         }
 
@@ -258,7 +253,7 @@ private fun PlaybackStage(
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX))
+                .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX)),
         )
 
         PlaybackStatusHud(
@@ -274,7 +269,7 @@ private fun PlaybackStage(
     name = "Playback",
     widthDp = 891,
     heightDp = 411,
-    device = Devices.PIXEL_9
+    device = Devices.PIXEL_9,
 )
 @Composable
 private fun PlaybackScreenPreview() {
@@ -283,7 +278,7 @@ private fun PlaybackScreenPreview() {
         id = "kim",
         name = "Kim Kitsuragi",
         colorArgb = 0xFF_B5_A6_42L,
-        type = SpeakerType.NPC
+        type = SpeakerType.NPC,
     )
 
     PlaybackScreenContent(
@@ -292,20 +287,20 @@ private fun PlaybackScreenPreview() {
             revealedEntries = listOf(
                 DialogueEntry(
                     speaker = npcSpeaker,
-                    text = "We should get going. The precinct won't wait forever."
+                    text = "We should get going. The precinct won't wait forever.",
                 ),
                 DialogueEntry(
                     speaker = skillSpeaker,
-                    text = "He's right. You've been standing here for eleven minutes."
+                    text = "He's right. You've been standing here for eleven minutes.",
                 ),
                 DialogueEntry(
                     speaker = npcSpeaker,
-                    text = "Detective? Are you listening?"
-                )
+                    text = "Detective? Are you listening?",
+                ),
             ),
-            isFinished = false
+            isFinished = false,
         ),
         onTap = {},
-        onBackClick = {}
+        onBackClick = {},
     )
 }

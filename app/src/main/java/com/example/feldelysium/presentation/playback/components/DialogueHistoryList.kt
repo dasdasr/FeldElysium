@@ -26,11 +26,11 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun DialogueHistoryList(
@@ -95,7 +95,7 @@ fun DialogueHistoryList(
                     maxWidth = constraints.maxWidth,
                     minHeight = 0,
                     maxHeight = Constraints.Infinity,
-                )
+                ),
             )
             val y = anchor.placementY(
                 contentHeightPx = placeable.height.toFloat(),
@@ -121,9 +121,7 @@ fun DialogueHistoryList(
 }
 
 // Shared scroll offset for the dialogue column and tape background
-private class ColumnScrollAnchor(
-    private val scope: CoroutineScope,
-) {
+private class ColumnScrollAnchor(private val scope: CoroutineScope) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
@@ -138,12 +136,7 @@ private class ColumnScrollAnchor(
     private var generation = 0
     private var job: kotlinx.coroutines.Job? = null
 
-    fun placementY(
-        contentHeightPx: Float,
-        restBottomPx: Float,
-        viewportHeightPx: Float,
-        textShiftPx: Float,
-    ): Float {
+    fun placementY(contentHeightPx: Float, restBottomPx: Float, viewportHeightPx: Float, textShiftPx: Float): Float {
         if (!hasAnchor) {
             if (contentHeightPx < 1f || viewportHeightPx < 1f) return restBottomPx
             hasAnchor = true
@@ -171,16 +164,13 @@ private class ColumnScrollAnchor(
         return when (PlaybackMotion.scrollPolicy) {
             PlaybackScrollPolicy.ReturnToRestAnchor ->
                 restBottomPx - contentHeightPx + (bonus - appliedShift)
+
             PlaybackScrollPolicy.ScrollOnlyWhenExceedsScreen ->
                 pinnedTop - appliedShift
         }
     }
 
-    fun noteScroll(
-        y: Float,
-        contentHeightPx: Float,
-        restBottomPx: Float,
-    ) {
+    fun noteScroll(y: Float, contentHeightPx: Float, restBottomPx: Float) {
         val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
         scrollFraction = if (maxOffset > 1f) {
             ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
@@ -224,10 +214,7 @@ private class ColumnScrollAnchor(
 }
 
 @Composable
-private fun TapeScrollIndicator(
-    anchor: ColumnScrollAnchor,
-    modifier: Modifier = Modifier,
-) {
+private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         val lineX = size.width * (
             PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
@@ -258,7 +245,10 @@ private fun TapeScrollIndicator(
 private fun DialogueHistoryListPreview() {
     DialogueHistoryList(
         entries = listOf(
-            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro, we are so back, so so bak, you know?"),
+            DialogueEntry(
+                speaker = PredefinedSpeakers.STEBAN,
+                text = "Go-go gyro, we are so back, so so bak, you know?",
+            ),
             DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
             DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
         ),

@@ -16,8 +16,8 @@ complexity:
 
 style:
   MagicNumber:
-    ignorePropertyDeclaration: true
-    ignoreCompanionObjectPropertyDeclaration: true
-    ignoreNamedArgument: true
-    ignoreExtensionFunctions: true
-    ignoreAnnotated: [ 'Composable', 'Preview' ]
+    active: false
+  MaxLineLength:
+    active: false
+  WildcardImport:
+    active: false

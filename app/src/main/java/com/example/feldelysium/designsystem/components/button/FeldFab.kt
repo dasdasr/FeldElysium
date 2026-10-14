@@ -106,13 +106,17 @@ fun FeldFab(
                 translationY = 1.5f * press
             }
             .then(
-                if (isFilm) Modifier.shadow(
+                if (isFilm) {
+                    Modifier.shadow(
                     elevation = 6.dp,
                     shape = RoundedCornerShape(4.dp),
                     clip = false,
                     ambientColor = Color.Black,
                     spotColor = Color.Black,
-                ) else Modifier
+                )
+                } else {
+                    Modifier
+                },
             )
             .semantics { contentDescription?.let { this.contentDescription = it } }
             .combinedClickable(
@@ -162,7 +166,7 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
         Canvas(
             Modifier
                 .fillMaxSize()
-                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen },
         ) {
             drawRoundRect(brush = body, cornerRadius = CornerRadius(4.dp.toPx()))
 
@@ -178,13 +182,16 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
             for (k in -1..count) {
                 val x = 6.dp.toPx() + k * pitch - shift
                 val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                        ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
+                    ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
                 if (a <= 0f) continue
                 val hole = Color.Black.copy(alpha = a)
                 val r = CornerRadius(1.dp.toPx())
                 drawRoundRect(hole, Offset(x, inset), Size(hw, hh), r, blendMode = BlendMode.DstOut)
                 drawRoundRect(
-                    hole, Offset(x, size.height - inset - hh), Size(hw, hh), r,
+                    hole,
+                    Offset(x, size.height - inset - hh),
+                    Size(hw, hh),
+                    r,
                     blendMode = BlendMode.DstOut,
                 )
             }
@@ -193,8 +200,11 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
             Modifier.size(34.dp).markerFilmMaterial(FeldMarker.Ink, seed).padding(3.dp),
             contentAlignment = Alignment.Center,
         ) {
-            if (content != null) content()
-            else Canvas(Modifier.fillMaxSize()) { handPlus(seed, 3.5.dp.toPx(), arm = 0.34f) }
+            if (content != null) {
+                content()
+            } else {
+                Canvas(Modifier.fillMaxSize()) { handPlus(seed, 3.5.dp.toPx(), arm = 0.34f) }
+            }
         }
     }
 }
@@ -213,7 +223,8 @@ private fun RecFace(seed: Int, press: () -> Float, content: (@Composable () -> U
                 initialValue = 0.45f,
                 targetValue = 1f,
                 animationSpec = infiniteRepeatable(
-                    tween(850, easing = FastOutSlowInEasing), RepeatMode.Reverse,
+                    tween(850, easing = FastOutSlowInEasing),
+                    RepeatMode.Reverse,
                 ),
                 label = "pulse",
             )
@@ -243,7 +254,8 @@ private fun DrawScope.handRing(seed: Int, strokeW: Float) {
         if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
     }
     drawPath(
-        path, Color.White,
+        path,
+        Color.White,
         style = Stroke(strokeW, cap = StrokeCap.Round, join = StrokeJoin.Round),
     )
 }
@@ -255,13 +267,15 @@ private fun DrawScope.handPlus(seed: Int, strokeW: Float, arm: Float = 0.22f) {
         Color.White,
         Offset(center.x - h, center.y + h * 0.05f),
         Offset(center.x + h * 1.08f * k, center.y - h * 0.06f),
-        strokeW, StrokeCap.Round,
+        strokeW,
+        StrokeCap.Round,
     )
     drawLine(
         Color.White,
         Offset(center.x + h * 0.04f, center.y - h * 1.05f),
         Offset(center.x - h * 0.05f * k, center.y + h * 1.0f),
-        strokeW, StrokeCap.Round,
+        strokeW,
+        StrokeCap.Round,
     )
 }
 

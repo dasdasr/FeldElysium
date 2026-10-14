@@ -39,12 +39,15 @@ fun FeldDivider(
     segment: Dp = 120.dp,
     changeChance: Float = 0.35f,
 ) {
-    val sized = if (vertical) Modifier
+    val sized = if (vertical) {
+        Modifier
         .width(thickness)
         .fillMaxHeight()
-    else Modifier
+    } else {
+        Modifier
         .height(thickness)
         .fillMaxWidth()
+    }
 
     Spacer(
         modifier
@@ -63,30 +66,39 @@ fun FeldDivider(
                 while (s < len) {
                     val l = segment.toPx() * (0.6f + rnd.nextFloat())
                     if (rnd.nextFloat() < changeChance) lvl = rnd.nextInt(3)
-                    starts += s; ends += minOf(s + l, len); alphas += levels[lvl]
+                    starts += s;
+                    ends += minOf(s + l, len);
+                    alphas += levels[lvl]
                     s += l
                 }
 
                 val brush: Brush =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        ShaderBrush(RuntimeShader(INK_AGSL).apply {
+                        ShaderBrush(
+                            RuntimeShader(INK_AGSL).apply {
                             setFloatUniform("seed", seed.mod(97).toFloat())
                             setFloatUniform("grainScale", 18.dp.toPx())
                             setFloatUniform("minAlpha", 0.6f)
                             setFloatUniform("contrast", 1.6f)
                             setColorUniform("inkColor", color.toArgb())
-                        })
-                    } else SolidColor(color)
+                        }
+                        )
+                    } else {
+                        SolidColor(color)
+                    }
 
                 onDrawBehind {
                     for (i in starts.indices) {
                         val a = starts[i]
                         val l = ends[i] - a
-                        if (vertical) drawRect(brush, Offset(0f, a), Size(thick, l), alphas[i])
-                        else drawRect(brush, Offset(a, 0f), Size(l, thick), alphas[i])
+                        if (vertical) {
+                            drawRect(brush, Offset(0f, a), Size(thick, l), alphas[i])
+                        } else {
+                            drawRect(brush, Offset(a, 0f), Size(l, thick), alphas[i])
+                        }
                     }
                 }
-            }
+            },
     )
 }
 

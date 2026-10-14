@@ -8,6 +8,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
@@ -28,39 +30,43 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.theme.DiscoDialogueTheme
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.ui.unit.Dp
-import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import kotlin.random.Random
 
 object FeldRough {
     fun entry(seed: Int): RoughStyle {
         val r = Random(seed * 31 + 7)
         return RoughStyle(
-            roughness = 0.6.dp, step = 44.dp,
+            roughness = 0.6.dp,
+            step = 44.dp,
             corner = (2f + r.nextFloat() * 4f).dp,
-            cornerVariation = 0.35f, cornerJitter = 0.3f,
-            tornChance = 0.04f, jerkChance = 0.04f,
+            cornerVariation = 0.35f,
+            cornerJitter = 0.3f,
+            tornChance = 0.04f,
+            jerkChance = 0.04f,
         )
     }
 
     fun field(seed: Int): RoughStyle {
         val r = Random(seed * 31 + 11)
         return RoughStyle(
-            roughness = 0.55.dp, step = 48.dp,
+            roughness = 0.55.dp,
+            step = 48.dp,
             corner = (2.5f + r.nextFloat() * 3.5f).dp,
-            cornerVariation = 0.3f, cornerJitter = 0.25f,
-            tornChance = 0.03f, jerkChance = 0.04f,
+            cornerVariation = 0.3f,
+            cornerJitter = 0.25f,
+            tornChance = 0.03f,
+            jerkChance = 0.04f,
         )
     }
 }
@@ -88,7 +94,7 @@ fun FeldTextField(
         start = 16.dp,
         end = 16.dp,
         top = 16.dp,
-        bottom = 16.dp
+        bottom = 16.dp,
     ),
     focusAnimation: Boolean = true,
     counterInside: Boolean = true,
@@ -135,7 +141,9 @@ fun FeldTextField(
                             indication = null,
                             enabled = enabled,
                         ) { requester.requestFocus() }
-                    } else Modifier
+                    } else {
+                        Modifier
+                    },
                 ),
         ) {
             BasicTextField(

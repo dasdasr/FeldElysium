@@ -8,10 +8,7 @@ import java.util.UUID
 
 class ParseBulkImportUseCase {
 
-    data class ParseResult(
-        val entries: List<DialogueEntry>,
-        val newSpeakers: List<Speaker>,
-    )
+    data class ParseResult(val entries: List<DialogueEntry>, val newSpeakers: List<Speaker>)
 
     fun execute(rawText: String, customSpeakers: List<Speaker> = emptyList()): ParseResult {
         val nameIndex: Map<String, Speaker> = buildMap {
@@ -35,7 +32,7 @@ class ParseBulkImportUseCase {
                 entries += DialogueEntry(
                     id = UUID.randomUUID().toString(),
                     speaker = speaker,
-                    text = text
+                    text = text,
                 )
             }
             textBuffer.clear()

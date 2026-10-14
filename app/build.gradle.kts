@@ -38,7 +38,6 @@ android {
 detekt {
     buildUponDefaultConfig = true
     config.setFrom("$rootDir/config/detekt/detekt.yml")
-    autoCorrect = true
     baseline = file("detekt-baseline.xml")
     parallel = true
 }

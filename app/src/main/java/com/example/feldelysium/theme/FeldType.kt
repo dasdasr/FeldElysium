@@ -60,6 +60,6 @@ val FeldTypography = Typography(
         fontSize = 12.sp,
         fontFamily = SinaNova,
         letterSpacing = 0.5.sp,
-        fontWeight = FontWeight.Bold
-    )
+        fontWeight = FontWeight.Bold,
+    ),
 )

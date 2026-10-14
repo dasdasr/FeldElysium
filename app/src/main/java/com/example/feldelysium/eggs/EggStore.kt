@@ -10,11 +10,7 @@ private val Context.eggDataStore by preferencesDataStore(name = "easter_eggs")
 
 class EggStore(private val context: Context) {
 
-    class Snapshot(
-        val discovered: Set<String>,
-        val daily: Map<String, Set<Int>>,
-        val epochDay: Long,
-    )
+    class Snapshot(val discovered: Set<String>, val daily: Map<String, Set<Int>>, val epochDay: Long)
 
     suspend fun load(today: Long): Snapshot {
         val prefs = context.eggDataStore.data.first()
@@ -43,11 +39,7 @@ class EggStore(private val context: Context) {
         }
     }
 
-    suspend fun markShownToday(
-        id: String,
-        replyIndex: Int,
-        today: Long,
-    ) {
+    suspend fun markShownToday(id: String, replyIndex: Int, today: Long) {
         context.eggDataStore.edit { prefs ->
             val kept = prefs[Keys.DAILY]
                 .orEmpty()

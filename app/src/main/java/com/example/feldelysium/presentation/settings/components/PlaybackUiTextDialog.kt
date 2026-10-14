@@ -68,7 +68,10 @@ fun PlaybackUiTextDialog(
             value = moneyText,
             maxLength = 6,
             seed = 1,
-            onValueChange = { moneyText = it; onMoneyChange(it) },
+            onValueChange = {
+                moneyText = it
+                onMoneyChange(it)
+            },
         )
         FeldDivider(seed = 51)
         PlaybackField(
@@ -77,7 +80,10 @@ fun PlaybackUiTextDialog(
             value = timeText,
             maxLength = 5,
             seed = 2,
-            onValueChange = { timeText = it; onTimeChange(it) },
+            onValueChange = {
+                timeText = it
+                onTimeChange(it)
+            },
         )
         FeldDivider(seed = 52)
         PlaybackField(
@@ -86,7 +92,10 @@ fun PlaybackUiTextDialog(
             value = dayText,
             maxLength = 6,
             seed = 3,
-            onValueChange = { dayText = it; onDayChange(it) },
+            onValueChange = {
+                dayText = it
+                onDayChange(it)
+            },
         )
     }
 }

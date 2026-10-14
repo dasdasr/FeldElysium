@@ -33,13 +33,7 @@ fun accentBrush(
     return ShaderBrush(shader)
 }
 
-fun wornBrush(
-    color: Color,
-    seed: Int,
-    density: Float,
-    wear: Float = 0.5f,
-    scale: Float = 26f
-): Brush {
+fun wornBrush(color: Color, seed: Int, density: Float, wear: Float = 0.5f, scale: Float = 26f): Brush {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return SolidColor(color)
     val shader = RuntimeShader(WORN_AGSL).apply {
         setFloatUniform("seed", seed.mod(97).toFloat())

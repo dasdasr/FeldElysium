@@ -38,13 +38,7 @@ private const val BurstMs = 560
 
 class ArcSeg(val path: Path, val alpha: Float, val frac: Float)
 private class Rib(val a: Offset, val b: Offset, val u: Float)
-private class Streak(
-    val angle: Float,
-    val len: Float,
-    val delay: Float,
-    val jit: List<Float>,
-    val nick: Float,
-)
+private class Streak(val angle: Float, val len: Float, val delay: Float, val jit: List<Float>, val nick: Float)
 
 @Composable
 internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier) {
@@ -73,14 +67,19 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
     LaunchedEffect(Unit) {
         delay(900)
         while (true) {
-            launch { ripple.snapTo(0f); ripple.animateTo(1f, tween(700)) }
+            launch {
+                ripple.snapTo(0f);
+                ripple.animateTo(1f, tween(700))
+            }
             launch {
                 volley++
                 burst.snapTo(0f)
                 burst.animateTo(1f, tween(BurstMs, easing = LinearEasing))
             }
-            pulse.animateTo(1.22f, tween(70)); pulse.animateTo(1f, tween(90))
-            pulse.animateTo(1.14f, tween(70)); pulse.animateTo(1f, tween(140))
+            pulse.animateTo(1.22f, tween(70));
+            pulse.animateTo(1f, tween(90))
+            pulse.animateTo(1.14f, tween(70));
+            pulse.animateTo(1f, tween(140))
             delay(Random.nextLong(1300, 2300))
         }
     }
@@ -134,13 +133,14 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
                 segs.forEach { if (it.frac <= rv) drawPath(it.path, arcBrush) }
 
                 val appear = min(1f, rv * 6f)
-                if (ripple.value < 1f)
+                if (ripple.value < 1f) {
                     drawCircle(
                         accent.copy(alpha = (1f - ripple.value) * 0.6f),
                         R * appear + 12 * d * ripple.value,
                         c,
                         style = Stroke(1.5f * d),
                     )
+                }
                 val s = pulse.value
                 drawCircle(fill, R * s * appear, c)
                 drawCircle(InkDeep, (R - 3.8f * d) * s * appear, c)
@@ -176,7 +176,10 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
                 val ty = cardB + (8f + bob * 3f) * d
                 drawPath(
                     Path().apply {
-                        moveTo(tx - 6 * d, ty); lineTo(tx + 6 * d, ty); lineTo(tx, ty + 7 * d); close()
+                        moveTo(tx - 6 * d, ty);
+                        lineTo(tx + 6 * d, ty);
+                        lineTo(tx, ty + 7 * d);
+                        close()
                     },
                     Cream.copy(alpha = 0.9f),
                 )
@@ -186,13 +189,17 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
 }
 
 private fun inkArc(
-    c: Offset, rx: Float, ry: Float,
-    startDeg: Float, endDeg: Float, d: Float, rnd: Random,
+    c: Offset,
+    rx: Float,
+    ry: Float,
+    startDeg: Float,
+    endDeg: Float,
+    d: Float,
+    rnd: Random,
 ): List<ArcSeg> {
     val steps = ((startDeg - endDeg) / 2f).roundToInt()
     val ph = List(2) { rnd.nextFloat() * 6.28f }
-    fun noise(u: Float, f1: Float, f2: Float) =
-        0.5f + 0.25f * sin(u * f1 + ph[0]) + 0.25f * sin(u * f2 + ph[1])
+    fun noise(u: Float, f1: Float, f2: Float) = 0.5f + 0.25f * sin(u * f1 + ph[0]) + 0.25f * sin(u * f2 + ph[1])
 
     val ribs = List(steps + 1) { i ->
         val u = i / steps.toFloat()
@@ -237,7 +244,7 @@ private fun DrawScope.drawFlick(
     color: Color,
     jit: List<Float>,
     nick: Float,
-    d: Float
+    d: Float,
 ) {
     val nrm = Offset(-dir.y, dir.x)
     val n = jit.size / 2
@@ -260,4 +267,3 @@ private fun DrawScope.drawFlick(
     val m = from + dir * (len * nick)
     drawLine(InkDeep, m - nrm * w, m + nrm * w, 1.1f * d)
 }
-

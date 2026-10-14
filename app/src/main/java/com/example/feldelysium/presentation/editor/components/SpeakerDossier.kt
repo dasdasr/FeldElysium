@@ -90,11 +90,7 @@ private val FrameInset = 20.dp
 private val Cream = Color(0xFFE6DCC4)
 
 @Composable
-private fun AssetImage(
-    @DrawableRes res: Int?,
-    modifier: Modifier,
-    placeholder: DrawScope.() -> Unit,
-) {
+private fun AssetImage(@DrawableRes res: Int?, modifier: Modifier, placeholder: DrawScope.() -> Unit) {
     if (res != null) {
         Image(painterResource(res), null, modifier, contentScale = ContentScale.FillBounds)
     } else {
@@ -135,28 +131,35 @@ fun SpeakerPhotoBlock(
                 .graphicsLayer {
                     rotationZ = -1.2f
                     val s = 1f - 0.015f * press
-                    scaleX = s; scaleY = s
+                    scaleX = s;
+                    scaleY = s
                 }
                 .clickable(
-                    interactionSource = photoSource, indication = null,
-                    role = Role.Button, onClick = onClick,
+                    interactionSource = photoSource,
+                    indication = null,
+                    role = Role.Button,
+                    onClick = onClick,
                 ),
         ) {
             Box(
                 Modifier
                     .fillMaxSize()
                     .padding(FrameInset)
-                    .background(Color(0xFF16201F))
+                    .background(Color(0xFF16201F)),
             ) {
                 when {
                     iconUri != null -> AsyncImage(
-                        iconUri, null, Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        iconUri,
+                        null,
+                        Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
                     )
 
                     iconRes != null -> Image(
-                        painterResource(iconRes), null, Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
+                        painterResource(iconRes),
+                        null,
+                        Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
                     )
 
                     else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -187,14 +190,8 @@ fun SpeakerPhotoBlock(
     }
 }
 
-
 @Composable
-fun SpeakerPreview(
-    name: String,
-    color: Color,
-    seed: Int,
-    modifier: Modifier = Modifier,
-) {
+fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = Modifier) {
     val rough = remember(seed) { entryRough(seed) }
     val a = SpeakerDossierAssets
     val density = LocalDensity.current.density
@@ -329,13 +326,15 @@ fun FieldLabel(text: String, optional: Boolean = false) {
     Text(
         text = buildAnnotatedString {
             append(text.uppercase())
-            if (optional) withStyle(
+            if (optional) {
+                withStyle(
                 SpanStyle(
                     fontFamily = FeldDecalType.Mono,
                     fontWeight = FontWeight.Normal,
-                    color = FeldPalette.Muted.copy(alpha = 0.7f)
+                    color = FeldPalette.Muted.copy(alpha = 0.7f),
                 ),
             ) { append("  (OPTIONAL)") }
+            }
         },
         style = FeldDecalType.Label.copy(fontSize = 11.sp, letterSpacing = 1.4.sp),
         color = FeldPalette.Muted,

@@ -19,15 +19,25 @@ internal fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCa
     val rnd = Random(seed)
 
     val bgBrush = accentBrush(
-        Ink.copy(alpha = 0.94f), seed + 5, d,
-        fade = 0f, glow = 0f, blotch = 0.05f, grain = 0.04f,
+        Ink.copy(alpha = 0.94f),
+        seed + 5,
+        d,
+        fade = 0f,
+        glow = 0f,
+        blotch = 0.05f,
+        grain = 0.04f,
     )
     val fill = accentBrush(accent, seed, d)
 
     val body = chamferRectPoints(
         Rect(0f, 0f, w, h),
-        cutTL = 3 * d, cutTR = 6 * d, cutBR = 5 * d, cutBL = 3 * d,
-        step = 10 * d, jitter = 0.9f * d, rnd = rnd,
+        cutTL = 3 * d,
+        cutTR = 6 * d,
+        cutBR = 5 * d,
+        cutBL = 3 * d,
+        step = 10 * d,
+        jitter = 0.9f * d,
+        rnd = rnd,
     ).toPath()
 
     class Speck(val at: Offset, val s: Float, val light: Boolean, val a: Float)
@@ -46,7 +56,7 @@ internal fun Modifier.toastCard(seed: Int, accent: Color): Modifier = drawWithCa
     val hairlineA = Offset(14 * d, 0.7f * d) to Offset(w * 0.42f, 0.9f * d)
     val hairlineB = Offset(w * 0.50f, 0.8f * d) to Offset(w * 0.86f, 0.6f * d)
     val bottomWear = Offset(w * 0.2f, h - 0.8f * d) to
-            Offset(w * 0.55f, h - 0.6f * d)
+        Offset(w * 0.55f, h - 0.6f * d)
 
     onDrawBehind {
         drawPath(body, bgBrush)

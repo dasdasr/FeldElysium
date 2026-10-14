@@ -37,7 +37,6 @@ data class StickerTapeSpec(
     val speckStrength: Float = 0.35f,
     val ageStrength: Float = 0.22f,
 
-
     val cornerRx: Dp = 44.dp,
     val cornerRy: Dp = 24.dp,
     val layerZone: Dp = 56.dp,
@@ -56,10 +55,7 @@ object FeldTape {
     )
 }
 
-fun Modifier.stickerTapeMaterial(
-    spec: StickerTapeSpec,
-    seed: Int = 0,
-): Modifier = drawWithCache {
+fun Modifier.stickerTapeMaterial(spec: StickerTapeSpec, seed: Int = 0): Modifier = drawWithCache {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val shader = RuntimeShader(STICKER_TAPE_AGSL).apply {
             setFloatUniform("size", size.width, size.height)

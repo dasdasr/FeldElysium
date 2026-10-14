@@ -14,19 +14,17 @@ class PlaybackEngine(private val entries: List<DialogueEntry>) {
         val entry = entries[cursor]
         cursor++
         return PlaybackStep(
-            entry        = entry,
+            entry = entry,
             revealedCount = cursor,
-            isLast       = cursor >= entries.size
+            isLast = cursor >= entries.size,
         )
     }
 
-    fun reset() { cursor = 0 }
+    fun reset() {
+        cursor = 0
+    }
 
     fun revealedEntries(): List<DialogueEntry> = entries.subList(0, cursor)
 }
 
-data class PlaybackStep(
-    val entry: DialogueEntry,
-    val revealedCount: Int,
-    val isLast: Boolean
-)
+data class PlaybackStep(val entry: DialogueEntry, val revealedCount: Int, val isLast: Boolean)

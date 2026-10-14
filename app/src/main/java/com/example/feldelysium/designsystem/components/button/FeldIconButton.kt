@@ -43,7 +43,10 @@ fun FeldIconButton(
 private fun FeldIconPreview() {
     DiscoDialogueTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
                 FeldIconId.entries.forEach { FeldIcon(it, tint = Color(0xFFB9B6AC)) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

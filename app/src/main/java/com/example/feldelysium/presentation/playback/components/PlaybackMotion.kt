@@ -70,6 +70,7 @@ internal fun scrollDeltaForHeightIncrease(
     settledScrollPx: Float,
 ): Float = when (policy) {
     PlaybackScrollPolicy.ReturnToRestAnchor -> heightIncreasePx
+
     PlaybackScrollPolicy.ScrollOnlyWhenExceedsScreen -> {
         val overflow = (pinnedTopPx + contentHeightPx - viewportHeightPx).coerceAtLeast(0f)
         (overflow - settledScrollPx).coerceAtLeast(0f)

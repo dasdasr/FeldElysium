@@ -93,7 +93,7 @@ fun FeldColorSwatches(
                         Spacer(
                             Modifier
                                 .weight(1f)
-                                .aspectRatio(1f)
+                                .aspectRatio(1f),
                         )
                     } else {
                         Swatch(
@@ -128,7 +128,7 @@ private fun Swatch(
                 cornerJitter = 0.15f,
                 tornChance = 0.03f,
                 forceTorn = -1,
-            )
+            ),
         )
     }
     val spec = remember(argb) { swatchSpec(argb) }
