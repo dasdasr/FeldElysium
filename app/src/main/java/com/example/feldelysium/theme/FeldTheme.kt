@@ -52,6 +52,7 @@ private val DiscoColorScheme = darkColorScheme(
 data class DiscoExtraColors(
     val success: Color = DiscoSuccess,
     val primaryPressed: Color = DiscoOrangePressed,
+    val accent: Color = DiscoTeal,
 )
 
 @Composable

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
@@ -53,6 +54,7 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
+import com.example.feldelysium.designsystem.components.input.FeldSliderColors
 import com.example.feldelysium.designsystem.components.input.swatchSpec
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
@@ -74,7 +76,7 @@ private val Presets = listOf(
 
 private val PreviewRough = RoughStyle(
     roughness = 0.9.dp,
-    step = 48.dp,
+    step = 12.dp,
     corner = 3.dp,
     tornChance = 0.2f,
 )
@@ -112,6 +114,7 @@ fun BackgroundPickerDialog(
                 onReset = onReset,
                 onCancel = onDismiss,
                 confirmLabel = "Save",
+                buttonSpec = FeldButtonDefaults.Cream,
             )
         },
     ) {
@@ -161,7 +164,7 @@ private fun MediaPane(
                 trailing = {
                     FeldSwitch(
                         checked = !settings.backgroundVideoSound,
-                        onCheckedChange = null,
+                        onCheckedChange = { },
                     )
                 },
             )
@@ -176,7 +179,7 @@ private fun MediaPane(
                 trailing = {
                     FeldSwitch(
                         checked = settings.backgroundVideoFill,
-                        onCheckedChange = null,
+                        onCheckedChange = { },
                     )
                 },
             )
@@ -312,27 +315,12 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
     val chipShape = remember { RoughShape(13, PreviewRough.copy(corner = 4.dp)) }
 
     Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Filled.Palette,
-                contentDescription = null,
-                tint = FeldPalette.Muted,
-                modifier = Modifier.size(24.dp),
-            )
-            Spacer(Modifier.width(16.dp))
-            Text(
-                text = "COLOR",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Spacer(Modifier.width(22.dp))
-            Box(
-                Modifier
-                    .weight(1f)
-                    .height(52.dp)
-                    .paperMaterial(chipShape, swatchSpec(live, selected = true)),
-            )
-        }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .paperMaterial(chipShape, swatchSpec(live, selected = true)),
+        )
 
         Spacer(Modifier.height(12.dp))
         FeldSlider(
@@ -343,11 +331,13 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             },
             onValueChangeFinished = { commit() },
             valueRange = 0f..360f,
+            accent = FeldSliderColors.Cream,
         )
         FeldSlider(
             value = bri,
             onValueChange = { bri = it },
             onValueChangeFinished = { commit() },
+            accent = FeldSliderColors.Teal,
         )
         Spacer(Modifier.height(12.dp))
         FeldColorSwatches(

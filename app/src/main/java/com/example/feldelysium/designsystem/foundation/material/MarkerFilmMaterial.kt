@@ -3,18 +3,37 @@ package com.example.feldelysium.designsystem.foundation.material
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.os.Build
+import android.util.LruCache
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.RenderEffect as ComposeRenderEffect
 import com.example.feldelysium.designsystem.foundation.material.agsl.MARKER_FILM_AGSL
+import kotlinx.coroutines.delay
 
 @Immutable
 data class MarkerFilmSpec(
@@ -74,49 +93,138 @@ object FeldMarker {
     )
 }
 
+private object MarkerShader {
+    val shader: RuntimeShader by lazy(LazyThreadSafetyMode.NONE) { RuntimeShader(MARKER_FILM_AGSL) }
+}
+
+private data class BakeKey(
+    val spec: MarkerFilmSpec,
+    val seed: Int,
+    val w: Int,
+    val h: Int,
+    val density: Float,
+    val key: Any?,
+)
+
+private object BakeCache {
+    private val lru = object : LruCache<BakeKey, ImageBitmap>(12 * 1024 * 1024) {
+        override fun sizeOf(key: BakeKey, value: ImageBitmap) = value.width * value.height * 4
+    }
+
+    fun get(k: BakeKey): ImageBitmap? = lru.get(k)
+    fun put(k: BakeKey, v: ImageBitmap) {
+        lru.put(k, v)
+    }
+}
+
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun createMarkerEffect(
+    spec: MarkerFilmSpec,
+    seed: Int,
+    density: Density
+): ComposeRenderEffect {
+    val s = MarkerShader.shader
+    with(density) {
+        s.setFloatUniform("seed", seed.mod(97).toFloat())
+        s.setFloatUniform("coverage", spec.coverage)
+        s.setFloatUniform("unevenness", spec.unevenness)
+        s.setFloatUniform("blotchScale", spec.blotchSize.toPx())
+        s.setFloatUniform("poolEdge", spec.poolEdge)
+        s.setFloatUniform("edgeSoft", spec.edgeSoftness.toPx())
+        s.setFloatUniform("erode", spec.erode)
+        s.setFloatUniform("erodeScale", spec.erodeSize.toPx())
+        s.setFloatUniform("wobble", spec.wobble.toPx())
+        s.setFloatUniform("streak", spec.streak)
+        s.setFloatUniform("streakLen", spec.streakLength.toPx())
+        s.setFloatUniform("streakWid", spec.streakWidth.toPx())
+        s.setFloatUniform("streakAngle", Math.toRadians(spec.streakAngle.toDouble()).toFloat())
+        s.setFloatUniform("skip", spec.skip)
+        s.setFloatUniform("skipCoverage", spec.skipCoverage)
+        s.setFloatUniform("skipScale", spec.skipSize.toPx())
+        s.setFloatUniform("pinhole", spec.pinhole)
+        s.setFloatUniform("grain", spec.grain)
+        s.setFloatUniform("grainScale", spec.grainSize.toPx())
+        s.setFloatUniform("smudge", spec.smudge)
+        s.setFloatUniform("smudgeScale", spec.smudgeSize.toPx())
+        s.setFloatUniform("smudgeRadius", spec.smudgeRadius.toPx())
+        s.setFloatUniform("speck", spec.speck)
+    }
+    val has = spec.color != Color.Unspecified
+    s.setFloatUniform("useInk", if (has) 1f else 0f)
+    s.setColorUniform("inkColor", (if (has) spec.color else Color.White).toArgb())
+    return RenderEffect.createRuntimeShaderEffect(s, "content").asComposeRenderEffect()
+}
+
+@Composable
 fun Modifier.markerFilmMaterial(
     spec: MarkerFilmSpec = FeldMarker.Chalk,
     seed: Int = 0,
+    bakeKey: Any? = null,
+    bake: Boolean = true,
 ): Modifier =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) markerFilmShader(spec, seed)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) markerFilmApi33(
+        spec,
+        seed,
+        bakeKey,
+        bake
+    )
     else this
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun Modifier.markerFilmShader(spec: MarkerFilmSpec, seed: Int): Modifier = composed {
-    val shader = remember { RuntimeShader(MARKER_FILM_AGSL) }
-    Modifier.graphicsLayer {
-        if (size.width <= 0f || size.height <= 0f) return@graphicsLayer
-        shader.apply {
-            setFloatUniform("seed", seed.mod(97).toFloat())
-            setFloatUniform("coverage", spec.coverage)
-            setFloatUniform("unevenness", spec.unevenness)
-            setFloatUniform("blotchScale", spec.blotchSize.toPx())
-            setFloatUniform("poolEdge", spec.poolEdge)
-            setFloatUniform("edgeSoft", spec.edgeSoftness.toPx())
-            setFloatUniform("erode", spec.erode)
-            setFloatUniform("erodeScale", spec.erodeSize.toPx())
-            setFloatUniform("wobble", spec.wobble.toPx())
-            setFloatUniform("streak", spec.streak)
-            setFloatUniform("streakLen", spec.streakLength.toPx())
-            setFloatUniform("streakWid", spec.streakWidth.toPx())
-            setFloatUniform("streakAngle", Math.toRadians(spec.streakAngle.toDouble()).toFloat())
-            setFloatUniform("skip", spec.skip)
-            setFloatUniform("skipCoverage", spec.skipCoverage)
-            setFloatUniform("skipScale", spec.skipSize.toPx())
-            setFloatUniform("pinhole", spec.pinhole)
-            setFloatUniform("grain", spec.grain)
-            setFloatUniform("grainScale", spec.grainSize.toPx())
-            setFloatUniform("smudge", spec.smudge)
-            setFloatUniform("smudgeScale", spec.smudgeSize.toPx())
-            setFloatUniform("smudgeRadius", spec.smudgeRadius.toPx())
-            setFloatUniform("speck", spec.speck)
-            setFloatUniform("useInk", if (spec.color == Color.Unspecified) 0f else 1f)
-            setColorUniform(
-                "inkColor",
-                (if (spec.color == Color.Unspecified) Color.White else spec.color).toArgb(),
-            )
-        }
-        renderEffect = RenderEffect.createRuntimeShaderEffect(shader, "content")
-            .asComposeRenderEffect()
+@Composable
+private fun Modifier.markerFilmApi33(
+    spec: MarkerFilmSpec, seed: Int, bakeKey: Any?, bake: Boolean,
+): Modifier {
+    val density = LocalDensity.current
+    val effect = remember(spec, seed, density.density) { createMarkerEffect(spec, seed, density) }
+    val layer = rememberGraphicsLayer()
+    var px by remember { mutableStateOf(IntSize.Zero) }
+
+    val key = remember(spec, seed, px, density.density, bakeKey) {
+        if (px == IntSize.Zero) null else BakeKey(
+            spec,
+            seed,
+            px.width,
+            px.height,
+            density.density,
+            bakeKey
+        )
     }
+    var baked by remember(key) { mutableStateOf(key?.let { BakeCache.get(it) }) }
+
+    LaunchedEffect(key, bake) {
+        if (!bake || key == null || baked != null) return@LaunchedEffect
+        delay(220)
+        withFrameNanos { }
+        withFrameNanos { }
+        val bmp = runCatching { layer.toImageBitmap() }.getOrNull() ?: return@LaunchedEffect
+        BakeCache.put(key, bmp)
+        baked = bmp
+    }
+
+    return this
+        .onSizeChanged { px = it }
+        .drawWithContent {
+            val b = baked
+            if (b != null) {
+                drawImage(b)
+            } else {
+                layer.record { this@drawWithContent.drawContent() }
+                layer.renderEffect = effect
+                drawLayer(layer)
+            }
+        }
+}
+
+@Composable
+fun MarkerFilmWarmup() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    Box(
+        Modifier
+            .size(8.dp)
+            .graphicsLayer { alpha = 0.01f }
+            .markerFilmMaterial(FeldMarker.Chalk, seed = 0, bake = false)
+            .background(Color.White),
+    )
 }

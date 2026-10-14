@@ -39,14 +39,30 @@ import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.ui.unit.Dp
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import kotlin.random.Random
 
 object FeldRough {
-    val Field = RoughStyle(
-        roughness = 0.6.dp, step = 44.dp, corner = 3.dp,
-        cornerVariation = 0.2f, cornerJitter = 0.2f,
-        tornChance = 0.03f, jerkChance = 0.04f,
-    )
+    fun entry(seed: Int): RoughStyle {
+        val r = Random(seed * 31 + 7)
+        return RoughStyle(
+            roughness = 0.6.dp, step = 44.dp,
+            corner = (2f + r.nextFloat() * 4f).dp,
+            cornerVariation = 0.35f, cornerJitter = 0.3f,
+            tornChance = 0.04f, jerkChance = 0.04f,
+        )
+    }
+
+    fun field(seed: Int): RoughStyle {
+        val r = Random(seed * 31 + 11)
+        return RoughStyle(
+            roughness = 0.55.dp, step = 48.dp,
+            corner = (2.5f + r.nextFloat() * 3.5f).dp,
+            cornerVariation = 0.3f, cornerJitter = 0.25f,
+            tornChance = 0.03f, jerkChance = 0.04f,
+        )
+    }
 }
 
 @Composable
@@ -56,7 +72,8 @@ fun FeldTextField(
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Field,
-    rough: RoughStyle = FeldRough.Field,
+    rough: RoughStyle = FeldRough.field(seed),
+    minHeight: Dp = 64.dp,
     maxLength: Int? = null,
     showLength: Boolean = true,
     minLines: Int = 1,
@@ -104,7 +121,7 @@ fun FeldTextField(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 64.dp)
+                .heightIn(minHeight)
                 .paperMaterial(
                     shape = shape,
                     spec = spec,

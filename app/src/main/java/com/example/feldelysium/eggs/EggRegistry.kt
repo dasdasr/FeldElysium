@@ -167,7 +167,7 @@ object EggRegistry {
             trigger = onEvent(EggEvent.SoonTap),
         ),
 
-        // ── Examples for future formats (uncomment and replace with actual events) ──
+        // ── Eggzamples for future formats (uncomment and replace with actual events) ──
         //
         // Action pattern: opened Editor → added → immediately deleted → added again
         // Egg("pattern.add.delete.add", Rare,
