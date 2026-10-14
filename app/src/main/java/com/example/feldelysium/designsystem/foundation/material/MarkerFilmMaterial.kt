@@ -94,7 +94,13 @@ object FeldMarker {
 }
 
 private object MarkerShader {
-    val shader: RuntimeShader by lazy(LazyThreadSafetyMode.NONE) { RuntimeShader(MARKER_FILM_AGSL) }
+    val shader: RuntimeShader? by lazy(LazyThreadSafetyMode.NONE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RuntimeShader(MARKER_FILM_AGSL)
+        } else {
+            null
+        }
+    }
 }
 
 private data class BakeKey(
@@ -119,7 +125,7 @@ private object BakeCache {
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun createMarkerEffect(spec: MarkerFilmSpec, seed: Int, density: Density): ComposeRenderEffect {
-    val s = MarkerShader.shader
+    val s = MarkerShader.shader ?: error("RuntimeShader unavailable on API 33+")
     with(density) {
         s.setFloatUniform("seed", seed.mod(97).toFloat())
         s.setFloatUniform("coverage", spec.coverage)
