@@ -131,7 +131,7 @@ fun SpeakerPhotoBlock(
                 .graphicsLayer {
                     rotationZ = -1.2f
                     val s = 1f - 0.015f * press
-                    scaleX = s;
+                    scaleX = s
                     scaleY = s
                 }
                 .clickable(
@@ -328,12 +328,12 @@ fun FieldLabel(text: String, optional: Boolean = false) {
             append(text.uppercase())
             if (optional) {
                 withStyle(
-                SpanStyle(
-                    fontFamily = FeldDecalType.Mono,
-                    fontWeight = FontWeight.Normal,
-                    color = FeldPalette.Muted.copy(alpha = 0.7f),
-                ),
-            ) { append("  (OPTIONAL)") }
+                    SpanStyle(
+                        fontFamily = FeldDecalType.Mono,
+                        fontWeight = FontWeight.Normal,
+                        color = FeldPalette.Muted.copy(alpha = 0.7f),
+                    ),
+                ) { append("  (OPTIONAL)") }
             }
         },
         style = FeldDecalType.Label.copy(fontSize = 11.sp, letterSpacing = 1.4.sp),

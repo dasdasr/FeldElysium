@@ -102,9 +102,11 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        Column(Modifier
-            .fillMaxSize()
-            .statusBarsPadding()) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
+        ) {
             FeldScreenHeader(
                 title = "App settings",
                 eyebrow = "Settings",
@@ -235,9 +237,12 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             }
         }
 
-        FeldToastHost(toast, Modifier
-            .align(Alignment.BottomCenter)
-            .navigationBarsPadding())
+        FeldToastHost(
+            toast,
+            Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding(),
+        )
     }
 
     if (showPlaybackUiText) {
@@ -315,16 +320,16 @@ private fun SoonTap(title: String, content: @Composable () -> Unit) {
 private fun AppSettings.playbackTextIsDefault(): Boolean {
     val d = AppSettings()
     return playbackMoney == d.playbackMoney &&
-            playbackTime == d.playbackTime &&
-            playbackDay == d.playbackDay
+        playbackTime == d.playbackTime &&
+        playbackDay == d.playbackDay
 }
 
 private fun AppSettings.backgroundIsDefault(): Boolean {
     val d = AppSettings()
     return backgroundKind == d.backgroundKind &&
-            backgroundColorArgb == d.backgroundColorArgb &&
-            backgroundMediaUri == d.backgroundMediaUri &&
-            backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
-            backgroundVideoSound == d.backgroundVideoSound &&
-            backgroundVideoFill == d.backgroundVideoFill
+        backgroundColorArgb == d.backgroundColorArgb &&
+        backgroundMediaUri == d.backgroundMediaUri &&
+        backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
+        backgroundVideoSound == d.backgroundVideoSound &&
+        backgroundVideoFill == d.backgroundVideoFill
 }

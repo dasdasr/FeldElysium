@@ -114,7 +114,7 @@ private fun pickKind(
     if (total <= 0f) return null
     var t = rng.nextFloat() * total
     for ((k, v) in w) {
-        t -= v;
+        t -= v
         if (t <= 0f && v > 0f) return k
     }
     return w.entries.lastOrNull { it.value > 0f }?.key
@@ -162,23 +162,27 @@ private fun findSpot(
         val py: Float
         when {
             center -> {
-                px = safe.left + (safe.width - bw) * rng.nextFloat();
+                px = safe.left + (safe.width - bw) * rng.nextFloat()
                 py = (safe.height - bh) * rng.nextFloat()
             }
+
             side == 0 -> {
-                px = safe.left + (safe.width - bw) * rx;
+                px = safe.left + (safe.width - bw) * rx
                 py = safe.top + m
             }
+
             side == 1 -> {
-                px = safe.left + (safe.width - bw) * rx;
+                px = safe.left + (safe.width - bw) * rx
                 py = safe.bottom - bh - m
             }
+
             side == 2 -> {
-                px = safe.left + m;
+                px = safe.left + m
                 py = safe.top + (safe.height - bh) * ry
             }
+
             else -> {
-                px = safe.right - bw - m;
+                px = safe.right - bw - m
                 py = safe.top + (safe.height - bh) * ry
             }
         }

@@ -33,12 +33,12 @@ data class EggReply(
             skill.name.uppercase()
         } else {
             buildString {
-            append('[')
-            if (difficulty != null) append(difficulty.label).append(": ")
-            append(skill.name)
-            if (result != null) append(" — ").append(result.label)
-            append(']')
-        }
+                append('[')
+                if (difficulty != null) append(difficulty.label).append(": ")
+                append(skill.name)
+                if (result != null) append(" — ").append(result.label)
+                append(']')
+            }
         }
 }
 

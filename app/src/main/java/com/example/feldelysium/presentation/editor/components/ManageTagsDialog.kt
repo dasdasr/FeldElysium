@@ -123,7 +123,7 @@ fun ManageTagsDialog(
             tag = tag,
             takenNames = tags.filter { it.id != tag.id }.map { it.name.lowercase() }.toSet(),
             onSave = {
-                onSave(it);
+                onSave(it)
                 editing = null
             },
             onDismiss = { editing = null },
@@ -140,7 +140,7 @@ fun ManageTagsDialog(
                 FeldDialogActions(
                     confirmLabel = "Delete",
                     onConfirm = {
-                        onDelete(tag);
+                        onDelete(tag)
                         deleting = null
                     },
                     onCancel = { deleting = null },

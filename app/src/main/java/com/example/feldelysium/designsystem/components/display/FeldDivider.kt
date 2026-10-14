@@ -41,12 +41,12 @@ fun FeldDivider(
 ) {
     val sized = if (vertical) {
         Modifier
-        .width(thickness)
-        .fillMaxHeight()
+            .width(thickness)
+            .fillMaxHeight()
     } else {
         Modifier
-        .height(thickness)
-        .fillMaxWidth()
+            .height(thickness)
+            .fillMaxWidth()
     }
 
     Spacer(
@@ -66,8 +66,8 @@ fun FeldDivider(
                 while (s < len) {
                     val l = segment.toPx() * (0.6f + rnd.nextFloat())
                     if (rnd.nextFloat() < changeChance) lvl = rnd.nextInt(3)
-                    starts += s;
-                    ends += minOf(s + l, len);
+                    starts += s
+                    ends += minOf(s + l, len)
                     alphas += levels[lvl]
                     s += l
                 }
@@ -76,12 +76,12 @@ fun FeldDivider(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         ShaderBrush(
                             RuntimeShader(INK_AGSL).apply {
-                            setFloatUniform("seed", seed.mod(97).toFloat())
-                            setFloatUniform("grainScale", 18.dp.toPx())
-                            setFloatUniform("minAlpha", 0.6f)
-                            setFloatUniform("contrast", 1.6f)
-                            setColorUniform("inkColor", color.toArgb())
-                        }
+                                setFloatUniform("seed", seed.mod(97).toFloat())
+                                setFloatUniform("grainScale", 18.dp.toPx())
+                                setFloatUniform("minAlpha", 0.6f)
+                                setFloatUniform("contrast", 1.6f)
+                                setColorUniform("inkColor", color.toArgb())
+                            },
                         )
                     } else {
                         SolidColor(color)

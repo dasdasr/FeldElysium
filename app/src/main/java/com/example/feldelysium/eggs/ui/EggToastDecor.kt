@@ -68,7 +68,7 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
         delay(900)
         while (true) {
             launch {
-                ripple.snapTo(0f);
+                ripple.snapTo(0f)
                 ripple.animateTo(1f, tween(700))
             }
             launch {
@@ -76,9 +76,9 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
                 burst.snapTo(0f)
                 burst.animateTo(1f, tween(BurstMs, easing = LinearEasing))
             }
-            pulse.animateTo(1.22f, tween(70));
+            pulse.animateTo(1.22f, tween(70))
             pulse.animateTo(1f, tween(90))
-            pulse.animateTo(1.14f, tween(70));
+            pulse.animateTo(1.14f, tween(70))
             pulse.animateTo(1f, tween(140))
             delay(Random.nextLong(1300, 2300))
         }
@@ -176,9 +176,9 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
                 val ty = cardB + (8f + bob * 3f) * d
                 drawPath(
                     Path().apply {
-                        moveTo(tx - 6 * d, ty);
-                        lineTo(tx + 6 * d, ty);
-                        lineTo(tx, ty + 7 * d);
+                        moveTo(tx - 6 * d, ty)
+                        lineTo(tx + 6 * d, ty)
+                        lineTo(tx, ty + 7 * d)
                         close()
                     },
                     Cream.copy(alpha = 0.9f),

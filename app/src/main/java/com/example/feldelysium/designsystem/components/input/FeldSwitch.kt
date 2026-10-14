@@ -74,7 +74,7 @@ private val RimSpec = FeldPaper.Panel.copy(
 private val Settle = spring<Float>(dampingRatio = 0.62f, stiffness = 520f)
 
 private fun smooth(x: Float): Float {
-    val t = x.coerceIn(0f, 1f);
+    val t = x.coerceIn(0f, 1f)
     return t * t * (3f - 2f * t)
 }
 
@@ -166,54 +166,54 @@ fun FeldSwitch(
         Modifier
     } else {
         Modifier.pointerInput(travelPx) {
-        awaitEachGesture {
-            val down = awaitFirstDown(requireUnconsumed = false)
-            pressed = true
-            val tracker = VelocityTracker()
-            tracker.addPosition(down.uptimeMillis, down.position)
-            var total = 0f
-            var drag = false
-            var finished = false
+            awaitEachGesture {
+                val down = awaitFirstDown(requireUnconsumed = false)
+                pressed = true
+                val tracker = VelocityTracker()
+                tracker.addPosition(down.uptimeMillis, down.position)
+                var total = 0f
+                var drag = false
+                var finished = false
 
-            while (!finished) {
-                val ev = awaitPointerEvent()
-                val c = ev.changes.firstOrNull { it.id == down.id } ?: break
-                if (c.isConsumed && !drag) break
-                tracker.addPosition(c.uptimeMillis, c.position)
+                while (!finished) {
+                    val ev = awaitPointerEvent()
+                    val c = ev.changes.firstOrNull { it.id == down.id } ?: break
+                    if (c.isConsumed && !drag) break
+                    tracker.addPosition(c.uptimeMillis, c.position)
 
-                if (!c.pressed) {
-                    if (drag) {
-                        dragging = false
-                        settle(tracker.calculateVelocity().x / travelPx)
+                    if (!c.pressed) {
+                        if (drag) {
+                            dragging = false
+                            settle(tracker.calculateVelocity().x / travelPx)
+                        } else {
+                            haptics.confirm()
+                            currentOnChange(!currentChecked)
+                        }
+                        finished = true
                     } else {
-                        haptics.confirm()
-                        currentOnChange(!currentChecked)
-                    }
-                    finished = true
-                } else {
-                    val dx = c.positionChange().x
-                    total += dx
-                    if (!drag && abs(total) > viewConfiguration.touchSlop) {
-                        drag = true;
-                        dragging = true
-                        scope.launch(start = CoroutineStart.UNDISPATCHED) { pos.stop() }
-                    }
-                    if (drag) {
-                        c.consume()
-                        val old = pos.value
-                        val new = (old + dx / travelPx).coerceIn(0f, 1f)
-                        if ((old < 0.5f) != (new < 0.5f)) haptics.tick()
-                        scope.launch(start = CoroutineStart.UNDISPATCHED) { pos.snapTo(new) }
+                        val dx = c.positionChange().x
+                        total += dx
+                        if (!drag && abs(total) > viewConfiguration.touchSlop) {
+                            drag = true
+                            dragging = true
+                            scope.launch(start = CoroutineStart.UNDISPATCHED) { pos.stop() }
+                        }
+                        if (drag) {
+                            c.consume()
+                            val old = pos.value
+                            val new = (old + dx / travelPx).coerceIn(0f, 1f)
+                            if ((old < 0.5f) != (new < 0.5f)) haptics.tick()
+                            scope.launch(start = CoroutineStart.UNDISPATCHED) { pos.snapTo(new) }
+                        }
                     }
                 }
+                if (!finished && drag) {
+                    dragging = false
+                    settle(0f)
+                }
+                pressed = false
             }
-            if (!finished && drag) {
-                dragging = false;
-                settle(0f)
-            }
-            pressed = false
         }
-    }
     }
 
     val labelStyle =
@@ -224,7 +224,7 @@ fun FeldSwitch(
             .size(width, height)
             .graphicsLayer {
                 val s = 1f - 0.03f * press
-                scaleX = s;
+                scaleX = s
                 scaleY = s
                 alpha = if (enabled) 1f else 0.45f
             }
@@ -255,7 +255,7 @@ fun FeldSwitch(
                 role = Role.Switch
                 toggleableState = ToggleableState(checked)
                 onClick {
-                    onCheckedChange(!checked);
+                    onCheckedChange(!checked)
                     true
                 }
             }

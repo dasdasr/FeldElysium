@@ -119,7 +119,7 @@ private fun chipPath(w: Float, h: Float, shape: FeldChipShape, tip: Float, round
 enum class FeldChipFill { Diamond, Chamfer }
 
 private fun smooth(x: Float): Float {
-    val t = x.coerceIn(0f, 1f);
+    val t = x.coerceIn(0f, 1f)
     return t * t * (3f - 2f * t)
 }
 
@@ -149,12 +149,12 @@ private fun revealPath(
     FeldChipFill.Chamfer -> {
         val k = 1.35f * t
         val m = Matrix().apply {
-            translate(o.x, o.y);
-            scale(k, k);
+            translate(o.x, o.y)
+            scale(k, k)
             translate(-o.x, -o.y)
         }
         Path().apply {
-            addPath(body);
+            addPath(body)
             transform(m)
         }
     }
@@ -210,10 +210,10 @@ fun FeldChip(
         contentHorizontalPadding
     } else {
         when (shape) {
-        FeldChipShape.Chamfer -> tip + 6.dp
-        FeldChipShape.Pill -> chipHeight / 4
-        FeldChipShape.Rectangle -> 8.dp
-    }
+            FeldChipShape.Chamfer -> tip + 6.dp
+            FeldChipShape.Pill -> chipHeight / 4
+            FeldChipShape.Rectangle -> 8.dp
+        }
     }
 
     Row(
@@ -221,7 +221,7 @@ fun FeldChip(
             .defaultMinSize(minHeight = ChipMinHeight)
             .onSizeChanged { chipHeight = with(density) { it.height.toDp() } }
             .graphicsLayer {
-                scaleX = scale;
+                scaleX = scale
                 scaleY = scale
             }
             .semantics { this.selected = selected }
@@ -260,9 +260,9 @@ fun FeldChip(
                 val defaultOrigin =
                     if (leading || leadingContent != null) {
                         Offset(
-                        sidePad.toPx() + h * 0.17f,
-                        h / 2f,
-                    )
+                            sidePad.toPx() + h * 0.17f,
+                            h / 2f,
+                        )
                     } else {
                         Offset(w / 2f, h / 2f)
                     }
@@ -309,13 +309,13 @@ fun FeldChip(
             Canvas(Modifier.size(chipHeight * 0.34f)) {
                 val s = size.minDimension
                 val d = Path().apply {
-                    moveTo(s / 2f, 0f);
-                    lineTo(s, s / 2f);
-                    lineTo(s / 2f, s);
+                    moveTo(s / 2f, 0f)
+                    lineTo(s, s / 2f)
+                    lineTo(s / 2f, s)
                     lineTo(
                         0f,
                         s / 2f,
-                    );
+                    )
                     close()
                 }
                 drawPath(d, diamondColor, alpha = 1f - flip)

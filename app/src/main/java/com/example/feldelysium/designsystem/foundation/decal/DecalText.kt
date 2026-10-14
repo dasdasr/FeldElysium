@@ -51,9 +51,11 @@ internal object DecalText {
 
     fun strip(rng: Random, c: DecalContext): String = when (rng.nextInt(3)) {
         0 -> "FELD • PLAYBACK • DEVICE"
+
         1 -> "REEL ${1 + rng.nextInt(6)} • ${c.date}"
+
         else -> {
-            val s = rng.nextInt(10, 90);
+            val s = rng.nextInt(10, 90)
             (0..3).joinToString("    ") { (s + it).toString() }
         }
     }

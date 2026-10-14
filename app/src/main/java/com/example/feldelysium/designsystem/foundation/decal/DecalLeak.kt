@@ -33,12 +33,12 @@ internal class Leak(size: Size, rightSide: Boolean, color: Color, strength: Floa
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ShaderBrush(
                 RuntimeShader(LEAK_AGSL).apply {
-                setFloatUniform("size", size.width.toFloat(), size.height.toFloat())
-                setFloatUniform("seed", seed)
-                setFloatUniform("strength", strength)
-                setFloatUniform("side", if (rightSide) 1f else 0f)
-                setColorUniform("tint", color.toArgb())
-            }
+                    setFloatUniform("size", size.width.toFloat(), size.height.toFloat())
+                    setFloatUniform("seed", seed)
+                    setFloatUniform("strength", strength)
+                    setFloatUniform("side", if (rightSide) 1f else 0f)
+                    setColorUniform("tint", color.toArgb())
+                },
             )
         } else {
             val c = color.copy(alpha = strength * 0.7f)

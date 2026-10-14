@@ -23,33 +23,33 @@ object SpeakerJson {
         put(
             "tags",
             JSONArray().apply {
-            doc.tags.forEach { t ->
-                put(
-                    JSONObject().apply {
-                    put("id", t.id);
-                    put("name", t.name)
-                    t.color?.let { put("color", hex(it)) }
-                    t.sound?.let { put("sound", it) }
+                doc.tags.forEach { t ->
+                    put(
+                        JSONObject().apply {
+                            put("id", t.id)
+                            put("name", t.name)
+                            t.color?.let { put("color", hex(it)) }
+                            t.sound?.let { put("sound", it) }
+                        },
+                    )
                 }
-                )
-            }
-        }
+            },
         )
         put(
             "speakers",
             JSONArray().apply {
-            doc.speakers.forEach { s ->
-                put(
-                    JSONObject().apply {
-                    put("id", s.id);
-                    put("name", s.name)
-                    s.color?.let { put("color", hex(it)) }
-                    s.tagId?.let { put("tag", it) }
-                    s.icon?.let { put("icon", it) }
+                doc.speakers.forEach { s ->
+                    put(
+                        JSONObject().apply {
+                            put("id", s.id)
+                            put("name", s.name)
+                            s.color?.let { put("color", hex(it)) }
+                            s.tagId?.let { put("tag", it) }
+                            s.icon?.let { put("icon", it) }
+                        },
+                    )
                 }
-                )
-            }
-        }
+            },
         )
     }.toString(2)
 

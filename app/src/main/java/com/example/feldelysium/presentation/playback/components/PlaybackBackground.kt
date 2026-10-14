@@ -92,7 +92,7 @@ fun BackgroundVideo(
                     VideoView(ctx).apply {
                         setVideoURI(Uri.parse(uri))
                         setOnErrorListener { _, _, _ ->
-                            onError();
+                            onError()
                             true
                         }
                         setOnPreparedListener { mp ->

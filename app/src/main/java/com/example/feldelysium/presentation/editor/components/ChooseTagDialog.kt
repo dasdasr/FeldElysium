@@ -109,7 +109,7 @@ fun ChooseTagDialog(
                             if (known == null) created = created + t
                             current = known ?: t
                         }
-                        draft = "";
+                        draft = ""
                         creating = false
                     },
                     modifier = Modifier.height(34.dp),

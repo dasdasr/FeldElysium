@@ -72,8 +72,8 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
     var stress by remember { mutableStateOf(false) }
 
     val base = when (preset) {
-        "Dialog" -> DecalSpec.Dialog;
-        "Panel" -> DecalSpec.Panel;
+        "Dialog" -> DecalSpec.Dialog
+        "Panel" -> DecalSpec.Panel
         else -> DecalSpec.Entry
     }
     val spec = base.copy(
@@ -118,15 +118,15 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                     FeldSwitch(
                         outline,
                         { outline = it },
-                    );
-                    Spacer(Modifier.width(8.dp));
+                    )
+                    Spacer(Modifier.width(8.dp))
                     Text("outline", color = Color.White)
                     Spacer(Modifier.width(16.dp))
                     FeldSwitch(
                         leading,
                         { leading = it },
-                    );
-                    Spacer(Modifier.width(8.dp));
+                    )
+                    Spacer(Modifier.width(8.dp))
                     Text("diamond", color = Color.White)
                 }
                 Row(
@@ -247,7 +247,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                FeldSwitch(dragging, { dragging = it });
+                FeldSwitch(dragging, { dragging = it })
                 Spacer(Modifier.width(8.dp))
                 Text("drag state (heartbeat diamond)", color = Color.White)
             }
@@ -278,7 +278,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         item { Title("MARKER FILM") }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                FeldSwitch(bake, { bake = it });
+                FeldSwitch(bake, { bake = it })
                 Spacer(Modifier.width(8.dp))
                 Text("bake to bitmap", color = Color.White)
             }
@@ -326,29 +326,29 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
         }
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                FeldSwitch(stress, { stress = it });
+                FeldSwitch(stress, { stress = it })
                 Spacer(Modifier.width(8.dp))
                 Text("stress: 80 film icons (check scroll)", color = Color.White)
             }
         }
         if (stress) {
             item {
-            Box(Modifier.height(240.dp)) {
-                LazyVerticalGrid(GridCells.Fixed(8), userScrollEnabled = true) {
-                    items(80) { i ->
-                        val id = FeldIconId.values()[i % FeldIconId.values().size]
-                        FeldIcon(
-                            id,
-                            tint = Color.White,
-                            size = 28.dp,
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .markerFilmMaterial(FeldMarker.Chalk, i, bakeKey = id, bake = bake),
-                        )
+                Box(Modifier.height(240.dp)) {
+                    LazyVerticalGrid(GridCells.Fixed(8), userScrollEnabled = true) {
+                        items(80) { i ->
+                            val id = FeldIconId.values()[i % FeldIconId.values().size]
+                            FeldIcon(
+                                id,
+                                tint = Color.White,
+                                size = 28.dp,
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .markerFilmMaterial(FeldMarker.Chalk, i, bakeKey = id, bake = bake),
+                            )
+                        }
                     }
                 }
             }
-        }
         }
 
         item { Title("DECAL FONTS") }

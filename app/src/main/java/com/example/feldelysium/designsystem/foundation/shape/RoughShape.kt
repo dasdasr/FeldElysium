@@ -291,7 +291,7 @@ private fun Path.catmullRomTo(k: List<Knot>) {
         val p1 = k[i].p
         val p2 = k[i + 1].p
         if (k[i].jumpNext) {
-            lineTo(p2.x, p2.y);
+            lineTo(p2.x, p2.y)
             continue
         }
 

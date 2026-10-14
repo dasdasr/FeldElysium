@@ -63,15 +63,15 @@ class SceneViewModel : ViewModel() {
                 current
             } else {
                 current.copy(
-                customSpeakers = current.customSpeakers.map {
-                    if (it.id == updated.id) updated else it
-                },
-                scene = current.scene.copy(
-                    entries = current.scene.entries.map { entry ->
-                        if (entry.speaker.id == updated.id) entry.copy(speaker = updated) else entry
+                    customSpeakers = current.customSpeakers.map {
+                        if (it.id == updated.id) updated else it
                     },
-                ),
-            )
+                    scene = current.scene.copy(
+                        entries = current.scene.entries.map { entry ->
+                            if (entry.speaker.id == updated.id) entry.copy(speaker = updated) else entry
+                        },
+                    ),
+                )
             }
         }
 
@@ -101,8 +101,8 @@ class SceneViewModel : ViewModel() {
                 current
             } else {
                 current.copy(
-                scene = current.scene.copy(entries = updated),
-            )
+                    scene = current.scene.copy(entries = updated),
+                )
             }
         }
     }
