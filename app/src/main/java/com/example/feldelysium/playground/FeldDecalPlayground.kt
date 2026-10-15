@@ -297,7 +297,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                         Text(
                             name.uppercase(),
                             style = MaterialTheme.typography.headlineMedium,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier
                                 .markerFilmMaterial(
                                     s,
@@ -310,7 +310,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                         FeldIconId.values().take(6).forEach {
                             FeldIcon(
                                 it,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 size = 28.dp,
                                 modifier = Modifier.markerFilmMaterial(
                                     s,
@@ -328,7 +328,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 FeldSwitch(stress, { stress = it })
                 Spacer(Modifier.width(8.dp))
-                Text("stress: 80 film icons (check scroll)", color = Color.White)
+                Text("stress: 80 film icons (check scroll)", color = MaterialTheme.colorScheme.onBackground)
             }
         }
         if (stress) {
@@ -339,7 +339,7 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                             val id = FeldIconId.values()[i % FeldIconId.values().size]
                             FeldIcon(
                                 id,
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onBackground,
                                 size = 28.dp,
                                 modifier = Modifier
                                     .padding(6.dp)
@@ -393,7 +393,7 @@ private fun Title(t: String) = Text(
 @Composable
 private fun LabeledSlider(label: String, v: Float, range: ClosedFloatingPointRange<Float>, onChange: (Float) -> Unit) {
     Column {
-        Text(label, color = Color.White, style = MaterialTheme.typography.labelSmall)
+        Text(label, color = MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.labelSmall)
         Slider(v, onChange, valueRange = range)
     }
 }

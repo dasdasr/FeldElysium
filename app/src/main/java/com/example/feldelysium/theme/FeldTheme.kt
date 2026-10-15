@@ -53,6 +53,9 @@ data class DiscoExtraColors(
     val success: Color = DiscoSuccess,
     val primaryPressed: Color = DiscoOrangePressed,
     val accent: Color = DiscoTeal,
+    val checkFailure: Color = Color(0xFFB3141A),
+    val damageMorale: Color = Color(0xFF7A3FB0),
+    val damageHealth: Color = Color(0xFFC0392B),
 )
 
 @Composable

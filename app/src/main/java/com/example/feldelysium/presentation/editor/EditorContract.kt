@@ -1,5 +1,6 @@
 package com.example.feldelysium.presentation.editor
 
+import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
@@ -43,7 +44,9 @@ data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
 sealed class EditorEvent {
     data object RequestAddEntry : EditorEvent()
     data class SelectSpeakerForNewEntry(val speaker: Speaker) : EditorEvent()
-    data class ConfirmNewEntry(val text: String, val check: SkillCheck? = null) : EditorEvent()
+    data class ConfirmNewEntry(val text: String, val check: SkillCheck? = null, val damage: DamageEffect? = null) :
+        EditorEvent()
+
     data class RequestEditEntry(val entry: DialogueEntry) : EditorEvent()
     data class ConfirmEditEntry(val updated: DialogueEntry) : EditorEvent()
     data class DeleteEntry(val entryId: String) : EditorEvent()

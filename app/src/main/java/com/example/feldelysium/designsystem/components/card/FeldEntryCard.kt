@@ -330,7 +330,8 @@ fun FeldEntryCard(
                     contentAlignment = Alignment.Center,
                 ) {
                     FeldIcon(
-                        FeldIconId.MoreHoriz,
+                        id = FeldIconId.MoreHoriz,
+                        seed = seed,
                         tint = FeldPalette.Muted,
                         size = 18.dp,
                     )

@@ -65,6 +65,7 @@ enum class FeldIconId {
 @Composable
 fun FeldIcon(
     id: FeldIconId,
+    seed: Int? = null,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current,
     contentDescription: String? = null,
@@ -106,7 +107,7 @@ fun FeldIcon(
                 if (film) {
                     Modifier.markerFilmMaterial(
                         FeldMarker.Chalk,
-                        id.ordinal,
+                        id.ordinal + (seed ?: 0),
                         bakeKey = tint,
                     )
                 } else {

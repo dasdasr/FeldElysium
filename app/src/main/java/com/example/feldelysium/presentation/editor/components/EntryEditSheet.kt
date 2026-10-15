@@ -26,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +63,7 @@ import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
@@ -88,7 +91,7 @@ private fun EntryEditSheetPreview() {
             text = "You vs al-ghoul",
         ),
         speaker = PredefinedSpeakers.MEASUREHEAD,
-        onConfirm = { _, _ -> },
+        onConfirm = { _, _, _ -> },
         onDismiss = {},
     )
 }
@@ -98,7 +101,7 @@ private fun EntryEditSheetPreview() {
 fun EntryEditSheet(
     entry: DialogueEntry?,
     speaker: Speaker?,
-    onConfirm: (text: String, check: SkillCheck?) -> Unit,
+    onConfirm: (text: String, check: SkillCheck?, damage: DamageEffect?) -> Unit,
     onDismiss: () -> Unit,
     onSpeakerClick: (() -> Unit)? = null,
     onEditSpeaker: ((Speaker) -> Unit)? = null,
@@ -107,10 +110,17 @@ fun EntryEditSheet(
     var check by remember(entry?.id) { mutableStateOf(entry?.check) }
     var lastCheck by remember(entry?.id) { mutableStateOf(entry?.check) }
 
+    var damage by remember(entry?.id) { mutableStateOf(entry?.damage) }
+    var lastDamage by remember(entry?.id) { mutableStateOf(entry?.damage) }
+    LaunchedEffect(damage) { if (damage != null) lastDamage = damage }
+
     LaunchedEffect(check) { if (check != null) lastCheck = check }
 
     LaunchedEffect(speaker?.type?.allowsChecks) {
-        if (speaker?.type?.allowsChecks != true) check = null
+        if (speaker?.type?.allowsChecks != true) {
+            check = null
+            damage = null
+        }
     }
 
     ModalBottomSheet(
@@ -176,20 +186,26 @@ fun EntryEditSheet(
                 }
 
                 if (speaker?.type?.allowsChecks == true) {
-                    SkillCheckRow(
-                        checked = check != null,
-                        onCheckedChange = { check = if (it) SkillCheck() else null },
-                    )
+                    ToggleRow("SKILL CHECK", Icons.Filled.Casino, check != null) {
+                        check = if (it) SkillCheck() else null
+                    }
                     AnimatedVisibility(
                         visible = check != null,
                         enter = expandVertically() + fadeIn(),
                         exit = shrinkVertically() + fadeOut(),
                     ) {
-                        EntryCheckEditor(
-                            speaker = speaker,
-                            check = check ?: lastCheck,
-                            onChange = { check = it },
-                        )
+                        EntryCheckEditor(speaker = speaker, check = check ?: lastCheck, onChange = { check = it })
+                    }
+
+                    ToggleRow("DAMAGE", Icons.Filled.Favorite, damage != null) {
+                        damage = if (it) DamageEffect() else null
+                    }
+                    AnimatedVisibility(
+                        visible = damage != null,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                    ) {
+                        EntryDamageEditor(damage = damage ?: lastDamage, onChange = { damage = it })
                     }
                 }
             }
@@ -199,10 +215,8 @@ fun EntryEditSheet(
                 confirmLabel = "Confirm",
                 onConfirm = {
                     if (text.isNotBlank()) {
-                        onConfirm(
-                            text.trim(),
-                            check?.takeIf { speaker?.type?.allowsChecks == true },
-                        )
+                        val allowed = speaker?.type?.allowsChecks == true
+                        onConfirm(text.trim(), check?.takeIf { allowed }, damage?.takeIf { allowed })
                     }
                 },
                 onCancel = onDismiss,
@@ -272,7 +286,7 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
 }
 
 @Composable
-private fun SkillCheckRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+private fun ToggleRow(label: String, icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -280,14 +294,14 @@ private fun SkillCheckRow(checked: Boolean, onCheckedChange: (Boolean) -> Unit) 
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = Icons.Filled.Casino,
+            imageVector = icon,
             contentDescription = null,
             tint = FeldPalette.Muted,
             modifier = Modifier.size(20.dp),
         )
         Spacer(Modifier.width(12.dp))
         Text(
-            text = "SKILL CHECK",
+            text = label,
             style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.4.sp),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
         )

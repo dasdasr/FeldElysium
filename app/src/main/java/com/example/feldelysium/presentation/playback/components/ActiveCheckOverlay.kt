@@ -4,14 +4,11 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -26,10 +23,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.presentation.playback.CheckOverlay
 import kotlinx.coroutines.delay
@@ -70,14 +64,12 @@ private fun ActiveCheckOverlayContent(check: SkillCheck, modifier: Modifier) {
         val slidePx = with(density) { maxWidth.toPx() } * CheckMotion.TEXT_SLIDE_FRACTION
         val (die1, die2) = check.dice
 
-        Image(
-            painter = painterResource(CheckAssets.background(check.result)),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .graphicsLayer { alpha = background.value },
+        BlendedImage(
+            res = CheckAssets.background(check.result),
+            modifier = Modifier.matchParentSize(),
+            blendMode = CheckMotion.BG_BLEND,
+            bottomFit = true,
+            alpha = { background.value },
         )
 
         Column(
@@ -93,16 +85,14 @@ private fun ActiveCheckOverlayContent(check: SkillCheck, modifier: Modifier) {
                 PipDie(die1, Modifier.size(diceSize))
                 PipDie(die2, Modifier.size(diceSize))
             }
-            Image(
-                painter = painterResource(CheckAssets.resultText(check.result)),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .height(textHeight)
-                    .graphicsLayer {
-                        alpha = 1f - textOut.value
-                        translationX = textOut.value * slidePx
-                    },
+            ResultPlaque(
+                text = CheckAssets.label(check.result),
+                color = CheckAssets.ResultColor(check.result),
+                height = textHeight,
+                modifier = Modifier.graphicsLayer {
+                    alpha = 1f - textOut.value
+                    translationX = textOut.value * slidePx
+                },
             )
         }
     }

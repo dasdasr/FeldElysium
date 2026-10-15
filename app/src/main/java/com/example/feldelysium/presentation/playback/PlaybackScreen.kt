@@ -51,6 +51,8 @@ import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.presentation.playback.components.ActiveCheckOverlay
+import com.example.feldelysium.presentation.playback.components.ActiveDamageOverlay
+import com.example.feldelysium.presentation.playback.components.DamageBackdrop
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
@@ -207,6 +209,8 @@ private fun PlaybackStage(
             modifier = Modifier.matchParentSize(),
         )
 
+        DamageBackdrop(overlay = state.damageOverlay, modifier = Modifier.matchParentSize())
+
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -242,6 +246,8 @@ private fun PlaybackStage(
             overlay = state.checkOverlay,
             modifier = Modifier.matchParentSize(),
         )
+
+        ActiveDamageOverlay(overlay = state.damageOverlay, modifier = Modifier.matchParentSize())
 
         IconButton(
             onClick = onBackClick,
