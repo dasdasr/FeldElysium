@@ -2,10 +2,13 @@ package com.example.feldelysium.presentation.editor
 
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
+import com.example.feldelysium.domain.model.SceneInfo
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import java.io.InputStream
+import java.io.OutputStream
 
 data class EditorUiState(
     val entries: List<DialogueEntry> = emptyList(),
@@ -27,6 +30,10 @@ data class EditorUiState(
 
     val editingSpeaker: Speaker? = null,
     val isChangingSpeaker: Boolean = false,
+
+    val sceneId: String = "",
+    val isSceneManagerOpen: Boolean = false,
+    val scenes: List<SceneInfo> = emptyList(),
 )
 
 data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
@@ -76,6 +83,15 @@ sealed class EditorEvent {
     data object NavigateToPlayback : EditorEvent()
     data class RenameScene(val name: String) : EditorEvent()
     data object ClearScene : EditorEvent()
+
+    data object SaveScene : EditorEvent()
+    data object OpenSceneManager : EditorEvent()
+    data object CloseSceneManager : EditorEvent()
+    data object NewScene : EditorEvent()
+    data class OpenScene(val id: String) : EditorEvent()
+    data class DeleteScene(val id: String) : EditorEvent()
+    data class ExportScene(val output: OutputStream?) : EditorEvent()
+    data class ImportScene(val input: InputStream?) : EditorEvent()
 }
 
 sealed class EditorEffect {

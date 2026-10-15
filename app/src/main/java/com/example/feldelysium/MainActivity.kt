@@ -17,8 +17,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import com.example.feldelysium.designsystem.foundation.material.MarkerFilmWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
+import com.example.feldelysium.di.AppViewModelFactory
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggsViewModel
 import com.example.feldelysium.eggs.ui.EggToastHost
@@ -106,4 +108,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = AppViewModelFactory((application as FeldApp).container, super.defaultViewModelProviderFactory)
 }
