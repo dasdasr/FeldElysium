@@ -331,14 +331,22 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
             speaker = state.editingEntry?.speaker ?: state.pendingSpeaker,
             onSpeakerClick = { vm.dispatch(EditorEvent.RequestChangeSpeaker) },
             onEditSpeaker = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
-            onConfirm = { text ->
+            onConfirm = { text, check ->
                 val editing = state.editingEntry
+
                 if (editing != null) {
                     eggs?.report(EggEvent.EntryEdit, editing.speaker.name)
-                    vm.dispatch(EditorEvent.ConfirmEditEntry(editing.copy(text = text)))
+                    vm.dispatch(
+                        EditorEvent.ConfirmEditEntry(
+                            editing.copy(
+                                text = text,
+                                check = check,
+                            ),
+                        ),
+                    )
                 } else {
                     eggs?.report(EggEvent.EntryAdd, state.pendingSpeaker?.name)
-                    vm.dispatch(EditorEvent.ConfirmNewEntry(text))
+                    vm.dispatch(EditorEvent.ConfirmNewEntry(text, check))
                 }
             },
             onDismiss = { vm.dispatch(EditorEvent.DismissEntryEdit) },

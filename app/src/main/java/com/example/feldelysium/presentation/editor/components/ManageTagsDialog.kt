@@ -178,6 +178,8 @@ private fun EditTagDialog(
         if (c != null && SpeakerColor.isCustom(c)) SpeakerColor.AllArgb + c else SpeakerColor.AllArgb
     }
 
+    var allowsChecks by remember { mutableStateOf(tag.allowsChecks) }
+
     FeldDialog(
         title = "Edit tag",
         eyebrow = tag.name,
@@ -185,7 +187,16 @@ private fun EditTagDialog(
         footer = {
             FeldDialogActions(
                 confirmLabel = "Save",
-                onConfirm = { onSave(tag.copy(name = clean, colorArgb = color, soundKey = sound)) },
+                onConfirm = {
+                    onSave(
+                        tag.copy(
+                            name = clean,
+                            colorArgb = color,
+                            soundKey = sound,
+                            allowsChecks = allowsChecks,
+                        )
+                    )
+                },
                 onCancel = onDismiss,
                 confirmEnabled = valid,
             )
@@ -243,5 +254,14 @@ private fun EditTagDialog(
                 )
             }
         }
+        Spacer(Modifier.height(18.dp))
+        FieldLabel("Skill checks")
+        FeldChip(
+            text = "Allow skill checks",
+            selected = allowsChecks,
+            onClick = { allowsChecks = !allowsChecks },
+            modifier = Modifier.height(30.dp),
+            accent = FeldChipColors.Teal,
+        )
     }
 }

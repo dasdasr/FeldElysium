@@ -62,7 +62,6 @@ import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 
-/** While id is null, placeholders are drawn. Add the files and enter R.drawable */
 object SpeakerDossierAssets {
     @DrawableRes
     val Frame: Int? = R.drawable.speaker_frame

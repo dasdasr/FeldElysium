@@ -40,8 +40,8 @@ class DataStoreSpeakerRepository(
     override val tags: Flow<List<SpeakerType>> = store.data
         .map { doc ->
             PredefinedSpeakers.TAGS +
-                doc.tags.filterNot { PredefinedSpeakers.isBundledTag(it.id) }
-                    .map { it.toType() }
+                    doc.tags.filterNot { PredefinedSpeakers.isBundledTag(it.id) }
+                        .map { it.toType() }
         }
         .distinctUntilChanged()
 
@@ -50,7 +50,7 @@ class DataStoreSpeakerRepository(
             val tagMap =
                 (doc.tags.map { it.toType() } + PredefinedSpeakers.TAGS).associateBy { it.id }
             PredefinedSpeakers.ALL +
-                doc.speakers.filter { it.id !in bundledIds }.map { it.toSpeaker(tagMap) }
+                    doc.speakers.filter { it.id !in bundledIds }.map { it.toSpeaker(tagMap) }
         }
         .distinctUntilChanged()
 
@@ -104,7 +104,7 @@ class DataStoreSpeakerRepository(
     override suspend fun exportPack(ids: Set<String>?, output: OutputStream) = withContext(io) {
         val doc = store.data.first()
         val chosen = doc.speakers.filter { ids == null || it.id in ids } +
-            PredefinedSpeakers.ALL.filter { ids != null && it.id in ids }.map { it.toData() }
+                PredefinedSpeakers.ALL.filter { ids != null && it.id in ids }.map { it.toData() }
 
         val tagPool = (doc.tags + PredefinedSpeakers.TAGS.map { it.toData() }).associateBy { it.id }
         val usedTags = chosen.mapNotNull { it.tagId }.distinct().mapNotNull { tagPool[it] }
@@ -272,8 +272,8 @@ class DataStoreSpeakerRepository(
         )
     }
 
-    private fun TagData.toType() = SpeakerType(id, name, color, sound)
-    private fun SpeakerType.toData() = TagData(id, name, colorArgb, soundKey)
+    private fun TagData.toType() = SpeakerType(id, name, color, sound, allowsChecks)
+    private fun SpeakerType.toData() = TagData(id, name, colorArgb, soundKey, allowsChecks)
 
     private inline fun <T> List<T>.replaceOrAdd(item: T, match: (T) -> Boolean): List<T> {
         val i = indexOfFirst(match)

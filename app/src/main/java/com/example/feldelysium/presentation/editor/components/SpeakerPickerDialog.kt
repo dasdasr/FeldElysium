@@ -112,6 +112,7 @@ fun SpeakerPickerDialog(
                 )
             }
             .filter { it.items.isNotEmpty() }
+            .sortedBy { if (it.type == SpeakerType.YOU) 0 else 1 }
     }
 
     Dialog(

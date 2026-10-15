@@ -2,6 +2,7 @@ package com.example.feldelysium.presentation.shared
 
 import androidx.lifecycle.ViewModel
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.model.normalized
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,7 +26,7 @@ class SceneViewModel : ViewModel() {
 
     private fun reduce(current: SceneState, action: SceneAction): SceneState = when (action) {
         is SceneAction.AddEntry -> current.copy(
-            scene = current.scene.copy(entries = current.scene.entries + action.entry),
+            scene = current.scene.copy(entries = current.scene.entries + action.entry.normalized()),
         )
 
         is SceneAction.DeleteEntry -> current.copy(
@@ -37,7 +38,7 @@ class SceneViewModel : ViewModel() {
         is SceneAction.UpdateEntry -> current.copy(
             scene = current.scene.copy(
                 entries = current.scene.entries.map {
-                    if (it.id == action.entry.id) action.entry else it
+                    if (it.id == action.entry.id) action.entry.normalized() else it
                 },
             ),
         )
@@ -48,7 +49,7 @@ class SceneViewModel : ViewModel() {
 
         is SceneAction.BulkAddEntries -> current.copy(
             scene = current.scene.copy(
-                entries = current.scene.entries + action.entries,
+                entries = current.scene.entries + action.entries.map { it.normalized() },
             ),
         )
 
@@ -89,21 +90,13 @@ class SceneViewModel : ViewModel() {
 
         is SceneAction.SyncSpeakers -> {
             val byId = action.speakers.associateBy { it.id }
-
             val updated = current.scene.entries.map { entry ->
-                byId[entry.speaker.id]
-                    ?.takeIf { it != entry.speaker }
-                    ?.let { entry.copy(speaker = it) }
-                    ?: entry
+                val fresh = byId[entry.speaker.id]
+                val synced = if (fresh != null && fresh != entry.speaker) entry.copy(speaker = fresh) else entry
+                synced.normalized()
             }
-
-            if (updated == current.scene.entries) {
-                current
-            } else {
-                current.copy(
-                    scene = current.scene.copy(entries = updated),
-                )
-            }
+            if (updated == current.scene.entries) current
+            else current.copy(scene = current.scene.copy(entries = updated))
         }
     }
 }
