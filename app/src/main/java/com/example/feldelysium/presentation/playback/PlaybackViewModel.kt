@@ -8,6 +8,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.feldelysium.data.sound.SoundGroup
 import com.example.feldelysium.data.sound.SoundManager
 import com.example.feldelysium.domain.model.CheckResult
+import com.example.feldelysium.domain.model.DamageEffect
+import com.example.feldelysium.domain.model.DamageType
 import com.example.feldelysium.domain.playback.PlaybackEngine
 import com.example.feldelysium.domain.playback.PlaybackStep
 import com.example.feldelysium.presentation.playback.components.CheckMotion
@@ -29,6 +31,7 @@ class PlaybackViewModel(application: Application, private val sceneViewModel: Sc
     private val soundManager = SoundManager(application)
     private lateinit var engine: PlaybackEngine
     private var checkJob: Job? = null
+    private var damageJob: Job? = null
 
     private val _state = MutableStateFlow(PlaybackUiState())
     val state: StateFlow<PlaybackUiState> = _state.asStateFlow()
@@ -59,17 +62,35 @@ class PlaybackViewModel(application: Application, private val sceneViewModel: Sc
         if (_state.value.isCheckRolling) return
         val step = engine.advance() ?: return
 
-        val check = step.entry.check?.takeIf { it.active && step.entry.speaker.type.allowsChecks }
+        val allowed = step.entry.speaker.type.allowsChecks
+        val check = step.entry.check?.takeIf { it.active && allowed }
+        val damage = step.entry.damage?.takeIf { allowed }
+
         if (check == null) {
             reveal(step, overlay = null)
+            if (damage != null) showDamage(step.entry.id, damage, delayMs = 0L)
             return
         }
 
-        playCheckSound(check.result)
+        playRollSound()
         _state.update { it.copy(isCheckRolling = true, checkOverlay = null) }
         checkJob = viewModelScope.launch {
             delay(CheckMotion.TAPE_ROLL_TOTAL_MS)
             reveal(step, overlay = CheckOverlay(entryId = step.entry.id, check = check))
+            if (damage != null) showDamage(step.entry.id, damage, CheckMotion.CHECK_OVERLAY_TOTAL_MS)
+        }
+    }
+
+    private fun showDamage(
+        entryId: String,
+        damage: DamageEffect,
+        delayMs: Long
+    ) {
+        damageJob?.cancel()
+        damageJob = viewModelScope.launch {
+            delay(delayMs)
+            playDamageSound(damage.type)
+            _state.update { it.copy(damageOverlay = DamageOverlay(entryId, damage)) }
         }
     }
 
@@ -85,13 +106,18 @@ class PlaybackViewModel(application: Application, private val sceneViewModel: Sc
         soundManager.play(SoundGroup.fromKey(step.entry.speaker.soundKey))
     }
 
-    // TODO(sounds): hook up a dedicated active-check sound, e.g. soundManager.playCheck(result).
+    // TODO(sounds): Roll sound
+    private fun playRollSound() = Unit
+
+    // TODO(sounds): Damage sound types
     @Suppress("UNUSED_PARAMETER")
-    private fun playCheckSound(result: CheckResult) = Unit
+    private fun playDamageSound(type: DamageType) = Unit
 
     private fun reset() {
         checkJob?.cancel()
         checkJob = null
+        damageJob?.cancel()
+        damageJob = null
         if (::engine.isInitialized) engine.reset()
         _state.update { PlaybackUiState(allEntries = it.allEntries) }
     }

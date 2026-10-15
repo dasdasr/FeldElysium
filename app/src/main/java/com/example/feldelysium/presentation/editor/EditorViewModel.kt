@@ -10,6 +10,7 @@ import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.model.normalized
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
 import com.example.feldelysium.presentation.shared.SceneAction
@@ -109,10 +110,7 @@ class EditorViewModel(
                 val editing = it.editingEntry
                 if (editing != null) {
                     it.copy(
-                        editingEntry = editing.copy(
-                            speaker = event.speaker,
-                            check = editing.check?.takeIf { event.speaker.type.allowsChecks },
-                        ),
+                        editingEntry = editing.copy(speaker = event.speaker).normalized(),
                         isSpeakerPickerOpen = false,
                         isChangingSpeaker = false,
                     )
@@ -144,6 +142,7 @@ class EditorViewModel(
                 speaker = speaker,
                 text = event.text.trim(),
                 check = event.check?.takeIf { speaker.type.allowsChecks },
+                damage = event.damage?.takeIf { speaker.type.allowsChecks },
             )
             sceneViewModel.dispatch(SceneAction.AddEntry(entry))
             _state.update { it.copy(pendingSpeaker = null, isEntryEditOpen = false) }
