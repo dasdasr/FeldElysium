@@ -90,7 +90,7 @@ private fun DamageContent(damage: DamageEffect, modifier: Modifier = Modifier) {
             Column(
                 modifier = Modifier.graphicsLayer {
                     alpha = 1f - textOut.value
-                    translationX = -textOut.value * slidePx // влево
+                    translationX = -textOut.value * slidePx
                 },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

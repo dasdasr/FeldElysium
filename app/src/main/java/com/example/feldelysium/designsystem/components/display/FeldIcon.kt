@@ -60,6 +60,7 @@ enum class FeldIconId {
     PlaybackText,
     Settings,
     Export,
+    Save,
 }
 
 @Composable
@@ -97,6 +98,7 @@ fun FeldIcon(
         FeldIconId.PlaybackText -> Icons.Default.Subtitles
         FeldIconId.Settings -> Icons.Default.Settings
         FeldIconId.Export -> Icons.Default.ImportExport
+        FeldIconId.Save -> Icons.Default.Save
     }
     Icon(
         v,

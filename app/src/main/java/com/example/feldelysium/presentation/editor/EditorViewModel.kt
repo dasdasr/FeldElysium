@@ -70,7 +70,7 @@ class EditorViewModel(
         sceneViewModel.state
             .onEach { sceneState ->
                 _state.update {
-                    it.copy(entries = sceneState.scene.entries, sceneName = sceneState.scene.title)
+                    it.copy(entries = sceneState.scene.entries, sceneName = sceneState.scene.title, sceneId = sceneState.scene.id)
                 }
             }
             .launchIn(viewModelScope)
@@ -240,6 +240,42 @@ class EditorViewModel(
                     isEntryEditOpen = true,
                 )
             }
+        }
+
+        EditorEvent.SaveScene -> { sceneViewModel.saveNow(); notify("Scene saved") }
+
+        EditorEvent.OpenSceneManager -> viewModelScope.launch {
+            _state.update { it.copy(isSceneManagerOpen = true, scenes = sceneViewModel.scenes()) }
+        }
+
+        EditorEvent.CloseSceneManager -> _state.update { it.copy(isSceneManagerOpen = false) }
+
+        EditorEvent.NewScene -> {
+            sceneViewModel.newScene()
+            _state.update { it.copy(isSceneManagerOpen = false) }
+        }
+
+        is EditorEvent.OpenScene -> {
+            sceneViewModel.openScene(event.id)
+            _state.update { it.copy(isSceneManagerOpen = false) }
+        }
+
+        is EditorEvent.DeleteScene -> viewModelScope.launch {
+            sceneViewModel.deleteScene(event.id).join()
+            _state.update { it.copy(scenes = sceneViewModel.scenes()) }
+        }
+
+        is EditorEvent.ExportScene -> viewModelScope.launch {
+            val out = event.output ?: return@launch
+            val ok = runCatching { out.use { sceneViewModel.exportScene(it) } }.isSuccess
+            notify(if (ok) "Scene exported" else "Export failed")
+        }
+
+        is EditorEvent.ImportScene -> viewModelScope.launch {
+            val input = event.input ?: return@launch
+            val ok = runCatching { input.use { sceneViewModel.importScene(it) } }.isSuccess
+            notify(if (ok) "Scene imported" else "Cannot read this file")
+            if (ok) _state.update { it.copy(isSceneManagerOpen = false) }
         }
     }
 

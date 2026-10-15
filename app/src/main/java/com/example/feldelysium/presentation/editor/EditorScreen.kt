@@ -2,6 +2,8 @@ package com.example.feldelysium.presentation.editor
 
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.BuildConfig
@@ -65,6 +69,7 @@ import com.example.feldelysium.presentation.editor.components.BulkImportDialog
 import com.example.feldelysium.presentation.editor.components.CustomSpeakerDialog
 import com.example.feldelysium.presentation.editor.components.EntryEditSheet
 import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
+import com.example.feldelysium.presentation.editor.components.SceneManagerDialog
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import sh.calvin.reorderable.ReorderableItem
@@ -81,6 +86,19 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
     val sceneVm: SceneViewModel = viewModel(activity)
     val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
     val state by vm.state.collectAsStateWithLifecycle()
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri ->
+        uri?.let { vm.dispatch(EditorEvent.ExportScene(activity.contentResolver.openOutputStream(it))) }
+    }
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let { vm.dispatch(EditorEvent.ImportScene(activity.contentResolver.openInputStream(it))) }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { sceneVm.saveNow() }
 
     var menuEntryId by remember { mutableStateOf<String?>(null) }
     var showManageTags by remember { mutableStateOf(false) }
@@ -138,6 +156,8 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                         vm.dispatch(EditorEvent.RenameScene(it.take(60)))
                     },
                     onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
+                    onLabelClick = { vm.dispatch(EditorEvent.OpenSceneManager) },
+                    onTitleCommit = { vm.dispatch(EditorEvent.SaveScene) },
                 )
 
                 FeldToolbar(
@@ -322,6 +342,20 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
             onSave = { vm.dispatch(EditorEvent.SaveTag(it)) },
             onDelete = { vm.dispatch(EditorEvent.DeleteTag(it)) },
             onDismiss = { showManageTags = false },
+        )
+    }
+
+    if (state.isSceneManagerOpen) {
+        SceneManagerDialog(
+            scenes = state.scenes,
+            currentId = state.sceneId,
+            onNew = { vm.dispatch(EditorEvent.NewScene) },
+            onOpen = { vm.dispatch(EditorEvent.OpenScene(it)) },
+            onDelete = { vm.dispatch(EditorEvent.DeleteScene(it)) },
+            onExport = { exportLauncher.launch("${state.sceneName.ifBlank { "scene" }}.json") },
+            onImport = { importLauncher.launch(arrayOf("*/*")) },
+            onClear = { vm.dispatch(EditorEvent.ClearScene) },
+            onDismiss = { vm.dispatch(EditorEvent.CloseSceneManager) },
         )
     }
 
