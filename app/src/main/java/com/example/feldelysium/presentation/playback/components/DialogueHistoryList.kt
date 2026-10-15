@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,11 +33,13 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun DialogueHistoryList(
     entries: List<DialogueEntry>,
     modifier: Modifier = Modifier,
+    isCheckRolling: Boolean = false,
     footer: (@Composable () -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
@@ -48,12 +52,18 @@ fun DialogueHistoryList(
 
         val density = LocalDensity.current
         val viewportPx = with(density) { maxHeight.toPx() }
+
+        LaunchedEffect(isCheckRolling) {
+            if (isCheckRolling) anchor.roll(viewportPx * CheckMotion.TAPE_ROLL_VIEWPORTS)
+        }
+
         val restBottomPx = viewportPx * PlaybackMotion.REST_BOTTOM_FRACTION
         val textStart = maxWidth * PlaybackMotion.TEXT_COLUMN_START_FRACTION
         val textEndInset = maxWidth * (1f - PlaybackMotion.TEXT_COLUMN_END_FRACTION)
         val fontSize = with(density) { (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp() }
         val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
         val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
+        val tapeOffsetPx = anchor.tapeShift.value + anchor.rollShift.value
 
         TapeBackground(
             offsetPx = tapeOffsetPx,
@@ -136,6 +146,18 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope) {
     private var generation = 0
     private var job: kotlinx.coroutines.Job? = null
 
+    val rollShift = Animatable(0f)
+    private var rollTarget = 0f
+
+    fun roll(distancePx: Float) {
+        rollTarget += distancePx
+        val target = rollTarget
+        scope.launch {
+            delay(CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds)
+            rollShift.animateTo(target, tween(CheckMotion.TAPE_ROLL_MS, easing = EaseInOut))
+        }
+    }
+
     fun placementY(contentHeightPx: Float, restBottomPx: Float, viewportHeightPx: Float, textShiftPx: Float): Float {
         if (!hasAnchor) {
             if (contentHeightPx < 1f || viewportHeightPx < 1f) return restBottomPx
@@ -217,8 +239,8 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope) {
 private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         val lineX = size.width * (
-            PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
-            )
+                PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+                )
         val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
         val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
         if (lineBottom <= lineTop) return@Canvas

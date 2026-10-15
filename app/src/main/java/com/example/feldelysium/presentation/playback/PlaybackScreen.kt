@@ -50,6 +50,7 @@ import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
+import com.example.feldelysium.presentation.playback.components.ActiveCheckOverlay
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
@@ -214,6 +215,7 @@ private fun PlaybackStage(
         ) {
             DialogueHistoryList(
                 entries = state.revealedEntries,
+                isCheckRolling = state.isCheckRolling,
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(tapeWidth)
@@ -221,17 +223,24 @@ private fun PlaybackStage(
             )
         }
 
-        LatestSpeakerPortrait(
-            speaker = state.revealedEntries.lastOrNull()?.speaker,
-            modifier = Modifier
-                .offset(
-                    x = portraitLeft - portraitBackdropInset,
-                    y = portraitTop - portraitBackdropInset,
-                )
-                .size(
-                    width = portraitWidth + portraitBackdropInset * 2,
-                    height = portraitHeight + portraitBackdropInset * 2,
-                ),
+        if (!state.isCheckRolling) {
+            LatestSpeakerPortrait(
+                speaker = state.revealedEntries.lastOrNull()?.speaker,
+                modifier = Modifier
+                    .offset(
+                        x = portraitLeft - portraitBackdropInset,
+                        y = portraitTop - portraitBackdropInset,
+                    )
+                    .size(
+                        width = portraitWidth + portraitBackdropInset * 2,
+                        height = portraitHeight + portraitBackdropInset * 2,
+                    ),
+            )
+        }
+
+        ActiveCheckOverlay(
+            overlay = state.checkOverlay,
+            modifier = Modifier.matchParentSize(),
         )
 
         IconButton(

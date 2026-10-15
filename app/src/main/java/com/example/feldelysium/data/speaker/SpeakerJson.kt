@@ -30,6 +30,8 @@ object SpeakerJson {
                             put("name", t.name)
                             t.color?.let { put("color", hex(it)) }
                             t.sound?.let { put("sound", it) }
+                            t.sound?.let { put("sound", it) }
+                            if (t.allowsChecks) put("allowsChecks", true)
                         },
                     )
                 }
@@ -66,7 +68,13 @@ object SpeakerJson {
             if (name.isEmpty() || id == "custom") {
                 null
             } else {
-                TagData(id, name, parseColor(t.str("color")), t.str("sound")?.trim()?.lowercase())
+                TagData(
+                    id,
+                    name,
+                    parseColor(t.str("color")),
+                    t.str("sound")?.trim()?.lowercase(),
+                    t.optBoolean("allowsChecks", false),
+                )
             }
         }.distinctBy { it.id }
 

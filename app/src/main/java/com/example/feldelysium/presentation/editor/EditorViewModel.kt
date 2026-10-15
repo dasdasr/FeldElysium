@@ -109,7 +109,10 @@ class EditorViewModel(
                 val editing = it.editingEntry
                 if (editing != null) {
                     it.copy(
-                        editingEntry = editing.copy(speaker = event.speaker),
+                        editingEntry = editing.copy(
+                            speaker = event.speaker,
+                            check = editing.check?.takeIf { event.speaker.type.allowsChecks },
+                        ),
                         isSpeakerPickerOpen = false,
                         isChangingSpeaker = false,
                     )
@@ -140,6 +143,7 @@ class EditorViewModel(
                 id = UUID.randomUUID().toString(),
                 speaker = speaker,
                 text = event.text.trim(),
+                check = event.check?.takeIf { speaker.type.allowsChecks },
             )
             sceneViewModel.dispatch(SceneAction.AddEntry(entry))
             _state.update { it.copy(pendingSpeaker = null, isEntryEditOpen = false) }
