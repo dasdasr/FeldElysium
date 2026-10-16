@@ -12,9 +12,11 @@ import com.example.feldelysium.theme.disco
 
 object CheckMotion {
     const val TAPE_ROLL_START_DELAY_MS = 100
-    const val TAPE_ROLL_MS = 1000
-    const val TAPE_ROLL_TOTAL_MS = 1300L
-    const val TAPE_ROLL_VIEWPORTS = 5f
+    const val TAPE_ROLL_MS = 2800
+    const val TAPE_ROLL_TOTAL_MS = TAPE_ROLL_START_DELAY_MS + TAPE_ROLL_MS.toLong()
+
+    const val CHECK_RESULT_EARLY_MS = 1100L
+    const val TAPE_ROLL_VIEWPORTS = 6f
 
     const val BG_FADE_DELAY_MS = 400L
     const val BG_FADE_MS = 700
@@ -40,6 +42,10 @@ object CheckMotion {
     const val DMG_TEXT_OUT_MS = 300
     const val DMG_SLIDE_FRACTION = 0.3f
     const val DMG_ICON_SIZE_FRACTION = 0.17f
+}
+
+object PanelMotion {
+    const val SLIDE_MS = 450
 }
 
 object CheckAssets {

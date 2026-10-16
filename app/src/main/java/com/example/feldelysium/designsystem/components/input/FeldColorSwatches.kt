@@ -33,6 +33,7 @@ import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
+import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 
 private val Cream = Color(0xFFE6DCC4)
@@ -142,6 +143,8 @@ private fun Swatch(
     var swatchSize by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
+    val sounds = rememberFeldSounds()
+
     Box(
         modifier = modifier
             .aspectRatio(1f)
@@ -155,7 +158,13 @@ private fun Swatch(
                 rotationZ = -3f * t
             }
             .paperMaterial(shape, spec)
-            .feldClickable(role = Role.RadioButton, onClick = onClick),
+            .feldClickable(
+                role = Role.RadioButton,
+                onClick = {
+                    if (!selected) sounds.select()
+                    onClick()
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         if (t > 0.01f) {

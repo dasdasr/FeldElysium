@@ -14,13 +14,17 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
 import com.example.feldelysium.designsystem.foundation.material.MarkerFilmWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
+import com.example.feldelysium.designsystem.foundation.sound.LocalFeldSounds
 import com.example.feldelysium.di.AppViewModelFactory
+import com.example.feldelysium.di.PlayerFeldSounds
+import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggsViewModel
 import com.example.feldelysium.eggs.ui.EggToastHost
@@ -40,6 +44,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val container = (application as FeldApp).container
+        container.soundPlayer.preload(SoundCue.uiSet)
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(AndroidColor.TRANSPARENT),
@@ -62,8 +68,12 @@ class MainActivity : ComponentActivity() {
                     var launchApp by rememberSaveable {
                         mutableStateOf(false)
                     }
+                    val sounds = remember { PlayerFeldSounds(container.soundPlayer) }
 
-                    CompositionLocalProvider(LocalEasterEggs provides eggs) {
+                    CompositionLocalProvider(
+                        LocalEasterEggs provides eggs,
+                        LocalFeldSounds provides sounds,
+                    ) {
                         if (launchApp) {
                             Box(Modifier.fillMaxSize()) {
                                 Surface(
@@ -107,6 +117,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        if (isFinishing) (application as FeldApp).container.soundPlayer.release()
+        super.onDestroy()
     }
 
     override val defaultViewModelProviderFactory: ViewModelProvider.Factory

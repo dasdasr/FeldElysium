@@ -54,6 +54,7 @@ import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlin.math.PI
 import kotlin.math.abs
@@ -110,6 +111,8 @@ fun FeldSegmentedControl(
         animationSpec = tween(70),
         label = "segmentPress",
     )
+
+    val sounds = rememberFeldSounds()
 
     BoxWithConstraints(
         modifier = modifier
@@ -171,7 +174,10 @@ fun FeldSegmentedControl(
                                     pressed = -1
                                 },
                                 onTap = {
-                                    if (i != selected) haptics.tick()
+                                    if (i != selected) {
+                                        haptics.tick()
+                                        sounds.tab(seed + i)
+                                    }
                                     onSelect(i)
                                 },
                             )

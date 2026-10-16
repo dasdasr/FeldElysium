@@ -3,15 +3,19 @@ package com.example.feldelysium.presentation.editor
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.feldelysium.FeldApp
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.model.normalized
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.domain.sound.SoundCue
+import com.example.feldelysium.domain.sound.SoundPlayer
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
 import com.example.feldelysium.presentation.shared.SceneAction
 import com.example.feldelysium.presentation.shared.SceneViewModel
@@ -32,6 +36,7 @@ class EditorViewModel(
     application: Application,
     private val sceneViewModel: SceneViewModel,
     private val parseUseCase: ParseBulkImportUseCase,
+    private val sounds: SoundPlayer,
 ) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(EditorUiState())
@@ -268,12 +273,14 @@ class EditorViewModel(
         is EditorEvent.ExportScene -> viewModelScope.launch {
             val out = event.output ?: return@launch
             val ok = runCatching { out.use { sceneViewModel.exportScene(it) } }.isSuccess
+            if (ok) sounds.play(SoundCue.UiExport)
             notify(if (ok) "Scene exported" else "Export failed")
         }
 
         is EditorEvent.ImportScene -> viewModelScope.launch {
             val input = event.input ?: return@launch
             val ok = runCatching { input.use { sceneViewModel.importScene(it) } }.isSuccess
+            if (ok) sounds.play(SoundCue.UiDone)
             notify(if (ok) "Scene imported" else "Cannot read this file")
             if (ok) _state.update { it.copy(isSceneManagerOpen = false) }
         }
@@ -317,12 +324,12 @@ class EditorViewModel(
     companion object {
         fun factory(sceneViewModel: SceneViewModel) = viewModelFactory {
             initializer {
-                val app =
-                    this[androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
+                val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
                 EditorViewModel(
                     application = app,
                     sceneViewModel = sceneViewModel,
                     parseUseCase = ParseBulkImportUseCase(),
+                    sounds = (app as FeldApp).container.soundPlayer,
                 )
             }
         }

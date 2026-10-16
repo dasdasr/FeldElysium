@@ -5,9 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.feldelysium.data.scene.FileSceneRepository
+import com.example.feldelysium.data.sound.SoundManager
 import com.example.feldelysium.data.speaker.SpeakerStorage
+import com.example.feldelysium.domain.playback.PlaybackAudio
 import com.example.feldelysium.domain.repository.SceneRepository
 import com.example.feldelysium.domain.repository.SpeakerRepository
+import com.example.feldelysium.domain.sound.SoundPlayer
 import com.example.feldelysium.domain.usecase.*
 import com.example.feldelysium.presentation.shared.SceneViewModel
 
@@ -25,6 +28,9 @@ class AppContainer(app: Application) {
         export = ExportSceneUseCase(sceneRepository),
         import = ImportSceneUseCase(sceneRepository, reconciler),
     )
+
+    val soundPlayer: SoundPlayer by lazy { SoundManager(app) }
+    fun playbackAudio() = PlaybackAudio(soundPlayer)
 }
 
 class AppViewModelFactory(
