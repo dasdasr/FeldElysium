@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.shared
 
 import com.example.feldelysium.domain.model.DialogueEntry
+import com.example.feldelysium.domain.model.DialogueScene
 import com.example.feldelysium.domain.model.Speaker
 
 /** Actions that mutate [SceneState]. */
@@ -17,5 +18,6 @@ sealed class SceneAction {
     data class SyncSpeakers(val speakers: List<Speaker>) : SceneAction()
 
     data class RenameScene(val title: String) : SceneAction()
+    data class LoadScene(val scene: DialogueScene) : SceneAction()
     data object ClearScene : SceneAction()
 }

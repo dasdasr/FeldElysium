@@ -63,8 +63,6 @@ import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.model.groupedByTag
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
-private val Dark = Color(0xFF1B1612)
-
 private data class SpeakerGroup(val type: SpeakerType, val title: String, val items: List<Speaker>)
 
 @Preview
@@ -112,6 +110,7 @@ fun SpeakerPickerDialog(
                 )
             }
             .filter { it.items.isNotEmpty() }
+            .sortedBy { if (it.type == SpeakerType.YOU) 0 else 1 }
     }
 
     Dialog(
@@ -350,6 +349,9 @@ private fun CreateSpeakerButton(onClick: () -> Unit) {
             wear = 0.45f,
         )
     }
+
+    val darkColor = MaterialTheme.colorScheme.onPrimary
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -361,7 +363,7 @@ private fun CreateSpeakerButton(onClick: () -> Unit) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(Icons.Filled.Add, null, tint = Dark, modifier = Modifier.size(26.dp))
+        Icon(Icons.Filled.Add, null, tint = darkColor, modifier = Modifier.size(26.dp))
         Spacer(Modifier.width(10.dp))
         Text(
             text = "CREATE CUSTOM SPEAKER",
@@ -369,7 +371,7 @@ private fun CreateSpeakerButton(onClick: () -> Unit) {
                 fontWeight = FontWeight.ExtraBold,
                 letterSpacing = 2.sp,
             ),
-            color = Dark,
+            color = darkColor,
         )
     }
 }

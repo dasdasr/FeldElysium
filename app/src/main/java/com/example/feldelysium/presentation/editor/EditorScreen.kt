@@ -2,6 +2,8 @@ package com.example.feldelysium.presentation.editor
 
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.BuildConfig
@@ -57,6 +61,7 @@ import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalConte
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
+import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggScreen
@@ -65,6 +70,7 @@ import com.example.feldelysium.presentation.editor.components.BulkImportDialog
 import com.example.feldelysium.presentation.editor.components.CustomSpeakerDialog
 import com.example.feldelysium.presentation.editor.components.EntryEditSheet
 import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
+import com.example.feldelysium.presentation.editor.components.SceneManagerDialog
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import sh.calvin.reorderable.ReorderableItem
@@ -75,12 +81,26 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
     val haptics = rememberFeldHaptics()
+    val sounds = rememberFeldSounds()
     val toast = rememberFeldToastState()
     val eggs = LocalEasterEggs.current
 
     val sceneVm: SceneViewModel = viewModel(activity)
     val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
     val state by vm.state.collectAsStateWithLifecycle()
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json"),
+    ) { uri ->
+        uri?.let { vm.dispatch(EditorEvent.ExportScene(activity.contentResolver.openOutputStream(it))) }
+    }
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument(),
+    ) { uri ->
+        uri?.let { vm.dispatch(EditorEvent.ImportScene(activity.contentResolver.openInputStream(it))) }
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { sceneVm.saveNow() }
 
     var menuEntryId by remember { mutableStateOf<String?>(null) }
     var showManageTags by remember { mutableStateOf(false) }
@@ -138,6 +158,11 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                         vm.dispatch(EditorEvent.RenameScene(it.take(60)))
                     },
                     onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
+                    onLabelClick = { vm.dispatch(EditorEvent.OpenSceneManager) },
+                    onTitleCommit = {
+                        sounds.save()
+                        vm.dispatch(EditorEvent.SaveScene)
+                    },
                 )
 
                 FeldToolbar(
@@ -325,20 +350,39 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
         )
     }
 
+    if (state.isSceneManagerOpen) {
+        SceneManagerDialog(
+            scenes = state.scenes,
+            currentId = state.sceneId,
+            onNew = { vm.dispatch(EditorEvent.NewScene) },
+            onOpen = { vm.dispatch(EditorEvent.OpenScene(it)) },
+            onDelete = { vm.dispatch(EditorEvent.DeleteScene(it)) },
+            onExport = { exportLauncher.launch("${state.sceneName.ifBlank { "scene" }}.json") },
+            onImport = { importLauncher.launch(arrayOf("*/*")) },
+            onClear = { vm.dispatch(EditorEvent.ClearScene) },
+            onDismiss = { vm.dispatch(EditorEvent.CloseSceneManager) },
+        )
+    }
+
     if (state.isEntryEditOpen) {
         EntryEditSheet(
             entry = state.editingEntry,
             speaker = state.editingEntry?.speaker ?: state.pendingSpeaker,
             onSpeakerClick = { vm.dispatch(EditorEvent.RequestChangeSpeaker) },
             onEditSpeaker = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
-            onConfirm = { text ->
+            onConfirm = { text, check, damage ->
                 val editing = state.editingEntry
+
                 if (editing != null) {
                     eggs?.report(EggEvent.EntryEdit, editing.speaker.name)
-                    vm.dispatch(EditorEvent.ConfirmEditEntry(editing.copy(text = text)))
+                    vm.dispatch(
+                        EditorEvent.ConfirmEditEntry(
+                            editing.copy(text = text, check = check, damage = damage),
+                        ),
+                    )
                 } else {
                     eggs?.report(EggEvent.EntryAdd, state.pendingSpeaker?.name)
-                    vm.dispatch(EditorEvent.ConfirmNewEntry(text))
+                    vm.dispatch(EditorEvent.ConfirmNewEntry(text, check, damage))
                 }
             },
             onDismiss = { vm.dispatch(EditorEvent.DismissEntryEdit) },

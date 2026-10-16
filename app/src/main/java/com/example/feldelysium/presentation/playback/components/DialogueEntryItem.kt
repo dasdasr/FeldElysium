@@ -24,7 +24,6 @@ import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private const val NAME_TRACKING_EM = 0.4f / 12f
 private const val HANGING_INDENT_EM = 14f / 12f
-private val BodyColor = Color(0xFF_E8_D8_C0)
 
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
@@ -47,42 +46,40 @@ fun DialogueEntryItem(
     fontSize: TextUnit,
     lineHeight: TextUnit,
     modifier: Modifier = Modifier,
+    dimmed: Boolean = false,
 ) {
     val alpha = remember(entry.id) { Animatable(0f) }
-    LaunchedEffect(isLatest) {
-        val target = if (isLatest) 1f else PlaybackMotion.PREVIOUS_LINES_ALPHA
-        val duration = if (isLatest) PlaybackMotion.TEXT_FADE_IN_MS else PlaybackMotion.PREVIOUS_DIM_MS
+    val bright = isLatest && !dimmed
+    LaunchedEffect(bright) {
+        val target = if (bright) 1f else PlaybackMotion.PREVIOUS_LINES_ALPHA
+        val duration = if (bright) PlaybackMotion.TEXT_FADE_IN_MS else PlaybackMotion.PREVIOUS_DIM_MS
         alpha.animateTo(target, tween(durationMillis = duration))
     }
     val animatedAlpha = alpha.value
 
+    val bodyColor = MaterialTheme.colorScheme.onSurface
+    val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
     val bodyStyle = MaterialTheme.typography.bodyMedium
     val speakerColor = Color(entry.speaker.colorArgb)
     Text(
         text = buildAnnotatedString {
-            withStyle(
-                SpanStyle(
-                    color = speakerColor,
-                    fontSize = fontSize,
-                    letterSpacing = fontSize * NAME_TRACKING_EM,
-                ),
-            ) {
-                append(entry.speaker.name.uppercase())
-                append(" – ")
+            val nameStyle = SpanStyle(
+                color = speakerColor,
+                fontSize = fontSize,
+                letterSpacing = fontSize * NAME_TRACKING_EM,
+            )
+            withStyle(nameStyle) { append(entry.speaker.name.uppercase()) }
+            entry.check?.let { c ->
+                withStyle(SpanStyle(color = labelColor, fontSize = fontSize)) {
+                    append(" [${c.difficulty.name}: ${c.result.name}]")
+                }
             }
-            withStyle(
-                SpanStyle(
-                    color = BodyColor,
-                    fontSize = fontSize,
-                ),
-            ) {
-                append(entry.text)
-            }
+            withStyle(nameStyle) { append(" – ") }
+            withStyle(SpanStyle(color = bodyColor, fontSize = fontSize)) { append(entry.text) }
         },
-        modifier = modifier
-            .graphicsLayer { this.alpha = animatedAlpha },
+        modifier = modifier.graphicsLayer { this.alpha = animatedAlpha },
         style = bodyStyle.copy(
-            color = BodyColor,
+            color = bodyColor,
             fontSize = fontSize,
             lineHeight = lineHeight,
             textIndent = TextIndent(firstLine = 0.sp, restLine = fontSize * HANGING_INDENT_EM),

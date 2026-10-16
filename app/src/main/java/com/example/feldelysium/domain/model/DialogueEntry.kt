@@ -6,5 +6,7 @@ data class DialogueEntry(
     val id: String = UUID.randomUUID().toString(),
     val speaker: Speaker,
     val text: String,
+    val check: SkillCheck? = null,
+    val damage: DamageEffect? = null,
     val metadata: Map<String, String> = emptyMap(),
 )

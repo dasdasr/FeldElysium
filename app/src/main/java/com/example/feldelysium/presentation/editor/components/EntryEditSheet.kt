@@ -1,21 +1,31 @@
 package com.example.feldelysium.presentation.editor.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +33,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,12 +55,15 @@ import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
+import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
@@ -74,7 +89,7 @@ private fun EntryEditSheetPreview() {
             text = "You vs al-ghoul",
         ),
         speaker = PredefinedSpeakers.MEASUREHEAD,
-        onConfirm = {},
+        onConfirm = { _, _, _ -> },
         onDismiss = {},
     )
 }
@@ -84,14 +99,27 @@ private fun EntryEditSheetPreview() {
 fun EntryEditSheet(
     entry: DialogueEntry?,
     speaker: Speaker?,
-    onConfirm: (text: String) -> Unit,
+    onConfirm: (text: String, check: SkillCheck?, damage: DamageEffect?) -> Unit,
     onDismiss: () -> Unit,
     onSpeakerClick: (() -> Unit)? = null,
     onEditSpeaker: ((Speaker) -> Unit)? = null,
-    onStyleClick: (() -> Unit)? = null,
-    styleName: String = "Normal",
 ) {
     var text by remember(entry?.id) { mutableStateOf(entry?.text ?: "") }
+    var check by remember(entry?.id) { mutableStateOf(entry?.check) }
+    var lastCheck by remember(entry?.id) { mutableStateOf(entry?.check) }
+
+    var damage by remember(entry?.id) { mutableStateOf(entry?.damage) }
+    var lastDamage by remember(entry?.id) { mutableStateOf(entry?.damage) }
+    LaunchedEffect(damage) { if (damage != null) lastDamage = damage }
+
+    LaunchedEffect(check) { if (check != null) lastCheck = check }
+
+    LaunchedEffect(speaker?.type?.allowsChecks) {
+        if (speaker?.type?.allowsChecks != true) {
+            check = null
+            damage = null
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -106,6 +134,7 @@ fun EntryEditSheet(
         FeldCard(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(max = 840.dp)
                 .imePadding()
                 .bleedBottom(SheetBleed),
             spec = FeldPaper.Entry,
@@ -117,44 +146,77 @@ fun EntryEditSheet(
                 bottom = SheetBleed,
             ),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = if (entry == null) "NEW ENTRY" else "EDIT ENTRY",
-                    style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.8.sp),
-                    color = FeldPalette.Muted,
-                    modifier = Modifier.weight(1f),
+            Column(
+                Modifier
+                    .weight(1f, fill = false)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = if (entry == null) "NEW ENTRY" else "EDIT ENTRY",
+                        style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.8.sp),
+                        color = FeldPalette.Muted,
+                        modifier = Modifier.weight(1f),
+                    )
+                    FeldIconButton(FeldIconId.Close, onDismiss)
+                }
+
+                SpeakerHeader(
+                    speaker = speaker,
+                    onClick = onSpeakerClick,
+                    onEdit = if (speaker != null && !speaker.isBundled && onEditSpeaker != null) {
+                        { onEditSpeaker(speaker) }
+                    } else {
+                        null
+                    },
                 )
-                FeldIconButton(FeldIconId.Close, onDismiss)
+
+                Spacer(Modifier.height(8.dp))
+                FeldLabeledBlock("Dialogue") {
+                    FeldTextField(
+                        value = text,
+                        onValueChange = { text = it },
+                        placeholder = "Dialogue text",
+                        minLines = 4,
+                        maxLines = 12,
+                        maxLength = 500,
+                    )
+                }
+
+                if (speaker?.type?.allowsChecks == true) {
+                    ToggleRow("SKILL CHECK", Icons.Filled.Casino, check != null) {
+                        check = if (it) SkillCheck() else null
+                    }
+                    AnimatedVisibility(
+                        visible = check != null,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                    ) {
+                        EntryCheckEditor(speaker = speaker, check = check ?: lastCheck, onChange = { check = it })
+                    }
+
+                    ToggleRow("DAMAGE", Icons.Filled.Favorite, damage != null) {
+                        damage = if (it) DamageEffect() else null
+                    }
+                    AnimatedVisibility(
+                        visible = damage != null,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                    ) {
+                        EntryDamageEditor(damage = damage ?: lastDamage, onChange = { damage = it })
+                    }
+                }
             }
-
-            SpeakerHeader(
-                speaker = speaker,
-                onClick = onSpeakerClick,
-                onEdit = if (speaker != null && !speaker.isBundled && onEditSpeaker != null) {
-                    { onEditSpeaker(speaker) }
-                } else {
-                    null
-                },
-            )
-
-            Spacer(Modifier.height(8.dp))
-            FeldLabeledBlock("Dialogue") {
-                FeldTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    placeholder = "Dialogue text",
-                    minLines = 4,
-                    maxLines = 12,
-                    maxLength = 500,
-                )
-            }
-
-            StyleRow(styleName = styleName, onClick = onStyleClick)
 
             Spacer(Modifier.height(12.dp))
             FeldDialogActions(
                 confirmLabel = "Confirm",
-                onConfirm = { if (text.isNotBlank()) onConfirm(text.trim()) },
+                onConfirm = {
+                    if (text.isNotBlank()) {
+                        val allowed = speaker?.type?.allowsChecks == true
+                        onConfirm(text.trim(), check?.takeIf { allowed }, damage?.takeIf { allowed })
+                    }
+                },
                 onCancel = onDismiss,
                 confirmEnabled = text.isNotBlank(),
                 modifier = Modifier.navigationBarsPadding(),
@@ -204,12 +266,13 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
         if (onEdit != null) {
             Box(
                 Modifier
-                    .size(40.dp)
+                    .size(32.dp)
+                    .padding(end = 8.dp)
                     .feldClickable(onClick = onEdit),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Sort,
+                    imageVector = Icons.Default.Edit,
                     contentDescription = "Edit speaker",
                     tint = FeldPalette.Muted,
                     modifier = Modifier.size(22.dp),
@@ -221,35 +284,26 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
 }
 
 @Composable
-private fun StyleRow(styleName: String, onClick: (() -> Unit)?) {
+private fun ToggleRow(label: String, icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.feldClickable(onClick = onClick) else Modifier)
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            imageVector = Icons.Filled.Tune,
+            imageVector = icon,
             contentDescription = null,
             tint = FeldPalette.Muted,
             modifier = Modifier.size(20.dp),
         )
         Spacer(Modifier.width(12.dp))
         Text(
-            text = "STYLE",
+            text = label,
             style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.4.sp),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
         )
         Spacer(Modifier.weight(1f))
-        Text(
-            text = styleName,
-            style = MaterialTheme.typography.bodyMedium,
-            color = FeldPalette.Muted,
-        )
-        if (onClick != null) {
-            Spacer(Modifier.width(4.dp))
-            Chevron()
-        }
+        FeldSwitch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

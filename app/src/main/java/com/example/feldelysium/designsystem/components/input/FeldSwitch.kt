@@ -51,6 +51,7 @@ import com.example.feldelysium.designsystem.foundation.material.paperMaterialMor
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -100,6 +101,7 @@ fun FeldSwitch(
     val density = LocalDensity.current
     val haptics = rememberFeldHaptics()
     val scope = rememberCoroutineScope()
+    val sounds = rememberFeldSounds()
 
     val inset = 2.dp
     val halfInner = (width - inset * 2) / 2
@@ -158,7 +160,8 @@ fun FeldSwitch(
         val newChecked = target == 0f
         if (newChecked != currentChecked) {
             haptics.confirm()
-            currentOnChange(newChecked)
+            sounds.toggle(seed)
+            currentOnChange(!currentChecked)
         }
     }
 
@@ -202,7 +205,10 @@ fun FeldSwitch(
                             c.consume()
                             val old = pos.value
                             val new = (old + dx / travelPx).coerceIn(0f, 1f)
-                            if ((old < 0.5f) != (new < 0.5f)) haptics.tick()
+                            if ((old < 0.5f) != (new < 0.5f)) {
+                                haptics.tick()
+                                sounds.toggle(seed)
+                            }
                             scope.launch(start = CoroutineStart.UNDISPATCHED) { pos.snapTo(new) }
                         }
                     }

@@ -76,6 +76,8 @@ fun FeldScreenHeader(
     actions: @Composable RowScope.() -> Unit = {},
     onTitleChange: ((String) -> Unit)? = null,
     onDiamondClick: (() -> Unit)? = null,
+    onLabelClick: (() -> Unit)? = null,
+    onTitleCommit: () -> Unit = {},
     titlePlaceholder: String = "Untitled scene",
     titleSpec: DistressSpec = FeldDistressedTitles.Large,
     titleStyle: TextStyle = MaterialTheme.typography.titleLarge.copy(
@@ -86,6 +88,8 @@ fun FeldScreenHeader(
     divider: Boolean = true,
 ) {
     val haptics = rememberFeldHaptics()
+
+    val labelClick = if (onLabelClick != null) Modifier.feldClickable(onClick = onLabelClick) else Modifier
 
     Column(
         modifier
@@ -118,6 +122,7 @@ fun FeldScreenHeader(
                     text = eyebrow.uppercase(),
                     style = MaterialTheme.typography.labelSmall,
                     color = FeldPalette.Muted,
+                    modifier = labelClick,
                 )
             }
             Spacer(Modifier.weight(1f))
@@ -134,6 +139,7 @@ fun FeldScreenHeader(
                 placeholder = titlePlaceholder,
                 spec = titleSpec,
                 style = titleStyle,
+                onCommit = onTitleCommit,
             )
         }
 
@@ -170,6 +176,7 @@ fun FeldScreenHeader(
                         it.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = FeldPalette.Muted,
+                        modifier = labelClick,
                     )
                 }
             }
@@ -196,6 +203,7 @@ private val EditSelectionColors = TextSelectionColors(
 private fun EditableTitle(
     text: String,
     onTextChange: (String) -> Unit,
+    onCommit: () -> Unit,
     placeholder: String,
     spec: DistressSpec,
     style: TextStyle,
@@ -228,6 +236,11 @@ private fun EditableTitle(
                 }
             },
     ) {
+        fun startEditing() {
+            field = TextFieldValue(text, TextRange(0, text.length))
+            editing = true
+        }
+
         FeldDistressedTitle(
             text = if (blank) placeholder else shown,
             spec = spec,
@@ -236,6 +249,7 @@ private fun EditableTitle(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(end = 44.dp)
                 .alpha(if (editing && blank) 0.35f else 1f)
                 .then(
                     if (editing) {
@@ -243,11 +257,26 @@ private fun EditableTitle(
                     } else {
                         Modifier.feldClickable(onClick = {
                             haptics.tick()
-                            field = TextFieldValue(text, TextRange(0, text.length))
-                            editing = true
+                            startEditing()
                         })
                     },
                 ),
+        )
+
+        FeldIconButton(
+            if (editing) FeldIconId.Save else FeldIconId.Edit,
+            onClick = {
+                if (editing) {
+                    haptics.confirm()
+                    onCommit()
+                    focusManager.clearFocus()
+                } else {
+                    haptics.tick()
+                    startEditing()
+                }
+            },
+            tint = if (editing) FeldPalette.Orange else FeldPalette.Muted,
+            modifier = Modifier.align(Alignment.CenterEnd),
         )
 
         if (editing) {
@@ -268,10 +297,12 @@ private fun EditableTitle(
                     ),
                     keyboardActions = KeyboardActions(onDone = {
                         haptics.confirm()
+                        onCommit()
                         focusManager.clearFocus()
                     }),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(end = 44.dp)
                         .focusRequester(requester)
                         .onFocusChanged {
                             if (it.isFocused) {

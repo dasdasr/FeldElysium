@@ -272,8 +272,8 @@ class DataStoreSpeakerRepository(
         )
     }
 
-    private fun TagData.toType() = SpeakerType(id, name, color, sound)
-    private fun SpeakerType.toData() = TagData(id, name, colorArgb, soundKey)
+    private fun TagData.toType() = SpeakerType(id, name, color, sound, allowsChecks)
+    private fun SpeakerType.toData() = TagData(id, name, colorArgb, soundKey, allowsChecks)
 
     private inline fun <T> List<T>.replaceOrAdd(item: T, match: (T) -> Boolean): List<T> {
         val i = indexOfFirst(match)
