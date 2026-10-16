@@ -194,7 +194,7 @@ private fun EditTagDialog(
                             colorArgb = color,
                             soundKey = sound,
                             allowsChecks = allowsChecks,
-                        )
+                        ),
                     )
                 },
                 onCancel = onDismiss,

@@ -75,7 +75,11 @@ class EditorViewModel(
         sceneViewModel.state
             .onEach { sceneState ->
                 _state.update {
-                    it.copy(entries = sceneState.scene.entries, sceneName = sceneState.scene.title, sceneId = sceneState.scene.id)
+                    it.copy(
+                        entries = sceneState.scene.entries,
+                        sceneName = sceneState.scene.title,
+                        sceneId = sceneState.scene.id,
+                    )
                 }
             }
             .launchIn(viewModelScope)
@@ -247,7 +251,10 @@ class EditorViewModel(
             }
         }
 
-        EditorEvent.SaveScene -> { sceneViewModel.saveNow(); notify("Scene saved") }
+        EditorEvent.SaveScene -> {
+            sceneViewModel.saveNow()
+            notify("Scene saved")
+        }
 
         EditorEvent.OpenSceneManager -> viewModelScope.launch {
             _state.update { it.copy(isSceneManagerOpen = true, scenes = sceneViewModel.scenes()) }

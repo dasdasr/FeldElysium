@@ -56,13 +56,15 @@ fun FeldDialogActions(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-            if (onCancel != null) FeldTextButton(
-                cancelLabel,
-                {
-                    sounds.cancel()
-                    onCancel()
-                },
-            )
+            if (onCancel != null) {
+                FeldTextButton(
+                    cancelLabel,
+                    {
+                        sounds.cancel()
+                        onCancel()
+                    },
+                )
+            }
         }
         FeldButton(
             text = confirmLabel,

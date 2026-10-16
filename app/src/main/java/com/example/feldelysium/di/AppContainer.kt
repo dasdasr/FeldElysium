@@ -11,7 +11,15 @@ import com.example.feldelysium.domain.playback.PlaybackAudio
 import com.example.feldelysium.domain.repository.SceneRepository
 import com.example.feldelysium.domain.repository.SpeakerRepository
 import com.example.feldelysium.domain.sound.SoundPlayer
-import com.example.feldelysium.domain.usecase.*
+import com.example.feldelysium.domain.usecase.DeleteSceneUseCase
+import com.example.feldelysium.domain.usecase.ExportSceneUseCase
+import com.example.feldelysium.domain.usecase.ImportSceneUseCase
+import com.example.feldelysium.domain.usecase.ListScenesUseCase
+import com.example.feldelysium.domain.usecase.LoadCurrentSceneUseCase
+import com.example.feldelysium.domain.usecase.OpenSceneUseCase
+import com.example.feldelysium.domain.usecase.SaveSceneUseCase
+import com.example.feldelysium.domain.usecase.SceneSpeakerReconciler
+import com.example.feldelysium.domain.usecase.SceneUseCases
 import com.example.feldelysium.presentation.shared.SceneViewModel
 
 class AppContainer(app: Application) {
@@ -33,10 +41,8 @@ class AppContainer(app: Application) {
     fun playbackAudio() = PlaybackAudio(soundPlayer)
 }
 
-class AppViewModelFactory(
-    private val container: AppContainer,
-    private val fallback: ViewModelProvider.Factory,
-) : ViewModelProvider.Factory {
+class AppViewModelFactory(private val container: AppContainer, private val fallback: ViewModelProvider.Factory) :
+    ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =

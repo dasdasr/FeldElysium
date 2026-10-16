@@ -31,24 +31,15 @@ class SceneSpeakerReconciler(private val speakerRepository: SpeakerRepository) {
     }
 }
 
-class LoadCurrentSceneUseCase(
-    private val scenes: SceneRepository,
-    private val reconciler: SceneSpeakerReconciler,
-) {
+class LoadCurrentSceneUseCase(private val scenes: SceneRepository, private val reconciler: SceneSpeakerReconciler) {
     suspend operator fun invoke(): DialogueScene? = scenes.loadCurrent()?.let { reconciler.reconcile(it) }
 }
 
-class OpenSceneUseCase(
-    private val scenes: SceneRepository,
-    private val reconciler: SceneSpeakerReconciler,
-) {
+class OpenSceneUseCase(private val scenes: SceneRepository, private val reconciler: SceneSpeakerReconciler) {
     suspend operator fun invoke(id: String): DialogueScene? = scenes.open(id)?.let { reconciler.reconcile(it) }
 }
 
-class ImportSceneUseCase(
-    private val scenes: SceneRepository,
-    private val reconciler: SceneSpeakerReconciler,
-) {
+class ImportSceneUseCase(private val scenes: SceneRepository, private val reconciler: SceneSpeakerReconciler) {
     suspend operator fun invoke(input: InputStream): DialogueScene {
         val scene = reconciler.reconcile(scenes.import(input))
         scenes.save(scene)

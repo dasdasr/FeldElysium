@@ -28,6 +28,7 @@ import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.presentation.playback.CheckOverlay
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun ActiveCheckOverlay(overlay: CheckOverlay?, modifier: Modifier = Modifier) {
@@ -43,15 +44,15 @@ private fun ActiveCheckOverlayContent(check: SkillCheck, modifier: Modifier) {
 
     LaunchedEffect(Unit) {
         launch {
-            delay(CheckMotion.BG_FADE_DELAY_MS)
+            delay(CheckMotion.BG_FADE_DELAY_MS.milliseconds)
             background.animateTo(0f, tween(CheckMotion.BG_FADE_MS, easing = EaseIn))
         }
         launch {
-            delay(CheckMotion.DICE_FADE_DELAY_MS)
+            delay(CheckMotion.DICE_FADE_DELAY_MS.milliseconds)
             dice.animateTo(0f, tween(CheckMotion.DICE_FADE_MS, easing = EaseIn))
         }
         launch {
-            delay(CheckMotion.TEXT_OUT_DELAY_MS)
+            delay(CheckMotion.TEXT_OUT_DELAY_MS.milliseconds)
             textOut.animateTo(1f, tween(CheckMotion.TEXT_OUT_MS, easing = EaseIn))
         }
     }
@@ -108,13 +109,22 @@ private const val BOTTOM = 72f
 
 private fun pips(value: Int): List<Pair<Float, Float>> = when (value) {
     1 -> listOf(MID to MID)
+
     2 -> listOf(NEAR to NEAR, FAR to FAR)
+
     3 -> listOf(NEAR to NEAR, MID to MID, FAR to FAR)
+
     4 -> listOf(NEAR to NEAR, FAR to NEAR, NEAR to FAR, FAR to FAR)
+
     5 -> listOf(NEAR to NEAR, FAR to NEAR, MID to MID, NEAR to FAR, FAR to FAR)
+
     else -> listOf(
-        NEAR to TOP, NEAR to MID, NEAR to BOTTOM,
-        FAR to TOP, FAR to MID, FAR to BOTTOM,
+        NEAR to TOP,
+        NEAR to MID,
+        NEAR to BOTTOM,
+        FAR to TOP,
+        FAR to MID,
+        FAR to BOTTOM,
     )
 }
 

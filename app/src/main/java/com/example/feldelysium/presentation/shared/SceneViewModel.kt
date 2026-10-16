@@ -156,8 +156,11 @@ class SceneViewModel(private val useCases: SceneUseCases) : ViewModel() {
                 val synced = if (fresh != null && fresh != entry.speaker) entry.copy(speaker = fresh) else entry
                 synced.normalized()
             }
-            if (updated == current.scene.entries) current
-            else current.copy(scene = current.scene.copy(entries = updated))
+            if (updated == current.scene.entries) {
+                current
+            } else {
+                current.copy(scene = current.scene.copy(entries = updated))
+            }
         }
     }
 }

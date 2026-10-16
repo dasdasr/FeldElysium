@@ -84,7 +84,7 @@ fun EntryCheckEditor(
             Spacer(Modifier.height(14.dp))
             FieldLabel("Left die", optional = true)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                (1..6).forEach { n ->
+                for (n in 1..6) {
                     CheckChip(
                         "$n",
                         d1 == n,
@@ -97,7 +97,7 @@ fun EntryCheckEditor(
             Spacer(Modifier.height(10.dp))
             FieldLabel("Right die", optional = true)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                (1..6).forEach { n ->
+                for (n in 1..6) {
                     CheckChip(
                         "$n",
                         d2 == n,
@@ -136,11 +136,7 @@ private fun CheckChip(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EntryDamageEditor(
-    damage: DamageEffect?,
-    onChange: (DamageEffect) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun EntryDamageEditor(damage: DamageEffect?, onChange: (DamageEffect) -> Unit, modifier: Modifier = Modifier) {
     val d = damage ?: return
     Column(modifier) {
         FieldLabel("Type")
@@ -154,7 +150,7 @@ fun EntryDamageEditor(
         Spacer(Modifier.height(14.dp))
         FieldLabel("Amount")
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            (1..5).forEach { n ->
+            for (n in 1..5) {
                 CheckChip(
                     "$n",
                     d.amount == n,

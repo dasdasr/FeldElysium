@@ -10,7 +10,9 @@ internal data class SceneFile(
     val entries: List<EntryData>,
     val speakers: List<SpeakerSnapshot> = emptyList(),
 ) {
-    companion object { const val VERSION = 1 }
+    companion object {
+        const val VERSION = 1
+    }
 }
 
 @Serializable

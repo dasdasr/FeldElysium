@@ -1,7 +1,15 @@
 package com.example.feldelysium.domain.model
 
 enum class CheckDifficulty {
-    Trivial, Easy, Medium, Challenging, Formidable, Legendary, Heroic, Godly, Impossible,
+    Trivial,
+    Easy,
+    Medium,
+    Challenging,
+    Formidable,
+    Legendary,
+    Heroic,
+    Godly,
+    Impossible,
 }
 
 enum class CheckResult { Success, Failure }
@@ -29,8 +37,7 @@ data class SkillCheck(
         }
 
     companion object {
-        fun defaultDice(result: CheckResult): Pair<Int, Int> =
-            if (result == CheckResult.Failure) 2 to 1 else 5 to 6
+        fun defaultDice(result: CheckResult): Pair<Int, Int> = if (result == CheckResult.Failure) 2 to 1 else 5 to 6
     }
 }
 

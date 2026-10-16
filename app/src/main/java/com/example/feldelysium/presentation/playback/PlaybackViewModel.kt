@@ -11,7 +11,6 @@ import com.example.feldelysium.domain.playback.PlaybackAudio
 import com.example.feldelysium.domain.playback.PlaybackEngine
 import com.example.feldelysium.domain.playback.PlaybackStep
 import com.example.feldelysium.presentation.playback.components.CheckMotion
-import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -23,11 +22,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
-class PlaybackViewModel(
-    private val sceneViewModel: SceneViewModel,
-    private val audio: PlaybackAudio,
-) : ViewModel() {
+class PlaybackViewModel(private val sceneViewModel: SceneViewModel, private val audio: PlaybackAudio) : ViewModel() {
 
     private lateinit var engine: PlaybackEngine
     private var checkJob: Job? = null
@@ -51,15 +48,23 @@ class PlaybackViewModel(
 
     fun dispatch(event: PlaybackEvent) = when (event) {
         PlaybackEvent.Tap -> onTap()
+
         PlaybackEvent.Reset -> reset()
+
         PlaybackEvent.ScreenStopped -> audio.stop()
+
         PlaybackEvent.NavigateBack -> viewModelScope.launch {
             _effects.send(PlaybackEffect.NavigateBack)
         }
 
         is PlaybackEvent.ScrollChanged -> {
-            if (!_state.value.isPanelOpen) Unit
-            else if (event.active) audio.startScrollLoop() else audio.stopScrollLoop()
+            if (!_state.value.isPanelOpen) {
+                Unit
+            } else if (event.active) {
+                audio.startScrollLoop()
+            } else {
+                audio.stopScrollLoop()
+            }
         }
     }
 
@@ -114,16 +119,16 @@ class PlaybackViewModel(
         checkJob = viewModelScope.launch {
             audio.diceRoll()
 
-            delay(CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong())
+            delay(CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds)
 
             delay(
                 (CheckMotion.TAPE_ROLL_MS - CheckMotion.CHECK_RESULT_EARLY_MS)
-                    .coerceAtLeast(0L).toLong()
+                    .coerceAtLeast(0L).milliseconds,
             )
 
             audio.checkResult(check.result)
 
-            delay(CheckMotion.CHECK_RESULT_EARLY_MS)
+            delay(CheckMotion.CHECK_RESULT_EARLY_MS.milliseconds)
 
             reveal(step, overlay = CheckOverlay(entryId = entry.id, check = check))
 
@@ -136,7 +141,7 @@ class PlaybackViewModel(
     private fun showDamage(entryId: String, damage: DamageEffect, delayMs: Long) {
         damageJob?.cancel()
         damageJob = viewModelScope.launch {
-            delay(delayMs)
+            delay(delayMs.milliseconds)
             audio.damage(damage.type)
             _state.update { it.copy(damageOverlay = DamageOverlay(entryId, damage)) }
         }
@@ -155,8 +160,10 @@ class PlaybackViewModel(
     }
 
     private fun cancelTimers() {
-        checkJob?.cancel(); checkJob = null
-        damageJob?.cancel(); damageJob = null
+        checkJob?.cancel()
+        checkJob = null
+        damageJob?.cancel()
+        damageJob = null
     }
 
     override fun onCleared() {

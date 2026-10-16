@@ -3,13 +3,34 @@ package com.example.feldelysium.domain.sound
 import com.example.feldelysium.domain.model.SoundKeys
 
 enum class SoundCue {
-    DialogPanelLoop, DialogPanelOut, DialogueClick,
-    DiceRoll, CheckSuccess, CheckFail,
-    PassiveFys, PassiveInt, PassiveMot, PassivePsy,
-    HealthDamaged, MoraleDamaged,
-    SpeakerIntellect, SpeakerPsyche, SpeakerPhysique, SpeakerMotorics, SpeakerNpc, SpeakerDefault,
+    DialogPanelLoop,
+    DialogPanelOut,
+    DialogueClick,
+    DiceRoll,
+    CheckSuccess,
+    CheckFail,
+    PassiveFys,
+    PassiveInt,
+    PassiveMot,
+    PassivePsy,
+    HealthDamaged,
+    MoraleDamaged,
+    SpeakerIntellect,
+    SpeakerPsyche,
+    SpeakerPhysique,
+    SpeakerMotorics,
+    SpeakerNpc,
+    SpeakerDefault,
 
-    UiSelect, UiClick, UiSwitch, UiCancel, UiSave, UiDone, UiDelete, UiTab, UiExport,
+    UiSelect,
+    UiClick,
+    UiSwitch,
+    UiCancel,
+    UiSave,
+    UiDone,
+    UiDelete,
+    UiTab,
+    UiExport,
     ;
 
     companion object {

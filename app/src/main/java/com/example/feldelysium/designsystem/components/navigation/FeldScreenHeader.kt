@@ -252,11 +252,14 @@ private fun EditableTitle(
                 .padding(end = 44.dp)
                 .alpha(if (editing && blank) 0.35f else 1f)
                 .then(
-                    if (editing) Modifier
-                    else Modifier.feldClickable(onClick = {
-                        haptics.tick()
-                        startEditing()
-                    }),
+                    if (editing) {
+                        Modifier
+                    } else {
+                        Modifier.feldClickable(onClick = {
+                            haptics.tick()
+                            startEditing()
+                        })
+                    },
                 ),
         )
 
