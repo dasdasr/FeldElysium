@@ -61,6 +61,7 @@ import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalConte
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
+import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggScreen
@@ -80,6 +81,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
     val haptics = rememberFeldHaptics()
+    val sounds = rememberFeldSounds()
     val toast = rememberFeldToastState()
     val eggs = LocalEasterEggs.current
 
@@ -157,7 +159,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     },
                     onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
                     onLabelClick = { vm.dispatch(EditorEvent.OpenSceneManager) },
-                    onTitleCommit = { vm.dispatch(EditorEvent.SaveScene) },
+                    onTitleCommit = { sounds.save(); vm.dispatch(EditorEvent.SaveScene) },
                 )
 
                 FeldToolbar(

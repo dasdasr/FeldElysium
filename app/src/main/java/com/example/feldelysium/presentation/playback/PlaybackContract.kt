@@ -9,6 +9,7 @@ data class PlaybackUiState(
     val revealedEntries: List<DialogueEntry> = emptyList(),
     val isFinished: Boolean = false,
     val isCheckRolling: Boolean = false,
+    val isPanelOpen: Boolean = false,
     val checkOverlay: CheckOverlay? = null,
     val damageOverlay: DamageOverlay? = null,
 )
@@ -17,6 +18,8 @@ sealed class PlaybackEvent {
     data object Tap : PlaybackEvent()
     data object Reset : PlaybackEvent()
     data object NavigateBack : PlaybackEvent()
+    data object ScreenStopped : PlaybackEvent()
+    data class ScrollChanged(val active: Boolean) : PlaybackEvent()
 }
 
 sealed class PlaybackEffect {

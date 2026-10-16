@@ -51,9 +51,12 @@ data class SpeakerType(
 }
 
 object SoundKeys {
-
     const val NONE = "none"
     const val DEFAULT = "default"
     const val NPC = "npc"
-    val All = listOf(DEFAULT, NPC, "intellect", "psyche", "physique", "motorics")
+    const val INTELLECT = "intellect"
+    const val PSYCHE = "psyche"
+    const val PHYSIQUE = "physique"
+    const val MOTORICS = "motorics"
+    val All = listOf(DEFAULT, NPC, INTELLECT, PSYCHE, PHYSIQUE, MOTORICS)
 }

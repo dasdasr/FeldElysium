@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -40,18 +42,19 @@ fun DialogueHistoryList(
     entries: List<DialogueEntry>,
     modifier: Modifier = Modifier,
     isCheckRolling: Boolean = false,
+    onScrollActive: (Boolean) -> Unit = {},
     footer: (@Composable () -> Unit)? = null,
 ) {
-    val scope = rememberCoroutineScope()
-    val anchor = remember { ColumnScrollAnchor(scope) }
-    val textShiftPx = anchor.textShift.value
-    val tapeOffsetPx = anchor.tapeShift.value
-
     BoxWithConstraints(modifier = modifier.clipToBounds()) {
         if (!maxWidth.value.isFinite() || !maxHeight.value.isFinite()) return@BoxWithConstraints
 
         val density = LocalDensity.current
         val viewportPx = with(density) { maxHeight.toPx() }
+
+        val scope = rememberCoroutineScope()
+        val currentOnScrollActive by rememberUpdatedState(onScrollActive)
+        val anchor = remember { ColumnScrollAnchor(scope) { currentOnScrollActive(it) } }
+        val textShiftPx = anchor.textShift.value
 
         LaunchedEffect(isCheckRolling) {
             if (isCheckRolling) anchor.roll(viewportPx * CheckMotion.TAPE_ROLL_VIEWPORTS)
@@ -131,7 +134,10 @@ fun DialogueHistoryList(
 }
 
 // Shared scroll offset for the dialogue column and tape background
-private class ColumnScrollAnchor(private val scope: CoroutineScope) {
+private class ColumnScrollAnchor(
+    private val scope: CoroutineScope,
+    private val onScrollActive: (Boolean) -> Unit,
+) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
@@ -211,26 +217,22 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope) {
             if (gen != generation) return@launch
             val textTarget = bonus
             val tapeDestination = tapeTarget
+            onScrollActive(true)
             coroutineScope {
                 launch {
                     textShift.animateTo(
                         textTarget,
-                        tween(
-                            durationMillis = PlaybackMotion.COLUMN_SCROLL_DURATION_MS,
-                            easing = PlaybackMotion.columnScrollEasing,
-                        ),
+                        tween(PlaybackMotion.COLUMN_SCROLL_DURATION_MS, easing = PlaybackMotion.columnScrollEasing)
                     )
                 }
                 launch {
                     tapeShift.animateTo(
                         tapeDestination,
-                        tween(
-                            durationMillis = PlaybackMotion.TAPE_SCROLL_DURATION_MS,
-                            easing = PlaybackMotion.tapeScrollEasing,
-                        ),
+                        tween(PlaybackMotion.TAPE_SCROLL_DURATION_MS, easing = PlaybackMotion.tapeScrollEasing)
                     )
                 }
             }
+            onScrollActive(false)
         }
     }
 }
