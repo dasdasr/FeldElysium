@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileFilter
@@ -17,15 +16,15 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
 
-class FileSceneRepository(
-    context: Context,
-    private val io: CoroutineDispatcher = Dispatchers.IO,
-) : SceneRepository {
+class FileSceneRepository(context: Context, private val io: CoroutineDispatcher = Dispatchers.IO) : SceneRepository {
 
     private val dir = File(context.filesDir, "scenes").apply { mkdirs() }
     private val prefs = context.getSharedPreferences("scene_store", Context.MODE_PRIVATE)
     private val mutex = Mutex()
-    private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
 
     private var currentId: String?
         get() = prefs.getString("current", null)
@@ -60,7 +59,6 @@ class FileSceneRepository(
             fileOf(id).delete()
             if (currentId == id) currentId = null
         }
-        Unit
     }
 
     override suspend fun list(): List<SceneInfo> = withContext(io) {

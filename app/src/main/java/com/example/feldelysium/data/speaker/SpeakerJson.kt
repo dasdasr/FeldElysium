@@ -23,37 +23,32 @@ object SpeakerJson {
         put(
             "tags",
             JSONArray().apply {
-                doc.tags.forEach { t ->
-                    put(
-                        JSONObject().apply {
-                            put("id", t.id)
-                            put("name", t.name)
-                            t.color?.let { put("color", hex(it)) }
-                            t.sound?.let { put("sound", it) }
-                            t.sound?.let { put("sound", it) }
-                            if (t.allowsChecks) put("allowsChecks", true)
-                        },
-                    )
-                }
+                doc.tags.forEach { put(encodeTag(it)) }
             },
         )
         put(
             "speakers",
             JSONArray().apply {
-                doc.speakers.forEach { s ->
-                    put(
-                        JSONObject().apply {
-                            put("id", s.id)
-                            put("name", s.name)
-                            s.color?.let { put("color", hex(it)) }
-                            s.tagId?.let { put("tag", it) }
-                            s.icon?.let { put("icon", it) }
-                        },
-                    )
-                }
+                doc.speakers.forEach { put(encodeSpeaker(it)) }
             },
         )
     }.toString(2)
+
+    private fun encodeTag(tag: TagData): JSONObject = JSONObject().apply {
+        put("id", tag.id)
+        put("name", tag.name)
+        tag.color?.let { put("color", hex(it)) }
+        tag.sound?.let { put("sound", it) }
+        if (tag.allowsChecks) put("allowsChecks", true)
+    }
+
+    private fun encodeSpeaker(speaker: SpeakerData): JSONObject = JSONObject().apply {
+        put("id", speaker.id)
+        put("name", speaker.name)
+        speaker.color?.let { put("color", hex(it)) }
+        speaker.tagId?.let { put("tag", it) }
+        speaker.icon?.let { put("icon", it) }
+    }
 
     fun decode(text: String, strict: Boolean): SpeakerDocument {
         val o = JSONObject(text)

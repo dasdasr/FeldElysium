@@ -134,10 +134,7 @@ fun DialogueHistoryList(
 }
 
 // Shared scroll offset for the dialogue column and tape background
-private class ColumnScrollAnchor(
-    private val scope: CoroutineScope,
-    private val onScrollActive: (Boolean) -> Unit,
-) {
+private class ColumnScrollAnchor(private val scope: CoroutineScope, private val onScrollActive: (Boolean) -> Unit) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
@@ -213,7 +210,7 @@ private class ColumnScrollAnchor(
         job = scope.launch {
             textShift.stop()
             tapeShift.stop()
-            delay(PlaybackMotion.SCROLL_START_DELAY_MS.toLong())
+            delay(PlaybackMotion.SCROLL_START_DELAY_MS.milliseconds)
             if (gen != generation) return@launch
             val textTarget = bonus
             val tapeDestination = tapeTarget
@@ -222,13 +219,13 @@ private class ColumnScrollAnchor(
                 launch {
                     textShift.animateTo(
                         textTarget,
-                        tween(PlaybackMotion.COLUMN_SCROLL_DURATION_MS, easing = PlaybackMotion.columnScrollEasing)
+                        tween(PlaybackMotion.COLUMN_SCROLL_DURATION_MS, easing = PlaybackMotion.columnScrollEasing),
                     )
                 }
                 launch {
                     tapeShift.animateTo(
                         tapeDestination,
-                        tween(PlaybackMotion.TAPE_SCROLL_DURATION_MS, easing = PlaybackMotion.tapeScrollEasing)
+                        tween(PlaybackMotion.TAPE_SCROLL_DURATION_MS, easing = PlaybackMotion.tapeScrollEasing),
                     )
                 }
             }
@@ -241,8 +238,8 @@ private class ColumnScrollAnchor(
 private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         val lineX = size.width * (
-                PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
-                )
+            PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+            )
         val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
         val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
         if (lineBottom <= lineTop) return@Canvas

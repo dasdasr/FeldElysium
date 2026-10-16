@@ -128,16 +128,28 @@ class SoundManager(context: Context) : SoundPlayer {
 
     private fun onLoaded(sampleId: Int, status: Int) {
         val s = byId[sampleId] ?: return
+
         if (status != 0) {
             s.failed = true
             s.pending = null
             return
         }
+
         s.ready = true
-        val p = s.pending ?: return
-        s.pending = null
-        if (SystemClock.uptimeMillis() - p.at > STALE_MS) return
-        if (p.loopToken != null) beginLoop(s, p.loopToken) else startOnce(s, p.volume)
+
+        val p = s.pending
+        if (p != null) {
+            s.pending = null
+
+            val isFresh = SystemClock.uptimeMillis() - p.at <= STALE_MS
+            if (isFresh) {
+                if (p.loopToken != null) {
+                    beginLoop(s, p.loopToken)
+                } else {
+                    startOnce(s, p.volume)
+                }
+            }
+        }
     }
 
     private fun startOnce(s: Sample, volume: Float) {

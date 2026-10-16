@@ -159,7 +159,10 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     },
                     onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
                     onLabelClick = { vm.dispatch(EditorEvent.OpenSceneManager) },
-                    onTitleCommit = { sounds.save(); vm.dispatch(EditorEvent.SaveScene) },
+                    onTitleCommit = {
+                        sounds.save()
+                        vm.dispatch(EditorEvent.SaveScene)
+                    },
                 )
 
                 FeldToolbar(

@@ -58,7 +58,14 @@ fun SceneManagerDialog(
         Spacer(Modifier.height(8.dp))
         FeldTextButton(
             if (confirmClear) "Tap again to clear all lines" else "Clear lines",
-            onClick = { if (confirmClear) { onClear(); confirmClear = false } else confirmClear = true },
+            onClick = {
+                if (confirmClear) {
+                    onClear()
+                    confirmClear = false
+                } else {
+                    confirmClear = true
+                }
+            },
         )
 
         Spacer(Modifier.height(20.dp))

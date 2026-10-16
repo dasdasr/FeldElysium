@@ -21,8 +21,6 @@ import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldChip
 import com.example.feldelysium.designsystem.components.input.FeldChipColors
-import com.example.feldelysium.designsystem.components.input.FeldChipFill
-import com.example.feldelysium.designsystem.components.input.FeldChipShape
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.domain.model.SpeakerType
 
@@ -151,6 +149,6 @@ private fun ChooseTagDialogPreview() {
         existing = listOf(SpeakerType.NPC),
         selected = SpeakerType.NPC,
         onConfirm = {},
-        onDismiss = {}
+        onDismiss = {},
     )
 }
