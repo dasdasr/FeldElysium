@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -31,29 +35,38 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun DialogueHistoryList(
     entries: List<DialogueEntry>,
     modifier: Modifier = Modifier,
+    isCheckRolling: Boolean = false,
+    onScrollActive: (Boolean) -> Unit = {},
     footer: (@Composable () -> Unit)? = null,
 ) {
-    val scope = rememberCoroutineScope()
-    val anchor = remember { ColumnScrollAnchor(scope) }
-    val textShiftPx = anchor.textShift.value
-    val tapeOffsetPx = anchor.tapeShift.value
-
     BoxWithConstraints(modifier = modifier.clipToBounds()) {
         if (!maxWidth.value.isFinite() || !maxHeight.value.isFinite()) return@BoxWithConstraints
 
         val density = LocalDensity.current
         val viewportPx = with(density) { maxHeight.toPx() }
+
+        val scope = rememberCoroutineScope()
+        val currentOnScrollActive by rememberUpdatedState(onScrollActive)
+        val anchor = remember { ColumnScrollAnchor(scope) { currentOnScrollActive(it) } }
+        val textShiftPx = anchor.textShift.value
+
+        LaunchedEffect(isCheckRolling) {
+            if (isCheckRolling) anchor.roll(viewportPx * CheckMotion.TAPE_ROLL_VIEWPORTS)
+        }
+
         val restBottomPx = viewportPx * PlaybackMotion.REST_BOTTOM_FRACTION
         val textStart = maxWidth * PlaybackMotion.TEXT_COLUMN_START_FRACTION
         val textEndInset = maxWidth * (1f - PlaybackMotion.TEXT_COLUMN_END_FRACTION)
         val fontSize = with(density) { (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp() }
         val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
         val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
+        val tapeOffsetPx = anchor.tapeShift.value + anchor.rollShift.value
 
         TapeBackground(
             offsetPx = tapeOffsetPx,
@@ -121,7 +134,7 @@ fun DialogueHistoryList(
 }
 
 // Shared scroll offset for the dialogue column and tape background
-private class ColumnScrollAnchor(private val scope: CoroutineScope) {
+private class ColumnScrollAnchor(private val scope: CoroutineScope, private val onScrollActive: (Boolean) -> Unit) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
@@ -135,6 +148,18 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope) {
     private var hasAnchor = false
     private var generation = 0
     private var job: kotlinx.coroutines.Job? = null
+
+    val rollShift = Animatable(0f)
+    private var rollTarget = 0f
+
+    fun roll(distancePx: Float) {
+        rollTarget += distancePx
+        val target = rollTarget
+        scope.launch {
+            delay(CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds)
+            rollShift.animateTo(target, tween(CheckMotion.TAPE_ROLL_MS, easing = EaseInOut))
+        }
+    }
 
     fun placementY(contentHeightPx: Float, restBottomPx: Float, viewportHeightPx: Float, textShiftPx: Float): Float {
         if (!hasAnchor) {
@@ -185,30 +210,26 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope) {
         job = scope.launch {
             textShift.stop()
             tapeShift.stop()
-            delay(PlaybackMotion.SCROLL_START_DELAY_MS.toLong())
+            delay(PlaybackMotion.SCROLL_START_DELAY_MS.milliseconds)
             if (gen != generation) return@launch
             val textTarget = bonus
             val tapeDestination = tapeTarget
+            onScrollActive(true)
             coroutineScope {
                 launch {
                     textShift.animateTo(
                         textTarget,
-                        tween(
-                            durationMillis = PlaybackMotion.COLUMN_SCROLL_DURATION_MS,
-                            easing = PlaybackMotion.columnScrollEasing,
-                        ),
+                        tween(PlaybackMotion.COLUMN_SCROLL_DURATION_MS, easing = PlaybackMotion.columnScrollEasing),
                     )
                 }
                 launch {
                     tapeShift.animateTo(
                         tapeDestination,
-                        tween(
-                            durationMillis = PlaybackMotion.TAPE_SCROLL_DURATION_MS,
-                            easing = PlaybackMotion.tapeScrollEasing,
-                        ),
+                        tween(PlaybackMotion.TAPE_SCROLL_DURATION_MS, easing = PlaybackMotion.tapeScrollEasing),
                     )
                 }
             }
+            onScrollActive(false)
         }
     }
 }

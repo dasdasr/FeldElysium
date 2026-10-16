@@ -3,6 +3,9 @@ package com.example.feldelysium.presentation.playback
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,8 +54,12 @@ import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
+import com.example.feldelysium.presentation.playback.components.ActiveCheckOverlay
+import com.example.feldelysium.presentation.playback.components.ActiveDamageOverlay
+import com.example.feldelysium.presentation.playback.components.DamageBackdrop
 import com.example.feldelysium.presentation.playback.components.DialogueHistoryList
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
+import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
 import com.example.feldelysium.presentation.settings.SettingsViewModel
@@ -124,6 +132,7 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
         day = settings.playbackDay,
         onTap = { vm.dispatch(PlaybackEvent.Tap) },
         onBackClick = { vm.dispatch(PlaybackEvent.NavigateBack) },
+        onScrollChanged = { vm.dispatch(PlaybackEvent.ScrollChanged(it)) },
         modifier = modifier,
     )
 }
@@ -133,6 +142,7 @@ fun PlaybackScreenContent(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
+    onScrollChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier,
     lockAspectRatio16x9: Boolean = true,
     background: AppSettings = AppSettings(),
@@ -157,6 +167,7 @@ fun PlaybackScreenContent(
                     time = time,
                     day = day,
                     modifier = Modifier.aspectRatio(16f / 9f, matchHeightConstraintsFirst = false),
+                    onScrollChanged = onScrollChanged,
                 )
             }
         } else {
@@ -179,6 +190,7 @@ private fun PlaybackStage(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
+    onScrollChanged: (Boolean) -> Unit = {},
     background: AppSettings,
     money: String,
     time: String,
@@ -201,38 +213,72 @@ private fun PlaybackStage(
         val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
         val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
 
+        val panelShift by animateFloatAsState(
+            targetValue = if (state.isPanelOpen) 0f else 1f,
+            animationSpec = tween(PanelMotion.SLIDE_MS, easing = FastOutSlowInEasing),
+            label = "panelShift",
+        )
+
         PlaybackBackground(
             settings = background,
             modifier = Modifier.matchParentSize(),
         )
 
+        DamageBackdrop(overlay = state.damageOverlay, modifier = Modifier.matchParentSize())
+
         Box(
             modifier = Modifier
-                .fillMaxHeight()
-                .width(tapeWidth + tapeRightMargin)
-                .align(Alignment.CenterEnd),
+                .matchParentSize()
+                .graphicsLayer { translationX = panelShift * size.width },
         ) {
-            DialogueHistoryList(
-                entries = state.revealedEntries,
+            Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(tapeWidth)
-                    .align(Alignment.CenterStart),
+                    .width(tapeWidth + tapeRightMargin)
+                    .align(Alignment.CenterEnd),
+            ) {
+                DialogueHistoryList(
+                    entries = state.revealedEntries,
+                    isCheckRolling = state.isCheckRolling,
+                    modifier = Modifier.fillMaxHeight().width(tapeWidth).align(Alignment.CenterStart),
+                    onScrollActive = onScrollChanged,
+                )
+            }
+
+            if (!state.isCheckRolling) {
+                LatestSpeakerPortrait(
+                    speaker = state.revealedEntries.lastOrNull()?.speaker,
+                    modifier = Modifier
+                        .offset(x = portraitLeft - portraitBackdropInset, y = portraitTop - portraitBackdropInset)
+                        .size(
+                            width = portraitWidth + portraitBackdropInset * 2,
+                            height = portraitHeight + portraitBackdropInset * 2,
+                        ),
+                )
+            }
+        }
+
+        if (!state.isCheckRolling) {
+            LatestSpeakerPortrait(
+                speaker = state.revealedEntries.lastOrNull()?.speaker,
+                modifier = Modifier
+                    .offset(
+                        x = portraitLeft - portraitBackdropInset,
+                        y = portraitTop - portraitBackdropInset,
+                    )
+                    .size(
+                        width = portraitWidth + portraitBackdropInset * 2,
+                        height = portraitHeight + portraitBackdropInset * 2,
+                    ),
             )
         }
 
-        LatestSpeakerPortrait(
-            speaker = state.revealedEntries.lastOrNull()?.speaker,
-            modifier = Modifier
-                .offset(
-                    x = portraitLeft - portraitBackdropInset,
-                    y = portraitTop - portraitBackdropInset,
-                )
-                .size(
-                    width = portraitWidth + portraitBackdropInset * 2,
-                    height = portraitHeight + portraitBackdropInset * 2,
-                ),
+        ActiveCheckOverlay(
+            overlay = state.checkOverlay,
+            modifier = Modifier.matchParentSize(),
         )
+
+        ActiveDamageOverlay(overlay = state.damageOverlay, modifier = Modifier.matchParentSize())
 
         IconButton(
             onClick = onBackClick,

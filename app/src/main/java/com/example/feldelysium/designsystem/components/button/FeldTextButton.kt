@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.feldelysium.designsystem.components.title.FeldTitleTag
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 
 @Composable
@@ -45,6 +46,8 @@ fun FeldDialogActions(
     confirmEnabled: Boolean = true,
     seed: Int = rememberSeed(),
 ) {
+    val sounds = rememberFeldSounds()
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -53,11 +56,24 @@ fun FeldDialogActions(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-            if (onCancel != null) FeldTextButton(cancelLabel, onCancel)
+            if (onCancel != null) {
+                FeldTextButton(
+                    cancelLabel,
+                    {
+                        sounds.cancel()
+                        onCancel()
+                    },
+                )
+            }
         }
         FeldButton(
-            confirmLabel,
-            onClick = { if (confirmEnabled) onConfirm() },
+            text = confirmLabel,
+            onClick = {
+                if (confirmEnabled) {
+                    sounds.click(seed)
+                    onConfirm()
+                }
+            },
             spec = if (confirmEnabled) FeldButtonDefaults.OrangeFresh else FeldButtonDefaults.Cream,
             modifier = Modifier
                 .weight(1f)

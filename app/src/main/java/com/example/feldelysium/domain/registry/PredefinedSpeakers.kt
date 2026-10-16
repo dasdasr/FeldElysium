@@ -7,7 +7,8 @@ import com.example.feldelysium.domain.model.SpeakerType
 
 object PredefinedSpeakers {
 
-    private fun tag(id: String, name: String, color: SpeakerColor) = SpeakerType(id, name, color.argb, id)
+    private fun tag(id: String, name: String, color: SpeakerColor) =
+        SpeakerType(id, name, color.argb, id, allowsChecks = true)
 
     val INTELLECT_TAG = tag("intellect", "Intellect", SpeakerColor.INTELLECT)
     val PSYCHE_TAG = tag("psyche", "Psyche", SpeakerColor.PSYCHE)
@@ -15,7 +16,7 @@ object PredefinedSpeakers {
     val MOTORICS_TAG = tag("motorics", "Motorics", SpeakerColor.MOTORICS)
 
     val TAGS: List<SpeakerType> =
-        listOf(INTELLECT_TAG, PSYCHE_TAG, PHYSIQUE_TAG, MOTORICS_TAG, SpeakerType.NPC)
+        listOf(INTELLECT_TAG, PSYCHE_TAG, PHYSIQUE_TAG, MOTORICS_TAG, SpeakerType.NPC, SpeakerType.YOU)
     private val tagIds = TAGS.map { it.id }.toSet()
 
     fun isBundledTag(id: String) = id in tagIds
@@ -37,6 +38,8 @@ object PredefinedSpeakers {
         type = SpeakerType.NPC,
         isBundled = true,
     )
+
+    val YOU = Speaker("you", "You", SpeakerColor.PLAIN.argb, null, type = SpeakerType.YOU, isBundled = true)
 
     val LOGIC = skill("logic", "Logic", R.drawable.ic_logic, INTELLECT_TAG)
     val ENCYCLOPEDIA = skill("encyclopedia", "Encyclopedia", null, INTELLECT_TAG)
@@ -100,7 +103,7 @@ object PredefinedSpeakers {
         STEBAN,
     )
 
-    val ALL: List<Speaker> = SKILLS + NPCS
+    val ALL: List<Speaker> = SKILLS + NPCS + YOU
 
     private val byNameIndex: Map<String, Speaker> = ALL.associateBy { it.name.uppercase() }
 

@@ -60,11 +60,13 @@ enum class FeldIconId {
     PlaybackText,
     Settings,
     Export,
+    Save,
 }
 
 @Composable
 fun FeldIcon(
     id: FeldIconId,
+    seed: Int? = null,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current,
     contentDescription: String? = null,
@@ -96,6 +98,7 @@ fun FeldIcon(
         FeldIconId.PlaybackText -> Icons.Default.Subtitles
         FeldIconId.Settings -> Icons.Default.Settings
         FeldIconId.Export -> Icons.Default.ImportExport
+        FeldIconId.Save -> Icons.Default.Save
     }
     Icon(
         v,
@@ -106,7 +109,7 @@ fun FeldIcon(
                 if (film) {
                     Modifier.markerFilmMaterial(
                         FeldMarker.Chalk,
-                        id.ordinal,
+                        id.ordinal + (seed ?: 0),
                         bakeKey = tint,
                     )
                 } else {

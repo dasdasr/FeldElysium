@@ -49,7 +49,7 @@ fun FeldCard(
     decalInset: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     revealOnEnter: Boolean = false,
-    revealMillis: Int = 500,
+    revealMillis: Int = 300,
     pressScale: Float = 0.012f,
     pressMillis: Int = 90,
     time: () -> Float = { 0f },
@@ -74,9 +74,9 @@ fun FeldCard(
         ),
         animation = FeldAnimations.Reveal.from(
             initial = mapOf(
-                "roughness" to { it + 10f },
-                "irregularity" to { it * 1.5f },
-                "wear" to { it * 1.5f },
+                "roughness" to { it + 5f },
+                "irregularity" to { it * 1.3f },
+                "wear" to { it * 1.3f },
             ),
             enabled = revealOnEnter,
             durationMillis = revealMillis,

@@ -3,14 +3,19 @@ package com.example.feldelysium.presentation.editor
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.feldelysium.FeldApp
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.model.normalized
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.domain.sound.SoundCue
+import com.example.feldelysium.domain.sound.SoundPlayer
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
 import com.example.feldelysium.presentation.shared.SceneAction
 import com.example.feldelysium.presentation.shared.SceneViewModel
@@ -31,6 +36,7 @@ class EditorViewModel(
     application: Application,
     private val sceneViewModel: SceneViewModel,
     private val parseUseCase: ParseBulkImportUseCase,
+    private val sounds: SoundPlayer,
 ) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(EditorUiState())
@@ -69,7 +75,11 @@ class EditorViewModel(
         sceneViewModel.state
             .onEach { sceneState ->
                 _state.update {
-                    it.copy(entries = sceneState.scene.entries, sceneName = sceneState.scene.title)
+                    it.copy(
+                        entries = sceneState.scene.entries,
+                        sceneName = sceneState.scene.title,
+                        sceneId = sceneState.scene.id,
+                    )
                 }
             }
             .launchIn(viewModelScope)
@@ -109,7 +119,7 @@ class EditorViewModel(
                 val editing = it.editingEntry
                 if (editing != null) {
                     it.copy(
-                        editingEntry = editing.copy(speaker = event.speaker),
+                        editingEntry = editing.copy(speaker = event.speaker).normalized(),
                         isSpeakerPickerOpen = false,
                         isChangingSpeaker = false,
                     )
@@ -140,6 +150,8 @@ class EditorViewModel(
                 id = UUID.randomUUID().toString(),
                 speaker = speaker,
                 text = event.text.trim(),
+                check = event.check?.takeIf { speaker.type.allowsChecks },
+                damage = event.damage?.takeIf { speaker.type.allowsChecks },
             )
             sceneViewModel.dispatch(SceneAction.AddEntry(entry))
             _state.update { it.copy(pendingSpeaker = null, isEntryEditOpen = false) }
@@ -238,6 +250,47 @@ class EditorViewModel(
                 )
             }
         }
+
+        EditorEvent.SaveScene -> {
+            sceneViewModel.saveNow()
+            notify("Scene saved")
+        }
+
+        EditorEvent.OpenSceneManager -> viewModelScope.launch {
+            _state.update { it.copy(isSceneManagerOpen = true, scenes = sceneViewModel.scenes()) }
+        }
+
+        EditorEvent.CloseSceneManager -> _state.update { it.copy(isSceneManagerOpen = false) }
+
+        EditorEvent.NewScene -> {
+            sceneViewModel.newScene()
+            _state.update { it.copy(isSceneManagerOpen = false) }
+        }
+
+        is EditorEvent.OpenScene -> {
+            sceneViewModel.openScene(event.id)
+            _state.update { it.copy(isSceneManagerOpen = false) }
+        }
+
+        is EditorEvent.DeleteScene -> viewModelScope.launch {
+            sceneViewModel.deleteScene(event.id).join()
+            _state.update { it.copy(scenes = sceneViewModel.scenes()) }
+        }
+
+        is EditorEvent.ExportScene -> viewModelScope.launch {
+            val out = event.output ?: return@launch
+            val ok = runCatching { out.use { sceneViewModel.exportScene(it) } }.isSuccess
+            if (ok) sounds.play(SoundCue.UiExport)
+            notify(if (ok) "Scene exported" else "Export failed")
+        }
+
+        is EditorEvent.ImportScene -> viewModelScope.launch {
+            val input = event.input ?: return@launch
+            val ok = runCatching { input.use { sceneViewModel.importScene(it) } }.isSuccess
+            if (ok) sounds.play(SoundCue.UiDone)
+            notify(if (ok) "Scene imported" else "Cannot read this file")
+            if (ok) _state.update { it.copy(isSceneManagerOpen = false) }
+        }
     }
 
     private fun previewFor(text: String): ImportPreview? {
@@ -278,12 +331,12 @@ class EditorViewModel(
     companion object {
         fun factory(sceneViewModel: SceneViewModel) = viewModelFactory {
             initializer {
-                val app =
-                    this[androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
+                val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
                 EditorViewModel(
                     application = app,
                     sceneViewModel = sceneViewModel,
                     parseUseCase = ParseBulkImportUseCase(),
+                    sounds = (app as FeldApp).container.soundPlayer,
                 )
             }
         }
