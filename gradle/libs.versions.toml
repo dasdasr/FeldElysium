@@ -19,6 +19,8 @@ datastorePreferences = "1.2.1"
 animationCore = "1.12.1"
 uiGraphics = "1.12.1"
 detekt = "2.0.0-alpha.6"
+uiautomator = "2.4.0"
+benchmarkMacroJunit4 = "1.5.0"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -43,9 +45,12 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-compose-animation-core = { group = "androidx.compose.animation", name = "animation-core", version.ref = "animationCore" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 detekt-rules-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
+android-test = { id = "com.android.test", version.ref = "agp" }

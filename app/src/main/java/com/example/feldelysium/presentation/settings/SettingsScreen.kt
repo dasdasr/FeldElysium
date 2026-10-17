@@ -26,6 +26,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.data.settings.AppSettings
@@ -119,7 +120,8 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .testTag("settings_scroll"),
             ) {
                 FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
