@@ -29,6 +29,8 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.BACKGROUND_MEDIA_IS_VIDEO] = next.backgroundMediaIsVideo
             prefs[Keys.BACKGROUND_VIDEO_SOUND] = next.backgroundVideoSound
             prefs[Keys.BACKGROUND_VIDEO_FILL] = next.backgroundVideoFill
+            prefs[Keys.SAMPLES_MODE] = next.samplesMode.name
+            prefs[Keys.PACK_IMPORTED] = next.packImported
         }
     }
 
@@ -45,6 +47,10 @@ class SettingsRepository(private val context: Context) {
         backgroundMediaIsVideo = prefs[Keys.BACKGROUND_MEDIA_IS_VIDEO] ?: false,
         backgroundVideoSound = prefs[Keys.BACKGROUND_VIDEO_SOUND] ?: false,
         backgroundVideoFill = prefs[Keys.BACKGROUND_VIDEO_FILL] ?: true,
+        samplesMode = prefs[Keys.SAMPLES_MODE]
+            ?.let { runCatching { SamplesMode.valueOf(it) }.getOrNull() }
+            ?: SamplesMode.AUTO,
+        packImported = prefs[Keys.PACK_IMPORTED] ?: false,
     )
 
     private object Keys {
@@ -58,5 +64,7 @@ class SettingsRepository(private val context: Context) {
         val BACKGROUND_MEDIA_IS_VIDEO = booleanPreferencesKey("background_media_is_video")
         val BACKGROUND_VIDEO_SOUND = booleanPreferencesKey("background_video_sound")
         val BACKGROUND_VIDEO_FILL = booleanPreferencesKey("background_video_fill")
+        val SAMPLES_MODE = stringPreferencesKey("samples_mode")
+        val PACK_IMPORTED = booleanPreferencesKey("pack_imported")
     }
 }

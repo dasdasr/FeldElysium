@@ -286,7 +286,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
 
     if (state.isSpeakerPickerOpen) {
         SpeakerPickerDialog(
-            speakers = state.allSpeakers,
+            speakers = state.pickerSpeakers,
             tags = state.tags,
             onSpeakerSelected = {
                 vm.dispatch(EditorEvent.SelectSpeakerForNewEntry(it))
