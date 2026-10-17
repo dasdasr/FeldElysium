@@ -13,6 +13,7 @@ import java.io.OutputStream
 data class EditorUiState(
     val entries: List<DialogueEntry> = emptyList(),
     val allSpeakers: List<Speaker> = PredefinedSpeakers.ALL,
+    val pickerSpeakers: List<Speaker> = PredefinedSpeakers.ALL,
     val sceneName: String = "Untitled Scene",
 
     val tags: List<SpeakerType> = PredefinedSpeakers.TAGS,

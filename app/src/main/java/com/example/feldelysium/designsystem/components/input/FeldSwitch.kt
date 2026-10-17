@@ -56,7 +56,6 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-import kotlin.math.min
 
 private val OnSpec = FeldPaper.DryButtonRust
 private val OffSpec = FeldPaper.DryButtonRust.copy(
@@ -81,7 +80,7 @@ private fun smooth(x: Float): Float {
 
 private class SideRoundShape(private val l: Float, private val r: Float) : Shape {
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val max = min(size.width, size.height) / 2f
+        val max = size.height / 2f
         val cl = CornerRadius(l.coerceIn(0f, max))
         val cr = CornerRadius(r.coerceIn(0f, max))
         return Outline.Rounded(RoundRect(0f, 0f, size.width, size.height, cl, cr, cr, cl))
@@ -143,7 +142,7 @@ fun FeldSwitch(
             RoughStyle(
                 roughness = 0.35.dp,
                 step = 14.dp,
-                corner = 1.5.dp,
+                corner = 2.dp,
                 inset = 0.dp,
                 cornerVariation = 0.2f,
                 cornerJitter = 0.1f,
@@ -190,6 +189,7 @@ fun FeldSwitch(
                             settle(tracker.calculateVelocity().x / travelPx)
                         } else {
                             haptics.confirm()
+                            sounds.toggle(seed + 1)
                             currentOnChange(!currentChecked)
                         }
                         finished = true
@@ -261,6 +261,7 @@ fun FeldSwitch(
                 role = Role.Switch
                 toggleableState = ToggleableState(checked)
                 onClick {
+                    sounds.toggle(seed)
                     onCheckedChange(!checked)
                     true
                 }

@@ -89,6 +89,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     backgroundVideoFill = d.backgroundVideoFill,
                 )
             }
+
+            is SettingsEvent.SetSamplesMode -> update { it.copy(samplesMode = event.mode) }
         }
     }
 

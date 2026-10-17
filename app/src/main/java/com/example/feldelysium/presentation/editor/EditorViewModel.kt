@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.feldelysium.FeldApp
+import com.example.feldelysium.data.settings.SamplesMode
+import com.example.feldelysium.data.settings.SettingsRepository
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -45,14 +48,15 @@ class EditorViewModel(
     private val _effects = Channel<EditorEffect>(Channel.BUFFERED)
     val effects = _effects.receiveAsFlow()
 
-    private val repo = SpeakerStorage.repository(application)
+    private val speakerRepo = SpeakerStorage.repository(application)
+    private val settingsRepo = SettingsRepository(application)
 
-    private val speakers = repo.speakers.stateIn(
+    private val speakers = speakerRepo.speakers.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         PredefinedSpeakers.ALL,
     )
-    private val tags = repo.tags.stateIn(
+    private val tags = speakerRepo.tags.stateIn(
         viewModelScope,
         SharingStarted.Eagerly,
         PredefinedSpeakers.TAGS,
@@ -63,13 +67,13 @@ class EditorViewModel(
         if (!prefs.getBoolean("scene_custom_speakers_v1", false)) {
             viewModelScope.launch {
                 val old = sceneViewModel.state.value.customSpeakers
-                old.forEach { repo.save(it) }
+                old.forEach { speakerRepo.save(it) }
                 if (old.isNotEmpty()) prefs.edit().putBoolean("scene_custom_speakers_v1", true).apply()
             }
         }
 
         viewModelScope.launch {
-            sceneViewModel.state.value.customSpeakers.forEach { repo.save(it) }
+            sceneViewModel.state.value.customSpeakers.forEach { speakerRepo.save(it) }
         }
 
         sceneViewModel.state
@@ -102,6 +106,17 @@ class EditorViewModel(
 
         tags
             .onEach { t -> _state.update { it.copy(tags = t) } }
+            .launchIn(viewModelScope)
+
+        combine(speakers, settingsRepo.settings) { all, s ->
+            val hide = when (s.samplesMode) {
+                SamplesMode.ALWAYS_SHOW -> false
+                SamplesMode.ALWAYS_HIDE -> true
+                SamplesMode.AUTO -> s.packImported
+            }
+            if (hide) all.filterNot { it.isSample } else all
+        }
+            .onEach { v -> _state.update { it.copy(pickerSpeakers = v) } }
             .launchIn(viewModelScope)
     }
 
@@ -181,7 +196,7 @@ class EditorViewModel(
         }
 
         is EditorEvent.ConfirmCustomSpeaker -> viewModelScope.launch {
-            repo.save(event.speaker)
+            speakerRepo.save(event.speaker)
             _state.update {
                 it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
             }
@@ -192,7 +207,7 @@ class EditorViewModel(
         }
 
         is EditorEvent.ConfirmEditSpeaker -> viewModelScope.launch {
-            repo.save(event.speaker)
+            speakerRepo.save(event.speaker)
             _state.update {
                 it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
             }
@@ -202,11 +217,11 @@ class EditorViewModel(
             it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
         }
 
-        is EditorEvent.SaveTag -> viewModelScope.launch { repo.saveTag(event.tag) }
+        is EditorEvent.SaveTag -> viewModelScope.launch { speakerRepo.saveTag(event.tag) }
 
-        is EditorEvent.DeleteTag -> viewModelScope.launch { repo.deleteTag(event.tag.id) }
+        is EditorEvent.DeleteTag -> viewModelScope.launch { speakerRepo.deleteTag(event.tag.id) }
 
-        is EditorEvent.DeleteSpeaker -> viewModelScope.launch { repo.delete(event.id) }
+        is EditorEvent.DeleteSpeaker -> viewModelScope.launch { speakerRepo.delete(event.id) }
 
         EditorEvent.OpenImportDialog -> _state.update {
             it.copy(isImportDialogOpen = true, importText = "", importPreview = null)
@@ -316,7 +331,7 @@ class EditorViewModel(
         }
 
         viewModelScope.launch {
-            result.newSpeakers.forEach { repo.save(it) }
+            result.newSpeakers.forEach { speakerRepo.save(it) }
             sceneViewModel.dispatch(SceneAction.BulkAddEntries(result.entries))
         }
         _state.update { it.copy(isImportDialogOpen = false, importText = "", importPreview = null) }
