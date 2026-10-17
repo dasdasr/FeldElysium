@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.ViewModelProvider
 import com.example.feldelysium.designsystem.foundation.material.MarkerFilmWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
@@ -65,9 +67,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    var launchApp by rememberSaveable {
-                        mutableStateOf(false)
-                    }
+                    val launchApp = true
                     val sounds = remember { PlayerFeldSounds(container.soundPlayer) }
 
                     CompositionLocalProvider(
@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                         LocalFeldSounds provides sounds,
                     ) {
                         if (launchApp) {
-                            Box(Modifier.fillMaxSize()) {
+                            Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
                                 Surface(
                                     modifier = Modifier.fillMaxSize(),
                                     color = MaterialTheme.colorScheme.background,
@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
                             }
                         } else {
                             PlaygroundHubScreen(
-                                onLaunchApp = { launchApp = true },
+                                onLaunchApp = { },
                                 playgrounds = listOf(
                                     PlaygroundEntry(
                                         id = "decals",
