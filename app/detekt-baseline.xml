@@ -11,6 +11,7 @@
     <ID>CyclomaticComplexMethod:EditorViewModel.kt:EditorViewModel$fun dispatch</ID>
     <ID>CyclomaticComplexMethod:RoughShape.kt:RoughShape$fun buildPath: Path</ID>
     <ID>CyclomaticComplexMethod:SceneViewModel.kt:SceneViewModel$private fun reduce: SceneState</ID>
+    <ID>CyclomaticComplexMethod:SettingsRepository.kt:SettingsRepository$private fun toAppSettings: AppSettings</ID>
     <ID>CyclomaticComplexMethod:SpeakerPackIO.kt:SpeakerPackIO$fun read: SpeakerDocument</ID>
     <ID>CyclomaticComplexMethod:SpeakerPackImporter.kt:SpeakerPackImporter$private fun restoreIcon: String?</ID>
     <ID>Filename:DecalLeak.kt:com.example.feldelysium.designsystem.foundation.decal.DecalLeak.kt</ID>

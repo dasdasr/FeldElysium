@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.data.settings.SamplesMode
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
@@ -195,6 +196,37 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         onClick = {
                             haptics.tick()
                             showTags = true
+                        },
+                    )
+                    FeldSettingsDivider()
+                    FeldSettingValueRow(
+                        icon = FeldIconId.Palette,
+                        title = "Author's samples",
+                        subtitle = when (settings.samplesMode) {
+                            SamplesMode.AUTO ->
+                                if (settings.packImported) {
+                                    "Pack imported, samples are hidden"
+                                } else {
+                                    "They'll hide after your first pack import"
+                                }
+
+                            SamplesMode.ALWAYS_SHOW -> "Always visible in the picker"
+
+                            SamplesMode.ALWAYS_HIDE -> "Always hidden"
+                        },
+                        value = when (settings.samplesMode) {
+                            SamplesMode.AUTO -> "Auto"
+                            SamplesMode.ALWAYS_SHOW -> "Show"
+                            SamplesMode.ALWAYS_HIDE -> "Hide"
+                        },
+                        onClick = {
+                            haptics.tick()
+                            val next = when (settings.samplesMode) {
+                                SamplesMode.AUTO -> SamplesMode.ALWAYS_SHOW
+                                SamplesMode.ALWAYS_SHOW -> SamplesMode.ALWAYS_HIDE
+                                SamplesMode.ALWAYS_HIDE -> SamplesMode.AUTO
+                            }
+                            vm.dispatch(SettingsEvent.SetSamplesMode(next))
                         },
                     )
                 }

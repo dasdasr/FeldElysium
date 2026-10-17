@@ -302,6 +302,14 @@ private fun SpeakerRow(speaker: Speaker, onClick: () -> Unit, onEdit: (() -> Uni
             color = color,
             modifier = Modifier.weight(1f),
         )
+        if (speaker.isSample) {
+            Text(
+                text = "SAMPLE",
+                style = MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp),
+                color = FeldPalette.Muted,
+                modifier = Modifier.padding(end = 8.dp),
+            )
+        }
         if (onEdit != null) {
             Box(
                 Modifier

@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.settings
 
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.data.settings.SamplesMode
 
 sealed interface SettingsEvent {
     data class SetLockAspectRatio16x9(val enabled: Boolean) : SettingsEvent
@@ -14,4 +15,5 @@ sealed interface SettingsEvent {
     data class SetBackgroundVideoSound(val enabled: Boolean) : SettingsEvent
     data class SetBackgroundVideoFill(val enabled: Boolean) : SettingsEvent
     data object ResetBackground : SettingsEvent
+    data class SetSamplesMode(val mode: SamplesMode) : SettingsEvent
 }
