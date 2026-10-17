@@ -3,6 +3,7 @@ package com.example.feldelysium.presentation.settings
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.feldelysium.data.settings.SettingsRepository
 import com.example.feldelysium.data.speaker.PackFormatException
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.ImportPolicy
@@ -24,6 +25,7 @@ class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
 
     data class UiState(val pending: ImportSpeakerPackUseCase.Prepared? = null, val message: String? = null)
 
+    private val settingsRepository = SettingsRepository(app)
     private val repo = SpeakerStorage.repository(app)
     private val useCase = ImportSpeakerPackUseCase(repo)
 
@@ -64,7 +66,7 @@ class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
                 if (prepared.needsDecision) {
                     _state.update { it.copy(pending = prepared) }
                 } else {
-                    say(report(useCase.apply(prepared)))
+                    applyImport(prepared)
                 }
             } catch (e: PackFormatException) {
                 say(e.message ?: "Not a speaker pack")
@@ -77,7 +79,7 @@ class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
     fun confirmImport(policy: ImportPolicy) {
         val prepared = _state.value.pending ?: return
         _state.update { it.copy(pending = null) }
-        viewModelScope.launch { say(report(useCase.apply(prepared, policy))) }
+        viewModelScope.launch { applyImport(prepared, policy) }
     }
 
     fun cancelImport() {
@@ -97,5 +99,19 @@ class SpeakerPackViewModel(app: Application) : AndroidViewModel(app) {
         append("Added ${r.added}")
         if (r.replaced > 0) append(", replaced ${r.replaced}")
         if (r.skipped > 0) append(", skipped ${r.skipped}")
+    }
+
+    private suspend fun applyImport(prepared: ImportSpeakerPackUseCase.Prepared, policy: ImportPolicy? = null) {
+        val result = if (policy != null) {
+            useCase.apply(prepared, policy)
+        } else {
+            useCase.apply(prepared)
+        }
+
+        if (result.added + result.replaced > 0) {
+            settingsRepository.update { it.copy(packImported = true) }
+        }
+
+        say(report(result))
     }
 }

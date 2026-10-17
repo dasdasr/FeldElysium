@@ -258,21 +258,6 @@ private fun PlaybackStage(
             }
         }
 
-        if (!state.isCheckRolling) {
-            LatestSpeakerPortrait(
-                speaker = state.revealedEntries.lastOrNull()?.speaker,
-                modifier = Modifier
-                    .offset(
-                        x = portraitLeft - portraitBackdropInset,
-                        y = portraitTop - portraitBackdropInset,
-                    )
-                    .size(
-                        width = portraitWidth + portraitBackdropInset * 2,
-                        height = portraitHeight + portraitBackdropInset * 2,
-                    ),
-            )
-        }
-
         ActiveCheckOverlay(
             overlay = state.checkOverlay,
             modifier = Modifier.matchParentSize(),

@@ -1,6 +1,7 @@
 package com.example.feldelysium.data.settings
 
 enum class BackgroundKind { MEDIA, COLOR }
+enum class SamplesMode { AUTO, ALWAYS_SHOW, ALWAYS_HIDE }
 
 data class AppSettings(
     val lockAspectRatio16x9: Boolean = true,
@@ -13,6 +14,8 @@ data class AppSettings(
     val backgroundMediaIsVideo: Boolean = false,
     val backgroundVideoSound: Boolean = false,
     val backgroundVideoFill: Boolean = true,
+    val samplesMode: SamplesMode = SamplesMode.AUTO,
+    val packImported: Boolean = false,
 ) {
     companion object {
         const val DEFAULT_BACKGROUND_COLOR = 0xFF000000L

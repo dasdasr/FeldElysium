@@ -8,6 +8,7 @@ data class Speaker(
     val customIconUri: String? = null,
     val type: SpeakerType = SpeakerType.CUSTOM,
     val isBundled: Boolean = false,
+    val isSample: Boolean = false,
 ) {
     val soundKey: String get() = type.soundKey ?: SoundKeys.DEFAULT
 
