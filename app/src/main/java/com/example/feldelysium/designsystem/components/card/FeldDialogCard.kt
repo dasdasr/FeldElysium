@@ -62,7 +62,6 @@ fun FeldDialogCard(
             rough = rough,
             contentPadding = PaddingValues(0.dp),
             revealOnEnter = revealOnEnter,
-            time = time,
         ) {
             Column(Modifier.padding(contentPadding)) {
                 Spacer(Modifier.height(tagHeight - tagLift + 12.dp))

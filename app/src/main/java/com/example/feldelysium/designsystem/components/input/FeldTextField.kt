@@ -3,6 +3,7 @@ package com.example.feldelysium.designsystem.components.input
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -128,11 +129,13 @@ fun FeldTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(minHeight)
-                .paperMaterial(
-                    shape = shape,
-                    spec = spec,
-                    wear = { spec.wear * (0.6f - 0.1f * focus) },
-                    time = time,
+                .paperMaterial(shape = shape, spec = spec, wear = spec.wear * 0.5f)
+                .then(
+                    if (focus > 0.01f) {
+                        Modifier.border(1.dp, FeldPalette.Orange.copy(alpha = 0.75f * focus), shape)
+                    } else {
+                        Modifier
+                    },
                 )
                 .then(
                     if (focusAnimation) {

@@ -90,7 +90,6 @@ fun DesignSystemPlayground(modifier: Modifier = Modifier) {
                 revealMillis = 300,
                 pressScale = 0.12f,
                 pressMillis = 90,
-                time = { 0f },
                 onClick = {},
             ) {
                 Text(
