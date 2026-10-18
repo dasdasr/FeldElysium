@@ -221,15 +221,3 @@ private fun Modifier.markerFilmApi33(spec: MarkerFilmSpec, seed: Int, bakeKey: A
             }
         }
 }
-
-@Composable
-fun MarkerFilmWarmup() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-    Box(
-        Modifier
-            .size(8.dp)
-            .graphicsLayer { alpha = 0.01f }
-            .markerFilmMaterial(FeldMarker.Chalk, seed = 0, bake = false)
-            .background(Color.White),
-    )
-}

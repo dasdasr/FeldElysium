@@ -1,5 +1,7 @@
 package com.example.feldelysium.designsystem.components.card
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -52,73 +55,47 @@ fun FeldCard(
     revealMillis: Int = 300,
     pressScale: Float = 0.012f,
     pressMillis: Int = 90,
-    time: () -> Float = { 0f },
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val interaction = remember { MutableInteractionSource() }
-
     val pressed by interaction.collectIsPressedAsState()
-
     val press by animateFloatAsState(
         targetValue = if (pressed) 1f else 0f,
         animationSpec = tween(pressMillis),
         label = "press",
     )
 
-    val reveal = feldAnimate(
-        values = FeldAnimationValues(
-            "roughness" to rough.roughness.value,
-            "irregularity" to rough.irregularity,
-            "wear" to spec.wear,
-        ),
-        animation = FeldAnimations.Reveal.from(
-            initial = mapOf(
-                "roughness" to { it + 5f },
-                "irregularity" to { it * 1.3f },
-                "wear" to { it * 1.3f },
-            ),
-            enabled = revealOnEnter,
-            durationMillis = revealMillis,
-        ),
-    )
-
-    val animatedRough = rough.copy(
-        roughness = reveal["roughness"].dp,
-        irregularity = reveal["irregularity"],
-    )
-
-    val shape = remember(seed, animatedRough) {
-        RoughShape(
-            seed = seed,
-            style = animatedRough,
-        )
+    val enter = remember { Animatable(if (revealOnEnter) 0f else 1f) }
+    LaunchedEffect(revealOnEnter) {
+        if (revealOnEnter) enter.animateTo(1f, tween(revealMillis, easing = FastOutSlowInEasing))
     }
 
+    val shape = remember(seed, rough) { RoughShape(seed = seed, style = rough) }
     val decals = rememberDecalLayer(ambient, seed, decalSpec, decalContext, decalInset)
+    val decalKey = remember(ambient, decalSpec, decalContext, decalInset) {
+        listOf(ambient, decalSpec, decalContext, decalInset)
+    }
 
     Column(
         modifier = modifier
             .graphicsLayer {
-                val scale = 1f - pressScale * press
-                scaleX = scale
-                scaleY = scale
+                val e = enter.value
+                val s = (0.96f + 0.04f * e) * (1f - pressScale * press)
+                scaleX = s
+                scaleY = s
+                alpha = e
             }
             .paperMaterial(
                 shape = shape,
                 spec = spec,
-                wear = { reveal["wear"] },
                 press = { press },
-                time = time,
                 decals = decals,
+                decalKey = decalKey,
             )
             .then(
                 if (onClick != null) {
-                    Modifier.clickable(
-                        interactionSource = interaction,
-                        indication = null,
-                        onClick = onClick,
-                    )
+                    Modifier.clickable(interactionSource = interaction, indication = null, onClick = onClick)
                 } else {
                     Modifier
                 },

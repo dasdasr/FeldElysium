@@ -36,6 +36,21 @@ layout(color) uniform half4 inkColor;
 ${NOISE_LIB}
 
 half4 main(float2 p) {
+    float R = max(edgeSoft + edgeRough * 1.5, splatterRadius) + 0.5;
+    float R2 = R * 0.7071;
+
+    float pre = float(content.eval(p).a)
+        + float(content.eval(p + float2( R, 0.0)).a)
+        + float(content.eval(p + float2(-R, 0.0)).a)
+        + float(content.eval(p + float2(0.0,  R)).a)
+        + float(content.eval(p + float2(0.0, -R)).a)
+        + float(content.eval(p + float2( R2,  R2)).a)
+        + float(content.eval(p + float2(-R2,  R2)).a)
+        + float(content.eval(p + float2( R2, -R2)).a)
+        + float(content.eval(p + float2(-R2, -R2)).a);
+
+    if (pre < 0.002) return half4(0.0);
+
     float2 sp = p + seed * 37.0;
 
     float2 w = float2(fbm(sp / (edgeScale * 3.0)),
