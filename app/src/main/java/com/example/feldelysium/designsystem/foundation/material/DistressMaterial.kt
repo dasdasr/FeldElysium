@@ -72,11 +72,7 @@ data class DistressSpec(
     )
 }
 
-fun Modifier.distressMaterial(
-    spec: DistressSpec,
-    seed: Int = 0,
-    bakeKey: Any? = null,
-): Modifier =
+fun Modifier.distressMaterial(spec: DistressSpec, seed: Int = 0, bakeKey: Any? = null): Modifier =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         if (bakeKey != null) {
             distressBaked(spec, seed, bakeKey)
@@ -99,11 +95,7 @@ private fun Modifier.distressShader(spec: DistressSpec, seed: Int): Modifier = c
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun Modifier.distressBaked(
-    spec: DistressSpec,
-    seed: Int,
-    bakeKey: Any,
-): Modifier = composed {
+private fun Modifier.distressBaked(spec: DistressSpec, seed: Int, bakeKey: Any): Modifier = composed {
     val shader = remember { RuntimeShader(DISTRESS_AGSL) }
     val layer = rememberGraphicsLayer()
     val density = LocalDensity.current

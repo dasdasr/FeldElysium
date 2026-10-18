@@ -230,24 +230,16 @@ private fun Modifier.paperBaked(
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun Modifier.paperLive(
-    shape: RoughShape,
-    spec: PaperSpec,
-    wear: Float,
-    decals: DecalLayer?,
-): Modifier = drawWithCache {
-    val art = buildArt(Density(density, fontScale), size, shape, spec, wear, decals)
-    onDrawWithContent {
-        drawArt(art)
-        drawContent()
+private fun Modifier.paperLive(shape: RoughShape, spec: PaperSpec, wear: Float, decals: DecalLayer?): Modifier =
+    drawWithCache {
+        val art = buildArt(Density(density, fontScale), size, shape, spec, wear, decals)
+        onDrawWithContent {
+            drawArt(art)
+            drawContent()
+        }
     }
-}
 
-private fun Modifier.paperFlat(
-    shape: RoughShape,
-    spec: PaperSpec,
-    decals: DecalLayer?,
-): Modifier = drawWithCache {
+private fun Modifier.paperFlat(shape: RoughShape, spec: PaperSpec, decals: DecalLayer?): Modifier = drawWithCache {
     val path = shape.buildPath(size, this)
     val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
     val inkLayers = if (spec.inkWidth.value > 0f) {
