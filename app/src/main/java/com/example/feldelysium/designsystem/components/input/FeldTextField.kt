@@ -99,7 +99,6 @@ fun FeldTextField(
     ),
     focusAnimation: Boolean = true,
     counterInside: Boolean = true,
-    time: () -> Float = { 0f },
 ) {
     val shape = remember(seed, rough) { RoughShape(seed, rough) }
     val baseStyle = textStyle ?: MaterialTheme.typography.bodyLarge

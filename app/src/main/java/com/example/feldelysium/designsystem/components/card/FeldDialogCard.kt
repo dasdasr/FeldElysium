@@ -49,7 +49,6 @@ fun FeldDialogCard(
     tagLift: Dp = 12.dp,
     tagHeight: Dp = 44.dp,
     revealOnEnter: Boolean = false,
-    time: () -> Float = { 0f },
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(modifier) {

@@ -25,9 +25,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.foundation.animation.FeldAnimationValues
-import com.example.feldelysium.designsystem.foundation.animation.FeldAnimations
-import com.example.feldelysium.designsystem.foundation.animation.feldAnimate
 import com.example.feldelysium.designsystem.foundation.decal.DecalContext
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
 import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext

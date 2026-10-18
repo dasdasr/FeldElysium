@@ -13,9 +13,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.example.feldelysium.designsystem.foundation.decal.DecalLayer
-import com.example.feldelysium.designsystem.foundation.decal.DecalPlan
-import com.example.feldelysium.designsystem.foundation.decal.drawDecals
 import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape

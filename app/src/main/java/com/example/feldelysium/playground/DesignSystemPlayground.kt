@@ -118,7 +118,6 @@ fun DesignSystemPlayground(modifier: Modifier = Modifier) {
                 enabled = true,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(color = colorScheme.onSurface),
                 contentPadding = PaddingValues(16.dp),
-                time = { 0f },
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {

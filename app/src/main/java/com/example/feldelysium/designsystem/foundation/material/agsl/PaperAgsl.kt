@@ -1,6 +1,5 @@
 package com.example.feldelysium.designsystem.foundation.material.agsl
 
-
 internal const val PAPER_AGSL = """
 uniform float2 size;
 uniform float seed;
