@@ -47,6 +47,7 @@ import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.presentation.editor.components.ImportConflictDialog
 import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.settings.components.BackgroundPickerDialog
+import com.example.feldelysium.presentation.settings.components.BarIconsDialog
 import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
 import com.example.feldelysium.presentation.settings.components.PlaybackUiTextDialog
 
@@ -71,6 +72,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     var showBackground by remember { mutableStateOf(false) }
     var showTags by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
+    var showBarIcons by remember { mutableStateOf(false) }
 
     BackHandler(enabled = !leaving) { leaving = true }
     LaunchedEffect(leaving) {
@@ -144,6 +146,15 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                             haptics.tick()
                             showPlaybackUiText = true
                         },
+                    )
+                    FeldSettingsDivider()
+                    FeldSettingRow(
+                        icon = FeldIconId.Settings,
+                        title = "Panel icons",
+                        subtitle = "Choose which bar icons are highlighted",
+                        showChevron = true,
+                        onClick = { haptics.tick()
+                            showBarIcons = true },
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
@@ -322,6 +333,25 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             onSave = packVm::saveTag,
             onDelete = packVm::deleteTag,
             onDismiss = { showTags = false },
+        )
+    }
+
+    if (showBarIcons) {
+        BarIconsDialog(
+            icons = settings.barIcons,
+            inventory = settings.inventoryIcons,
+            onCycleIcon = { slot ->
+                haptics.tick()
+                val current = settings.barIcons[slot] ?: slot.defaultState
+                vm.dispatch(SettingsEvent.SetBarIconState(slot, current.next()))
+            },
+            onCycleInventory = { slot ->
+                haptics.tick()
+                val current = settings.inventoryIcons[slot] ?: slot.defaultIcon
+                vm.dispatch(SettingsEvent.SetInventoryIcon(slot, current.next()))
+            },
+            onReset = { haptics.thud(); vm.dispatch(SettingsEvent.ResetBarIcons) },
+            onDismiss = { showBarIcons = false },
         )
     }
 

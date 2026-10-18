@@ -61,7 +61,9 @@ import com.example.feldelysium.presentation.playback.components.DialogueHistoryL
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
+import com.example.feldelysium.presentation.playback.components.PlaybackBottomBar
 import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
+import com.example.feldelysium.presentation.playback.components.StatusLine
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
@@ -278,20 +280,13 @@ private fun PlaybackStage(
             )
         }
 
-        Image(
-            painter = painterResource(R.drawable.bottom_ui_bar),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
+        PlaybackBottomBar(
+            icons = background.barIcons,
+            inventory = background.inventoryIcons,
+            status = StatusLine(money, time, day),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX)),
-        )
-
-        PlaybackStatusHud(
-            money = money,
-            time = time,
-            day = day,
-            modifier = Modifier.fillMaxSize(),
         )
     }
 }
