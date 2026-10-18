@@ -24,19 +24,16 @@ import androidx.compose.ui.unit.TextUnit
 import com.example.feldelysium.R
 import kotlin.math.roundToInt
 
-private const val BASELINE_Y_FRACTION = 0.92f
-
-private const val ROW_Y_SHIFT_FRACTION = 0.015f
-
-private const val ICON_CENTER_X_FRACTION = 0.866f
-
-private const val MONEY_START_X_FRACTION = 0.876f
-private const val TIME_START_X_FRACTION = 0.907f
-private const val DAY_START_X_FRACTION = 0.969f
-
-private const val SMALL_FONT_WIDTH_FRACTION = 0.011f
-
 private const val TIME_FONT_SCALE = 2.3f
+
+private const val BASELINE_FROM_BOTTOM_FRACTION = 0.091f
+
+private const val ICON_CENTER_X_FRACTION = 0.666f
+private const val MONEY_START_X_FRACTION = 0.691f
+private const val TIME_START_X_FRACTION = 0.768f
+private const val DAY_START_X_FRACTION = 0.923f
+
+private const val SMALL_FONT_WIDTH_FRACTION = 0.0274f
 
 private const val DIGIT_CENTER_ABOVE_BASELINE_EM = 0.35f
 
@@ -80,7 +77,7 @@ fun PlaybackStatusHud(money: String, time: String, day: String, modifier: Modifi
             val dayLabel = measurables[3].measure(unbounded)
             val width = constraints.maxWidth
             val height = constraints.maxHeight
-            val baseline = height * (BASELINE_Y_FRACTION + ROW_Y_SHIFT_FRACTION)
+            val baseline = height - width * BASELINE_FROM_BOTTOM_FRACTION
             layout(width, height) {
                 fun placeLabel(placeable: Placeable, startFraction: Float) {
                     placeable.place(

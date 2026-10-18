@@ -91,6 +91,19 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             }
 
             is SettingsEvent.SetSamplesMode -> update { it.copy(samplesMode = event.mode) }
+
+            is SettingsEvent.SetBarIconState -> update {
+                it.copy(barIcons = it.barIcons + (event.slot to event.state))
+            }
+
+            is SettingsEvent.SetInventoryIcon -> update {
+                it.copy(inventoryIcons = it.inventoryIcons + (event.slot to event.icon))
+            }
+
+            SettingsEvent.ResetBarIcons -> update {
+                val d = AppSettings()
+                it.copy(barIcons = d.barIcons, inventoryIcons = d.inventoryIcons)
+            }
         }
     }
 

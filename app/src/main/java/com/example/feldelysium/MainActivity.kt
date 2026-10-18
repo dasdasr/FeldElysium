@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
 import com.example.feldelysium.designsystem.foundation.material.FeldWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
@@ -37,15 +38,20 @@ import com.example.feldelysium.playground.FeldDecalPlayground
 import com.example.feldelysium.playground.FeldShaderPlayground
 import com.example.feldelysium.playground.PlaygroundEntry
 import com.example.feldelysium.playground.PlaygroundHubScreen
+import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
 
     private val eggsVm: EggsViewModel by viewModels()
+    private val sceneVm: SceneViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
+        splash.setKeepOnScreenCondition { !sceneVm.state.value.isLoaded }
+
         val container = (application as FeldApp).container
         container.soundPlayer.preload(SoundCue.uiSet)
 
@@ -95,17 +101,13 @@ class MainActivity : ComponentActivity() {
                                         id = "decals",
                                         title = "Decal Playground",
                                         description = "Test decorative marks, textures and placement.",
-                                        content = {
-                                            FeldDecalPlayground()
-                                        },
+                                        content = { FeldDecalPlayground() },
                                     ),
                                     PlaygroundEntry(
                                         id = "design-system",
                                         title = "Design System",
                                         description = "Preview and test reusable UI components.",
-                                        content = {
-                                            DesignSystemPlayground()
-                                        },
+                                        content = { DesignSystemPlayground() },
                                     ),
                                     PlaygroundEntry(
                                         id = "shaders",
