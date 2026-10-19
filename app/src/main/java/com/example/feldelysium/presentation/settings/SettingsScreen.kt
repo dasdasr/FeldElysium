@@ -153,8 +153,10 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         title = "Panel icons",
                         subtitle = "Choose which bar icons are highlighted",
                         showChevron = true,
-                        onClick = { haptics.tick()
-                            showBarIcons = true },
+                        onClick = {
+                            haptics.tick()
+                            showBarIcons = true
+                        },
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
@@ -350,7 +352,10 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 val current = settings.inventoryIcons[slot] ?: slot.defaultIcon
                 vm.dispatch(SettingsEvent.SetInventoryIcon(slot, current.next()))
             },
-            onReset = { haptics.thud(); vm.dispatch(SettingsEvent.ResetBarIcons) },
+            onReset = {
+                haptics.thud()
+                vm.dispatch(SettingsEvent.ResetBarIcons)
+            },
             onDismiss = { showBarIcons = false },
         )
     }

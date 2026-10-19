@@ -77,7 +77,6 @@ import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.launch
@@ -209,8 +208,8 @@ fun FeldEntryCard(
             val fresh = isDragging && now - sway.velocityStamp < SWAY_VELOCITY_TTL_NANOS
             val velocity = if (fresh) sway.velocityY else 0f
             val torque = -SWAY_STIFFNESS * sway.angle -
-                    SWAY_DAMPING * angularVelocity +
-                    SWAY_GAIN * velocity * sway.dir
+                SWAY_DAMPING * angularVelocity +
+                SWAY_GAIN * velocity * sway.dir
 
             angularVelocity += torque * dt
             sway.angle = (sway.angle + angularVelocity * dt)
@@ -572,12 +571,7 @@ internal fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     }
 }
 
-private fun DrawScope.drawTab(
-    brush: Brush,
-    seed: Int,
-    barWidth: Float = size.width,
-    alpha: Float = 1f,
-) {
+private fun DrawScope.drawTab(brush: Brush, seed: Int, barWidth: Float = size.width, alpha: Float = 1f) {
     val r = Random(seed * 17 + 3)
     val wob = 1.5.dp.toPx()
     val base = barWidth - wob

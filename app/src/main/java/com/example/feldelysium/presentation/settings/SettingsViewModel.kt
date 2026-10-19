@@ -26,71 +26,24 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun dispatch(event: SettingsEvent) {
         when (event) {
-            is SettingsEvent.SetLockAspectRatio16x9 -> update {
-                it.copy(lockAspectRatio16x9 = event.enabled)
-            }
+            is SettingsEvent.SetLockAspectRatio16x9,
+            is SettingsEvent.SetPlaybackMoney,
+            is SettingsEvent.SetPlaybackTime,
+            is SettingsEvent.SetPlaybackDay,
+            SettingsEvent.ResetPlaybackUiText,
+            -> updatePlaybackSettings(event)
 
-            is SettingsEvent.SetPlaybackMoney -> update {
-                it.copy(playbackMoney = event.value)
-            }
+            is SettingsEvent.SetBackgroundKind,
+            is SettingsEvent.SetBackgroundColor,
+            is SettingsEvent.SetBackgroundMedia,
+            is SettingsEvent.SetBackgroundVideoSound,
+            is SettingsEvent.SetBackgroundVideoFill,
+            SettingsEvent.ResetBackground,
+            -> updateBackgroundSettings(event)
 
-            is SettingsEvent.SetPlaybackTime -> update {
-                it.copy(playbackTime = event.value)
+            is SettingsEvent.SetSamplesMode -> update {
+                it.copy(samplesMode = event.mode)
             }
-
-            is SettingsEvent.SetPlaybackDay -> update {
-                it.copy(playbackDay = event.value)
-            }
-
-            SettingsEvent.ResetPlaybackUiText -> update {
-                val defaults = AppSettings()
-                it.copy(
-                    playbackMoney = defaults.playbackMoney,
-                    playbackTime = defaults.playbackTime,
-                    playbackDay = defaults.playbackDay,
-                )
-            }
-
-            is SettingsEvent.SetBackgroundKind -> update {
-                it.copy(backgroundKind = event.kind)
-            }
-
-            is SettingsEvent.SetBackgroundColor -> update {
-                it.copy(backgroundColorArgb = event.argb, backgroundKind = BackgroundKind.COLOR)
-            }
-
-            is SettingsEvent.SetBackgroundMedia -> {
-                persistRead(event.uri)
-                update {
-                    it.copy(
-                        backgroundKind = BackgroundKind.MEDIA,
-                        backgroundMediaUri = event.uri,
-                        backgroundMediaIsVideo = event.isVideo,
-                    )
-                }
-            }
-
-            is SettingsEvent.SetBackgroundVideoSound -> update {
-                it.copy(backgroundVideoSound = event.enabled)
-            }
-
-            is SettingsEvent.SetBackgroundVideoFill -> update {
-                it.copy(backgroundVideoFill = event.enabled)
-            }
-
-            SettingsEvent.ResetBackground -> update {
-                val d = AppSettings()
-                it.copy(
-                    backgroundKind = d.backgroundKind,
-                    backgroundColorArgb = d.backgroundColorArgb,
-                    backgroundMediaUri = d.backgroundMediaUri,
-                    backgroundMediaIsVideo = d.backgroundMediaIsVideo,
-                    backgroundVideoSound = d.backgroundVideoSound,
-                    backgroundVideoFill = d.backgroundVideoFill,
-                )
-            }
-
-            is SettingsEvent.SetSamplesMode -> update { it.copy(samplesMode = event.mode) }
 
             is SettingsEvent.SetBarIconState -> update {
                 it.copy(barIcons = it.barIcons + (event.slot to event.state))
@@ -101,8 +54,87 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             }
 
             SettingsEvent.ResetBarIcons -> update {
-                val d = AppSettings()
-                it.copy(barIcons = d.barIcons, inventoryIcons = d.inventoryIcons)
+                val defaults = AppSettings()
+                it.copy(
+                    barIcons = defaults.barIcons,
+                    inventoryIcons = defaults.inventoryIcons,
+                )
+            }
+        }
+    }
+
+    private fun updatePlaybackSettings(event: SettingsEvent) {
+        update {
+            when (event) {
+                is SettingsEvent.SetLockAspectRatio16x9 ->
+                    it.copy(lockAspectRatio16x9 = event.enabled)
+
+                is SettingsEvent.SetPlaybackMoney ->
+                    it.copy(playbackMoney = event.value)
+
+                is SettingsEvent.SetPlaybackTime ->
+                    it.copy(playbackTime = event.value)
+
+                is SettingsEvent.SetPlaybackDay ->
+                    it.copy(playbackDay = event.value)
+
+                SettingsEvent.ResetPlaybackUiText -> {
+                    val defaults = AppSettings()
+                    it.copy(
+                        playbackMoney = defaults.playbackMoney,
+                        playbackTime = defaults.playbackTime,
+                        playbackDay = defaults.playbackDay,
+                    )
+                }
+
+                else -> it
+            }
+        }
+    }
+
+    private fun updateBackgroundSettings(event: SettingsEvent) {
+        when (event) {
+            is SettingsEvent.SetBackgroundMedia -> persistRead(event.uri)
+            else -> Unit
+        }
+
+        update {
+            when (event) {
+                is SettingsEvent.SetBackgroundKind ->
+                    it.copy(backgroundKind = event.kind)
+
+                is SettingsEvent.SetBackgroundColor ->
+                    it.copy(
+                        backgroundColorArgb = event.argb,
+                        backgroundKind = BackgroundKind.COLOR,
+                    )
+
+                is SettingsEvent.SetBackgroundMedia ->
+                    it.copy(
+                        backgroundKind = BackgroundKind.MEDIA,
+                        backgroundMediaUri = event.uri,
+                        backgroundMediaIsVideo = event.isVideo,
+                    )
+
+                is SettingsEvent.SetBackgroundVideoSound ->
+                    it.copy(backgroundVideoSound = event.enabled)
+
+                is SettingsEvent.SetBackgroundVideoFill ->
+                    it.copy(backgroundVideoFill = event.enabled)
+
+                SettingsEvent.ResetBackground -> {
+                    val defaults = AppSettings()
+                    it.copy(
+                        backgroundKind = defaults.backgroundKind,
+                        backgroundColorArgb = defaults.backgroundColorArgb,
+                        backgroundMediaUri = defaults.backgroundMediaUri,
+                        backgroundMediaIsVideo = defaults.backgroundMediaIsVideo,
+                        backgroundVideoSound = defaults.backgroundVideoSound,
+                        backgroundVideoFill = defaults.backgroundVideoFill,
+                    )
+                }
+
+                else -> it
             }
         }
     }

@@ -59,6 +59,7 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -101,7 +102,6 @@ fun FeldScreenHeader(
                 FeldIconButton(
                     navIcon,
                     onNav,
-                    tint = FeldPalette.Muted,
                     modifier = Modifier.padding(start = 0.dp),
                 )
             }
@@ -274,7 +274,7 @@ private fun EditableTitle(
                     startEditing()
                 }
             },
-            tint = if (editing) FeldPalette.Orange else FeldPalette.Muted,
+            markerFilmSpec = if (editing) FeldMarker.Dry else FeldMarker.Chalk,
             modifier = Modifier.align(Alignment.CenterEnd),
         )
 

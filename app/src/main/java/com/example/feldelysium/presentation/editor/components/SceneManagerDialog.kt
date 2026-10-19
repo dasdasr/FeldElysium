@@ -89,7 +89,7 @@ fun SceneManagerDialog(
                         color = FeldPalette.Muted,
                     )
                 }
-                FeldIconButton(FeldIconId.Delete, onClick = { onDelete(s.id) }, tint = FeldPalette.Muted)
+                FeldIconButton(FeldIconId.Delete, onClick = { onDelete(s.id) })
             }
         }
     }
