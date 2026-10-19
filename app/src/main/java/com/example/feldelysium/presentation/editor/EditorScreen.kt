@@ -73,8 +73,6 @@ import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.editor.components.SceneManagerDialog
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
 import com.example.feldelysium.presentation.shared.SceneViewModel
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 

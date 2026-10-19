@@ -17,7 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
+import com.example.feldelysium.designsystem.foundation.material.MarkerFilmSpec
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
@@ -25,8 +26,8 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 fun FeldIconButton(
     id: FeldIconId,
     onClick: () -> Unit,
+    markerFilmSpec: MarkerFilmSpec = FeldMarker.Chalk,
     modifier: Modifier = Modifier,
-    tint: Color = FeldPalette.Muted,
     size: Dp = 24.dp,
     enabled: Boolean = true,
 ) {
@@ -35,7 +36,7 @@ fun FeldIconButton(
             .sizeIn(minWidth = 40.dp, minHeight = 40.dp)
             .feldClickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) { FeldIcon(id, size = size) }
+    ) { FeldIcon(id, markerFilmSpec = markerFilmSpec, size = size) }
 }
 
 @Preview(widthDp = 400, heightDp = 260, showBackground = true, backgroundColor = 0xFF0B1011)

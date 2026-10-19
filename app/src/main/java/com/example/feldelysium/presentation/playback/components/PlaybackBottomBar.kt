@@ -15,8 +15,7 @@ import com.example.feldelysium.data.settings.BarIconState
 import com.example.feldelysium.data.settings.BarSlot
 import com.example.feldelysium.data.settings.InventoryIcon
 import com.example.feldelysium.data.settings.InventorySlot
-
-data class StatusLine(val money: String, val time: String, val day: String)
+import com.example.feldelysium.domain.model.StatusLine
 
 private object BarLayout {
     const val ICON_SIZE = 0.075f
