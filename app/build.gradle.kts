@@ -103,4 +103,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     detektPlugins(libs.detekt.rules.ktlint.wrapper)
+
+    implementation(libs.androidx.core.splashscreen)
 }

@@ -16,6 +16,8 @@ data class AppSettings(
     val backgroundVideoFill: Boolean = true,
     val samplesMode: SamplesMode = SamplesMode.AUTO,
     val packImported: Boolean = false,
+    val barIcons: Map<BarSlot, BarIconState> = BarSlot.entries.associateWith { it.defaultState },
+    val inventoryIcons: Map<InventorySlot, InventoryIcon> = InventorySlot.entries.associateWith { it.defaultIcon },
 ) {
     companion object {
         const val DEFAULT_BACKGROUND_COLOR = 0xFF000000L

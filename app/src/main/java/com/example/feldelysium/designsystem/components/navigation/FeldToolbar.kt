@@ -47,7 +47,7 @@ fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, see
                         .padding(vertical = 14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    FeldIcon(item.icon, tint = tint, size = 24.dp, film = true)
+                    FeldIcon(item.icon, size = 24.dp, film = true)
                     Spacer(Modifier.height(6.dp))
                     Text(
                         text = item.label.uppercase(),

@@ -40,7 +40,8 @@ class SceneViewModel(private val useCases: SceneUseCases) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            useCases.loadCurrent()?.let { saved -> _state.update { it.copy(scene = saved) } }
+            val saved = useCases.loadCurrent()
+            _state.update { it.copy(scene = saved ?: it.scene, isLoaded = true) }
             loaded = true
             _state.map { it.scene }
                 .distinctUntilChanged()

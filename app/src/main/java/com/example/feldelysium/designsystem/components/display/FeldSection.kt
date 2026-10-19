@@ -61,7 +61,6 @@ fun FeldSection(
             if (expanded != null) {
                 FeldIcon(
                     FeldIconId.Chevron,
-                    tint = FeldPalette.Muted,
                     size = 18.dp,
                     modifier = Modifier
                         .padding(start = 8.dp, end = 4.dp)

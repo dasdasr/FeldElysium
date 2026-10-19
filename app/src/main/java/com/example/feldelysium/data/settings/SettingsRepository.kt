@@ -31,6 +31,8 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.BACKGROUND_VIDEO_FILL] = next.backgroundVideoFill
             prefs[Keys.SAMPLES_MODE] = next.samplesMode.name
             prefs[Keys.PACK_IMPORTED] = next.packImported
+            next.barIcons.forEach { (slot, state) -> prefs[barKey(slot)] = state.name }
+            next.inventoryIcons.forEach { (slot, icon) -> prefs[invKey(slot)] = icon.name }
         }
     }
 
@@ -51,6 +53,16 @@ class SettingsRepository(private val context: Context) {
             ?.let { runCatching { SamplesMode.valueOf(it) }.getOrNull() }
             ?: SamplesMode.AUTO,
         packImported = prefs[Keys.PACK_IMPORTED] ?: false,
+        barIcons = BarSlot.entries.associateWith { slot ->
+            prefs[barKey(slot)]
+                ?.let { runCatching { BarIconState.valueOf(it) }.getOrNull() }
+                ?: slot.defaultState
+        },
+        inventoryIcons = InventorySlot.entries.associateWith { slot ->
+            prefs[invKey(slot)]
+                ?.let { runCatching { InventoryIcon.valueOf(it) }.getOrNull() }
+                ?: slot.defaultIcon
+        },
     )
 
     private object Keys {
@@ -67,4 +79,7 @@ class SettingsRepository(private val context: Context) {
         val SAMPLES_MODE = stringPreferencesKey("samples_mode")
         val PACK_IMPORTED = booleanPreferencesKey("pack_imported")
     }
+
+    private fun barKey(slot: BarSlot) = stringPreferencesKey("bar_icon_${slot.name.lowercase()}")
+    private fun invKey(slot: InventorySlot) = stringPreferencesKey("bar_inv_${slot.name.lowercase()}")
 }
