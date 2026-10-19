@@ -43,6 +43,9 @@ fun FeldDistressedTitle(
     val tuned = remember(spec, roughness, roughnessSize, strength) {
         spec.scaled(roughness, roughnessSize, spec.strength * strength)
     }
+    val bakeKey = remember(text, textStyle, maxLines, overflow, textAlign) {
+        listOf(text, textStyle, maxLines, overflow, textAlign)
+    }
     Text(
         text = text.uppercase(),
         style = textStyle.copy(color = spec.color),
@@ -50,7 +53,7 @@ fun FeldDistressedTitle(
         maxLines = maxLines,
         overflow = overflow,
         modifier = modifier
-            .distressMaterial(tuned, seed)
+            .distressMaterial(tuned, seed, bakeKey = bakeKey)
             .padding(DistressPad),
     )
 }

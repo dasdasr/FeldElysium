@@ -60,33 +60,64 @@ half4 main(float2 p) {
     float alongLen = horiz ? size.x : size.y;
     float depth = d - rim;
 
+        
     float cut = bow * sin(3.14159 * clamp(along / alongLen, 0.0, 1.0));
+    float crack = 0.0;
+    float edgeAlpha = 1.0;
+    
+    float limit = max(bow + tearDepth + 4.0, crackDepth * 1.4) + 1.0;
+    
+    if (depth < limit) {
+        float2 w = float2(
+            fbm(sp / (tearScale * 3.0)),
+            fbm(sp / (tearScale * 3.0) + 7.7)
+        ) - 0.5;
+    
+        float tn = fbm(sp / tearScale + w * 2.0);
+        float zoneN = fbm(sp / (tearScale * 6.0) + 3.0);
+        float zoneT = 0.62 - 0.40 * tearCoverage;
+        float zone = smoothstep(zoneT, zoneT + 0.06, zoneN);
+        float bite = smoothstep(0.42, 0.60, tn)
+                   + (noise(sp / 2.5) - 0.5) * 0.3;
+    
+        cut += tearDepth * zone * clamp(bite, 0.0, 1.0);
+    
+        float2 lc = float2(along, max(depth, 0.0));
+        float2 cq = float2(
+            lc.x / crackScale,
+            lc.y / (crackScale * 3.5)
+        );
+    
+        cq += (
+            float2(fbm(sp / 14.0), fbm(sp / 14.0 + 5.0)) - 0.5
+        ) * 0.7;
+        cq += seed * 3.1;
+    
+        float ce = voronoiEdge(cq);
+    
+        float cmT = 0.80 - 0.45 * crackCoverage;
+        float cm = smoothstep(
+            cmT, cmT + 0.08,
+            noise(float2(lc.x / (crackScale * 1.7) + seed * 3.0, 1.0))
+        );
+    
+        float len = crackDepth * (
+            0.5 + 0.9 * noise(
+                float2(lc.x / (crackScale * 0.8), 3.0 + seed)
+            )
+        );
+    
+        float fall = 1.0 - smoothstep(0.0, len, depth);
+        float wpx = crackWidth * (0.4 + 0.6 * fall);
+    
+        crack = (1.0 - smoothstep(0.0, wpx / crackScale, ce))
+              * cm * fall;
+    
+        cut += crack * (1.0 - smoothstep(0.0, 4.0, depth));
+    
+        edgeAlpha = smoothstep(cut - 0.5, cut + 0.5, depth);
+    }
 
-    float2 w = float2(fbm(sp / (tearScale * 3.0)), fbm(sp / (tearScale * 3.0) + 7.7)) - 0.5;
-    float tn = fbm(sp / tearScale + w * 2.0);
-    float zoneN = fbm(sp / (tearScale * 6.0) + 3.0);
-    float zoneT = 0.62 - 0.40 * tearCoverage;
-    float zone = smoothstep(zoneT, zoneT + 0.06, zoneN);
-    float bite = smoothstep(0.42, 0.60, tn) + (noise(sp / 2.5) - 0.5) * 0.3;
-    cut += tearDepth * zone * clamp(bite, 0.0, 1.0);
-
-    float2 lc = float2(along, max(depth, 0.0));
-    float2 cq = float2(lc.x / crackScale, lc.y / (crackScale * 3.5));
-    cq += (float2(fbm(sp / 14.0), fbm(sp / 14.0 + 5.0)) - 0.5) * 0.7;
-    cq += seed * 3.1;
-    float ce = voronoiEdge(cq);
-
-    float cmT = 0.80 - 0.45 * crackCoverage;
-    float cm = smoothstep(cmT, cmT + 0.08,
-                          noise(float2(lc.x / (crackScale * 1.7) + seed * 3.0, 1.0)));
-    float len = crackDepth * (0.5 + 0.9 * noise(float2(lc.x / (crackScale * 0.8), 3.0 + seed)));
-    float fall = 1.0 - smoothstep(0.0, len, depth);
-    float wpx = crackWidth * (0.4 + 0.6 * fall);
-    float crack = (1.0 - smoothstep(0.0, wpx / crackScale, ce)) * cm * fall;
-
-    cut += crack * 1.0 * (1.0 - smoothstep(0.0, 4.0, depth));
-
-    float edgeAlpha = smoothstep(cut - 0.5, cut + 0.5, depth);
 
     float mottle = fbm(sp / mottleScale);
     float grain = noise(sp / grainScale);

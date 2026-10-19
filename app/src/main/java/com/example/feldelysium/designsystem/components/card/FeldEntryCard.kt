@@ -369,7 +369,7 @@ private fun StampNumber(number: Int, seed: Int, color: Color, modifier: Modifier
                 rotationZ = look.tilt
                 translationY = look.dy.dp.toPx()
             }
-            .distressMaterial(StampDistress, seed)
+            .distressMaterial(StampDistress, seed, bakeKey = look.format(number))
             .padding(2.dp),
     )
 }

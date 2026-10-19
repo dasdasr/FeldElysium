@@ -13,9 +13,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.example.feldelysium.designsystem.foundation.decal.DecalLayer
-import com.example.feldelysium.designsystem.foundation.decal.DecalPlan
-import com.example.feldelysium.designsystem.foundation.decal.drawDecals
 import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
@@ -216,92 +213,6 @@ object FeldPaper {
         pressShade = 0f,
         sinkShade = 0f,
     )
-}
-
-fun Modifier.paperMaterial(
-    shape: RoughShape,
-    spec: PaperSpec,
-    wear: () -> Float = { spec.wear },
-    press: () -> Float = { 0f },
-    time: () -> Float = { 0f },
-    decals: DecalLayer? = null,
-): Modifier = drawWithCache {
-    val path = shape.buildPath(size, this)
-    val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
-    val inkLayers = if (spec.inkWidth.value > 0f) {
-        shape.buildInkLayers(path, this, spec.inkWidth.toPx())
-    } else {
-        emptyList()
-    }
-    val sinkBand = spec.sinkBand.toPx()
-    val seed = shape.seed.mod(97).toFloat()
-    val rim = shape.rimPx(this)
-
-    val band = spec.edgeBand.toPx()
-    val chipScale = spec.chipSize.toPx()
-    val mottleScale = spec.mottleSize.toPx()
-    val grainScale = spec.grainSize.toPx()
-    val inkGrain = spec.inkGrainSize.toPx()
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        val paper = RuntimeShader(PAPER_AGSL).apply {
-            setFloatUniform("size", size.width, size.height)
-            setFloatUniform("seed", seed)
-            setFloatUniform("rim", rim)
-            setFloatUniform("edgeWear", spec.edgeWear)
-            setFloatUniform("band", band)
-            setFloatUniform("chipScale", chipScale)
-            setFloatUniform("chipCoverage", spec.chipCoverage)
-            setFloatUniform("innerWear", spec.innerWear)
-            setFloatUniform("maxLoss", spec.maxLoss)
-            setFloatUniform("scuffTint", spec.scuffTint)
-            setFloatUniform("mottleScale", mottleScale)
-            setFloatUniform("mottleStrength", spec.mottleStrength)
-            setFloatUniform("grainScale", grainScale)
-            setFloatUniform("grainStrength", spec.grainStrength)
-            setFloatUniform("edgeShade", spec.edgeShade)
-            setFloatUniform("pressShade", spec.pressShade)
-            setColorUniform("baseColor", spec.base.toArgb())
-            setColorUniform("scuffColor", spec.scuff.toArgb())
-            setFloatUniform("colorGrain", spec.colorGrain)
-            setFloatUniform("toothStrength", spec.toothStrength)
-            setFloatUniform("speckleStrength", spec.speckleStrength)
-            setFloatUniform("sinkBand", sinkBand)
-            setFloatUniform("sinkShade", spec.sinkShade)
-        }
-        val ink = RuntimeShader(INK_AGSL).apply {
-            setFloatUniform("seed", seed)
-            setFloatUniform("grainScale", inkGrain)
-            setFloatUniform("minAlpha", spec.inkMinAlpha)
-            setFloatUniform("contrast", spec.inkContrast)
-            setColorUniform("inkColor", spec.ink.toArgb())
-        }
-        val paperBrush = ShaderBrush(paper)
-        val inkBrush = ShaderBrush(ink)
-
-        onDrawWithContent {
-            paper.setFloatUniform("wear", wear())
-            paper.setFloatUniform("press", press())
-            paper.setFloatUniform("time", time())
-
-            clipPath(path) {
-                drawRect(paperBrush)
-                drawDecals(placed)
-                this@onDrawWithContent.drawContent()
-            }
-            drawInk(inkLayers, inkBrush)
-        }
-    } else {
-        val inkBrush = SolidColor(spec.ink)
-        onDrawWithContent {
-            clipPath(path) {
-                drawRect(spec.base)
-                drawDecals(placed)
-                this@onDrawWithContent.drawContent()
-            }
-            drawInk(inkLayers, inkBrush)
-        }
-    }
 }
 
 fun Modifier.paperMaterialMorph(

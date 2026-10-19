@@ -49,7 +49,6 @@ fun FeldDialogCard(
     tagLift: Dp = 12.dp,
     tagHeight: Dp = 44.dp,
     revealOnEnter: Boolean = false,
-    time: () -> Float = { 0f },
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(modifier) {
@@ -62,7 +61,6 @@ fun FeldDialogCard(
             rough = rough,
             contentPadding = PaddingValues(0.dp),
             revealOnEnter = revealOnEnter,
-            time = time,
         ) {
             Column(Modifier.padding(contentPadding)) {
                 Spacer(Modifier.height(tagHeight - tagLift + 12.dp))
