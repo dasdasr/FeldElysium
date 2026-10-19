@@ -5,14 +5,26 @@ import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.material.agsl.DISTRESS_AGSL
 
@@ -60,9 +72,13 @@ data class DistressSpec(
     )
 }
 
-fun Modifier.distressMaterial(spec: DistressSpec, seed: Int = 0): Modifier =
+fun Modifier.distressMaterial(spec: DistressSpec, seed: Int = 0, bakeKey: Any? = null): Modifier =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        distressShader(spec, seed)
+        if (bakeKey != null) {
+            distressBaked(spec, seed, bakeKey)
+        } else {
+            distressShader(spec, seed)
+        }
     } else {
         this
     }
@@ -72,33 +88,116 @@ private fun Modifier.distressShader(spec: DistressSpec, seed: Int): Modifier = c
     val shader = remember { RuntimeShader(DISTRESS_AGSL) }
     Modifier.graphicsLayer {
         if (size.width <= 0f || size.height <= 0f) return@graphicsLayer
-        shader.apply {
-            setFloatUniform("seed", seed.mod(97).toFloat())
-            setFloatUniform("strength", spec.strength)
-            setFloatUniform("edgeSoft", spec.edgeSoftness.toPx())
-            setFloatUniform("edgeRough", spec.edgeRough.toPx())
-            setFloatUniform("edgeScale", spec.edgeSize.toPx())
-            setFloatUniform("edgeErode", spec.edgeErode)
-            setFloatUniform("bleed", spec.bleed)
-            setFloatUniform("patchy", spec.patchy)
-            setFloatUniform("patchScale", spec.patchSize.toPx())
-            setFloatUniform("dropout", spec.dropout)
-            setFloatUniform("dropoutScale", spec.dropoutSize.toPx())
-            setFloatUniform("scratch", spec.scratch)
-            setFloatUniform("scratchLen", spec.scratchLength.toPx())
-            setFloatUniform("scratchWid", spec.scratchWidth.toPx())
-            setFloatUniform("scratchAngle", Math.toRadians(spec.scratchAngle.toDouble()).toFloat())
-            setFloatUniform("speck", spec.speck)
-            setFloatUniform("speckScale", spec.speckSize.toPx())
-            setFloatUniform("grain", spec.grain)
-            setFloatUniform("grainScale", spec.grainSize.toPx())
-            setFloatUniform("splatter", spec.splatter)
-            setFloatUniform("splatterRadius", spec.splatterRadius.toPx())
-            val hasColor = spec.color != Color.Unspecified
-            setFloatUniform("useInk", if (hasColor) 1f else 0f)
-            setColorUniform("inkColor", (if (hasColor) spec.color else Color.White).toArgb())
-        }
+        shader.applyDistressUniforms(spec, seed, this@graphicsLayer)
         renderEffect = RenderEffect.createRuntimeShaderEffect(shader, "content")
             .asComposeRenderEffect()
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun Modifier.distressBaked(spec: DistressSpec, seed: Int, bakeKey: Any): Modifier = composed {
+    val shader = remember { RuntimeShader(DISTRESS_AGSL) }
+    val layer = rememberGraphicsLayer()
+    val density = LocalDensity.current
+
+    var layerSize by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+
+    var baked by remember(spec, seed, bakeKey, density, layerSize) {
+        mutableStateOf<ImageBitmap?>(null)
+    }
+
+    var recorded by remember(spec, seed, bakeKey, density, layerSize) {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(spec, seed, bakeKey, density, layerSize, recorded) {
+        if (layerSize == IntSize.Zero || !recorded || baked != null) {
+            return@LaunchedEffect
+        }
+
+        withFrameNanos { }
+        baked = layer.toImageBitmap()
+    }
+
+    Modifier
+        .onSizeChanged { newSize ->
+            if (layerSize != newSize) {
+                layerSize = newSize
+            }
+        }
+        .drawWithContent {
+            val ready = baked
+
+            if (
+                ready != null &&
+                ready.width == size.width.toInt() &&
+                ready.height == size.height.toInt()
+            ) {
+                drawImage(ready)
+                return@drawWithContent
+            }
+
+            if (size.width <= 0f || size.height <= 0f) {
+                return@drawWithContent
+            }
+
+            shader.applyDistressUniforms(spec, seed, this)
+
+            layer.renderEffect = RenderEffect
+                .createRuntimeShaderEffect(shader, "content")
+                .asComposeRenderEffect()
+
+            layer.record {
+                this@drawWithContent.drawContent()
+            }
+
+            drawLayer(layer)
+
+            if (!recorded) {
+                recorded = true
+            }
+        }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private fun RuntimeShader.applyDistressUniforms(
+    spec: DistressSpec,
+    seed: Int,
+    density: androidx.compose.ui.unit.Density,
+) {
+    with(density) {
+        setFloatUniform("seed", seed.mod(97).toFloat())
+        setFloatUniform("strength", spec.strength)
+        setFloatUniform("edgeSoft", spec.edgeSoftness.toPx())
+        setFloatUniform("edgeRough", spec.edgeRough.toPx())
+        setFloatUniform("edgeScale", spec.edgeSize.toPx())
+        setFloatUniform("edgeErode", spec.edgeErode)
+        setFloatUniform("bleed", spec.bleed)
+        setFloatUniform("patchy", spec.patchy)
+        setFloatUniform("patchScale", spec.patchSize.toPx())
+        setFloatUniform("dropout", spec.dropout)
+        setFloatUniform("dropoutScale", spec.dropoutSize.toPx())
+        setFloatUniform("scratch", spec.scratch)
+        setFloatUniform("scratchLen", spec.scratchLength.toPx())
+        setFloatUniform("scratchWid", spec.scratchWidth.toPx())
+        setFloatUniform(
+            "scratchAngle",
+            Math.toRadians(spec.scratchAngle.toDouble()).toFloat(),
+        )
+        setFloatUniform("speck", spec.speck)
+        setFloatUniform("speckScale", spec.speckSize.toPx())
+        setFloatUniform("grain", spec.grain)
+        setFloatUniform("grainScale", spec.grainSize.toPx())
+        setFloatUniform("splatter", spec.splatter)
+        setFloatUniform("splatterRadius", spec.splatterRadius.toPx())
+
+        val hasColor = spec.color != Color.Unspecified
+        setFloatUniform("useInk", if (hasColor) 1f else 0f)
+        setColorUniform(
+            "inkColor",
+            (if (hasColor) spec.color else Color.White).toArgb(),
+        )
     }
 }

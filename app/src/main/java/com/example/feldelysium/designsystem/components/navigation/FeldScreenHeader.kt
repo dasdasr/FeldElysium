@@ -154,7 +154,7 @@ fun FeldScreenHeader(
 
         if (metaStart != null || metaEnd != null) {
             Row(
-                modifier = Modifier
+                modifier = labelClick
                     .fillMaxWidth()
                     .padding(top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -176,7 +176,6 @@ fun FeldScreenHeader(
                         it.uppercase(),
                         style = MaterialTheme.typography.labelSmall,
                         color = FeldPalette.Muted,
-                        modifier = labelClick,
                     )
                 }
             }

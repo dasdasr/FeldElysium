@@ -90,7 +90,6 @@ fun DesignSystemPlayground(modifier: Modifier = Modifier) {
                 revealMillis = 300,
                 pressScale = 0.12f,
                 pressMillis = 90,
-                time = { 0f },
                 onClick = {},
             ) {
                 Text(
@@ -119,7 +118,6 @@ fun DesignSystemPlayground(modifier: Modifier = Modifier) {
                 enabled = true,
                 textStyle = MaterialTheme.typography.bodyMedium.copy(color = colorScheme.onSurface),
                 contentPadding = PaddingValues(16.dp),
-                time = { 0f },
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {

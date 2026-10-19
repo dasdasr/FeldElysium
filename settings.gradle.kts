@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "FeldElysium"
 include(":app")
+include(":benchmark")
