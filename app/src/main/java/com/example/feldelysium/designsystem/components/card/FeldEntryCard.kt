@@ -1,6 +1,7 @@
 package com.example.feldelysium.designsystem.components.card
 
 import android.os.SystemClock
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
@@ -13,6 +14,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,15 +37,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathMeasure
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.TransformOrigin
@@ -65,14 +70,16 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
 import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.distressMaterial
 import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.exp
 import kotlin.random.Random
@@ -82,6 +89,8 @@ private const val SWAY_DAMPING = 9f
 private const val SWAY_GAIN = 0.20f
 private const val SWAY_MAX_ANGLE = 6f
 private const val SWAY_VELOCITY_TTL_NANOS = 80_000_000L
+private const val SWIPE_DELETE_THRESHOLD = 0.65f
+private const val SWIPE_FILL_FULL = 0.3f
 
 private val EntryRough = RoughStyle(
     roughness = 0.6.dp,
@@ -141,9 +150,13 @@ fun FeldEntryCard(
     dragModifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     onMore: (() -> Unit)? = null,
+    onSwipeDelete: (() -> Unit)? = null,
+    onSwipeArmed: () -> Unit = {},
 ) {
     val density = LocalDensity.current.density
     val longPressMs = LocalViewConfiguration.current.longPressTimeoutMillis.toInt()
+    val scope = rememberCoroutineScope()
+    val swipe = remember { Animatable(0f) }
 
     val lift by animateFloatAsState(
         targetValue = if (isDragging) 1f else 0f,
@@ -204,11 +217,12 @@ fun FeldEntryCard(
         }
         sway.angle = 0f
     }
-
     val barBrush = remember(speakerColor, seed, density) {
         wornBrush(speakerColor, seed, density, wear = 0.6f, scale = 7f)
     }
+    val flatBrush = remember(speakerColor) { SolidColor(speakerColor) }
     val rough = remember(seed) { entryRough(seed) }
+    val cardShape = remember(seed, rough) { RoughShape(seed = seed, style = rough) }
 
     val baseCtx = LocalFeldDecalContext.current
     val decalCtx = remember(baseCtx, number, speakerName) {
@@ -252,6 +266,33 @@ fun FeldEntryCard(
                     holding = false
                 }
             }
+            .pointerInput(onSwipeDelete != null, isDragging) {
+                if (onSwipeDelete == null || isDragging) return@pointerInput
+                var armed = false
+                detectHorizontalDragGestures(
+                    onDragStart = { armed = false },
+                    onDragEnd = {
+                        val width = sway.width
+                        if (swipe.value / width >= SWIPE_DELETE_THRESHOLD) {
+                            scope.launch {
+                                swipe.animateTo(width, tween(120))
+                                onSwipeDelete()
+                            }
+                        } else {
+                            scope.launch { swipe.animateTo(0f, tween(200)) }
+                        }
+                    },
+                    onDragCancel = { scope.launch { swipe.animateTo(0f, tween(200)) } },
+                    onHorizontalDrag = { change, dragAmount ->
+                        change.consume()
+                        val next = (swipe.value + dragAmount).coerceIn(0f, sway.width)
+                        val nowArmed = next / sway.width >= SWIPE_DELETE_THRESHOLD
+                        if (nowArmed && !armed) onSwipeArmed()
+                        armed = nowArmed
+                        scope.launch { swipe.snapTo(next) }
+                    },
+                )
+            }
             .then(dragModifier),
         ambient = ambient,
         decalSpec = decalSpec,
@@ -262,7 +303,11 @@ fun FeldEntryCard(
         contentPadding = PaddingValues(0.dp),
         onClick = onClick,
     ) {
-        Box(Modifier.fillMaxWidth()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .clip(cardShape),
+        ) {
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -282,7 +327,8 @@ fun FeldEntryCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier
+                            .size(22.dp)
                             .drawBehind { drawDiamondBeat(ringBrush, hold, pulse?.value) },
                         contentAlignment = Alignment.Center,
                     ) {
@@ -332,7 +378,6 @@ fun FeldEntryCard(
                     FeldIcon(
                         id = FeldIconId.MoreHoriz,
                         seed = seed,
-                        tint = FeldPalette.Muted,
                         size = 18.dp,
                     )
                 }
@@ -347,6 +392,61 @@ fun FeldEntryCard(
                         .align(Alignment.BottomEnd)
                         .padding(end = 10.dp, bottom = 4.dp),
                 )
+            }
+
+            if (onSwipeDelete != null) {
+                Box(
+                    Modifier
+                        .matchParentSize()
+                        .drawBehind {
+                            val p = (swipe.value / size.width.coerceAtLeast(1f)).coerceIn(0f, 1f)
+                            if (p > 0.001f) {
+                                val tabW = 7.dp.toPx()
+                                drawTab(
+                                    brush = flatBrush,
+                                    seed = seed,
+                                    barWidth = tabW + (size.width - tabW) * p,
+                                    alpha = (p / SWIPE_FILL_FULL).coerceIn(0f, 1f),
+                                )
+                            }
+                        },
+                )
+            }
+
+            if (onSwipeDelete != null) {
+                Box(
+                    Modifier
+                        .matchParentSize()
+                        .drawBehind {
+                            val p = (swipe.value / size.width.coerceAtLeast(1f)).coerceIn(0f, 1f)
+                            if (p > 0.001f) {
+                                val tabW = 7.dp.toPx()
+                                val barW = tabW + (size.width - tabW) * p
+                                drawTab(barBrush, seed, barW)
+                                drawTab(
+                                    brush = flatBrush,
+                                    seed = seed,
+                                    barWidth = barW,
+                                    alpha = (p / SWIPE_FILL_FULL).coerceIn(0f, 1f),
+                                )
+                            }
+                        },
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    FeldIcon(
+                        id = FeldIconId.Delete,
+                        seed = seed,
+                        markerFilmSpec = FeldMarker.Ink,
+                        size = 24.dp,
+                        modifier = Modifier
+                            .padding(start = 21.dp)
+                            .graphicsLayer {
+                                val p = (swipe.value / sway.width).coerceIn(0f, 1f)
+                                val barW = 7.dp.toPx() + (sway.width - 7.dp.toPx()) * p
+                                alpha = ((barW - 50.dp.toPx()) / 20.dp.toPx()).coerceIn(0f, 1f)
+                            },
+                    )
+                }
             }
         }
     }
@@ -471,10 +571,10 @@ internal fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     }
 }
 
-private fun DrawScope.drawTab(brush: Brush, seed: Int) {
+private fun DrawScope.drawTab(brush: Brush, seed: Int, barWidth: Float = size.width, alpha: Float = 1f) {
     val r = Random(seed * 17 + 3)
     val wob = 1.5.dp.toPx()
-    val base = size.width - wob
+    val base = barWidth - wob
     val top = r.nextFloat() * 4.dp.toPx()
     val bottom = size.height - r.nextFloat() * 4.dp.toPx()
     val step = 7.dp.toPx()
@@ -490,7 +590,7 @@ private fun DrawScope.drawTab(brush: Brush, seed: Int) {
         lineTo(0f, bottom)
         close()
     }
-    drawPath(path, brush)
+    drawPath(path, brush, alpha = alpha)
 }
 
 @Preview(widthDp = 380, heightDp = 520, showBackground = true, backgroundColor = 0xFF0B1011)

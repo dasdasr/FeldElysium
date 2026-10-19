@@ -10,7 +10,11 @@ import com.example.feldelysium.domain.registry.PredefinedSpeakers
  * Immutable. All mutations go through [SceneAction] → reducer in [SceneViewModel].
  * [allSpeakers] is a computed property — it is NOT stored; it is derived on each access.
  */
-data class SceneState(val scene: DialogueScene = DialogueScene(), val customSpeakers: List<Speaker> = emptyList()) {
+data class SceneState(
+    val scene: DialogueScene = DialogueScene(),
+    val customSpeakers: List<Speaker> = emptyList(),
+    val isLoaded: Boolean = false,
+) {
     val allSpeakers: List<Speaker>
         get() = PredefinedSpeakers.ALL + customSpeakers
 

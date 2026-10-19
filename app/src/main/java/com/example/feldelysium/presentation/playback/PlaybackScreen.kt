@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -35,9 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,11 +43,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
+import com.example.feldelysium.domain.model.StatusLine
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
@@ -61,7 +58,7 @@ import com.example.feldelysium.presentation.playback.components.DialogueHistoryL
 import com.example.feldelysium.presentation.playback.components.LatestSpeakerPortrait
 import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
-import com.example.feldelysium.presentation.playback.components.PlaybackStatusHud
+import com.example.feldelysium.presentation.playback.components.PlaybackBottomBar
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
@@ -278,20 +275,13 @@ private fun PlaybackStage(
             )
         }
 
-        Image(
-            painter = painterResource(R.drawable.bottom_ui_bar),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
+        PlaybackBottomBar(
+            icons = background.barIcons,
+            inventory = background.inventoryIcons,
+            status = StatusLine(money, time, day),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX)),
-        )
-
-        PlaybackStatusHud(
-            money = money,
-            time = time,
-            day = day,
-            modifier = Modifier.fillMaxSize(),
         )
     }
 }

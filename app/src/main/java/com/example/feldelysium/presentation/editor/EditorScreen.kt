@@ -80,12 +80,35 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
+    val sceneVm: SceneViewModel = viewModel(activity)
+    val sceneState by sceneVm.state.collectAsStateWithLifecycle()
+
+    if (sceneState.isLoaded) {
+        EditorContent(
+            sceneVm = sceneVm,
+            onNavigateToPlayback = onNavigateToPlayback,
+            onNavigateToSettings = onNavigateToSettings,
+            modifier = modifier,
+        )
+    } else {
+        Box(modifier.fillMaxSize().background(colorScheme.background))
+    }
+}
+
+@SuppressLint("ContextCastToActivity")
+@Composable
+private fun EditorContent(
+    sceneVm: SceneViewModel,
+    onNavigateToPlayback: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val activity = LocalContext.current as ComponentActivity
     val haptics = rememberFeldHaptics()
     val sounds = rememberFeldSounds()
     val toast = rememberFeldToastState()
     val eggs = LocalEasterEggs.current
 
-    val sceneVm: SceneViewModel = viewModel(activity)
     val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
     val state by vm.state.collectAsStateWithLifecycle()
 
@@ -229,6 +252,12 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                             onMore = {
                                                 haptics.tick()
                                                 menuEntryId = entry.id
+                                            },
+                                            onSwipeArmed = { haptics.tick() },
+                                            onSwipeDelete = {
+                                                haptics.thud()
+                                                eggs?.report(EggEvent.EntryDelete, entry.speaker.name)
+                                                vm.dispatch(EditorEvent.DeleteEntry(entry.id))
                                             },
                                         )
                                         FeldMenu(

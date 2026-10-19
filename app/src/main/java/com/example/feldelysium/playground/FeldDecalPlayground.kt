@@ -310,7 +310,6 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                         FeldIconId.values().take(6).forEach {
                             FeldIcon(
                                 it,
-                                tint = MaterialTheme.colorScheme.onBackground,
                                 size = 28.dp,
                                 modifier = Modifier.markerFilmMaterial(
                                     s,
@@ -339,7 +338,6 @@ fun FeldDecalPlayground(modifier: Modifier = Modifier) {
                             val id = FeldIconId.values()[i % FeldIconId.values().size]
                             FeldIcon(
                                 id,
-                                tint = MaterialTheme.colorScheme.onBackground,
                                 size = 28.dp,
                                 modifier = Modifier
                                     .padding(6.dp)

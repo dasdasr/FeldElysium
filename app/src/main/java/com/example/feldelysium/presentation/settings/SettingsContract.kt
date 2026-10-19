@@ -1,6 +1,10 @@
 package com.example.feldelysium.presentation.settings
 
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.data.settings.BarIconState
+import com.example.feldelysium.data.settings.BarSlot
+import com.example.feldelysium.data.settings.InventoryIcon
+import com.example.feldelysium.data.settings.InventorySlot
 import com.example.feldelysium.data.settings.SamplesMode
 
 sealed interface SettingsEvent {
@@ -16,4 +20,7 @@ sealed interface SettingsEvent {
     data class SetBackgroundVideoFill(val enabled: Boolean) : SettingsEvent
     data object ResetBackground : SettingsEvent
     data class SetSamplesMode(val mode: SamplesMode) : SettingsEvent
+    data class SetBarIconState(val slot: BarSlot, val state: BarIconState) : SettingsEvent
+    data object ResetBarIcons : SettingsEvent
+    data class SetInventoryIcon(val slot: InventorySlot, val icon: InventoryIcon) : SettingsEvent
 }
