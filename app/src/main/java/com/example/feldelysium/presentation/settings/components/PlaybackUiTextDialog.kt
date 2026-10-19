@@ -118,7 +118,6 @@ private fun PlaybackField(
         FeldIcon(
             id = icon,
             contentDescription = null,
-            tint = Teal,
             modifier = Modifier.size(28.dp),
         )
         Spacer(Modifier.width(16.dp))

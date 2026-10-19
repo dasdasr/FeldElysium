@@ -31,6 +31,7 @@ import com.example.feldelysium.designsystem.components.input.FeldChip
 import com.example.feldelysium.designsystem.components.input.FeldChipColors
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldTextField
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.SoundKeys
@@ -102,14 +103,13 @@ fun ManageTagsDialog(
                 } else {
                     FeldIcon(
                         FeldIconId.Edit,
-                        tint = FeldPalette.Muted,
                         size = 20.dp,
                         modifier = Modifier.feldClickable { editing = tag },
                     )
                     Spacer(Modifier.width(14.dp))
                     FeldIcon(
                         FeldIconId.Delete,
-                        tint = FeldPalette.Orange,
+                        markerFilmSpec = FeldMarker.Dry,
                         size = 20.dp,
                         modifier = Modifier.feldClickable { deleting = tag },
                     )
