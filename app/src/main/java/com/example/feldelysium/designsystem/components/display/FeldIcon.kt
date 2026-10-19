@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
+import com.example.feldelysium.designsystem.foundation.material.MarkerFilmSpec
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
@@ -68,7 +69,7 @@ fun FeldIcon(
     id: FeldIconId,
     seed: Int? = null,
     modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current,
+    markerFilmSpec: MarkerFilmSpec = FeldMarker.Chalk,
     contentDescription: String? = null,
     size: Dp = 24.dp,
     film: Boolean = true,
@@ -108,15 +109,14 @@ fun FeldIcon(
             .then(
                 if (film) {
                     Modifier.markerFilmMaterial(
-                        FeldMarker.Chalk,
+                        markerFilmSpec,
                         id.ordinal + (seed ?: 0),
-                        bakeKey = tint,
+                        bakeKey = seed,
                     )
                 } else {
                     Modifier
                 },
             ),
-        tint = tint,
     )
 }
 
@@ -168,7 +168,6 @@ private fun FeldIconPreview() {
                         FeldIcon(
                             id = id,
                             size = 24.dp,
-                            tint = Color.White,
                         )
 
                         Text(

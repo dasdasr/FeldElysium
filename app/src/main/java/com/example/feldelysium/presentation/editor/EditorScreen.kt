@@ -255,6 +255,12 @@ private fun EditorContent(
                                                 haptics.tick()
                                                 menuEntryId = entry.id
                                             },
+                                            onSwipeArmed = { haptics.tick() },
+                                            onSwipeDelete = {
+                                                haptics.thud()
+                                                eggs?.report(EggEvent.EntryDelete, entry.speaker.name)
+                                                vm.dispatch(EditorEvent.DeleteEntry(entry.id))
+                                            },
                                         )
                                         FeldMenu(
                                             expanded = menuEntryId == entry.id,

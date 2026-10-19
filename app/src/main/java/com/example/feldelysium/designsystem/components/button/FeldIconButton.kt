@@ -35,7 +35,7 @@ fun FeldIconButton(
             .sizeIn(minWidth = 40.dp, minHeight = 40.dp)
             .feldClickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) { FeldIcon(id, tint = tint, size = size) }
+    ) { FeldIcon(id, size = size) }
 }
 
 @Preview(widthDp = 400, heightDp = 260, showBackground = true, backgroundColor = 0xFF0B1011)
@@ -47,7 +47,7 @@ private fun FeldIconPreview() {
                 horizontalArrangement = Arrangement.spacedBy(14.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
-                FeldIconId.entries.forEach { FeldIcon(it, tint = Color(0xFFB9B6AC)) }
+                FeldIconId.entries.forEach { FeldIcon(it) }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 FeldDiamond(Color(0xFF4FB3A6))

@@ -491,8 +491,8 @@ private fun buildDemos(): List<ShaderDemo> {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Text("FELD", style = MaterialTheme.typography.headlineLarge, color = Color.White)
-                    FeldIcon(FeldIconId.Play, tint = Color.White, size = 30.dp)
-                    FeldIcon(FeldIconId.Settings, tint = Color.White, size = 30.dp)
+                    FeldIcon(FeldIconId.Play, size = 30.dp)
+                    FeldIcon(FeldIconId.Settings, size = 30.dp)
                 }
             }
         },
