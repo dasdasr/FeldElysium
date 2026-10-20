@@ -81,11 +81,14 @@ class ScreenRecordService : Service() {
         val proj = mpm.getMediaProjection(resultCode, data)
             ?: error("Failed to obtain MediaProjection")
 
-        proj.registerCallback(object : MediaProjection.Callback() {
-            override fun onStop() {
-                stopRecording()
-            }
-        }, null)
+        proj.registerCallback(
+            object : MediaProjection.Callback() {
+                override fun onStop() {
+                    stopRecording()
+                }
+            },
+            null,
+        )
 
         projection = proj
         capture = ScreenCapture(proj, size, withAudio, file).also {
@@ -178,7 +181,7 @@ class ScreenRecordService : Service() {
             width: Int,
             height: Int,
             dpi: Int,
-            withAudio: Boolean
+            withAudio: Boolean,
         ) {
             val i = Intent(context, ScreenRecordService::class.java)
                 .setAction(ACTION_START)

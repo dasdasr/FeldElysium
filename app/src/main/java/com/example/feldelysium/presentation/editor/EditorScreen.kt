@@ -83,14 +83,9 @@ import com.example.feldelysium.record.ScreenRecordService
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun EditorScreen(
-    onNavigateToPlayback: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val container = (context.applicationContext as FeldApp).container
 
@@ -106,7 +101,6 @@ fun EditorScreen(
         factory = EditorViewModel.factory(container),
     )
     val state by vm.state.collectAsStateWithLifecycle()
-
 
     val haptics = rememberFeldHaptics()
     val sounds = rememberFeldSounds()
@@ -191,7 +185,6 @@ fun EditorScreen(
                     },
                 )
 
-
                 FeldToolbar(
                     items = buildList {
                         add(
@@ -232,7 +225,6 @@ fun EditorScreen(
                         )
                     },
                 )
-
 
                 Box(Modifier.weight(1f)) {
                     if (state.entries.isEmpty()) {

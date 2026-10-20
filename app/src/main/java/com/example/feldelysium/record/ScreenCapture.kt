@@ -52,8 +52,14 @@ internal class ScreenCapture(
         codec.start()
         videoCodec = codec
         display = projection.createVirtualDisplay(
-            "feld-record", width, height, size.dpi,
-            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null,
+            "feld-record",
+            width,
+            height,
+            size.dpi,
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+            surface,
+            null,
+            null,
         )
         threads += thread(name = "feld-video", isDaemon = true) { encodeVideo(codec) }
         audioRecord?.let { rec -> threads += thread(name = "feld-audio", isDaemon = true) { encodeAudio(rec) } }
@@ -79,7 +85,7 @@ internal class ScreenCapture(
                 track = muxer.addTrack(codec.outputFormat)
             } else if (index >= 0) {
                 val data = codec.getOutputBuffer(index)
-                if (data != null && info.size > 0 && !info.has(MediaCodec.BUFFER_FLAG_CODEC_CONFIG) && track >= 0) {
+                if (data != null && info.isWritable() && track >= 0) {
                     if (firstPts < 0) {
                         firstPts = info.presentationTimeUs
                         offsetUs = nowUs() - startUs
@@ -95,7 +101,7 @@ internal class ScreenCapture(
         codec.release()
     }
 
-    @Suppress("CyclomaticComplexMethod", "LongMethod")
+    @Suppress("CyclomaticComplexMethod", "LongMethod", "LoopWithTooManyJumpStatements")
     private fun encodeAudio(record: AudioRecord) {
         val codec = MediaCodec.createEncoderByType(AUDIO_MIME)
         val format = MediaFormat.createAudioFormat(AUDIO_MIME, SAMPLE_RATE, CHANNELS).apply {
@@ -129,7 +135,9 @@ internal class ScreenCapture(
                             codec.queueInputBuffer(index, 0, read, ptsUs, 0)
                             frames += read / BYTES_PER_FRAME
                         }
+
                         running -> codec.queueInputBuffer(index, 0, 0, ptsUs, 0)
+
                         else -> {
                             codec.queueInputBuffer(index, 0, 0, ptsUs, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
                             inputDone = true
@@ -146,7 +154,7 @@ internal class ScreenCapture(
                 }
                 if (out < 0) continue
                 val data = codec.getOutputBuffer(out)
-                if (data != null && info.size > 0 && !info.has(MediaCodec.BUFFER_FLAG_CODEC_CONFIG) && track >= 0) {
+                if (data != null && info.isWritable() && track >= 0) {
                     muxer.write(track, data, info)
                 }
                 codec.releaseOutputBuffer(out, false)
@@ -177,7 +185,9 @@ internal class ScreenCapture(
             .setChannelMask(AudioFormat.CHANNEL_IN_STEREO)
             .build()
         val minBuf = AudioRecord.getMinBufferSize(
-            SAMPLE_RATE, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT,
+            SAMPLE_RATE,
+            AudioFormat.CHANNEL_IN_STEREO,
+            AudioFormat.ENCODING_PCM_16BIT,
         )
         AudioRecord.Builder()
             .setAudioFormat(audioFormat)
@@ -228,6 +238,8 @@ internal class ScreenCapture(
     }
 
     private fun MediaCodec.BufferInfo.has(flag: Int) = (flags and flag) != 0
+
+    private fun MediaCodec.BufferInfo.isWritable() = size > 0 && !has(MediaCodec.BUFFER_FLAG_CODEC_CONFIG)
 
     private fun nowUs() = System.nanoTime() / 1000
 

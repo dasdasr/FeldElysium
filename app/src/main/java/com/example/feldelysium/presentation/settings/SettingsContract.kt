@@ -36,9 +36,13 @@ internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
     val d = AppSettings()
     return when (event) {
         is SettingsEvent.SetLockAspectRatio16x9 -> copy(lockAspectRatio16x9 = event.enabled)
+
         is SettingsEvent.SetExportEnabled -> copy(exportEnabled = event.enabled)
+
         is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
+
         is SettingsEvent.SetAutoPlay -> copy(autoPlay = event.enabled)
+
         is SettingsEvent.SetAutoPlaySpeed -> copy(autoPlaySpeed = event.speed)
 
         is SettingsEvent.SetPlaybackMoney -> copy(playbackMoney = event.value)

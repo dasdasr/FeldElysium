@@ -35,9 +35,11 @@ data class FeldToolbarItem(
 @Composable
 fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, seed: Int = rememberSeed()) {
     Column(modifier.fillMaxWidth()) {
-        Row(Modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+        ) {
             items.forEachIndexed { i, item ->
                 if (i > 0) {
                     FeldDivider(
@@ -71,7 +73,11 @@ fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, see
                     Spacer(Modifier.height(if (primary) 4.dp else 6.dp))
                     Text(
                         text = item.label.uppercase(),
-                        style = if (primary) MaterialTheme.typography.labelMedium else MaterialTheme.typography.labelSmall,
+                        style = if (primary) {
+                            MaterialTheme.typography.labelMedium
+                        } else {
+                            MaterialTheme.typography.labelSmall
+                        },
                         color = tint,
                     )
                 }

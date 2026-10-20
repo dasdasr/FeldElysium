@@ -1,8 +1,6 @@
 package com.example.feldelysium.presentation.settings
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -432,4 +430,3 @@ private fun AppSettings.backgroundIsDefault(): Boolean {
         backgroundVideoSound == d.backgroundVideoSound &&
         backgroundVideoFill == d.backgroundVideoFill
 }
-

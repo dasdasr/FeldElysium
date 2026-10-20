@@ -68,8 +68,8 @@ import com.example.feldelysium.record.ScreenRecordCoordinator
 import com.example.feldelysium.record.ScreenRecordService
 import com.example.feldelysium.record.realScreenSize
 import com.example.feldelysium.theme.ChromaKeyGreen
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -137,8 +137,13 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             delay(600.milliseconds)
             val size = activity.realScreenSize()
             ScreenRecordService.start(
-                activity, grant.resultCode, grant.data,
-                size.width, size.height, size.dpi, grant.withAudio,
+                activity,
+                grant.resultCode,
+                grant.data,
+                size.width,
+                size.height,
+                size.dpi,
+                grant.withAudio,
             )
             val started = withTimeoutOrNull(5_000.milliseconds) {
                 ScreenRecordService.state.first { it == RecordState.Recording }
