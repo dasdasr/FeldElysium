@@ -31,6 +31,10 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.BACKGROUND_VIDEO_FILL] = next.backgroundVideoFill
             prefs[Keys.SAMPLES_MODE] = next.samplesMode.name
             prefs[Keys.PACK_IMPORTED] = next.packImported
+            prefs[Keys.EXPORT_ENABLED] = next.exportEnabled
+            prefs[Keys.EXPORT_AUDIO] = next.exportAudio
+            prefs[Keys.AUTO_PLAY] = next.autoPlay
+            prefs[Keys.AUTO_PLAY_SPEED] = next.autoPlaySpeed.name
             next.barIcons.forEach { (slot, state) -> prefs[barKey(slot)] = state.name }
             next.inventoryIcons.forEach { (slot, icon) -> prefs[invKey(slot)] = icon.name }
         }
@@ -53,6 +57,12 @@ class SettingsRepository(private val context: Context) {
             ?.let { runCatching { SamplesMode.valueOf(it) }.getOrNull() }
             ?: SamplesMode.AUTO,
         packImported = prefs[Keys.PACK_IMPORTED] ?: false,
+        exportEnabled = prefs[Keys.EXPORT_ENABLED] ?: true,
+        exportAudio = prefs[Keys.EXPORT_AUDIO] ?: true,
+        autoPlay = prefs[Keys.AUTO_PLAY] ?: false,
+        autoPlaySpeed = prefs[Keys.AUTO_PLAY_SPEED]
+            ?.let { runCatching { AutoPlaySpeed.valueOf(it) }.getOrNull() }
+            ?: AutoPlaySpeed.NORMAL,
         barIcons = BarSlot.entries.associateWith { slot ->
             prefs[barKey(slot)]
                 ?.let { runCatching { BarIconState.valueOf(it) }.getOrNull() }
@@ -78,6 +88,10 @@ class SettingsRepository(private val context: Context) {
         val BACKGROUND_VIDEO_FILL = booleanPreferencesKey("background_video_fill")
         val SAMPLES_MODE = stringPreferencesKey("samples_mode")
         val PACK_IMPORTED = booleanPreferencesKey("pack_imported")
+        val EXPORT_ENABLED = booleanPreferencesKey("export_enabled")
+        val EXPORT_AUDIO = booleanPreferencesKey("export_audio")
+        val AUTO_PLAY = booleanPreferencesKey("auto_play")
+        val AUTO_PLAY_SPEED = stringPreferencesKey("auto_play_speed")
     }
 
     private fun barKey(slot: BarSlot) = stringPreferencesKey("bar_icon_${slot.name.lowercase()}")

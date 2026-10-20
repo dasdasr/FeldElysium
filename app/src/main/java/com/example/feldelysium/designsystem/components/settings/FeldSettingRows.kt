@@ -38,6 +38,7 @@ fun FeldSettingRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
+    stampText: String? = null,
     showChevron: Boolean = false,
     role: Role = Role.Button,
     onClick: (() -> Unit)? = null,
@@ -85,7 +86,7 @@ fun FeldSettingRow(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (!enabled) {
-                SoonStamp()
+                FeldStamp(stampText)
             } else {
                 trailing?.invoke()
                 if (showChevron) {
@@ -111,6 +112,7 @@ fun FeldSettingValueRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
+    stampText: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
     FeldSettingRow(
@@ -119,6 +121,7 @@ fun FeldSettingValueRow(
         subtitle = subtitle,
         modifier = modifier,
         enabled = enabled,
+        stampText = stampText,
         showChevron = true,
         onClick = onClick,
         trailing = {
@@ -143,6 +146,7 @@ fun FeldSettingSwitchRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     enabled: Boolean = true,
+    stampText: String? = null,
     seed: Int = rememberSeed(),
 ) {
     FeldSettingRow(
@@ -151,6 +155,7 @@ fun FeldSettingSwitchRow(
         subtitle = subtitle,
         modifier = modifier,
         enabled = enabled,
+        stampText = stampText,
         role = Role.Switch,
         onClick = { onCheckedChange(!checked) },
         trailing = {
@@ -164,9 +169,9 @@ fun FeldSettingSwitchRow(
 }
 
 @Composable
-private fun SoonStamp() {
+private fun FeldStamp(stampText: String? = null) {
     Text(
-        text = "SOON",
+        text = stampText ?: "SOON",
         style = MaterialTheme.typography.labelSmall,
         color = FeldPalette.Muted,
         modifier = Modifier
