@@ -62,21 +62,16 @@ class MainActivity : ComponentActivity() {
         onDenied = null
     }
 
-
     private val audioPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { granted -> launchCapture(withAudio = granted) }
 
-    private fun requestScreenRecording(
-        withAudio: Boolean,
-        onGranted: () -> Unit,
-        onDenied: () -> Unit,
-    ) {
+    private fun requestScreenRecording(withAudio: Boolean, onGranted: () -> Unit, onDenied: () -> Unit) {
         this.onGranted = onGranted
         this.onDenied = onDenied
         val needAudio = withAudio && Build.VERSION.SDK_INT >= 29
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) ==
-                PackageManager.PERMISSION_GRANTED
+            PackageManager.PERMISSION_GRANTED
         if (needAudio && !hasPermission) {
             audioPermission.launch(Manifest.permission.RECORD_AUDIO)
         } else {

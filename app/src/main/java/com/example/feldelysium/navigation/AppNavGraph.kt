@@ -25,9 +25,9 @@ fun AppNavGraph() {
         exitTransition = {
             scaleOut(
                 targetScale = 0.94f,
-                animationSpec = tween(durationMillis = 160)
+                animationSpec = tween(durationMillis = 160),
             ) + fadeOut(
-                animationSpec = tween(durationMillis = 160)
+                animationSpec = tween(durationMillis = 160),
             )
         },
         popEnterTransition = {
@@ -36,9 +36,9 @@ fun AppNavGraph() {
         popExitTransition = {
             scaleOut(
                 targetScale = 0.94f,
-                animationSpec = tween(durationMillis = 160)
+                animationSpec = tween(durationMillis = 160),
             ) + fadeOut(
-                animationSpec = tween(durationMillis = 160)
+                animationSpec = tween(durationMillis = 160),
             )
         },
     ) {

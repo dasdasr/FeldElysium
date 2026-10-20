@@ -163,8 +163,7 @@ class EditorViewModel(
         return false
     }
 
-    private fun fail(e: FeldError): Boolean =
-        notify(e.toastText())
+    private fun fail(e: FeldError): Boolean = notify(e.toastText())
 
     private fun customSpeakers() = state.value.allSpeakers.filterNot { it.isBundled }
 

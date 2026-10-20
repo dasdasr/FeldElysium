@@ -12,14 +12,19 @@ sealed interface FeldError {
 fun FeldError.toastText(): String = when (this) {
     FeldError.RecordDenied ->
         "NO TAPE, NO SHOW\nAllow screen recording, or turn off «Record playback» in Settings"
+
     FeldError.RecordFailed ->
         "TAPE JAMMED\nVideo wasn't saved. The record choked, try again"
+
     FeldError.ExportFailed ->
         "EXPORT FAILED\nThe scene refused to leave"
+
     FeldError.ImportFailed ->
         "CAN'T READ THIS\nThat file is not what I was expecting"
+
     FeldError.EmptyImport ->
         "NOTHING FOUND\nTry «NAME: text»"
+
     FeldError.NoScriptPasted ->
         "EMPTY\nPaste some lines first, I can't read minds"
 }
