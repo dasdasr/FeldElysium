@@ -1,10 +1,12 @@
 package com.example.feldelysium.designsystem.components.navigation
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,23 +16,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 
 data class FeldToolbarItem(
     val icon: FeldIconId,
     val label: String,
     val enabled: Boolean = true,
+    val accent: Color? = null,
     val onClick: () -> Unit,
 )
 
 @Composable
 fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, seed: Int = rememberSeed()) {
     Column(modifier.fillMaxWidth()) {
-        Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+        Row(Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)) {
             items.forEachIndexed { i, item ->
                 if (i > 0) {
                     FeldDivider(
@@ -39,19 +46,32 @@ fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, see
                         modifier = Modifier.padding(vertical = 14.dp),
                     )
                 }
-                val tint = colorScheme.onSurface.copy(alpha = if (item.enabled) 0.9f else 0.35f)
+                val primary = item.accent != null && item.enabled
+                val tint = when {
+                    !item.enabled -> colorScheme.onSurface.copy(alpha = 0.35f)
+                    primary -> item.accent
+                    else -> colorScheme.onSurface.copy(alpha = 0.9f)
+                }
+
                 Column(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(if (primary) 1.5f else 1f)
+                        .fillMaxHeight()
                         .clickable(enabled = item.enabled, onClick = item.onClick)
                         .padding(vertical = 14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    FeldIcon(item.icon, size = 24.dp, film = true)
-                    Spacer(Modifier.height(6.dp))
+                    FeldIcon(
+                        id = item.icon,
+                        size = if (primary) 32.dp else 24.dp,
+                        film = true,
+                        markerFilmSpec = if (primary) FeldMarker.Chalk.copy(color = item.accent) else FeldMarker.Chalk,
+                    )
+                    Spacer(Modifier.height(if (primary) 4.dp else 6.dp))
                     Text(
                         text = item.label.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = if (primary) MaterialTheme.typography.labelMedium else MaterialTheme.typography.labelSmall,
                         color = tint,
                     )
                 }
