@@ -43,6 +43,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.feldelysium.FeldApp
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
@@ -60,7 +61,6 @@ import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.playback.components.PlaybackBottomBar
 import com.example.feldelysium.presentation.settings.SettingsViewModel
-import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.ChromaKeyGreen
 
 private const val REFERENCE_WIDTH_PX = 1920f
@@ -88,9 +88,16 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     }
 
     val activity = LocalContext.current as ComponentActivity
-    val sceneVm: SceneViewModel = viewModel(activity)
-    val settingsVm: SettingsViewModel = viewModel(activity)
-    val vm: PlaybackViewModel = viewModel(factory = PlaybackViewModel.factory(sceneVm))
+    val container = (activity.application as FeldApp).container
+
+    val settingsVm: SettingsViewModel = viewModel(
+        viewModelStoreOwner = activity,
+        factory = SettingsViewModel.factory(container),
+    )
+
+    val vm: PlaybackViewModel = viewModel(
+        factory = PlaybackViewModel.factory(container),
+    )
     val state = vm.state.collectAsStateWithLifecycle().value
     val settings = settingsVm.state.collectAsStateWithLifecycle().value
 
@@ -112,14 +119,6 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
         }
     }
 
-    LaunchedEffect(Unit) {
-        vm.effects.collect { effect ->
-            when (effect) {
-                PlaybackEffect.NavigateBack -> onNavigateBack()
-            }
-        }
-    }
-
     PlaybackScreenContent(
         state = state,
         lockAspectRatio16x9 = settings.lockAspectRatio16x9,
@@ -128,7 +127,7 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
         time = settings.playbackTime,
         day = settings.playbackDay,
         onTap = { vm.dispatch(PlaybackEvent.Tap) },
-        onBackClick = { vm.dispatch(PlaybackEvent.NavigateBack) },
+        onBackClick = onNavigateBack,
         onScrollChanged = { vm.dispatch(PlaybackEvent.ScrollChanged(it)) },
         modifier = modifier,
     )

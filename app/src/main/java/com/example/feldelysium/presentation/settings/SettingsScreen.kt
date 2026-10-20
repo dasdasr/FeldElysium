@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.feldelysium.FeldApp
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.data.settings.SamplesMode
@@ -57,7 +58,12 @@ private const val PlaybackFontName = "Sina Nova Regular"
 @Composable
 fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
-    val vm: SettingsViewModel = viewModel(activity)
+    val container = (activity.application as FeldApp).container
+
+    val vm: SettingsViewModel = viewModel(
+        viewModelStoreOwner = activity,
+        factory = SettingsViewModel.factory(container),
+    )
     val settings by vm.state.collectAsStateWithLifecycle()
     val haptics = rememberFeldHaptics()
     val eggs = LocalEasterEggs.current

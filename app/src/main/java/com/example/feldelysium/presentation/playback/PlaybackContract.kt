@@ -17,13 +17,8 @@ data class PlaybackUiState(
 sealed class PlaybackEvent {
     data object Tap : PlaybackEvent()
     data object Reset : PlaybackEvent()
-    data object NavigateBack : PlaybackEvent()
     data object ScreenStopped : PlaybackEvent()
     data class ScrollChanged(val active: Boolean) : PlaybackEvent()
-}
-
-sealed class PlaybackEffect {
-    data object NavigateBack : PlaybackEffect()
 }
 
 data class CheckOverlay(val entryId: String, val check: SkillCheck)

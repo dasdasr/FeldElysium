@@ -1,46 +1,36 @@
 package com.example.feldelysium.presentation.playback
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.feldelysium.FeldApp
+import com.example.feldelysium.di.AppContainer
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.playback.PlaybackAudio
 import com.example.feldelysium.domain.playback.PlaybackEngine
 import com.example.feldelysium.domain.playback.PlaybackStep
 import com.example.feldelysium.presentation.playback.components.CheckMotion
-import com.example.feldelysium.presentation.shared.SceneViewModel
+import com.example.feldelysium.presentation.shared.SceneSource
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-class PlaybackViewModel(private val sceneViewModel: SceneViewModel, private val audio: PlaybackAudio) : ViewModel() {
-
-    private lateinit var engine: PlaybackEngine
+class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : ViewModel() {
+    private val entries = scene.scene.value.entries
+    private val engine = PlaybackEngine(entries)
     private var checkJob: Job? = null
     private var damageJob: Job? = null
 
-    private val _state = MutableStateFlow(PlaybackUiState())
+    private val _state = MutableStateFlow(PlaybackUiState(allEntries = entries))
     val state: StateFlow<PlaybackUiState> = _state.asStateFlow()
-
-    private val _effects = Channel<PlaybackEffect>(Channel.BUFFERED)
-    val effects = _effects.receiveAsFlow()
 
     init {
         viewModelScope.launch {
-            val sceneState = sceneViewModel.state.first()
-            engine = PlaybackEngine(sceneState.scene.entries)
-            _state.update { it.copy(allEntries = sceneState.scene.entries) }
             audio.preload()
             open()
         }
@@ -52,10 +42,6 @@ class PlaybackViewModel(private val sceneViewModel: SceneViewModel, private val 
         PlaybackEvent.Reset -> reset()
 
         PlaybackEvent.ScreenStopped -> audio.stop()
-
-        PlaybackEvent.NavigateBack -> viewModelScope.launch {
-            _effects.send(PlaybackEffect.NavigateBack)
-        }
 
         is PlaybackEvent.ScrollChanged -> {
             if (!_state.value.isPanelOpen) {
@@ -69,7 +55,6 @@ class PlaybackViewModel(private val sceneViewModel: SceneViewModel, private val 
     }
 
     private fun onTap() {
-        if (!::engine.isInitialized) return
         val s = _state.value
         when {
             s.isCheckRolling -> Unit
@@ -92,7 +77,6 @@ class PlaybackViewModel(private val sceneViewModel: SceneViewModel, private val 
     }
 
     private fun reset() {
-        if (!::engine.isInitialized) return
         cancelTimers()
         audio.stop()
         engine.reset()
@@ -172,13 +156,8 @@ class PlaybackViewModel(private val sceneViewModel: SceneViewModel, private val 
     }
 
     companion object {
-        private const val CLICK_TO_ROLL_MS = 90L
-
-        fun factory(sceneViewModel: SceneViewModel) = viewModelFactory {
-            initializer {
-                val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as FeldApp
-                PlaybackViewModel(sceneViewModel, app.container.playbackAudio())
-            }
+        fun factory(c: AppContainer) = viewModelFactory {
+            initializer { PlaybackViewModel(c.sceneSession, c.playbackAudio()) }
         }
     }
 }
