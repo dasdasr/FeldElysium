@@ -25,6 +25,10 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
     private val engine = PlaybackEngine(entries)
     private var checkJob: Job? = null
     private var damageJob: Job? = null
+    private var autoJob: Job? = null
+
+    private val _autoPlayDone = MutableStateFlow(false)
+    val autoPlayDone: StateFlow<Boolean> = _autoPlayDone.asStateFlow()
 
     private val _state = MutableStateFlow(PlaybackUiState(allEntries = entries))
     val state: StateFlow<PlaybackUiState> = _state.asStateFlow()
@@ -54,7 +58,29 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
         }
     }
 
+    fun startAutoPlay(speed: Float) {
+        if (entries.isEmpty()) {
+            _autoPlayDone.value = true
+            return
+        }
+        _autoPlayDone.value = false
+        reset()
+        autoJob = viewModelScope.launch {
+            delay(START_HOLD_MS.milliseconds)
+            while (!_state.value.isFinished) {
+                advance()
+                while (_state.value.isCheckRolling) delay(CHECK_POLL_MS.milliseconds)
+                val text = _state.value.revealedEntries.lastOrNull()?.text.orEmpty()
+                val readMs = ((BASE_READ_MS + text.length * MS_PER_CHAR) / speed).toLong()
+                delay(readMs.milliseconds)
+            }
+            delay(END_HOLD_MS.milliseconds)
+            _autoPlayDone.value = true
+        }
+    }
+
     private fun onTap() {
+        if (autoJob?.isActive == true) return
         val s = _state.value
         when {
             s.isCheckRolling -> Unit
@@ -144,6 +170,8 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
     }
 
     private fun cancelTimers() {
+        autoJob?.cancel()
+        autoJob = null
         checkJob?.cancel()
         checkJob = null
         damageJob?.cancel()
@@ -156,6 +184,12 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
     }
 
     companion object {
+        private const val START_HOLD_MS = 800L
+        private const val CHECK_POLL_MS = 50L
+        private const val BASE_READ_MS = 2800L
+        private const val MS_PER_CHAR = 8L
+        private const val END_HOLD_MS = 2000L
+
         fun factory(c: AppContainer) = viewModelFactory {
             initializer { PlaybackViewModel(c.sceneSession, c.playbackAudio()) }
         }

@@ -61,6 +61,7 @@ enum class FeldIconId {
     Settings,
     Export,
     Save,
+    Sound,
 }
 
 @Composable
@@ -99,6 +100,7 @@ fun FeldIcon(
         FeldIconId.Settings -> Icons.Default.Settings
         FeldIconId.Export -> Icons.Default.ImportExport
         FeldIconId.Save -> Icons.Default.Save
+        FeldIconId.Sound -> Icons.Default.MusicNote
     }
     Icon(
         v,
