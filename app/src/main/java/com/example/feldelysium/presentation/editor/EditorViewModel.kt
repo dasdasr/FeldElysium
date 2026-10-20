@@ -92,14 +92,21 @@ class EditorViewModel(
     }
 
     fun importLines(text: String): Boolean {
-        if (text.isBlank()) return notify("Paste some lines first")
         val result = parser.execute(text, customSpeakers())
-        if (result.entries.isEmpty()) return notify("No lines found. Try «NAME: text»")
-        viewModelScope.launch {
-            result.newSpeakers.forEach { speakerRepo.save(it) }
-            session.addEntries(result.entries)
+
+        return when {
+            text.isBlank() -> notify("Paste some lines first")
+
+            result.entries.isEmpty() -> notify("No lines found. Try «NAME: text»")
+
+            else -> {
+                viewModelScope.launch {
+                    result.newSpeakers.forEach { speakerRepo.save(it) }
+                    session.addEntries(result.entries)
+                }
+                true
+            }
         }
-        return true
     }
 
     fun refreshScenes() {
@@ -148,14 +155,14 @@ class EditorViewModel(
 
     private fun customSpeakers() = state.value.allSpeakers.filterNot { it.isBundled }
 
-    private suspend inline fun attempt(block: () -> Unit): Boolean =
-        try {
-            block(); true
-        } catch (e: CancellationException) {
-            throw e
-        } catch (_: Exception) {
-            false
-        }
+    private suspend inline fun attempt(block: () -> Unit): Boolean = try {
+        block()
+        true
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        false
+    }
 
     companion object {
         fun factory(c: AppContainer) = viewModelFactory {
@@ -165,7 +172,7 @@ class EditorViewModel(
                     c.speakerRepository,
                     c.settingsRepository,
                     ParseBulkImportUseCase(),
-                    c.soundPlayer
+                    c.soundPlayer,
                 )
             }
         }

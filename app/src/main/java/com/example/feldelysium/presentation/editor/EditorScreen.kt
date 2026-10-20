@@ -346,8 +346,14 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
             SceneManagerDialog(
                 scenes = state.scenes,
                 currentId = state.sceneId,
-                onNew = { vm.newScene(); close() },
-                onOpen = { vm.openScene(it); close() },
+                onNew = {
+                    vm.newScene()
+                    close()
+                },
+                onOpen = {
+                    vm.openScene(it)
+                    close()
+                },
                 onDelete = vm::deleteScene,
                 onExport = { exportLauncher.launch("${state.sceneName.ifBlank { "scene" }}.json") },
                 onImport = { importLauncher.launch(arrayOf("*/*")) },
@@ -369,10 +375,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
 }
 
 @Composable
-private fun EmptyState(
-    onImport: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.feldClickable(onClick = onImport),
         contentAlignment = Alignment.Center,

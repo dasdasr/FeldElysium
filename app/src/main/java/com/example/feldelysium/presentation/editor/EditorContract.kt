@@ -1,6 +1,5 @@
 package com.example.feldelysium.presentation.editor
 
-import kotlinx.serialization.json.Json
 import androidx.compose.runtime.saveable.Saver
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.SceneInfo
@@ -8,6 +7,7 @@ import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 data class EditorUiState(
     val sceneId: String = "",
@@ -43,11 +43,8 @@ sealed interface EditorDialog {
     data class NewEntry(val speakerId: String? = null) : EditorDialog
 
     @Serializable
-    data class EditEntry(
-        val entryId: String,
-        val speakerId: String,
-        val pickingSpeaker: Boolean = false,
-    ) : EditorDialog
+    data class EditEntry(val entryId: String, val speakerId: String, val pickingSpeaker: Boolean = false) :
+        EditorDialog
 
     @Serializable
     data class EditSpeaker(val speakerId: String?, val back: EditorDialog = None) : EditorDialog
