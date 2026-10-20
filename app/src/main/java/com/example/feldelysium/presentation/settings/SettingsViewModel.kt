@@ -15,10 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(
-    private val repository: SettingsRepository,
-    private val resolver: ContentResolver,
-) : ViewModel() {
+class SettingsViewModel(private val repository: SettingsRepository, private val resolver: ContentResolver) :
+    ViewModel() {
 
     val state: StateFlow<AppSettings> =
         repository.settings.stateIn(viewModelScope, SharingStarted.Eagerly, AppSettings())
