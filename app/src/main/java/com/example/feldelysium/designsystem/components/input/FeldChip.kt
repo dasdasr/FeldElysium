@@ -54,7 +54,7 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 enum class FeldChipShape { Chamfer, Pill, Rectangle }
 
 object FeldChipColors {
-    val Teal = Color(0xFF4FB3A6)
+    val Teal = FeldPalette.Teal
     val Orange = FeldPalette.Orange
     val Cream = FeldPalette.Cream
 }
