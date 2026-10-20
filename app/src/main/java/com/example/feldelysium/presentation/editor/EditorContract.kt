@@ -1,41 +1,26 @@
 package com.example.feldelysium.presentation.editor
 
-import com.example.feldelysium.domain.model.DamageEffect
+import androidx.compose.runtime.saveable.Saver
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.SceneInfo
-import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import java.io.InputStream
-import java.io.OutputStream
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 data class EditorUiState(
+    val sceneId: String = "",
+    val sceneName: String = "Untitled Scene",
     val entries: List<DialogueEntry> = emptyList(),
     val allSpeakers: List<Speaker> = PredefinedSpeakers.ALL,
     val pickerSpeakers: List<Speaker> = PredefinedSpeakers.ALL,
-    val sceneName: String = "Untitled Scene",
-
     val tags: List<SpeakerType> = PredefinedSpeakers.TAGS,
-
-    val editingEntry: DialogueEntry? = null,
-    val pendingSpeaker: Speaker? = null,
-
-    val isSpeakerPickerOpen: Boolean = false,
-    val isEntryEditOpen: Boolean = false,
-    val isImportDialogOpen: Boolean = false,
-    val isCustomSpeakerDialogOpen: Boolean = false,
-
-    val importText: String = "",
-    val importPreview: ImportPreview? = null,
-
-    val editingSpeaker: Speaker? = null,
-    val isChangingSpeaker: Boolean = false,
-
-    val sceneId: String = "",
-    val isSceneManagerOpen: Boolean = false,
     val scenes: List<SceneInfo> = emptyList(),
-)
+) {
+    fun speaker(id: String) = allSpeakers.firstOrNull { it.id == id }
+    fun entry(id: String) = entries.firstOrNull { it.id == id }
+}
 
 data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
     val caption: String
@@ -49,54 +34,29 @@ data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
         }
 }
 
-sealed class EditorEvent {
-    data object RequestAddEntry : EditorEvent()
-    data class SelectSpeakerForNewEntry(val speaker: Speaker) : EditorEvent()
-    data class ConfirmNewEntry(val text: String, val check: SkillCheck? = null, val damage: DamageEffect? = null) :
-        EditorEvent()
+@Serializable
+sealed interface EditorDialog {
+    @Serializable
+    data object None : EditorDialog
 
-    data class RequestEditEntry(val entry: DialogueEntry) : EditorEvent()
-    data class ConfirmEditEntry(val updated: DialogueEntry) : EditorEvent()
-    data class DeleteEntry(val entryId: String) : EditorEvent()
-    data class ReorderEntries(val entries: List<DialogueEntry>) : EditorEvent()
-    data object DismissEntryEdit : EditorEvent()
+    @Serializable
+    data class NewEntry(val speakerId: String? = null) : EditorDialog
 
-    data object RequestCustomSpeaker : EditorEvent()
-    data class ConfirmCustomSpeaker(val speaker: Speaker) : EditorEvent()
-    data class RequestEditSpeaker(val speaker: Speaker) : EditorEvent()
-    data class ConfirmEditSpeaker(val speaker: Speaker) : EditorEvent()
-    data object DismissCustomSpeaker : EditorEvent()
+    @Serializable
+    data class EditEntry(val entryId: String, val speakerId: String, val pickingSpeaker: Boolean = false) :
+        EditorDialog
 
-    data class SaveTag(val tag: SpeakerType) : EditorEvent()
-    data class DeleteTag(val tag: SpeakerType) : EditorEvent()
-    data class DeleteSpeaker(val id: String) : EditorEvent()
+    @Serializable
+    data class EditSpeaker(val speakerId: String?, val back: EditorDialog = None) : EditorDialog
 
-    data object OpenImportDialog : EditorEvent()
-    data object CloseImportDialog : EditorEvent()
-    data class ImportTextChanged(val text: String) : EditorEvent()
-    data object ConfirmImport : EditorEvent()
+    @Serializable
+    data object ImportLines : EditorDialog
 
-    data object OpenSpeakerPicker : EditorEvent()
-    data object CloseSpeakerPicker : EditorEvent()
-    data object RequestChangeSpeaker : EditorEvent()
-    data object AddEntryWithRandomSpeaker : EditorEvent()
-
-    data object NavigateToPlayback : EditorEvent()
-    data class RenameScene(val name: String) : EditorEvent()
-    data object ClearScene : EditorEvent()
-
-    data object SaveScene : EditorEvent()
-    data object OpenSceneManager : EditorEvent()
-    data object CloseSceneManager : EditorEvent()
-    data object NewScene : EditorEvent()
-    data class OpenScene(val id: String) : EditorEvent()
-    data class DeleteScene(val id: String) : EditorEvent()
-    data class ExportScene(val output: OutputStream?) : EditorEvent()
-    data class ImportScene(val input: InputStream?) : EditorEvent()
+    @Serializable
+    data object SceneManager : EditorDialog
 }
 
-sealed class EditorEffect {
-    data object NavigateToPlayback : EditorEffect()
-    data class ShowSnackbar(val message: String) : EditorEffect()
-    data object LaunchGalleryPicker : EditorEffect()
-}
+val EditorDialogSaver = Saver<EditorDialog, String>(
+    save = { Json.encodeToString(EditorDialog.serializer(), it) },
+    restore = { Json.decodeFromString(EditorDialog.serializer(), it) },
+)

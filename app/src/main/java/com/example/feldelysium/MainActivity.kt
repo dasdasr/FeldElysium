@@ -12,20 +12,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModelProvider
 import com.example.feldelysium.designsystem.foundation.material.FeldWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
 import com.example.feldelysium.designsystem.foundation.sound.LocalFeldSounds
-import com.example.feldelysium.di.AppViewModelFactory
 import com.example.feldelysium.di.PlayerFeldSounds
 import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.eggs.EggEvent
@@ -33,26 +27,20 @@ import com.example.feldelysium.eggs.EggsViewModel
 import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
-import com.example.feldelysium.playground.DesignSystemPlayground
-import com.example.feldelysium.playground.FeldDecalPlayground
-import com.example.feldelysium.playground.FeldShaderPlayground
-import com.example.feldelysium.playground.PlaygroundEntry
-import com.example.feldelysium.playground.PlaygroundHubScreen
-import com.example.feldelysium.presentation.shared.SceneViewModel
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import android.graphics.Color as AndroidColor
 
 class MainActivity : ComponentActivity() {
 
     private val eggsVm: EggsViewModel by viewModels()
-    private val sceneVm: SceneViewModel by viewModels()
+
+    private val container get() = (application as FeldApp).container
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splash.setKeepOnScreenCondition { !sceneVm.state.value.isLoaded }
+        splash.setKeepOnScreenCondition { !container.sceneSession.isLoaded.value }
 
-        val container = (application as FeldApp).container
         container.soundPlayer.preload(SoundCue.uiSet)
 
         enableEdgeToEdge(
@@ -74,49 +62,20 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    var launchApp by rememberSaveable {
-                        mutableStateOf(false)
-                    }
                     val sounds = remember { PlayerFeldSounds(container.soundPlayer) }
 
                     CompositionLocalProvider(
                         LocalEasterEggs provides eggs,
                         LocalFeldSounds provides sounds,
                     ) {
-                        if (launchApp) {
-                            Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
-                                Surface(
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.background,
-                                ) {
-                                    AppNavGraph()
-                                }
-                                EggToastHost(eggs)
+                        Box(Modifier.fillMaxSize().semantics { testTagsAsResourceId = true }) {
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                color = MaterialTheme.colorScheme.background,
+                            ) {
+                                AppNavGraph()
                             }
-                        } else {
-                            PlaygroundHubScreen(
-                                onLaunchApp = { launchApp = true },
-                                playgrounds = listOf(
-                                    PlaygroundEntry(
-                                        id = "decals",
-                                        title = "Decal Playground",
-                                        description = "Test decorative marks, textures and placement.",
-                                        content = { FeldDecalPlayground() },
-                                    ),
-                                    PlaygroundEntry(
-                                        id = "design-system",
-                                        title = "Design System",
-                                        description = "Preview and test reusable UI components.",
-                                        content = { DesignSystemPlayground() },
-                                    ),
-                                    PlaygroundEntry(
-                                        id = "shaders",
-                                        title = "Shaders",
-                                        description = "All shaders: grid and frame set up",
-                                        content = { FeldShaderPlayground() },
-                                    ),
-                                ),
-                            )
+                            EggToastHost(eggs)
                         }
                     }
                 }
@@ -124,11 +83,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        if (isFinishing) (application as FeldApp).container.soundPlayer.release()
-        super.onDestroy()
+    override fun onStop() {
+        container.sceneSession.flush()
+        super.onStop()
     }
 
-    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = AppViewModelFactory((application as FeldApp).container, super.defaultViewModelProviderFactory)
+    override fun onDestroy() {
+        if (isFinishing) container.soundPlayer.release()
+        super.onDestroy()
+    }
 }

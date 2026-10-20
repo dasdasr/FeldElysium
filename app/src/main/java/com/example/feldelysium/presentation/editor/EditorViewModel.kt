@@ -1,359 +1,203 @@
 package com.example.feldelysium.presentation.editor
 
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.feldelysium.FeldApp
+import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.SamplesMode
 import com.example.feldelysium.data.settings.SettingsRepository
-import com.example.feldelysium.data.speaker.SpeakerStorage
+import com.example.feldelysium.di.AppContainer
+import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
+import com.example.feldelysium.domain.model.DialogueScene
+import com.example.feldelysium.domain.model.SceneInfo
+import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
-import com.example.feldelysium.domain.model.normalized
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.domain.repository.SpeakerRepository
 import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.domain.sound.SoundPlayer
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
-import com.example.feldelysium.presentation.shared.SceneAction
-import com.example.feldelysium.presentation.shared.SceneViewModel
+import com.example.feldelysium.presentation.shared.SceneSession
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
+import java.io.InputStream
+import java.io.OutputStream
+import kotlin.coroutines.cancellation.CancellationException
 
 class EditorViewModel(
-    application: Application,
-    private val sceneViewModel: SceneViewModel,
-    private val parseUseCase: ParseBulkImportUseCase,
+    private val session: SceneSession,
+    private val speakerRepo: SpeakerRepository,
+    settingsRepo: SettingsRepository,
+    private val parser: ParseBulkImportUseCase,
     private val sounds: SoundPlayer,
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    private val _state = MutableStateFlow(EditorUiState())
-    val state: StateFlow<EditorUiState> = _state.asStateFlow()
+    private val sceneList = MutableStateFlow<List<SceneInfo>>(emptyList())
 
-    private val _effects = Channel<EditorEffect>(Channel.BUFFERED)
-    val effects = _effects.receiveAsFlow()
-
-    private val speakerRepo = SpeakerStorage.repository(application)
-    private val settingsRepo = SettingsRepository(application)
-
-    private val speakers = speakerRepo.speakers.stateIn(
+    val state: StateFlow<EditorUiState> = combine(
+        session.scene,
+        speakerRepo.speakers,
+        speakerRepo.tags,
+        settingsRepo.settings,
+        sceneList,
+    ) { scene, speakers, tags, prefs, scenes ->
+        editorUiState(scene, speakers, tags, prefs, scenes)
+    }.stateIn(
         viewModelScope,
-        SharingStarted.Eagerly,
-        PredefinedSpeakers.ALL,
-    )
-    private val tags = speakerRepo.tags.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly,
-        PredefinedSpeakers.TAGS,
+        SharingStarted.WhileSubscribed(5_000),
+        editorUiState(session.scene.value, PredefinedSpeakers.ALL, PredefinedSpeakers.TAGS, AppSettings(), emptyList()),
     )
 
-    init {
-        val prefs = application.getSharedPreferences("speaker_migration", Context.MODE_PRIVATE)
-        if (!prefs.getBoolean("scene_custom_speakers_v1", false)) {
-            viewModelScope.launch {
-                val old = sceneViewModel.state.value.customSpeakers
-                old.forEach { speakerRepo.save(it) }
-                if (old.isNotEmpty()) prefs.edit().putBoolean("scene_custom_speakers_v1", true).apply()
-            }
-        }
+    private val _messages = Channel<String>(Channel.BUFFERED)
 
-        viewModelScope.launch {
-            sceneViewModel.state.value.customSpeakers.forEach { speakerRepo.save(it) }
-        }
+    val messages = _messages.receiveAsFlow()
 
-        sceneViewModel.state
-            .onEach { sceneState ->
-                _state.update {
-                    it.copy(
-                        entries = sceneState.scene.entries,
-                        sceneName = sceneState.scene.title,
-                        sceneId = sceneState.scene.id,
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
-
-        speakers
-            .onEach { list ->
-                val byId = list.associateBy { it.id }
-                fun Speaker.fresh(): Speaker = byId[id] ?: this
-
-                _state.update { editor ->
-                    editor.copy(
-                        allSpeakers = list,
-                        editingEntry = editor.editingEntry?.let { it.copy(speaker = it.speaker.fresh()) },
-                        pendingSpeaker = editor.pendingSpeaker?.fresh(),
-                    )
-                }
-                sceneViewModel.dispatch(SceneAction.SyncSpeakers(list))
-            }
-            .launchIn(viewModelScope)
-
-        tags
-            .onEach { t -> _state.update { it.copy(tags = t) } }
-            .launchIn(viewModelScope)
-
-        combine(speakers, settingsRepo.settings) { all, s ->
-            val hide = when (s.samplesMode) {
-                SamplesMode.ALWAYS_SHOW -> false
-                SamplesMode.ALWAYS_HIDE -> true
-                SamplesMode.AUTO -> s.packImported
-            }
-            if (hide) all.filterNot { it.isSample } else all
-        }
-            .onEach { v -> _state.update { it.copy(pickerSpeakers = v) } }
-            .launchIn(viewModelScope)
-    }
-
-    fun dispatch(event: EditorEvent) = when (event) {
-        EditorEvent.RequestAddEntry -> _state.update {
-            it.copy(isSpeakerPickerOpen = true)
-        }
-
-        EditorEvent.RequestChangeSpeaker -> _state.update {
-            it.copy(isSpeakerPickerOpen = true, isChangingSpeaker = true)
-        }
-
-        is EditorEvent.SelectSpeakerForNewEntry -> _state.update {
-            if (it.isChangingSpeaker) {
-                val editing = it.editingEntry
-                if (editing != null) {
-                    it.copy(
-                        editingEntry = editing.copy(speaker = event.speaker).normalized(),
-                        isSpeakerPickerOpen = false,
-                        isChangingSpeaker = false,
-                    )
-                } else {
-                    it.copy(
-                        pendingSpeaker = event.speaker,
-                        isSpeakerPickerOpen = false,
-                        isChangingSpeaker = false,
-                    )
-                }
-            } else {
-                it.copy(
-                    pendingSpeaker = event.speaker,
-                    isSpeakerPickerOpen = false,
-                    isEntryEditOpen = true,
-                )
-            }
-        }
-
-        is EditorEvent.ConfirmNewEntry -> {
-            val speaker = _state.value.pendingSpeaker ?: Speaker(
-                id = "-1",
-                name = "NO PENDING SPEAKER",
-                colorArgb = 0xFF_7E_3A_1AL,
-                type = SpeakerType.CUSTOM,
-            )
-            val entry = DialogueEntry(
-                id = UUID.randomUUID().toString(),
+    fun addEntry(speakerId: String, text: String, check: SkillCheck?, damage: DamageEffect?) {
+        val speaker = state.value.speaker(speakerId) ?: return
+        val allowed = speaker.type.allowsChecks
+        session.addEntry(
+            DialogueEntry(
                 speaker = speaker,
-                text = event.text.trim(),
-                check = event.check?.takeIf { speaker.type.allowsChecks },
-                damage = event.damage?.takeIf { speaker.type.allowsChecks },
-            )
-            sceneViewModel.dispatch(SceneAction.AddEntry(entry))
-            _state.update { it.copy(pendingSpeaker = null, isEntryEditOpen = false) }
-        }
-
-        is EditorEvent.RequestEditEntry -> _state.update {
-            it.copy(editingEntry = event.entry, isEntryEditOpen = true)
-        }
-
-        is EditorEvent.ConfirmEditEntry -> {
-            sceneViewModel.dispatch(SceneAction.UpdateEntry(event.updated))
-            _state.update { it.copy(editingEntry = null, isEntryEditOpen = false) }
-        }
-
-        is EditorEvent.DeleteEntry ->
-            sceneViewModel.dispatch(SceneAction.DeleteEntry(event.entryId))
-
-        is EditorEvent.ReorderEntries ->
-            sceneViewModel.dispatch(SceneAction.ReorderEntries(event.entries))
-
-        EditorEvent.DismissEntryEdit -> _state.update {
-            it.copy(editingEntry = null, pendingSpeaker = null, isEntryEditOpen = false)
-        }
-
-        EditorEvent.RequestCustomSpeaker -> _state.update {
-            it.copy(editingSpeaker = null, isCustomSpeakerDialogOpen = true)
-        }
-
-        is EditorEvent.ConfirmCustomSpeaker -> viewModelScope.launch {
-            speakerRepo.save(event.speaker)
-            _state.update {
-                it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
-            }
-        }
-
-        is EditorEvent.RequestEditSpeaker -> _state.update {
-            it.copy(editingSpeaker = event.speaker, isCustomSpeakerDialogOpen = true)
-        }
-
-        is EditorEvent.ConfirmEditSpeaker -> viewModelScope.launch {
-            speakerRepo.save(event.speaker)
-            _state.update {
-                it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
-            }
-        }
-
-        EditorEvent.DismissCustomSpeaker -> _state.update {
-            it.copy(isCustomSpeakerDialogOpen = false, editingSpeaker = null)
-        }
-
-        is EditorEvent.SaveTag -> viewModelScope.launch { speakerRepo.saveTag(event.tag) }
-
-        is EditorEvent.DeleteTag -> viewModelScope.launch { speakerRepo.deleteTag(event.tag.id) }
-
-        is EditorEvent.DeleteSpeaker -> viewModelScope.launch { speakerRepo.delete(event.id) }
-
-        EditorEvent.OpenImportDialog -> _state.update {
-            it.copy(isImportDialogOpen = true, importText = "", importPreview = null)
-        }
-
-        EditorEvent.CloseImportDialog -> _state.update {
-            it.copy(isImportDialogOpen = false)
-        }
-
-        is EditorEvent.ImportTextChanged -> _state.update {
-            it.copy(importText = event.text, importPreview = previewFor(event.text))
-        }
-
-        EditorEvent.ConfirmImport -> handleImport()
-
-        EditorEvent.OpenSpeakerPicker -> _state.update { it.copy(isSpeakerPickerOpen = true) }
-
-        EditorEvent.CloseSpeakerPicker -> _state.update {
-            it.copy(isSpeakerPickerOpen = false, isChangingSpeaker = false)
-        }
-
-        EditorEvent.NavigateToPlayback -> viewModelScope.launch {
-            _effects.send(EditorEffect.NavigateToPlayback)
-        }
-
-        is EditorEvent.RenameScene ->
-            sceneViewModel.dispatch(SceneAction.RenameScene(event.name))
-
-        EditorEvent.ClearScene ->
-            sceneViewModel.dispatch(SceneAction.ClearScene)
-
-        EditorEvent.AddEntryWithRandomSpeaker -> _state.update {
-            val speaker = it.allSpeakers.randomOrNull()
-            if (speaker == null) {
-                it.copy(isSpeakerPickerOpen = true)
-            } else {
-                it.copy(
-                    pendingSpeaker = speaker,
-                    isSpeakerPickerOpen = false,
-                    isEntryEditOpen = true,
-                )
-            }
-        }
-
-        EditorEvent.SaveScene -> {
-            sceneViewModel.saveNow()
-            notify("Scene saved")
-        }
-
-        EditorEvent.OpenSceneManager -> viewModelScope.launch {
-            _state.update { it.copy(isSceneManagerOpen = true, scenes = sceneViewModel.scenes()) }
-        }
-
-        EditorEvent.CloseSceneManager -> _state.update { it.copy(isSceneManagerOpen = false) }
-
-        EditorEvent.NewScene -> {
-            sceneViewModel.newScene()
-            _state.update { it.copy(isSceneManagerOpen = false) }
-        }
-
-        is EditorEvent.OpenScene -> {
-            sceneViewModel.openScene(event.id)
-            _state.update { it.copy(isSceneManagerOpen = false) }
-        }
-
-        is EditorEvent.DeleteScene -> viewModelScope.launch {
-            sceneViewModel.deleteScene(event.id).join()
-            _state.update { it.copy(scenes = sceneViewModel.scenes()) }
-        }
-
-        is EditorEvent.ExportScene -> viewModelScope.launch {
-            val out = event.output ?: return@launch
-            val ok = runCatching { out.use { sceneViewModel.exportScene(it) } }.isSuccess
-            if (ok) sounds.play(SoundCue.UiExport)
-            notify(if (ok) "Scene exported" else "Export failed")
-        }
-
-        is EditorEvent.ImportScene -> viewModelScope.launch {
-            val input = event.input ?: return@launch
-            val ok = runCatching { input.use { sceneViewModel.importScene(it) } }.isSuccess
-            if (ok) sounds.play(SoundCue.UiDone)
-            notify(if (ok) "Scene imported" else "Cannot read this file")
-            if (ok) _state.update { it.copy(isSceneManagerOpen = false) }
-        }
-    }
-
-    private fun previewFor(text: String): ImportPreview? {
-        if (text.isBlank()) return null
-        val result = parseUseCase.execute(text, customSpeakers())
-        return ImportPreview(
-            lineCount = result.entries.size,
-            newSpeakerCount = result.newSpeakers.size,
+                text = text.trim(),
+                check = check.takeIf { allowed },
+                damage = damage.takeIf { allowed },
+            ),
         )
     }
 
-    private fun handleImport() {
-        val text = _state.value.importText
-        if (text.isBlank()) {
-            notify("Paste some lines first")
-            return
-        }
+    fun updateEntry(entry: DialogueEntry) = session.updateEntry(entry)
+    fun deleteEntry(id: String) = session.deleteEntry(id)
+    fun reorderEntries(entries: List<DialogueEntry>) = session.reorder(entries)
+    fun renameScene(name: String) = session.rename(name)
+    fun clearScene() = session.clear()
 
-        val result = parseUseCase.execute(text, customSpeakers())
-        if (result.entries.isEmpty()) {
-            notify("No lines found. Try «NAME: text»")
-            return
-        }
+    fun saveSpeaker(speaker: Speaker) = viewModelScope.launch { speakerRepo.save(speaker) }
+    fun deleteSpeaker(id: String) = viewModelScope.launch { speakerRepo.delete(id) }
+    fun saveTag(tag: SpeakerType) = viewModelScope.launch { speakerRepo.saveTag(tag) }
+    fun deleteTag(tag: SpeakerType) = viewModelScope.launch { speakerRepo.deleteTag(tag.id) }
 
+    fun previewImport(text: String): ImportPreview? {
+        if (text.isBlank()) return null
+        val result = parser.execute(text, customSpeakers())
+        return ImportPreview(result.entries.size, result.newSpeakers.size)
+    }
+
+    fun importLines(text: String): Boolean {
+        val result = parser.execute(text, customSpeakers())
+
+        return when {
+            text.isBlank() -> notify("Paste some lines first")
+
+            result.entries.isEmpty() -> notify("No lines found. Try «NAME: text»")
+
+            else -> {
+                viewModelScope.launch {
+                    result.newSpeakers.forEach { speakerRepo.save(it) }
+                    session.addEntries(result.entries)
+                }
+                true
+            }
+        }
+    }
+
+    fun refreshScenes() {
+        viewModelScope.launch { sceneList.value = session.listScenes() }
+    }
+
+    fun newScene() = viewModelScope.launch { session.newScene() }
+    fun openScene(id: String) = viewModelScope.launch { session.openScene(id) }
+
+    fun deleteScene(id: String) {
         viewModelScope.launch {
-            result.newSpeakers.forEach { speakerRepo.save(it) }
-            sceneViewModel.dispatch(SceneAction.BulkAddEntries(result.entries))
+            session.deleteScene(id)
+            sceneList.value = session.listScenes()
         }
-        _state.update { it.copy(isImportDialogOpen = false, importText = "", importPreview = null) }
     }
 
-    private fun notify(message: String) {
-        viewModelScope.launch { _effects.send(EditorEffect.ShowSnackbar(message)) }
+    fun saveScene() {
+        viewModelScope.launch {
+            session.save()
+            notify("Scene saved")
+        }
     }
 
-    private fun customSpeakers(): List<Speaker> = speakers.value.filterNot { it.isBundled }
+    fun exportScene(output: OutputStream?) {
+        output ?: return
+        viewModelScope.launch {
+            val ok = attempt { output.use { session.exportScene(it) } }
+            if (ok) sounds.play(SoundCue.UiExport)
+            notify(if (ok) "Scene exported" else "Export failed")
+        }
+    }
+
+    fun importScene(input: InputStream?) {
+        input ?: return
+        viewModelScope.launch {
+            val ok = attempt { input.use { session.importScene(it) } }
+            if (ok) sounds.play(SoundCue.UiDone)
+            notify(if (ok) "Scene imported" else "Cannot read this file")
+        }
+    }
+
+    private fun notify(message: String): Boolean {
+        _messages.trySend(message)
+        return false
+    }
+
+    private fun customSpeakers() = state.value.allSpeakers.filterNot { it.isBundled }
+
+    private suspend inline fun attempt(block: () -> Unit): Boolean = try {
+        block()
+        true
+    } catch (e: CancellationException) {
+        throw e
+    } catch (_: Exception) {
+        false
+    }
 
     companion object {
-        fun factory(sceneViewModel: SceneViewModel) = viewModelFactory {
+        fun factory(c: AppContainer) = viewModelFactory {
             initializer {
-                val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!
                 EditorViewModel(
-                    application = app,
-                    sceneViewModel = sceneViewModel,
-                    parseUseCase = ParseBulkImportUseCase(),
-                    sounds = (app as FeldApp).container.soundPlayer,
+                    c.sceneSession,
+                    c.speakerRepository,
+                    c.settingsRepository,
+                    ParseBulkImportUseCase(),
+                    c.soundPlayer,
                 )
             }
         }
     }
+}
+
+private fun editorUiState(
+    scene: DialogueScene,
+    speakers: List<Speaker>,
+    tags: List<SpeakerType>,
+    prefs: AppSettings,
+    scenes: List<SceneInfo>,
+): EditorUiState {
+    val hideSamples = when (prefs.samplesMode) {
+        SamplesMode.ALWAYS_SHOW -> false
+        SamplesMode.ALWAYS_HIDE -> true
+        SamplesMode.AUTO -> prefs.packImported
+    }
+    return EditorUiState(
+        sceneId = scene.id,
+        sceneName = scene.title,
+        entries = scene.entries,
+        allSpeakers = speakers,
+        pickerSpeakers = if (hideSamples) speakers.filterNot { it.isSample } else speakers,
+        tags = tags,
+        scenes = scenes,
+    )
 }
