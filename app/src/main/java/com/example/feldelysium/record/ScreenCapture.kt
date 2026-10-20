@@ -253,7 +253,7 @@ internal class ScreenCapture(
         const val FPS = 30
         const val SAMPLE_RATE = 44_100
         const val CHANNELS = 2
-        const val BYTES_PER_FRAME = 4 // 16 бит × 2 канала
+        const val BYTES_PER_FRAME = 4
         const val CHUNK_BYTES = 4096
         const val TIMEOUT_US = 10_000L
         const val JOIN_MS = 2_000L

@@ -1,7 +1,6 @@
 package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -54,7 +55,6 @@ fun DialogueHistoryList(
         val scope = rememberCoroutineScope()
         val currentOnScrollActive by rememberUpdatedState(onScrollActive)
         val anchor = remember { ColumnScrollAnchor(scope) { currentOnScrollActive(it) } }
-        val textShiftPx = anchor.textShift.value
 
         LaunchedEffect(isCheckRolling) {
             if (isCheckRolling) anchor.roll(viewportPx * CheckMotion.TAPE_ROLL_VIEWPORTS)
@@ -66,10 +66,9 @@ fun DialogueHistoryList(
         val fontSize = with(density) { (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp() }
         val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
         val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
-        val tapeOffsetPx = anchor.tapeShift.value + anchor.rollShift.value
 
         TapeBackground(
-            offsetPx = tapeOffsetPx,
+            offsetPx = { anchor.tapeShift.value + anchor.rollShift.value },
             modifier = Modifier.fillMaxSize(),
         )
 
@@ -110,18 +109,26 @@ fun DialogueHistoryList(
                     maxHeight = Constraints.Infinity,
                 ),
             )
-            val y = anchor.placementY(
+            val baseY = anchor.placementY(
                 contentHeightPx = placeable.height.toFloat(),
                 restBottomPx = restBottomPx,
                 viewportHeightPx = viewportPx,
-                textShiftPx = textShiftPx,
+                textShiftPx = 0f,
             )
+
             anchor.noteScroll(
-                y = y,
+                y = baseY,
                 contentHeightPx = placeable.height.toFloat(),
                 restBottomPx = restBottomPx,
             )
+
             layout(constraints.maxWidth, constraints.maxHeight) {
+                val y = anchor.placementY(
+                    contentHeightPx = placeable.height.toFloat(),
+                    restBottomPx = restBottomPx,
+                    viewportHeightPx = viewportPx,
+                    textShiftPx = anchor.textShift.value,
+                )
                 placeable.place(0, y.roundToInt())
             }
         }
@@ -138,7 +145,7 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
-    var scrollFraction: Float = 0f
+    var scrollFraction by mutableFloatStateOf(0f)
         private set
 
     private var bonus = 0f
@@ -157,7 +164,7 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
         val target = rollTarget
         scope.launch {
             delay(CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds)
-            rollShift.animateTo(target, tween(CheckMotion.TAPE_ROLL_MS, easing = EaseInOut))
+            rollShift.animateTo(target, tween(CheckMotion.TAPE_ROLL_MS, easing = CheckMotion.TAPE_ROLL_EASING))
         }
     }
 
