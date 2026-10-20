@@ -1,7 +1,5 @@
 package com.example.feldelysium.presentation.editor
 
-import android.annotation.SuppressLint
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -29,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,11 +38,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.BuildConfig
+import com.example.feldelysium.FeldApp
 import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldFab
 import com.example.feldelysium.designsystem.components.card.FeldEntryCard
@@ -63,6 +61,7 @@ import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggScreen
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
@@ -72,61 +71,42 @@ import com.example.feldelysium.presentation.editor.components.EntryEditSheet
 import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.editor.components.SceneManagerDialog
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
-import com.example.feldelysium.presentation.shared.SceneViewModel
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-@SuppressLint("ContextCastToActivity")
 @Composable
 fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
-    val activity = LocalContext.current as ComponentActivity
-    val sceneVm: SceneViewModel = viewModel(activity)
-    val sceneState by sceneVm.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val container = (context.applicationContext as FeldApp).container
+    val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(container))
+    val state by vm.state.collectAsStateWithLifecycle()
 
-    if (sceneState.isLoaded) {
-        EditorContent(
-            sceneVm = sceneVm,
-            onNavigateToPlayback = onNavigateToPlayback,
-            onNavigateToSettings = onNavigateToSettings,
-            modifier = modifier,
-        )
-    } else {
-        Box(modifier.fillMaxSize().background(colorScheme.background))
-    }
-}
-
-@SuppressLint("ContextCastToActivity")
-@Composable
-private fun EditorContent(
-    sceneVm: SceneViewModel,
-    onNavigateToPlayback: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val activity = LocalContext.current as ComponentActivity
     val haptics = rememberFeldHaptics()
     val sounds = rememberFeldSounds()
     val toast = rememberFeldToastState()
     val eggs = LocalEasterEggs.current
 
-    val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(sceneVm))
-    val state by vm.state.collectAsStateWithLifecycle()
+    var dialog by rememberSaveable(stateSaver = EditorDialogSaver) {
+        mutableStateOf<EditorDialog>(EditorDialog.None)
+    }
+    var menuEntryId by remember { mutableStateOf<String?>(null) }
+    var showManageTags by remember { mutableStateOf(false) }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
     ) { uri ->
-        uri?.let { vm.dispatch(EditorEvent.ExportScene(activity.contentResolver.openOutputStream(it))) }
+        uri?.let { vm.exportScene(context.contentResolver.openOutputStream(it)) }
     }
     val importLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
     ) { uri ->
-        uri?.let { vm.dispatch(EditorEvent.ImportScene(activity.contentResolver.openInputStream(it))) }
+        uri?.let {
+            vm.importScene(context.contentResolver.openInputStream(it))
+            dialog = EditorDialog.None
+        }
     }
 
-    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { sceneVm.saveNow() }
-
-    var menuEntryId by remember { mutableStateOf<String?>(null) }
-    var showManageTags by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { vm.messages.collect { toast.show(it) } }
 
     val decalCtx = remember(state.sceneName, state.entries.size) {
         DecalContext(
@@ -138,29 +118,16 @@ private fun EditorContent(
         )
     }
 
-    LaunchedEffect(Unit) {
-        vm.effects.collect { effect ->
-            when (effect) {
-                EditorEffect.NavigateToPlayback -> onNavigateToPlayback()
-
-                is EditorEffect.ShowSnackbar ->
-                    toast.show(effect.message)
-
-                EditorEffect.LaunchGalleryPicker -> {
-                    /* TODO */
-                }
-            }
-        }
-    }
-
     val lazyListState = rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        val reordered = state.entries.toMutableList().apply {
-            add(to.index, removeAt(from.index))
-        }
         haptics.handleMove()
+        vm.reorderEntries(state.entries.toMutableList().apply { add(to.index, removeAt(from.index)) })
+    }
 
-        vm.dispatch(EditorEvent.ReorderEntries(reordered))
+    fun deleteEntry(entry: DialogueEntry) {
+        haptics.thud()
+        eggs?.report(EggEvent.EntryDelete, entry.speaker.name)
+        vm.deleteEntry(entry.id)
     }
 
     CompositionLocalProvider(LocalFeldDecalContext provides decalCtx) {
@@ -177,62 +144,49 @@ private fun EditorContent(
                     metaStart = "${state.entries.size} LINES",
                     metaEnd = "DIALOGUE SCENE",
                     navIcon = null,
-                    onTitleChange = {
-                        vm.dispatch(EditorEvent.RenameScene(it.take(60)))
-                    },
+                    onTitleChange = { vm.renameScene(it.take(60)) },
                     onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
-                    onLabelClick = { vm.dispatch(EditorEvent.OpenSceneManager) },
+                    onLabelClick = { dialog = EditorDialog.SceneManager },
                     onTitleCommit = {
                         sounds.save()
-                        vm.dispatch(EditorEvent.SaveScene)
+                        vm.saveScene()
                     },
                 )
 
                 FeldToolbar(
                     items = listOf(
-                        FeldToolbarItem(FeldIconId.Import, "Paste") {
-                            vm.dispatch(EditorEvent.OpenImportDialog)
-                        },
+                        FeldToolbarItem(FeldIconId.Import, "Paste") { dialog = EditorDialog.ImportLines },
                         FeldToolbarItem(
                             icon = FeldIconId.Play,
                             label = "Playback",
                             enabled = state.entries.isNotEmpty(),
                             onClick = {
                                 haptics.confirm()
-                                vm.dispatch(EditorEvent.NavigateToPlayback)
+                                onNavigateToPlayback()
                             },
                         ),
-                        FeldToolbarItem(
-                            FeldIconId.Settings,
-                            "Settings",
-                            onClick = onNavigateToSettings,
-                        ),
+                        FeldToolbarItem(FeldIconId.Settings, "Settings", onClick = onNavigateToSettings),
                     ),
                 )
 
                 Box(Modifier.weight(1f)) {
                     if (state.entries.isEmpty()) {
                         EmptyState(
-                            onImport = { vm.dispatch(EditorEvent.OpenImportDialog) },
+                            onImport = { dialog = EditorDialog.ImportLines },
                             modifier = Modifier.fillMaxSize(),
                         )
                     } else {
                         LazyColumn(
                             state = lazyListState,
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 12.dp,
-                                bottom = 96.dp,
-                            ),
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 96.dp),
                             verticalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
                             itemsIndexed(state.entries, key = { _, e -> e.id }) { index, entry ->
                                 ReorderableItem(reorderState, key = entry.id) { isDragging ->
-                                    LaunchedEffect(isDragging) {
-                                        if (isDragging) haptics.thud()
-                                    }
+                                    LaunchedEffect(isDragging) { if (isDragging) haptics.thud() }
+
+                                    val edit = { dialog = EditorDialog.EditEntry(entry.id, entry.speaker.id) }
 
                                     Box {
                                         FeldEntryCard(
@@ -244,46 +198,21 @@ private fun EditorContent(
                                             seed = entry.id.hashCode(),
                                             isDragging = isDragging,
                                             dragModifier = Modifier.longPressDraggableHandle(),
-                                            onClick = {
-                                                vm.dispatch(
-                                                    EditorEvent.RequestEditEntry(entry),
-                                                )
-                                            },
+                                            onClick = edit,
                                             onMore = {
                                                 haptics.tick()
                                                 menuEntryId = entry.id
                                             },
                                             onSwipeArmed = { haptics.tick() },
-                                            onSwipeDelete = {
-                                                haptics.thud()
-                                                eggs?.report(EggEvent.EntryDelete, entry.speaker.name)
-                                                vm.dispatch(EditorEvent.DeleteEntry(entry.id))
-                                            },
+                                            onSwipeDelete = { deleteEntry(entry) },
                                         )
                                         FeldMenu(
                                             expanded = menuEntryId == entry.id,
                                             onDismiss = { menuEntryId = null },
                                             seed = entry.id.hashCode(),
                                             items = listOf(
-                                                FeldMenuItem("Edit") {
-                                                    vm.dispatch(
-                                                        EditorEvent.RequestEditEntry(
-                                                            entry,
-                                                        ),
-                                                    )
-                                                },
-                                                FeldMenuItem("Delete", destructive = true) {
-                                                    haptics.thud()
-                                                    eggs?.report(
-                                                        EggEvent.EntryDelete,
-                                                        entry.speaker.name,
-                                                    )
-                                                    vm.dispatch(
-                                                        EditorEvent.DeleteEntry(
-                                                            entry.id,
-                                                        ),
-                                                    )
-                                                },
+                                                FeldMenuItem("Edit", onClick = edit),
+                                                FeldMenuItem("Delete", destructive = true) { deleteEntry(entry) },
                                             ),
                                         )
                                     }
@@ -295,12 +224,12 @@ private fun EditorContent(
                     FeldFab(
                         onClick = {
                             haptics.tick()
-                            vm.dispatch(EditorEvent.RequestAddEntry)
+                            dialog = EditorDialog.NewEntry()
                         },
                         onLongClick = {
                             haptics.thud()
                             eggs?.report(EggEvent.FabLongPress)
-                            vm.dispatch(EditorEvent.AddEntryWithRandomSpeaker)
+                            dialog = EditorDialog.NewEntry(state.pickerSpeakers.randomOrNull()?.id)
                         },
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
@@ -313,58 +242,117 @@ private fun EditorContent(
         }
     }
 
-    if (state.isSpeakerPickerOpen) {
-        SpeakerPickerDialog(
-            speakers = state.pickerSpeakers,
-            tags = state.tags,
-            onSpeakerSelected = {
-                vm.dispatch(EditorEvent.SelectSpeakerForNewEntry(it))
-            },
-            onCreateCustom = {
-                vm.dispatch(EditorEvent.RequestCustomSpeaker)
-            },
-            onEditCustom = {
-                vm.dispatch(EditorEvent.RequestEditSpeaker(it))
-            },
-            onDismiss = {
-                vm.dispatch(EditorEvent.CloseSpeakerPicker)
-            },
-        )
-    }
+    val close = { dialog = EditorDialog.None }
 
-    if (state.isImportDialogOpen) {
-        BulkImportDialog(
-            text = state.importText,
-            preview = state.importPreview,
-            onText = { vm.dispatch(EditorEvent.ImportTextChanged(it)) },
-            onConfirm = {
-                haptics.confirm()
-                vm.dispatch(EditorEvent.ConfirmImport)
-            },
-            onDismiss = { vm.dispatch(EditorEvent.CloseImportDialog) },
-        )
-    }
+    when (val d = dialog) {
+        EditorDialog.None -> Unit
 
-    if (state.isCustomSpeakerDialogOpen) {
-        key(state.editingSpeaker?.id ?: "create") {
-            CustomSpeakerDialog(
-                speaker = state.editingSpeaker,
-                existingTypes = state.tags,
-                onManageTags = { showManageTags = true },
-                onDelete = state.editingSpeaker?.takeIf { !it.isBundled }?.let { s ->
-                    {
-                        vm.dispatch(EditorEvent.DeleteSpeaker(s.id))
-                        vm.dispatch(EditorEvent.DismissCustomSpeaker)
-                    }
+        is EditorDialog.NewEntry -> {
+            val speaker = d.speakerId?.let(state::speaker)
+            if (speaker == null) {
+                SpeakerPickerDialog(
+                    speakers = state.pickerSpeakers,
+                    tags = state.tags,
+                    onSpeakerSelected = { dialog = EditorDialog.NewEntry(it.id) },
+                    onCreateCustom = { dialog = EditorDialog.EditSpeaker(null, back = d) },
+                    onEditCustom = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
+                    onDismiss = close,
+                )
+            } else {
+                EntryEditSheet(
+                    entry = null,
+                    speaker = speaker,
+                    onSpeakerClick = { dialog = EditorDialog.NewEntry(null) },
+                    onEditSpeaker = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
+                    onConfirm = { text, check, damage ->
+                        eggs?.report(EggEvent.EntryAdd, speaker.name)
+                        vm.addEntry(speaker.id, text, check, damage)
+                        close()
+                    },
+                    onDismiss = close,
+                )
+            }
+        }
+
+        is EditorDialog.EditEntry -> {
+            val entry = state.entry(d.entryId)
+            val speaker = state.speaker(d.speakerId)
+            when {
+                entry == null -> close()
+
+                speaker == null || d.pickingSpeaker -> SpeakerPickerDialog(
+                    speakers = state.pickerSpeakers,
+                    tags = state.tags,
+                    onSpeakerSelected = { dialog = d.copy(speakerId = it.id, pickingSpeaker = false) },
+                    onCreateCustom = { dialog = EditorDialog.EditSpeaker(null, back = d) },
+                    onEditCustom = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
+                    onDismiss = { if (speaker == null) close() else dialog = d.copy(pickingSpeaker = false) },
+                )
+
+                else -> EntryEditSheet(
+                    entry = entry,
+                    speaker = speaker,
+                    onSpeakerClick = { dialog = d.copy(pickingSpeaker = true) },
+                    onEditSpeaker = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
+                    onConfirm = { text, check, damage ->
+                        eggs?.report(EggEvent.EntryEdit, entry.speaker.name)
+                        vm.updateEntry(entry.copy(speaker = speaker, text = text, check = check, damage = damage))
+                        close()
+                    },
+                    onDismiss = close,
+                )
+            }
+        }
+
+        is EditorDialog.EditSpeaker -> {
+            val speaker = d.speakerId?.let(state::speaker)
+            key(d.speakerId ?: "create") {
+                CustomSpeakerDialog(
+                    speaker = speaker,
+                    existingTypes = state.tags,
+                    onManageTags = { showManageTags = true },
+                    onDelete = speaker?.takeIf { !it.isBundled }?.let { s ->
+                        {
+                            vm.deleteSpeaker(s.id)
+                            dialog = d.back
+                        }
+                    },
+                    onConfirm = {
+                        vm.saveSpeaker(it)
+                        dialog = d.back
+                    },
+                    onDismiss = { dialog = d.back },
+                )
+            }
+        }
+
+        EditorDialog.ImportLines -> {
+            var text by rememberSaveable { mutableStateOf("") }
+            val preview = remember(text, state.allSpeakers) { vm.previewImport(text) }
+            BulkImportDialog(
+                text = text,
+                preview = preview,
+                onText = { text = it },
+                onConfirm = {
+                    haptics.confirm()
+                    if (vm.importLines(text)) close()
                 },
-                onConfirm = { speaker ->
-                    if (state.editingSpeaker != null) {
-                        vm.dispatch(EditorEvent.ConfirmEditSpeaker(speaker))
-                    } else {
-                        vm.dispatch(EditorEvent.ConfirmCustomSpeaker(speaker))
-                    }
-                },
-                onDismiss = { vm.dispatch(EditorEvent.DismissCustomSpeaker) },
+                onDismiss = close,
+            )
+        }
+
+        EditorDialog.SceneManager -> {
+            LaunchedEffect(Unit) { vm.refreshScenes() }
+            SceneManagerDialog(
+                scenes = state.scenes,
+                currentId = state.sceneId,
+                onNew = { vm.newScene(); close() },
+                onOpen = { vm.openScene(it); close() },
+                onDelete = vm::deleteScene,
+                onExport = { exportLauncher.launch("${state.sceneName.ifBlank { "scene" }}.json") },
+                onImport = { importLauncher.launch(arrayOf("*/*")) },
+                onClear = vm::clearScene,
+                onDismiss = close,
             )
         }
     }
@@ -373,54 +361,18 @@ private fun EditorContent(
         ManageTagsDialog(
             tags = state.tags,
             speakers = state.allSpeakers,
-            onSave = { vm.dispatch(EditorEvent.SaveTag(it)) },
-            onDelete = { vm.dispatch(EditorEvent.DeleteTag(it)) },
+            onSave = vm::saveTag,
+            onDelete = vm::deleteTag,
             onDismiss = { showManageTags = false },
-        )
-    }
-
-    if (state.isSceneManagerOpen) {
-        SceneManagerDialog(
-            scenes = state.scenes,
-            currentId = state.sceneId,
-            onNew = { vm.dispatch(EditorEvent.NewScene) },
-            onOpen = { vm.dispatch(EditorEvent.OpenScene(it)) },
-            onDelete = { vm.dispatch(EditorEvent.DeleteScene(it)) },
-            onExport = { exportLauncher.launch("${state.sceneName.ifBlank { "scene" }}.json") },
-            onImport = { importLauncher.launch(arrayOf("*/*")) },
-            onClear = { vm.dispatch(EditorEvent.ClearScene) },
-            onDismiss = { vm.dispatch(EditorEvent.CloseSceneManager) },
-        )
-    }
-
-    if (state.isEntryEditOpen) {
-        EntryEditSheet(
-            entry = state.editingEntry,
-            speaker = state.editingEntry?.speaker ?: state.pendingSpeaker,
-            onSpeakerClick = { vm.dispatch(EditorEvent.RequestChangeSpeaker) },
-            onEditSpeaker = { vm.dispatch(EditorEvent.RequestEditSpeaker(it)) },
-            onConfirm = { text, check, damage ->
-                val editing = state.editingEntry
-
-                if (editing != null) {
-                    eggs?.report(EggEvent.EntryEdit, editing.speaker.name)
-                    vm.dispatch(
-                        EditorEvent.ConfirmEditEntry(
-                            editing.copy(text = text, check = check, damage = damage),
-                        ),
-                    )
-                } else {
-                    eggs?.report(EggEvent.EntryAdd, state.pendingSpeaker?.name)
-                    vm.dispatch(EditorEvent.ConfirmNewEntry(text, check, damage))
-                }
-            },
-            onDismiss = { vm.dispatch(EditorEvent.DismissEntryEdit) },
         )
     }
 }
 
 @Composable
-private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
+private fun EmptyState(
+    onImport: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier = modifier.feldClickable(onClick = onImport),
         contentAlignment = Alignment.Center,
@@ -449,8 +401,7 @@ private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
 
             Text(
                 text = "Paste a script or\nadd a line.",
-                style = MaterialTheme
-                    .typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurface.copy(alpha = 0.62f),
                 textAlign = TextAlign.Center,
                 lineHeight = 14.sp,
