@@ -31,9 +31,5 @@ sealed interface Prompt {
     data object None : Prompt
     data object Pending : Prompt
     data class Continue(val nextSpeakerColor: Long) : Prompt
-    data class Choices(
-        val options: List<String>,
-        val chosenIndex: Int,
-        val selected: Boolean = false,
-    ) : Prompt
+    data class Choices(val options: List<String>, val chosenIndex: Int, val selected: Boolean = false) : Prompt
 }

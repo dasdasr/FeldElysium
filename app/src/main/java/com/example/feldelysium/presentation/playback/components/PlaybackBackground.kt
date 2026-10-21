@@ -6,13 +6,13 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.view.Surface
 import android.view.TextureView
-import android.widget.VideoView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -25,7 +25,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
-import androidx.compose.runtime.remember
 
 @Composable
 fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
@@ -39,9 +38,11 @@ fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
     val showMedia = settings.backgroundKind == BackgroundKind.MEDIA && mediaOk
     val color = Color(settings.backgroundColorArgb.toInt())
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(color)) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color),
+    ) {
         if (!showMedia) return@Box
         if (settings.backgroundMediaIsVideo) {
             var failed by remember(settings.backgroundMediaUri) { mutableStateOf(false) }
@@ -64,6 +65,7 @@ fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
     }
 }
 
+@Suppress("EmptyFunctionBlock")
 @Composable
 fun BackgroundVideo(
     uri: String,
@@ -88,7 +90,7 @@ fun BackgroundVideo(
                 AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
-                    .build()
+                    .build(),
             )
             mp.setDataSource(context, Uri.parse(uri))
             mp.isLooping = true
@@ -96,7 +98,10 @@ fun BackgroundVideo(
                 if (w > 0 && h > 0) videoSize = IntSize(w, h)
             }
             mp.setOnPreparedListener { it.start() }
-            mp.setOnErrorListener { _, _, _ -> currentOnError(); true }
+            mp.setOnErrorListener { _, _, _ ->
+                currentOnError()
+                true
+            }
             mp.prepareAsync()
         }.onFailure { currentOnError() }
     }

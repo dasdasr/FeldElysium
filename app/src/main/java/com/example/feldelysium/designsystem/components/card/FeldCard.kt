@@ -86,8 +86,12 @@ fun FeldCard(
                 alpha = e
             }
             .paperMaterial(
-                shape = shape, spec = spec, press = { press },
-                decals = decals, decalKey = decalKey, textured = textured,
+                shape = shape,
+                spec = spec,
+                press = { press },
+                decals = decals,
+                decalKey = decalKey,
+                textured = textured,
             )
             .then(
                 if (onClick != null) {

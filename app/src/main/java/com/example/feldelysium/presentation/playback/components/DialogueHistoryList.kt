@@ -34,8 +34,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
@@ -48,12 +46,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
-
-data class FooterMetrics(
-    val fontSize: TextUnit,
-    val lineHeight: TextUnit,
-    val buttonHeight: Dp,
-)
 
 @Composable
 fun DialogueHistoryList(
@@ -97,9 +89,9 @@ fun DialogueHistoryList(
             (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp()
         }
         val entryGap = maxHeight * (
-                PlaybackMotion.LINE_HEIGHT_FRACTION *
-                        PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS
-                )
+            PlaybackMotion.LINE_HEIGHT_FRACTION *
+                PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS
+            )
 
         val metrics = FooterMetrics(
             fontSize = fontSize,
@@ -119,8 +111,8 @@ fun DialogueHistoryList(
         TapeBackground(
             offsetPx = {
                 anchor.tapeShift.value +
-                        anchor.rollShift.value -
-                        anchor.userOffset
+                    anchor.rollShift.value -
+                    anchor.userOffset
             },
             modifier = Modifier.fillMaxSize(),
         )
@@ -206,12 +198,12 @@ fun DialogueHistoryList(
 
             val overflow = if (footerHeight > 0) {
                 (
-                        finalY +
-                                contentHeight +
-                                footerGapPx +
-                                footerHeight -
-                                safeBottomPx
-                        ).coerceAtLeast(0f)
+                    finalY +
+                        contentHeight +
+                        footerGapPx +
+                        footerHeight -
+                        safeBottomPx
+                    ).coerceAtLeast(0f)
             } else {
                 0f
             }
@@ -252,10 +244,7 @@ fun DialogueHistoryList(
     }
 }
 
-private class ColumnScrollAnchor(
-    private val scope: CoroutineScope,
-    private val onScrollActive: (Boolean) -> Unit,
-) {
+private class ColumnScrollAnchor(private val scope: CoroutineScope, private val onScrollActive: (Boolean) -> Unit) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
@@ -298,10 +287,7 @@ private class ColumnScrollAnchor(
         }
     }
 
-    fun updateFooterLift(
-        overflowPx: Float,
-        hasFooter: Boolean,
-    ) {
+    fun updateFooterLift(overflowPx: Float, hasFooter: Boolean) {
         val target = if (hasFooter) {
             max(liftTarget, overflowPx)
         } else {
@@ -344,12 +330,7 @@ private class ColumnScrollAnchor(
         }
     }
 
-    fun placementY(
-        contentHeightPx: Float,
-        restBottomPx: Float,
-        viewportHeightPx: Float,
-        textShiftPx: Float,
-    ): Float {
+    fun placementY(contentHeightPx: Float, restBottomPx: Float, viewportHeightPx: Float, textShiftPx: Float): Float {
         if (!hasAnchor) {
             if (contentHeightPx < 1f || viewportHeightPx < 1f) {
                 return restBottomPx
@@ -374,7 +355,7 @@ private class ColumnScrollAnchor(
             if (scrollDelta > 1f) {
                 bonus += scrollDelta
                 tapeTarget += scrollDelta *
-                        PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
+                    PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
                 startScroll()
             }
         }
@@ -390,11 +371,7 @@ private class ColumnScrollAnchor(
         }
     }
 
-    fun noteScroll(
-        y: Float,
-        contentHeightPx: Float,
-        restBottomPx: Float,
-    ) {
+    fun noteScroll(y: Float, contentHeightPx: Float, restBottomPx: Float) {
         val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
 
         scrollFraction = if (maxOffset > 1f) {
@@ -453,15 +430,12 @@ private class ColumnScrollAnchor(
 }
 
 @Composable
-private fun TapeScrollIndicator(
-    anchor: ColumnScrollAnchor,
-    modifier: Modifier = Modifier,
-) {
+private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         val lineX = size.width * (
-                PlaybackMotion.SCROLLBAR_X_FRACTION -
-                        PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
-                )
+            PlaybackMotion.SCROLLBAR_X_FRACTION -
+                PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+            )
 
         val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
         val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
@@ -477,12 +451,12 @@ private fun TapeScrollIndicator(
 
         val lineLength = lineBottom - lineTop
         val travelTop = lineTop +
-                lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_START
+            lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_START
         val travelBottom = lineTop +
-                lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_END
+            lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_END
 
         val dotY = travelTop +
-                (travelBottom - travelTop) * anchor.scrollFraction
+            (travelBottom - travelTop) * anchor.scrollFraction
 
         drawCircle(
             color = Color.White,

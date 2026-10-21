@@ -3,7 +3,6 @@ package com.example.feldelysium.designsystem.components.navigation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -56,12 +55,10 @@ import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.components.display.FeldDivider
-import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
-import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme

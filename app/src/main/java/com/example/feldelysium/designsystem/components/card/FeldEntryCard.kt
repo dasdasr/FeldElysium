@@ -13,6 +13,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -80,7 +81,6 @@ import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -150,9 +150,9 @@ fun FeldEntryCard(
     worn: Boolean = false,
     seed: Int = rememberSeed(),
     isDragging: Boolean = false,
+    selected: Boolean = false,
     dragModifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    onMore: (() -> Unit)? = null,
     onSwipeDelete: (() -> Unit)? = null,
     onSwipeArmed: () -> Unit = {},
 ) {
@@ -192,8 +192,11 @@ fun FeldEntryCard(
         cachedDiamondBrush(speakerColor, seed, density)
     }
     val barBrush: Brush = remember(speakerColor, seed, density, worn) {
-        if (worn) wornBrush(speakerColor, seed, density, wear = 0.6f, scale = 7f)
-        else SolidColor(speakerColor)
+        if (worn) {
+            wornBrush(speakerColor, seed, density, wear = 0.6f, scale = 7f)
+        } else {
+            SolidColor(speakerColor)
+        }
     }
     val flatBrush = remember(speakerColor) { SolidColor(speakerColor) }
 
@@ -216,8 +219,8 @@ fun FeldEntryCard(
             val fresh = isDragging && now - sway.velocityStamp < SWAY_VELOCITY_TTL_NANOS
             val velocity = if (fresh) sway.velocityY else 0f
             val torque = -SWAY_STIFFNESS * sway.angle -
-                    SWAY_DAMPING * angularVelocity +
-                    SWAY_GAIN * velocity * sway.dir
+                SWAY_DAMPING * angularVelocity +
+                SWAY_GAIN * velocity * sway.dir
 
             angularVelocity += torque * dt
             sway.angle = (sway.angle + angularVelocity * dt)
@@ -369,9 +372,6 @@ fun FeldEntryCard(
                             color = speakerColor,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.padding(
-                                end = if (onMore != null) 26.dp else 0.dp,
-                            ),
                         )
 
                         Text(
@@ -381,22 +381,6 @@ fun FeldEntryCard(
                             modifier = Modifier.padding(top = 3.dp),
                         )
                     }
-                }
-            }
-
-            if (onMore != null) {
-                Box(
-                    Modifier
-                        .align(Alignment.TopEnd)
-                        .size(34.dp)
-                        .feldClickable(onClick = onMore),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    FeldIcon(
-                        id = FeldIconId.MoreHoriz,
-                        seed = seed,
-                        size = 18.dp,
-                    )
                 }
             }
 
@@ -445,6 +429,13 @@ fun FeldEntryCard(
                     )
                 }
             }
+            if (selected) {
+                Box(
+                    Modifier
+                        .matchParentSize()
+                        .background(Color.Black.copy(alpha = 0.4f)),
+                )
+            }
         }
     }
 }
@@ -491,13 +482,7 @@ private class StampLook(seed: Int) {
 }
 
 @Composable
-fun FeldHandDiamond(
-    color: Color,
-    seed: Int,
-    size: Dp = 22.dp,
-    modifier: Modifier = Modifier,
-    brush: Brush? = null,
-) {
+fun FeldHandDiamond(color: Color, seed: Int, size: Dp = 22.dp, modifier: Modifier = Modifier, brush: Brush? = null) {
     val density = LocalDensity.current.density
     val b = brush ?: remember(color, seed, density) { cachedDiamondBrush(color, seed, density) }
     val j = remember(seed) {
@@ -608,7 +593,6 @@ private fun FeldEntryCardPreview() {
                 number = 1,
                 seed = 1,
                 onClick = {},
-                onMore = {},
             )
             FeldEntryCard(
                 "Empathy",
@@ -617,7 +601,6 @@ private fun FeldEntryCardPreview() {
                 number = 2,
                 seed = 2,
                 onClick = {},
-                onMore = {},
             )
             FeldEntryCard(
                 "Drama",
@@ -626,7 +609,6 @@ private fun FeldEntryCardPreview() {
                 number = 3,
                 seed = 3,
                 isDragging = true,
-                onMore = {},
             )
         }
     }

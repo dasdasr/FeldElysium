@@ -50,7 +50,6 @@ class PlaybackViewModel(
     private fun tapAnywhere(): Boolean =
         prefs.value.let { !it.showContinueButton || it.tapMode == TapMode.WHOLE_SCREEN }
 
-
     init {
         viewModelScope.launch {
             audio.preload()
@@ -61,8 +60,11 @@ class PlaybackViewModel(
     fun dispatch(event: PlaybackEvent) {
         when (event) {
             PlaybackEvent.Tap -> onTap()
+
             PlaybackEvent.Reset -> reset()
+
             PlaybackEvent.ScreenStopped -> audio.stop()
+
             PlaybackEvent.ContinueClicked -> {
                 if (_state.value.prompt is Prompt.Continue) advance()
             }
@@ -108,12 +110,18 @@ class PlaybackViewModel(
         val s = _state.value
         when {
             s.isCheckRolling -> Unit
+
             !s.isPanelOpen -> reset()
+
             s.isFinished -> close()
+
             else -> when (val p = s.prompt) {
                 Prompt.None -> advance()
+
                 Prompt.Pending -> Unit
+
                 is Prompt.Continue -> if (tapAnywhere()) advance()
+
                 is Prompt.Choices ->
                     if (tapAnywhere() && !p.selected) viewModelScope.launch { step() }
             }
@@ -138,12 +146,14 @@ class PlaybackViewModel(
         audio.panelOut()
         _state.update {
             it.copy(
-                isPanelOpen = false, isCheckRolling = false, checkOverlay = null,
-                damageOverlay = null, prompt = Prompt.None
+                isPanelOpen = false,
+                isCheckRolling = false,
+                checkOverlay = null,
+                damageOverlay = null,
+                prompt = Prompt.None,
             )
         }
     }
-
 
     private fun reset() {
         cancelTimers()

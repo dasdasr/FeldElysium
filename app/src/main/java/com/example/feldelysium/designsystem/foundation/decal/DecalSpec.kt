@@ -2,15 +2,24 @@ package com.example.feldelysium.designsystem.foundation.decal
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 
 enum class DecalKind {
-    Ruler, Perforation, Text, DataBlock, Counter, Glyph, Mark,
-    Tape, Ring, Stitch, Staple, Corner, Tally,
+    Ruler,
+    Perforation,
+    Text,
+    DataBlock,
+    Counter,
+    Glyph,
+    Mark,
+    Tape,
+    Ring,
+    Stitch,
+    Staple,
+    Corner,
+    Tally,
 }
 
 private val DefaultAlphaCap = mapOf(
@@ -41,7 +50,7 @@ data class DecalSpec(
     val gap: Dp = 8.dp,
     val edgeMarginDp: ClosedFloatingPointRange<Float> = 2f..7f,
     val allowCenter: Boolean = true,
-    val leakChance: Float = 0.25f,
+    val leakChance: Float = 0.05f,
     val leakColor: Color = FeldPalette.Orange,
 ) {
     companion object {
@@ -59,7 +68,7 @@ data class DecalSpec(
             ),
             maxDecals = 4,
             allowCenter = false,
-            leakChance = 0.15f,
+            leakChance = 0.05f,
         )
         val Dialog = DecalSpec(
             weights = mapOf(

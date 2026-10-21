@@ -54,12 +54,7 @@ private val OptionOrange = Color(0xFFD9482B)
 private val ContinueOrange = Color(0xFFE0281E)
 
 @Composable
-fun PlaybackPromptFooter(
-    prompt: Prompt,
-    metrics: FooterMetrics,
-    onContinue: () -> Unit,
-    onChoice: () -> Unit,
-) {
+fun PlaybackPromptFooter(prompt: Prompt, metrics: FooterMetrics, onContinue: () -> Unit, onChoice: () -> Unit) {
     when (prompt) {
         is Prompt.Choices -> FadeIn { ReplyOptions(prompt, metrics, onChoice) }
         is Prompt.Continue -> FadeIn { ContinueButton(prompt.nextSpeakerColor, metrics, onContinue) }
@@ -97,7 +92,7 @@ private fun ReplyOptions(p: Prompt.Choices, m: FooterMetrics, onChoice: () -> Un
                     platformStyle = PlatformTextStyle(includeFontPadding = false),
                     lineHeightStyle = LineHeightStyle(
                         LineHeightStyle.Alignment.Proportional,
-                        LineHeightStyle.Trim.None
+                        LineHeightStyle.Trim.None,
                     ),
                 ),
                 modifier = Modifier
