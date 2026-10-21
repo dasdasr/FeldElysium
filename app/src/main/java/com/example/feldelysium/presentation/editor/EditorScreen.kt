@@ -321,9 +321,9 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     speaker = speaker,
                     onSpeakerClick = { dialog = EditorDialog.NewEntry(null) },
                     onEditSpeaker = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
-                    onConfirm = { text, check, damage ->
+                    onConfirm = { text, check, damage, replies ->
                         eggs?.report(EggEvent.EntryAdd, speaker.name)
-                        vm.addEntry(speaker.id, text, check, damage)
+                        vm.addEntry(speaker.id, text, check, damage, replies)
                         close()
                     },
                     onDismiss = close,
@@ -351,9 +351,17 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     speaker = speaker,
                     onSpeakerClick = { dialog = d.copy(pickingSpeaker = true) },
                     onEditSpeaker = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
-                    onConfirm = { text, check, damage ->
+                    onConfirm = { text, check, damage, replies ->
                         eggs?.report(EggEvent.EntryEdit, entry.speaker.name)
-                        vm.updateEntry(entry.copy(speaker = speaker, text = text, check = check, damage = damage))
+                        vm.updateEntry(
+                            entry.copy(
+                                speaker = speaker,
+                                text = text,
+                                check = check,
+                                damage = damage,
+                                replies = replies,
+                            ),
+                        )
                         close()
                     },
                     onDismiss = close,

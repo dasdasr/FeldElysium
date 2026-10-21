@@ -62,6 +62,7 @@ import com.example.feldelysium.presentation.playback.components.LatestSpeakerPor
 import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.playback.components.PlaybackBottomBar
+import com.example.feldelysium.presentation.playback.components.PlaybackPromptFooter
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.record.RecordState
 import com.example.feldelysium.record.ScreenRecordCoordinator
@@ -179,6 +180,8 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
         onTap = { vm.dispatch(PlaybackEvent.Tap) },
         onBackClick = onNavigateBack,
         onScrollChanged = { vm.dispatch(PlaybackEvent.ScrollChanged(it)) },
+        onContinue = { vm.dispatch(PlaybackEvent.ContinueClicked) },
+        onChoice = { vm.dispatch(PlaybackEvent.ChoiceClicked) },
         modifier = modifier,
     )
 }
@@ -189,6 +192,8 @@ fun PlaybackScreenContent(
     onTap: () -> Unit,
     onBackClick: () -> Unit,
     onScrollChanged: (Boolean) -> Unit = {},
+    onContinue: () -> Unit = {},
+    onChoice: () -> Unit = {},
     modifier: Modifier = Modifier,
     lockAspectRatio16x9: Boolean = true,
     background: AppSettings = AppSettings(),
@@ -208,6 +213,8 @@ fun PlaybackScreenContent(
                     state = state,
                     onTap = onTap,
                     onBackClick = onBackClick,
+                    onContinue = onContinue,
+                    onChoice = onChoice,
                     background = background,
                     money = money,
                     time = time,
@@ -237,6 +244,8 @@ private fun PlaybackStage(
     onTap: () -> Unit,
     onBackClick: () -> Unit,
     onScrollChanged: (Boolean) -> Unit = {},
+    onContinue: () -> Unit = {},
+    onChoice: () -> Unit = {},
     background: AppSettings,
     money: String,
     time: String,
@@ -286,11 +295,11 @@ private fun PlaybackStage(
                 DialogueHistoryList(
                     entries = state.revealedEntries,
                     isCheckRolling = state.isCheckRolling,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(tapeWidth)
-                        .align(Alignment.CenterStart),
+                    modifier = Modifier.fillMaxHeight().width(tapeWidth).align(Alignment.CenterStart),
                     onScrollActive = onScrollChanged,
+                    footer = { metrics ->
+                        PlaybackPromptFooter(state.prompt, metrics, onContinue, onChoice)
+                    },
                 )
             }
 

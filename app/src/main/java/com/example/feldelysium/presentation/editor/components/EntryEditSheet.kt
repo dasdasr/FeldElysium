@@ -5,6 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,13 +24,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -63,8 +68,10 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
+import com.example.feldelysium.domain.model.ReplyChoices
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
+import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
 private val SheetRough = RoughStyle(
@@ -89,7 +96,7 @@ private fun EntryEditSheetPreview() {
             text = "You vs al-ghoul",
         ),
         speaker = PredefinedSpeakers.MEASUREHEAD,
-        onConfirm = { _, _, _ -> },
+        onConfirm = { _, _, _, _ -> },
         onDismiss = {},
     )
 }
@@ -99,7 +106,7 @@ private fun EntryEditSheetPreview() {
 fun EntryEditSheet(
     entry: DialogueEntry?,
     speaker: Speaker?,
-    onConfirm: (text: String, check: SkillCheck?, damage: DamageEffect?) -> Unit,
+    onConfirm: (text: String, check: SkillCheck?, damage: DamageEffect?, replies: ReplyChoices?) -> Unit,
     onDismiss: () -> Unit,
     onSpeakerClick: (() -> Unit)? = null,
     onEditSpeaker: ((Speaker) -> Unit)? = null,
@@ -110,6 +117,11 @@ fun EntryEditSheet(
 
     var damage by remember(entry?.id) { mutableStateOf(entry?.damage) }
     var lastDamage by remember(entry?.id) { mutableStateOf(entry?.damage) }
+    val isYou = speaker?.type == SpeakerType.YOU
+    var replies by remember(entry?.id) { mutableStateOf(entry?.replies) }
+
+    LaunchedEffect(isYou) { if (!isYou) replies = null }
+
     LaunchedEffect(damage) { if (damage != null) lastDamage = damage }
 
     LaunchedEffect(check) { if (check != null) lastCheck = check }
@@ -123,7 +135,10 @@ fun EntryEditSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+            confirmValueChange = { it != SheetValue.Hidden },
+        ),
         containerColor = Color.Transparent,
         dragHandle = null,
         shape = RectangleShape,
@@ -172,15 +187,32 @@ fun EntryEditSheet(
                 )
 
                 Spacer(Modifier.height(8.dp))
-                FeldLabeledBlock("Dialogue") {
-                    FeldTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        placeholder = "Dialogue text",
-                        minLines = 4,
-                        maxLines = 12,
-                        maxLength = 500,
-                    )
+                if (replies == null) {
+                    FeldLabeledBlock("Dialogue") {
+                        FeldTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            placeholder = "Dialogue text",
+                            minLines = 4,
+                            maxLines = 12,
+                            maxLength = 500,
+                        )
+                    }
+                }
+
+                if (isYou) {
+                    ToggleRow("REPLY OPTIONS", Icons.AutoMirrored.Filled.Reply, replies != null) { on ->
+                        replies = if (on) {
+                            ReplyChoices(listOf(text.take(ReplyChoices.MAX_LENGTH), ""))
+                        } else null
+                    }
+                    AnimatedVisibility(
+                        visible = replies != null,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut(),
+                    ) {
+                        replies?.let { ReplyOptionsEditor(it) { new -> replies = new } }
+                    }
                 }
 
                 if (speaker?.type?.allowsChecks == true) {
@@ -208,17 +240,22 @@ fun EntryEditSheet(
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
+            val replyValid = replies?.normalized() != null
             FeldDialogActions(
                 confirmLabel = "Confirm",
+                confirmEnabled = if (replies != null) replyValid else text.isNotBlank(),
                 onConfirm = {
-                    if (text.isNotBlank()) {
-                        val allowed = speaker?.type?.allowsChecks == true
-                        onConfirm(text.trim(), check?.takeIf { allowed }, damage?.takeIf { allowed })
+                    val allowed = speaker?.type?.allowsChecks == true
+                    val r = replies?.normalized()
+                    when {
+                        replies != null && r != null ->
+                            onConfirm(r.chosen, null, null, r)
+
+                        replies == null && text.isNotBlank() ->
+                            onConfirm(text.trim(), check?.takeIf { allowed }, damage?.takeIf { allowed }, null)
                     }
                 },
                 onCancel = onDismiss,
-                confirmEnabled = text.isNotBlank(),
                 modifier = Modifier.navigationBarsPadding(),
             )
         }
@@ -305,5 +342,65 @@ private fun ToggleRow(label: String, icon: ImageVector, checked: Boolean, onChec
         )
         Spacer(Modifier.weight(1f))
         FeldSwitch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@Composable
+private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            "Select one option for dialogue",
+            style = MaterialTheme.typography.labelSmall,
+            color = FeldPalette.Muted,
+        )
+        value.options.forEachIndexed { i, option ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = if (i == value.chosenIndex) Icons.Filled.RadioButtonChecked
+                    else Icons.Filled.RadioButtonUnchecked,
+                    contentDescription = "Spoken by YOU",
+                    tint = FeldPalette.Muted,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .feldClickable { onChange(value.copy(chosenIndex = i)) },
+                )
+                Spacer(Modifier.width(8.dp))
+                Box(Modifier.weight(1f)) {
+                    FeldTextField(
+                        value = option,
+                        onValueChange = { v ->
+                            onChange(value.copy(options = value.options.toMutableList().also {
+                                it[i] = v.take(ReplyChoices.MAX_LENGTH)
+                            }))
+                        },
+                        placeholder = "Option ${i + 1}",
+                        minLines = 1,
+                        maxLines = 2,
+                        maxLength = ReplyChoices.MAX_LENGTH,
+                    )
+                }
+                if (value.options.size > 2) {
+                    FeldIconButton(FeldIconId.Close, {
+                        val opts = value.options.toMutableList().also { it.removeAt(i) }
+                        val chosen = when {
+                            value.chosenIndex == i -> 0
+                            value.chosenIndex > i -> value.chosenIndex - 1
+                            else -> value.chosenIndex
+                        }
+                        onChange(ReplyChoices(opts, chosen))
+                    })
+                }
+            }
+        }
+        if (value.options.size < ReplyChoices.MAX_OPTIONS) {
+            Text(
+                "+ ADD OPTION",
+                style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.4.sp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                modifier = Modifier
+                    .feldClickable { onChange(value.copy(options = value.options + "")) }
+                    .padding(vertical = 8.dp),
+            )
+        }
     }
 }
