@@ -36,6 +36,7 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.AUTO_PLAY] = next.autoPlay
             prefs[Keys.AUTO_PLAY_SPEED] = next.autoPlaySpeed.name
             prefs[Keys.SHOW_CONTINUE_BUTTON] = next.showContinueButton
+            prefs[Keys.TAP_MODE] = next.tapMode.name
             next.barIcons.forEach { (slot, state) -> prefs[barKey(slot)] = state.name }
             next.inventoryIcons.forEach { (slot, icon) -> prefs[invKey(slot)] = icon.name }
         }
@@ -64,6 +65,9 @@ class SettingsRepository(private val context: Context) {
         autoPlaySpeed = prefs[Keys.AUTO_PLAY_SPEED]
             ?.let { runCatching { AutoPlaySpeed.valueOf(it) }.getOrNull() }
             ?: AutoPlaySpeed.NORMAL,
+        tapMode = prefs[Keys.TAP_MODE]
+            ?.let { runCatching { TapMode.valueOf(it) }.getOrNull() }
+            ?: TapMode.WHOLE_SCREEN,
         barIcons = BarSlot.entries.associateWith { slot ->
             prefs[barKey(slot)]
                 ?.let { runCatching { BarIconState.valueOf(it) }.getOrNull() }
@@ -95,6 +99,7 @@ class SettingsRepository(private val context: Context) {
         val AUTO_PLAY = booleanPreferencesKey("auto_play")
         val AUTO_PLAY_SPEED = stringPreferencesKey("auto_play_speed")
         val SHOW_CONTINUE_BUTTON = booleanPreferencesKey("show_continue_button")
+        val TAP_MODE = stringPreferencesKey("tap_mode")
     }
 
     private fun barKey(slot: BarSlot) = stringPreferencesKey("bar_icon_${slot.name.lowercase()}")

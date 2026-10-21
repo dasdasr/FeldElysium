@@ -1,7 +1,11 @@
 package com.example.feldelysium.presentation.playback.components
 
+import android.graphics.SurfaceTexture
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
+import android.view.Surface
+import android.view.TextureView
 import android.widget.VideoView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,6 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import androidx.compose.runtime.remember
 
 @Composable
 fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
@@ -34,7 +39,9 @@ fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
     val showMedia = settings.backgroundKind == BackgroundKind.MEDIA && mediaOk
     val color = Color(settings.backgroundColorArgb.toInt())
 
-    Box(modifier = modifier.fillMaxSize().background(color)) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(color)) {
         if (!showMedia) return@Box
         if (settings.backgroundMediaIsVideo) {
             var failed by remember(settings.backgroundMediaUri) { mutableStateOf(false) }
@@ -65,47 +72,81 @@ fun BackgroundVideo(
     modifier: Modifier = Modifier,
     onError: () -> Unit = {},
 ) {
-    var player by remember(uri) { mutableStateOf<MediaPlayer?>(null) }
+    val context = LocalContext.current
+    val mp = remember(uri) { MediaPlayer() }
     var videoSize by remember(uri) { mutableStateOf<IntSize?>(null) }
+    var surface by remember(uri) { mutableStateOf<Surface?>(null) }
+    val currentOnError by rememberUpdatedState(onError)
 
-    LaunchedEffect(sound, player) {
+    DisposableEffect(mp) {
+        onDispose { runCatching { mp.release() } }
+    }
+
+    LaunchedEffect(mp) {
+        runCatching {
+            mp.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
+                    .build()
+            )
+            mp.setDataSource(context, Uri.parse(uri))
+            mp.isLooping = true
+            mp.setOnVideoSizeChangedListener { _, w, h ->
+                if (w > 0 && h > 0) videoSize = IntSize(w, h)
+            }
+            mp.setOnPreparedListener { it.start() }
+            mp.setOnErrorListener { _, _, _ -> currentOnError(); true }
+            mp.prepareAsync()
+        }.onFailure { currentOnError() }
+    }
+
+    LaunchedEffect(mp, surface) {
+        runCatching { mp.setSurface(surface) }
+    }
+
+    LaunchedEffect(mp, sound) {
         val v = if (sound) 1f else 0f
-        runCatching { player?.setVolume(v, v) }
+        runCatching { mp.setVolume(v, v) }
     }
 
     BoxWithConstraints(modifier = modifier.clipToBounds(), contentAlignment = Alignment.Center) {
         val density = LocalDensity.current
         val cw = constraints.maxWidth.toFloat()
         val ch = constraints.maxHeight.toFloat()
+
         val videoModifier = videoSize
-            ?.takeIf { fill && it.width > 0 && it.height > 0 }
+            ?.takeIf { it.width > 0 && it.height > 0 }
             ?.let { s ->
-                val k = maxOf(cw / s.width, ch / s.height)
+                val kw = cw / s.width
+                val kh = ch / s.height
+                val k = if (fill) maxOf(kw, kh) else minOf(kw, kh)
                 with(density) {
                     Modifier.requiredSize((s.width * k).toDp(), (s.height * k).toDp())
                 }
             } ?: Modifier.fillMaxSize()
 
-        key(uri) {
-            AndroidView(
-                factory = { ctx ->
-                    VideoView(ctx).apply {
-                        setVideoURI(Uri.parse(uri))
-                        setOnErrorListener { _, _, _ ->
-                            onError()
-                            true
+        AndroidView(
+            factory = { ctx ->
+                TextureView(ctx).apply {
+                    surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                        override fun onSurfaceTextureAvailable(st: SurfaceTexture, w: Int, h: Int) {
+                            surface = Surface(st)
                         }
-                        setOnPreparedListener { mp ->
-                            mp.isLooping = true
-                            mp.setVolume(0f, 0f)
-                            videoSize = IntSize(mp.videoWidth, mp.videoHeight)
-                            player = mp
-                            start()
+
+                        override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {}
+                        override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean {
+                            runCatching { mp.setSurface(null) }
+                            surface?.release()
+                            surface = null
+                            return true
                         }
+
+                        override fun onSurfaceTextureUpdated(st: SurfaceTexture) {}
                     }
-                },
-                modifier = videoModifier,
-            )
-        }
+                }
+            },
+            modifier = videoModifier,
+        )
     }
 }

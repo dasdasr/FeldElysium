@@ -1,8 +1,13 @@
 package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -35,60 +40,108 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
-data class FooterMetrics(val fontSize: TextUnit, val lineHeight: TextUnit, val buttonHeight: Dp)
+data class FooterMetrics(
+    val fontSize: TextUnit,
+    val lineHeight: TextUnit,
+    val buttonHeight: Dp,
+)
 
 @Composable
 fun DialogueHistoryList(
     entries: List<DialogueEntry>,
     modifier: Modifier = Modifier,
+    dragToScroll: Boolean = false,
     isCheckRolling: Boolean = false,
     onScrollActive: (Boolean) -> Unit = {},
     footer: (@Composable (FooterMetrics) -> Unit)? = null,
 ) {
     BoxWithConstraints(modifier = modifier.clipToBounds()) {
-        if (!maxWidth.value.isFinite() || !maxHeight.value.isFinite()) return@BoxWithConstraints
+        if (!maxWidth.value.isFinite() || !maxHeight.value.isFinite()) {
+            return@BoxWithConstraints
+        }
 
         val density = LocalDensity.current
         val viewportPx = with(density) { maxHeight.toPx() }
 
         val scope = rememberCoroutineScope()
         val currentOnScrollActive by rememberUpdatedState(onScrollActive)
-        val anchor = remember { ColumnScrollAnchor(scope) { currentOnScrollActive(it) } }
+        val anchor = remember {
+            ColumnScrollAnchor(scope) { currentOnScrollActive(it) }
+        }
 
         LaunchedEffect(isCheckRolling) {
-            if (isCheckRolling) anchor.roll(viewportPx * CheckMotion.TAPE_ROLL_VIEWPORTS)
+            if (isCheckRolling) {
+                anchor.roll(viewportPx * CheckMotion.TAPE_ROLL_VIEWPORTS)
+            }
         }
 
         val restBottomPx = viewportPx * PlaybackMotion.REST_BOTTOM_FRACTION
+        val safeBottomPx = viewportPx * PlaybackMotion.FOOTER_SAFE_BOTTOM_FRACTION
+
         val textStart = maxWidth * PlaybackMotion.TEXT_COLUMN_START_FRACTION
         val textEndInset = maxWidth * (1f - PlaybackMotion.TEXT_COLUMN_END_FRACTION)
-        val fontSize = with(density) { (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp() }
-        val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
-        val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
+
+        val fontSize = with(density) {
+            (maxHeight * PlaybackMotion.FONT_SIZE_FRACTION).toSp()
+        }
+        val lineHeight = with(density) {
+            (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp()
+        }
+        val entryGap = maxHeight * (
+                PlaybackMotion.LINE_HEIGHT_FRACTION *
+                        PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS
+                )
 
         val metrics = FooterMetrics(
-            fontSize, lineHeight, maxHeight * PlaybackMotion.CONTINUE_HEIGHT_FRACTION,
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            buttonHeight = maxHeight * PlaybackMotion.CONTINUE_HEIGHT_FRACTION,
         )
         val footerGapPx = viewportPx * PlaybackMotion.CONTINUE_GAP_FRACTION
 
+        LaunchedEffect(dragToScroll, entries.size) {
+            anchor.settleUser()
+        }
+
+        val dragState = rememberDraggableState { delta ->
+            anchor.dragBy(delta)
+        }
+
         TapeBackground(
-            offsetPx = { anchor.tapeShift.value + anchor.rollShift.value },
+            offsetPx = {
+                anchor.tapeShift.value +
+                        anchor.rollShift.value -
+                        anchor.userOffset
+            },
             modifier = Modifier.fillMaxSize(),
         )
 
         Layout(
-            modifier = Modifier.fillMaxSize().clipToBounds(),
+            modifier = Modifier
+                .fillMaxSize()
+                .clipToBounds()
+                .draggable(
+                    state = dragState,
+                    orientation = Orientation.Vertical,
+                    enabled = dragToScroll && !isCheckRolling,
+                ),
             content = {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = textStart, end = textEndInset),
+                        .padding(
+                            start = textStart,
+                            end = textEndInset,
+                        ),
                     verticalArrangement = Arrangement.spacedBy(entryGap),
                 ) {
                     entries.forEachIndexed { index, entry ->
@@ -103,39 +156,92 @@ fun DialogueHistoryList(
                         }
                     }
                 }
+
                 if (footer != null) {
                     Box(
                         Modifier
                             .fillMaxWidth()
-                            .padding(start = textStart, end = textEndInset),
-                    ) { footer(metrics) }
+                            .padding(
+                                start = textStart,
+                                end = textEndInset,
+                            ),
+                    ) {
+                        footer(metrics)
+                    }
                 }
             },
         ) { measurables, constraints ->
             val fixed = Constraints(
-                minWidth = constraints.maxWidth, maxWidth = constraints.maxWidth,
-                minHeight = 0, maxHeight = Constraints.Infinity,
+                minWidth = constraints.maxWidth,
+                maxWidth = constraints.maxWidth,
+                minHeight = 0,
+                maxHeight = Constraints.Infinity,
             )
+
             val placeable = measurables[0].measure(fixed)
             val footerPlaceable = measurables.getOrNull(1)?.measure(fixed)
+            val footerHeight = footerPlaceable?.height ?: 0
+
+            val contentHeight = placeable.height.toFloat()
 
             val baseY = anchor.placementY(
-                contentHeightPx = placeable.height.toFloat(),
+                contentHeightPx = contentHeight,
                 restBottomPx = restBottomPx,
                 viewportHeightPx = viewportPx,
                 textShiftPx = 0f,
             )
-            anchor.noteScroll(baseY, placeable.height.toFloat(), restBottomPx)
 
-            layout(constraints.maxWidth, constraints.maxHeight) {
+            anchor.noteScroll(
+                y = baseY,
+                contentHeightPx = contentHeight,
+                restBottomPx = restBottomPx,
+            )
+
+            val finalY = anchor.placementY(
+                contentHeightPx = contentHeight,
+                restBottomPx = restBottomPx,
+                viewportHeightPx = viewportPx,
+                textShiftPx = Float.MAX_VALUE,
+            )
+
+            val overflow = if (footerHeight > 0) {
+                (
+                        finalY +
+                                contentHeight +
+                                footerGapPx +
+                                footerHeight -
+                                safeBottomPx
+                        ).coerceAtLeast(0f)
+            } else {
+                0f
+            }
+
+            anchor.updateFooterLift(
+                overflowPx = overflow,
+                hasFooter = footerHeight > 0,
+            )
+            anchor.noteDragBounds(finalY)
+
+            layout(
+                width = constraints.maxWidth,
+                height = constraints.maxHeight,
+            ) {
                 val y = anchor.placementY(
-                    contentHeightPx = placeable.height.toFloat(),
+                    contentHeightPx = contentHeight,
                     restBottomPx = restBottomPx,
                     viewportHeightPx = viewportPx,
                     textShiftPx = anchor.textShift.value,
+                ) - anchor.footerLift.value + anchor.userOffset
+
+                placeable.place(
+                    x = 0,
+                    y = y.roundToInt(),
                 )
-                placeable.place(0, y.roundToInt())
-                footerPlaceable?.place(0, (y + placeable.height + footerGapPx).roundToInt())
+
+                footerPlaceable?.place(
+                    x = 0,
+                    y = (y + placeable.height + footerGapPx).roundToInt(),
+                )
             }
         }
 
@@ -146,8 +252,10 @@ fun DialogueHistoryList(
     }
 }
 
-// Shared scroll offset for the dialogue column and tape background
-private class ColumnScrollAnchor(private val scope: CoroutineScope, private val onScrollActive: (Boolean) -> Unit) {
+private class ColumnScrollAnchor(
+    private val scope: CoroutineScope,
+    private val onScrollActive: (Boolean) -> Unit,
+) {
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
@@ -160,29 +268,100 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
     private var pinnedTop = 0f
     private var hasAnchor = false
     private var generation = 0
-    private var job: kotlinx.coroutines.Job? = null
+    private var job: Job? = null
 
     val rollShift = Animatable(0f)
     private var rollTarget = 0f
 
+    val footerLift = Animatable(0f)
+    private var liftTarget = 0f
+    private var maxBack = 0f
+
+    var userOffset by mutableFloatStateOf(0f)
+        private set
+
     fun roll(distancePx: Float) {
         rollTarget += distancePx
         val target = rollTarget
+
         scope.launch {
-            delay(CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds)
-            rollShift.animateTo(target, tween(CheckMotion.TAPE_ROLL_MS, easing = CheckMotion.TAPE_ROLL_EASING))
+            delay(
+                CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds,
+            )
+            rollShift.animateTo(
+                targetValue = target,
+                animationSpec = tween(
+                    durationMillis = CheckMotion.TAPE_ROLL_MS,
+                    easing = CheckMotion.TAPE_ROLL_EASING,
+                ),
+            )
         }
     }
 
-    fun placementY(contentHeightPx: Float, restBottomPx: Float, viewportHeightPx: Float, textShiftPx: Float): Float {
+    fun updateFooterLift(
+        overflowPx: Float,
+        hasFooter: Boolean,
+    ) {
+        val target = if (hasFooter) {
+            max(liftTarget, overflowPx)
+        } else {
+            0f
+        }
+
+        if (abs(target - liftTarget) < 1f) return
+
+        liftTarget = target
+
+        scope.launch {
+            footerLift.animateTo(
+                targetValue = target,
+                animationSpec = tween(
+                    durationMillis = PlaybackMotion.FOOTER_LIFT_MS,
+                    easing = FastOutSlowInEasing,
+                ),
+            )
+        }
+    }
+
+    fun noteDragBounds(finalY: Float) {
+        maxBack = (-(finalY - liftTarget)).coerceAtLeast(0f)
+        userOffset = userOffset.coerceIn(0f, maxBack)
+    }
+
+    fun dragBy(delta: Float) {
+        userOffset = (userOffset + delta).coerceIn(0f, maxBack)
+    }
+
+    suspend fun settleUser() {
+        if (userOffset == 0f) return
+
+        animate(
+            initialValue = userOffset,
+            targetValue = 0f,
+            animationSpec = tween(150),
+        ) { value, _ ->
+            userOffset = value
+        }
+    }
+
+    fun placementY(
+        contentHeightPx: Float,
+        restBottomPx: Float,
+        viewportHeightPx: Float,
+        textShiftPx: Float,
+    ): Float {
         if (!hasAnchor) {
-            if (contentHeightPx < 1f || viewportHeightPx < 1f) return restBottomPx
+            if (contentHeightPx < 1f || viewportHeightPx < 1f) {
+                return restBottomPx
+            }
+
             hasAnchor = true
             anchoredHeight = contentHeightPx
             pinnedTop = restBottomPx - contentHeightPx
         } else if (contentHeightPx > anchoredHeight + 1f) {
             val heightIncrease = contentHeightPx - anchoredHeight
             anchoredHeight = contentHeightPx
+
             val scrollDelta = scrollDeltaForHeightIncrease(
                 policy = PlaybackMotion.scrollPolicy,
                 heightIncreasePx = heightIncrease,
@@ -191,14 +370,17 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
                 viewportHeightPx = viewportHeightPx,
                 settledScrollPx = bonus,
             )
+
             if (scrollDelta > 1f) {
                 bonus += scrollDelta
-                tapeTarget += scrollDelta * PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
+                tapeTarget += scrollDelta *
+                        PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
                 startScroll()
             }
         }
 
         val appliedShift = textShiftPx.coerceIn(0f, bonus)
+
         return when (PlaybackMotion.scrollPolicy) {
             PlaybackScrollPolicy.ReturnToRestAnchor ->
                 restBottomPx - contentHeightPx + (bonus - appliedShift)
@@ -208,8 +390,13 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
         }
     }
 
-    fun noteScroll(y: Float, contentHeightPx: Float, restBottomPx: Float) {
+    fun noteScroll(
+        y: Float,
+        contentHeightPx: Float,
+        restBottomPx: Float,
+    ) {
         val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
+
         scrollFraction = if (maxOffset > 1f) {
             ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
         } else {
@@ -220,52 +407,83 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
     private fun startScroll() {
         val gen = ++generation
         job?.cancel()
+
         job = scope.launch {
             textShift.stop()
             tapeShift.stop()
+
             delay(PlaybackMotion.SCROLL_START_DELAY_MS.milliseconds)
+
             if (gen != generation) return@launch
+
             val textTarget = bonus
             val tapeDestination = tapeTarget
+
             onScrollActive(true)
-            coroutineScope {
-                launch {
-                    textShift.animateTo(
-                        textTarget,
-                        tween(PlaybackMotion.COLUMN_SCROLL_DURATION_MS, easing = PlaybackMotion.columnScrollEasing),
-                    )
+
+            try {
+                coroutineScope {
+                    launch {
+                        textShift.animateTo(
+                            targetValue = textTarget,
+                            animationSpec = tween(
+                                durationMillis = PlaybackMotion.COLUMN_SCROLL_DURATION_MS,
+                                easing = PlaybackMotion.columnScrollEasing,
+                            ),
+                        )
+                    }
+
+                    launch {
+                        tapeShift.animateTo(
+                            targetValue = tapeDestination,
+                            animationSpec = tween(
+                                durationMillis = PlaybackMotion.TAPE_SCROLL_DURATION_MS,
+                                easing = PlaybackMotion.tapeScrollEasing,
+                            ),
+                        )
+                    }
                 }
-                launch {
-                    tapeShift.animateTo(
-                        tapeDestination,
-                        tween(PlaybackMotion.TAPE_SCROLL_DURATION_MS, easing = PlaybackMotion.tapeScrollEasing),
-                    )
+            } finally {
+                if (gen == generation) {
+                    onScrollActive(false)
                 }
             }
-            onScrollActive(false)
         }
     }
 }
 
 @Composable
-private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
+private fun TapeScrollIndicator(
+    anchor: ColumnScrollAnchor,
+    modifier: Modifier = Modifier,
+) {
     Canvas(modifier) {
         val lineX = size.width * (
-                PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+                PlaybackMotion.SCROLLBAR_X_FRACTION -
+                        PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
                 )
+
         val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
         val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
+
         if (lineBottom <= lineTop) return@Canvas
+
         drawLine(
             color = Color.White.copy(alpha = 0.38f),
             start = Offset(lineX, lineTop),
             end = Offset(lineX, lineBottom),
             strokeWidth = 1.dp.toPx(),
         )
+
         val lineLength = lineBottom - lineTop
-        val travelTop = lineTop + lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_START
-        val travelBottom = lineTop + lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_END
-        val dotY = travelTop + (travelBottom - travelTop) * anchor.scrollFraction
+        val travelTop = lineTop +
+                lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_START
+        val travelBottom = lineTop +
+                lineLength * PlaybackMotion.SCROLLBAR_DOT_RANGE_END
+
+        val dotY = travelTop +
+                (travelBottom - travelTop) * anchor.scrollFraction
+
         drawCircle(
             color = Color.White,
             radius = 3.dp.toPx(),
@@ -283,8 +501,14 @@ private fun DialogueHistoryListPreview() {
                 speaker = PredefinedSpeakers.STEBAN,
                 text = "Go-go gyro, we are so back, so so bak, you know?",
             ),
-            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
-            DialogueEntry(speaker = PredefinedSpeakers.STEBAN, text = "Go-go gyro"),
+            DialogueEntry(
+                speaker = PredefinedSpeakers.STEBAN,
+                text = "Go-go gyro",
+            ),
+            DialogueEntry(
+                speaker = PredefinedSpeakers.STEBAN,
+                text = "Go-go gyro",
+            ),
         ),
         modifier = Modifier
             .width(280.dp)

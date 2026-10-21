@@ -34,20 +34,6 @@ internal class Placement(
     val alpha: Float,
 )
 
-internal fun DrawScope.drawDecals(list: List<Placement>) {
-    for (placement in list) {
-        val c = placement.bounds.center
-        val e = placement.decal.extent
-        withTransform({
-            rotate(placement.rotation, c)
-            if (placement.mirror) scale(-1f, 1f, c)
-            translate(c.x - e.width / 2f, c.y - e.height / 2f)
-        }) {
-            with(placement.decal) { draw(placement.color, placement.alpha) }
-        }
-    }
-}
-
 internal class RulerDecal(
     private val length: Float,
     private val height: Float,
@@ -204,16 +190,85 @@ internal class MarkDecal(
     }
 }
 
-internal class SpriteDecal(private val bitmap: ImageBitmap, private val src: IntRect, override val extent: Size) :
-    Decal {
+internal class TapeDecal(private val w: Float, private val h: Float) : Decal {
+    override val extent = Size(w, h)
+    private val n = h * 0.25f
+    private val path = Path().apply {
+        moveTo(0f, 0f); lineTo(w, 0f); lineTo(w - n, h / 2f)
+        lineTo(w, h); lineTo(0f, h); lineTo(n, h / 2f); close()
+    }
+
     override fun DrawScope.draw(color: Color, alpha: Float) {
-        drawImage(
-            image = bitmap,
-            srcOffset = IntOffset(src.left, src.top),
-            srcSize = IntSize(src.width, src.height),
-            dstSize = IntSize(extent.width.toInt(), extent.height.toInt()),
-            alpha = alpha,
-            colorFilter = ColorFilter.tint(color),
-        )
+        drawPath(path, color.copy(alpha = alpha * 0.5f))
+    }
+}
+
+internal class RingDecal(private val r: Float, private val stroke: Float) : Decal {
+    override val extent = Size(r * 2f, r * 2f)
+    override fun DrawScope.draw(color: Color, alpha: Float) {
+        val c = color.copy(alpha = alpha)
+        drawCircle(c, r * 0.95f, Offset(r, r), style = Stroke(stroke))
+        drawCircle(c.copy(alpha = alpha * 0.5f), r * 0.8f, Offset(r * 1.05f, r), style = Stroke(stroke * 0.6f))
+    }
+}
+
+internal class StitchDecal(private val len: Float, private val dash: Float, private val stroke: Float) : Decal {
+    override val extent = Size(len, stroke * 2f)
+    override fun DrawScope.draw(color: Color, alpha: Float) {
+        val c = color.copy(alpha = alpha)
+        var x = 0f
+        while (x < len) {
+            drawLine(c, Offset(x, stroke), Offset(minOf(x + dash, len), stroke), stroke)
+            x += dash * 1.8f
+        }
+    }
+}
+
+internal class StapleDecal(private val w: Float, private val h: Float, private val stroke: Float) : Decal {
+    override val extent = Size(w, h)
+    private val path = Path().apply {
+        moveTo(0f, h); lineTo(0f, h * 0.2f); lineTo(w, h * 0.2f); lineTo(w, h)
+    }
+
+    override fun DrawScope.draw(color: Color, alpha: Float) {
+        drawPath(path, color.copy(alpha = alpha), style = Stroke(stroke * 1.4f, join = StrokeJoin.Round))
+    }
+}
+
+internal class CornerFoldDecal(private val s: Float) : Decal {
+    override val extent = Size(s, s)
+    private val path = Path().apply { moveTo(0f, 0f); lineTo(s, 0f); lineTo(0f, s); close() }
+    override fun DrawScope.draw(color: Color, alpha: Float) {
+        drawPath(path, color.copy(alpha = alpha * 0.6f))
+        drawLine(color.copy(alpha = alpha), Offset(s, 0f), Offset(0f, s), 1f)
+    }
+}
+
+internal class TallyDecal(
+    private val count: Int,
+    private val h: Float,
+    private val gap: Float,
+    private val stroke: Float,
+) : Decal {
+    private val groups = (count + 4) / 5
+    override val extent = Size(groups * gap * 6f, h)
+    override fun DrawScope.draw(color: Color, alpha: Float) {
+        val c = color.copy(alpha = alpha)
+        for (g in 0 until groups) {
+            val n = minOf(5, count - g * 5)
+            val x0 = g * gap * 6f
+            for (i in 0 until minOf(n, 4)) {
+                drawLine(c, Offset(x0 + i * gap, 0f), Offset(x0 + i * gap, h), stroke, StrokeCap.Round)
+            }
+            if (n == 5) {
+                drawLine(
+                    c,
+                    Offset(x0 - gap * 0.4f, h * 0.85f),
+                    Offset(x0 + gap * 3.4f, h * 0.15f),
+                    stroke,
+                    StrokeCap.Round
+                )
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.feldelysium.designsystem.components.navigation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -55,6 +56,7 @@ import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.display.FeldDiamond
 import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
@@ -263,7 +265,7 @@ private fun EditableTitle(
         )
 
         FeldIconButton(
-            if (editing) FeldIconId.Save else FeldIconId.Edit,
+            id = if (editing) FeldIconId.Save else FeldIconId.Edit,
             onClick = {
                 if (editing) {
                     haptics.confirm()
@@ -274,7 +276,6 @@ private fun EditableTitle(
                     startEditing()
                 }
             },
-            markerFilmSpec = if (editing) FeldMarker.Dry else FeldMarker.Chalk,
             modifier = Modifier.align(Alignment.CenterEnd),
         )
 

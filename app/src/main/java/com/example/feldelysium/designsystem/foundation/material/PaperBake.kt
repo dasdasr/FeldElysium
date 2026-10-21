@@ -31,6 +31,7 @@ import com.example.feldelysium.designsystem.foundation.decal.drawDecals
 import com.example.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.example.feldelysium.designsystem.foundation.material.agsl.PAPER_AGSL
 import com.example.feldelysium.designsystem.foundation.shape.InkLayer
+import com.example.feldelysium.designsystem.foundation.shape.RoughCache
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.shape.buildInkLayers
@@ -46,8 +47,10 @@ fun Modifier.paperMaterial(
     decals: DecalLayer? = null,
     decalKey: Any? = decals,
     bake: Boolean = true,
+    textured: Boolean = true,
 ): Modifier = when {
-    Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> paperFlat(shape, spec, decals)
+    !textured || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> paperFlat(shape, spec, decals)
+
     bake -> paperBaked(shape, spec, wear, press, decals, decalKey)
     else -> paperLive(shape, spec, wear, decals)
 }
@@ -97,17 +100,21 @@ private fun buildArt(
     wear: Float,
     decals: DecalLayer?,
 ): PaperArt {
-    val path = shape.buildPath(size, d)
+    val geo = RoughCache.get(
+        shape = shape,
+        size = size,
+        d = d,
+        inkWidthPx = with(d) { spec.inkWidth.toPx() },
+    )
+    val path = geo.path
+    val ink = geo.ink
     val placed = decals?.plan(size, d) ?: DecalPlan(emptyList(), null)
     val seed = shape.seed.mod(97).toFloat()
     val rim = shape.rimPx(d)
 
-    val ink = with(d) {
-        if (spec.inkWidth.value > 0f) shape.buildInkLayers(path, d, spec.inkWidth.toPx()) else emptyList()
-    }
-
     val paper = RuntimeShader(PAPER_AGSL)
     val inkShader = RuntimeShader(INK_AGSL)
+
     with(d) {
         paper.apply {
             setFloatUniform("size", size.width, size.height)
@@ -137,6 +144,7 @@ private fun buildArt(
             setColorUniform("baseColor", spec.base.toArgb())
             setColorUniform("scuffColor", spec.scuff.toArgb())
         }
+
         inkShader.apply {
             setFloatUniform("seed", seed)
             setFloatUniform("grainScale", spec.inkGrainSize.toPx())
@@ -145,7 +153,14 @@ private fun buildArt(
             setColorUniform("inkColor", spec.ink.toArgb())
         }
     }
-    return PaperArt(path, placed, ink, ShaderBrush(paper), ShaderBrush(inkShader))
+
+    return PaperArt(
+        path = path,
+        placed = placed,
+        ink = ink,
+        paperBrush = ShaderBrush(paper),
+        inkBrush = ShaderBrush(inkShader),
+    )
 }
 
 private fun DrawScope.drawArt(a: PaperArt) {
@@ -239,21 +254,17 @@ private fun Modifier.paperLive(shape: RoughShape, spec: PaperSpec, wear: Float, 
         }
     }
 
-private fun Modifier.paperFlat(shape: RoughShape, spec: PaperSpec, decals: DecalLayer?): Modifier = drawWithCache {
-    val path = shape.buildPath(size, this)
-    val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
-    val inkLayers = if (spec.inkWidth.value > 0f) {
-        shape.buildInkLayers(path, this, spec.inkWidth.toPx())
-    } else {
-        emptyList()
-    }
-    val inkBrush = SolidColor(spec.ink)
-    onDrawWithContent {
-        clipPath(path) {
-            drawRect(spec.base)
-            drawDecals(placed)
-            this@onDrawWithContent.drawContent()
+private fun Modifier.paperFlat(shape: RoughShape, spec: PaperSpec, decals: DecalLayer?): Modifier =
+    drawWithCache {
+        val geo = RoughCache.get(shape, size, this, spec.inkWidth.toPx())
+        val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
+        val inkBrush = SolidColor(spec.ink)
+        onDrawWithContent {
+            clipPath(geo.path) {
+                drawRect(spec.base)
+                drawDecals(placed)
+                this@onDrawWithContent.drawContent()
+            }
+            drawInk(geo.ink, inkBrush)
         }
-        drawInk(inkLayers, inkBrush)
     }
-}

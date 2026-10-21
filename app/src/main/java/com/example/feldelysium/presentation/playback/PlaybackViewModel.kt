@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.SettingsRepository
+import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.di.AppContainer
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.SpeakerType
@@ -16,9 +18,11 @@ import com.example.feldelysium.presentation.shared.SceneSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -40,6 +44,12 @@ class PlaybackViewModel(
 
     private val _state = MutableStateFlow(PlaybackUiState(allEntries = entries))
     val state: StateFlow<PlaybackUiState> = _state.asStateFlow()
+
+    private val prefs = settings.settings.stateIn(viewModelScope, SharingStarted.Eagerly, AppSettings())
+
+    private fun tapAnywhere(): Boolean =
+        prefs.value.let { !it.showContinueButton || it.tapMode == TapMode.WHOLE_SCREEN }
+
 
     init {
         viewModelScope.launch {
@@ -100,8 +110,13 @@ class PlaybackViewModel(
             s.isCheckRolling -> Unit
             !s.isPanelOpen -> reset()
             s.isFinished -> close()
-            s.prompt !is Prompt.None -> Unit
-            else -> advance()
+            else -> when (val p = s.prompt) {
+                Prompt.None -> advance()
+                Prompt.Pending -> Unit
+                is Prompt.Continue -> if (tapAnywhere()) advance()
+                is Prompt.Choices ->
+                    if (tapAnywhere() && !p.selected) viewModelScope.launch { step() }
+            }
         }
     }
 
