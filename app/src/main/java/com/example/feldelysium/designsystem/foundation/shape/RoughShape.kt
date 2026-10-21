@@ -56,8 +56,12 @@ data class RoughStyle(
 )
 
 internal data class RoughKey(
-    val seed: Int, val style: RoughStyle, val w: Int, val h: Int,
-    val density: Float, val inkWidth: Float,
+    val seed: Int,
+    val style: RoughStyle,
+    val w: Int,
+    val h: Int,
+    val density: Float,
+    val inkWidth: Float,
 )
 internal class RoughGeometry(val path: Path, val ink: List<InkLayer>)
 
@@ -66,8 +70,12 @@ internal object RoughCache {
 
     fun get(shape: RoughShape, size: Size, d: Density, inkWidthPx: Float): RoughGeometry {
         val key = RoughKey(
-            shape.seed, shape.style,
-            size.width.roundToInt(), size.height.roundToInt(), d.density, inkWidthPx,
+            shape.seed,
+            shape.style,
+            size.width.roundToInt(),
+            size.height.roundToInt(),
+            d.density,
+            inkWidthPx,
         )
         return lru.get(key) ?: run {
             val path = shape.buildPath(size, d)

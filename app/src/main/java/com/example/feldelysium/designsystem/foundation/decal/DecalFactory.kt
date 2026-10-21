@@ -24,7 +24,6 @@ internal fun buildDecal(
     kind: DecalKind,
     rng: Random,
     ctx: DecalContext,
-    spec: DecalSpec,
     density: Density,
     ld: LayoutDirection,
     measurer: TextMeasurer,
@@ -104,10 +103,15 @@ internal fun buildDecal(
         }
 
         DecalKind.Tape -> TapeDecal(r(26f, 44f) * d, r(9f, 13f) * d)
+
         DecalKind.Ring -> RingDecal(r(9f, 16f) * d, 0.8f * d)
+
         DecalKind.Stitch -> StitchDecal(r(40f, 90f) * d, r(2.5f, 4f) * d, 0.8f * d)
+
         DecalKind.Staple -> StapleDecal(r(8f, 11f) * d, r(5f, 7f) * d, 1f * d)
+
         DecalKind.Corner -> CornerFoldDecal(r(10f, 16f) * d)
+
         DecalKind.Tally -> TallyDecal(rng.nextInt(3, 9), r(7f, 10f) * d, r(2f, 2.6f) * d, 0.7f * d)
     }
 }

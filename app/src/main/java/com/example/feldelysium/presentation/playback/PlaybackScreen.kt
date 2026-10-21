@@ -300,7 +300,7 @@ private fun PlaybackStage(
                     modifier = Modifier.fillMaxHeight().width(tapeWidth).align(Alignment.CenterStart),
                     onScrollActive = onScrollChanged,
                     dragToScroll = background.showContinueButton &&
-                            background.tapMode == TapMode.CONTINUE_BUTTON,
+                        background.tapMode == TapMode.CONTINUE_BUTTON,
                     footer = { metrics -> PlaybackPromptFooter(state.prompt, metrics, onContinue, onChoice) },
                 )
             }

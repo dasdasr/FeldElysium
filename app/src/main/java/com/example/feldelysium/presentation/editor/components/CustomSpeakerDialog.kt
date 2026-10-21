@@ -103,8 +103,6 @@ fun CustomSpeakerDialog(
                     {}
                 },
                 modifier = Modifier.width(132.dp),
-                name = name,
-                number = fileNo,
             )
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {

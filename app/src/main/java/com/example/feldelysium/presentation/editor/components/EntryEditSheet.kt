@@ -204,7 +204,9 @@ fun EntryEditSheet(
                     ToggleRow("REPLY OPTIONS", Icons.AutoMirrored.Filled.Reply, replies != null) { on ->
                         replies = if (on) {
                             ReplyChoices(listOf(text.take(ReplyChoices.MAX_LENGTH), ""))
-                        } else null
+                        } else {
+                            null
+                        }
                     }
                     AnimatedVisibility(
                         visible = replies != null,
@@ -356,8 +358,11 @@ private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> 
         value.options.forEachIndexed { i, option ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = if (i == value.chosenIndex) Icons.Filled.RadioButtonChecked
-                    else Icons.Filled.RadioButtonUnchecked,
+                    imageVector = if (i == value.chosenIndex) {
+                        Icons.Filled.RadioButtonChecked
+                    } else {
+                        Icons.Filled.RadioButtonUnchecked
+                    },
                     contentDescription = "Spoken by YOU",
                     tint = FeldPalette.Muted,
                     modifier = Modifier
@@ -369,9 +374,13 @@ private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> 
                     FeldTextField(
                         value = option,
                         onValueChange = { v ->
-                            onChange(value.copy(options = value.options.toMutableList().also {
-                                it[i] = v.take(ReplyChoices.MAX_LENGTH)
-                            }))
+                            onChange(
+                                value.copy(
+                                    options = value.options.toMutableList().also {
+                                        it[i] = v.take(ReplyChoices.MAX_LENGTH)
+                                    },
+                                ),
+                            )
                         },
                         placeholder = "Option ${i + 1}",
                         minLines = 1,

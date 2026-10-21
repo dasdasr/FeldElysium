@@ -1,13 +1,13 @@
 package com.example.feldelysium.designsystem.components.input
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,8 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
+import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
@@ -28,7 +30,12 @@ import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 
-data class FeldMenuItem(val label: String, val destructive: Boolean = false, val onClick: () -> Unit)
+data class FeldMenuItem(
+    val label: String,
+    val icon: FeldIconId? = null,
+    val destructive: Boolean = false,
+    val onClick: () -> Unit,
+)
 
 private val MenuRough = RoughStyle(
     roughness = 0.6.dp,
@@ -47,7 +54,7 @@ fun FeldMenu(
     items: List<FeldMenuItem>,
     modifier: Modifier = Modifier,
     seed: Int = 11,
-    offset: DpOffset = DpOffset(0.dp, 0.dp),
+    offset: DpOffset = DpOffset(12.dp, 0.dp),
 ) {
     val shape = remember(seed) { RoughShape(seed, MenuRough) }
     DropdownMenu(
@@ -63,36 +70,40 @@ fun FeldMenu(
         Column(
             Modifier
                 .width(IntrinsicSize.Max)
-                .widthIn(min = 168.dp)
                 .paperMaterial(shape, FeldPaper.Field)
                 .padding(vertical = 4.dp),
         ) {
             items.forEachIndexed { i, item ->
-                if (i > 0) FeldDivider(Modifier.padding(horizontal = 12.dp))
-                val color = if (item.destructive) {
-                    FeldPalette.Orange
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                }
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .feldClickable(onClick = {
-                            onDismiss()
-                            item.onClick()
-                        })
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    FeldHandDiamond(color, seed + i, 9.dp)
-                    Spacer(Modifier.width(12.dp))
-                    Text(
-                        text = item.label.uppercase(),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = color,
-                    )
-                }
+                if (i > 0) FeldDivider(Modifier.padding(horizontal = 14.dp))
+                MenuRow(item, seed + i, onDismiss)
             }
         }
+    }
+}
+
+@Composable
+private fun MenuRow(item: FeldMenuItem, seed: Int, onDismiss: () -> Unit) {
+    val color = if (item.destructive) FeldPalette.Orange else MaterialTheme.colorScheme.onSurface
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .feldClickable(onClick = {
+                onDismiss()
+                item.onClick()
+            })
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.size(20.dp).padding(bottom = 2.dp), contentAlignment = Alignment.Center) {
+            if (item.icon != null) {
+                FeldIcon(id = item.icon, seed = seed, size = 18.dp, film = false)
+            }
+        }
+        Text(
+            text = item.label.uppercase(),
+            style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.2.sp),
+            color = color,
+            modifier = Modifier.padding(start = 2.dp),
+        )
     }
 }

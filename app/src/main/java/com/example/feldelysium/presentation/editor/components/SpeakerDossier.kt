@@ -98,8 +98,6 @@ fun SpeakerPhotoBlock(
     accent: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    name: String = "",
-    number: Int = 1,
 ) {
     val a = SpeakerDossierAssets
     val photoSource = remember { MutableInteractionSource() }

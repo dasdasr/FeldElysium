@@ -34,7 +34,7 @@ private const val HANGING_INDENT_EM = 14f / 12f
 private fun DialogueEntryItemPreview() {
     Column(
         modifier = Modifier.padding(16.dp),
-    ){
+    ) {
         DialogueEntryItem(
             entry = DialogueEntry(
                 speaker = PredefinedSpeakers.YOU,
@@ -101,7 +101,7 @@ fun DialogueEntryItem(
 
             entry.check?.let { check ->
                 withStyle(
-                    SpanStyle(color = labelColor, fontSize = fontSize)
+                    SpanStyle(color = labelColor, fontSize = fontSize),
                 ) {
                     append(" [${check.difficulty.name}: ${check.result.name}]")
                 }
@@ -130,5 +130,4 @@ fun DialogueEntryItem(
             ),
         ),
     )
-
 }

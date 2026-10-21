@@ -5,20 +5,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntRect
-import androidx.compose.ui.unit.IntSize
 
 internal interface Decal {
     val extent: Size
@@ -194,8 +188,13 @@ internal class TapeDecal(private val w: Float, private val h: Float) : Decal {
     override val extent = Size(w, h)
     private val n = h * 0.25f
     private val path = Path().apply {
-        moveTo(0f, 0f); lineTo(w, 0f); lineTo(w - n, h / 2f)
-        lineTo(w, h); lineTo(0f, h); lineTo(n, h / 2f); close()
+        moveTo(0f, 0f)
+        lineTo(w, 0f)
+        lineTo(w - n, h / 2f)
+        lineTo(w, h)
+        lineTo(0f, h)
+        lineTo(n, h / 2f)
+        close()
     }
 
     override fun DrawScope.draw(color: Color, alpha: Float) {
@@ -227,7 +226,10 @@ internal class StitchDecal(private val len: Float, private val dash: Float, priv
 internal class StapleDecal(private val w: Float, private val h: Float, private val stroke: Float) : Decal {
     override val extent = Size(w, h)
     private val path = Path().apply {
-        moveTo(0f, h); lineTo(0f, h * 0.2f); lineTo(w, h * 0.2f); lineTo(w, h)
+        moveTo(0f, h)
+        lineTo(0f, h * 0.2f)
+        lineTo(w, h * 0.2f)
+        lineTo(w, h)
     }
 
     override fun DrawScope.draw(color: Color, alpha: Float) {
@@ -237,7 +239,12 @@ internal class StapleDecal(private val w: Float, private val h: Float, private v
 
 internal class CornerFoldDecal(private val s: Float) : Decal {
     override val extent = Size(s, s)
-    private val path = Path().apply { moveTo(0f, 0f); lineTo(s, 0f); lineTo(0f, s); close() }
+    private val path = Path().apply {
+        moveTo(0f, 0f)
+        lineTo(s, 0f)
+        lineTo(0f, s)
+        close()
+    }
     override fun DrawScope.draw(color: Color, alpha: Float) {
         drawPath(path, color.copy(alpha = alpha * 0.6f))
         drawLine(color.copy(alpha = alpha), Offset(s, 0f), Offset(0f, s), 1f)
@@ -266,7 +273,7 @@ internal class TallyDecal(
                     Offset(x0 - gap * 0.4f, h * 0.85f),
                     Offset(x0 + gap * 3.4f, h * 0.15f),
                     stroke,
-                    StrokeCap.Round
+                    StrokeCap.Round,
                 )
             }
         }

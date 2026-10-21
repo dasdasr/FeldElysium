@@ -38,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -244,6 +245,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                     LaunchedEffect(isDragging) { if (isDragging) haptics.thud() }
 
                                     val edit = { dialog = EditorDialog.EditEntry(entry.id, entry.speaker.id) }
+                                    val selected = menuEntryId == entry.id
 
                                     Box {
                                         FeldEntryCard(
@@ -254,24 +256,31 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                             ambient = 0.7f,
                                             seed = entry.id.hashCode(),
                                             isDragging = isDragging,
+                                            selected = selected,
                                             dragModifier = Modifier.longPressDraggableHandle(),
-                                            onClick = edit,
-                                            onMore = {
+                                            onClick = {
                                                 haptics.tick()
                                                 menuEntryId = entry.id
                                             },
                                             onSwipeArmed = { haptics.tick() },
                                             onSwipeDelete = { deleteEntry(entry) },
                                         )
-                                        FeldMenu(
-                                            expanded = menuEntryId == entry.id,
-                                            onDismiss = { menuEntryId = null },
-                                            seed = entry.id.hashCode(),
-                                            items = listOf(
-                                                FeldMenuItem("Edit", onClick = edit),
-                                                FeldMenuItem("Delete", destructive = true) { deleteEntry(entry) },
-                                            ),
-                                        )
+                                        Box(Modifier.align(Alignment.Center)) {
+                                            FeldMenu(
+                                                expanded = selected,
+                                                onDismiss = { menuEntryId = null },
+                                                seed = entry.id.hashCode(),
+                                                offset = DpOffset(0.dp, 0.dp),
+                                                items = listOf(
+                                                    FeldMenuItem("Edit", FeldIconId.Edit, onClick = edit),
+                                                    FeldMenuItem(
+                                                        "Delete",
+                                                        FeldIconId.Delete,
+                                                        destructive = true,
+                                                    ) { deleteEntry(entry) },
+                                                ),
+                                            )
+                                        }
                                     }
                                 }
                             }

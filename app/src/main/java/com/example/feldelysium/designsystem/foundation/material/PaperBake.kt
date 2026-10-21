@@ -34,7 +34,6 @@ import com.example.feldelysium.designsystem.foundation.shape.InkLayer
 import com.example.feldelysium.designsystem.foundation.shape.RoughCache
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.foundation.shape.buildInkLayers
 import com.example.feldelysium.designsystem.foundation.shape.drawInk
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -50,7 +49,6 @@ fun Modifier.paperMaterial(
     textured: Boolean = true,
 ): Modifier = when {
     !textured || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> paperFlat(shape, spec, decals)
-
     bake -> paperBaked(shape, spec, wear, press, decals, decalKey)
     else -> paperLive(shape, spec, wear, decals)
 }
@@ -254,17 +252,16 @@ private fun Modifier.paperLive(shape: RoughShape, spec: PaperSpec, wear: Float, 
         }
     }
 
-private fun Modifier.paperFlat(shape: RoughShape, spec: PaperSpec, decals: DecalLayer?): Modifier =
-    drawWithCache {
-        val geo = RoughCache.get(shape, size, this, spec.inkWidth.toPx())
-        val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
-        val inkBrush = SolidColor(spec.ink)
-        onDrawWithContent {
-            clipPath(geo.path) {
-                drawRect(spec.base)
-                drawDecals(placed)
-                this@onDrawWithContent.drawContent()
-            }
-            drawInk(geo.ink, inkBrush)
+private fun Modifier.paperFlat(shape: RoughShape, spec: PaperSpec, decals: DecalLayer?): Modifier = drawWithCache {
+    val geo = RoughCache.get(shape, size, this, spec.inkWidth.toPx())
+    val placed = decals?.plan(size, this) ?: DecalPlan(emptyList(), null)
+    val inkBrush = SolidColor(spec.ink)
+    onDrawWithContent {
+        clipPath(geo.path) {
+            drawRect(spec.base)
+            drawDecals(placed)
+            this@onDrawWithContent.drawContent()
         }
+        drawInk(geo.ink, inkBrush)
     }
+}
