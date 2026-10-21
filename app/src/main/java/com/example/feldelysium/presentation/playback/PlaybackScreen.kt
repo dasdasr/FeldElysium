@@ -2,6 +2,7 @@ package com.example.feldelysium.presentation.playback
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +63,15 @@ import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.playback.components.PlaybackBottomBar
 import com.example.feldelysium.presentation.settings.SettingsViewModel
+import com.example.feldelysium.record.RecordState
+import com.example.feldelysium.record.ScreenRecordCoordinator
+import com.example.feldelysium.record.ScreenRecordService
+import com.example.feldelysium.record.realScreenSize
 import com.example.feldelysium.theme.ChromaKeyGreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val REFERENCE_WIDTH_PX = 1920f
 private const val REFERENCE_HEIGHT_PX = 1080f
@@ -116,6 +126,46 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
 
         onDispose {
             controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    LaunchedEffect(isLandscape) {
+        if (!isLandscape) return@LaunchedEffect
+        val grant = ScreenRecordCoordinator.take()
+        if (grant != null) {
+            delay(600.milliseconds)
+            val size = activity.realScreenSize()
+            ScreenRecordService.start(
+                activity,
+                grant.resultCode,
+                grant.data,
+                size.width,
+                size.height,
+                size.dpi,
+                grant.withAudio,
+            )
+            val started = withTimeoutOrNull(5_000.milliseconds) {
+                ScreenRecordService.state.first { it == RecordState.Recording }
+            }
+            if (started == null) return@LaunchedEffect
+        }
+        if (settings.autoPlay) vm.startAutoPlay(settings.autoPlaySpeed.factor)
+    }
+
+    val autoDone by vm.autoPlayDone.collectAsStateWithLifecycle()
+    LaunchedEffect(autoDone) {
+        if (autoDone && ScreenRecordService.state.value == RecordState.Recording) {
+            ScreenRecordService.stop(activity)
+            onNavigateBack()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            if (ScreenRecordService.state.value == RecordState.Recording) {
+                ScreenRecordService.stop(activity)
+            }
         }
     }
 
@@ -236,7 +286,10 @@ private fun PlaybackStage(
                 DialogueHistoryList(
                     entries = state.revealedEntries,
                     isCheckRolling = state.isCheckRolling,
-                    modifier = Modifier.fillMaxHeight().width(tapeWidth).align(Alignment.CenterStart),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(tapeWidth)
+                        .align(Alignment.CenterStart),
                     onScrollActive = onScrollChanged,
                 )
             }

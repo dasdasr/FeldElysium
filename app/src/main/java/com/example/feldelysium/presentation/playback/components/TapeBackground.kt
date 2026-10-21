@@ -18,13 +18,13 @@ private const val TAPE_TEXTURE_ASPECT = TAPE_TEXTURE_HEIGHT_PX / TAPE_TEXTURE_WI
 
 // Tile manually to keep the texture scroll seamless.
 @Composable
-fun TapeBackground(offsetPx: Float, modifier: Modifier = Modifier) {
+fun TapeBackground(offsetPx: () -> Float, modifier: Modifier = Modifier) {
     val painter = painterResource(id = R.drawable.seamless_tape)
     Canvas(modifier = modifier) {
         val tileHeight = size.width * TAPE_TEXTURE_ASPECT
         if (tileHeight < 1f || size.height <= 0f) return@Canvas
 
-        val scroll = positiveMod(offsetPx, tileHeight)
+        val scroll = positiveMod(offsetPx(), tileHeight)
         var top = -scroll
         var guard = 0
         while (top < size.height && guard < 8) {
@@ -48,7 +48,7 @@ private fun positiveMod(value: Float, modulus: Float): Float {
 @Composable
 private fun TapeBackgroundPreview() {
     TapeBackground(
-        offsetPx = 0f,
+        offsetPx = { 0f },
         modifier = Modifier
             .width(220.dp)
             .height(400.dp),

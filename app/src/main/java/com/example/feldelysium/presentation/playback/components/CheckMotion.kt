@@ -1,5 +1,7 @@
 package com.example.feldelysium.presentation.playback.components
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.Easing
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.BlendMode
@@ -17,6 +19,8 @@ object CheckMotion {
 
     const val CHECK_RESULT_EARLY_MS = 1100L
     const val TAPE_ROLL_VIEWPORTS = 6f
+
+    val TAPE_ROLL_EASING: Easing = CubicBezierEasing(0.5f, 0f, 1f, 0.6f)
 
     const val BG_FADE_DELAY_MS = 400L
     const val BG_FADE_MS = 700
