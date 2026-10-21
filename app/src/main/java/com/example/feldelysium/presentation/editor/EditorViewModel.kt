@@ -20,7 +20,9 @@ import com.example.feldelysium.domain.repository.SpeakerRepository
 import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.domain.sound.SoundPlayer
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
+import com.example.feldelysium.presentation.shared.FeldError
 import com.example.feldelysium.presentation.shared.SceneSession
+import com.example.feldelysium.presentation.shared.toastText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -95,9 +97,9 @@ class EditorViewModel(
         val result = parser.execute(text, customSpeakers())
 
         return when {
-            text.isBlank() -> notify("Paste some lines first")
+            text.isBlank() -> fail(FeldError.NoScriptPasted)
 
-            result.entries.isEmpty() -> notify("No lines found. Try «NAME: text»")
+            result.entries.isEmpty() -> fail(FeldError.EmptyImport)
 
             else -> {
                 viewModelScope.launch {
@@ -135,7 +137,11 @@ class EditorViewModel(
         viewModelScope.launch {
             val ok = attempt { output.use { session.exportScene(it) } }
             if (ok) sounds.play(SoundCue.UiExport)
-            notify(if (ok) "Scene exported" else "Export failed")
+            if (ok) {
+                notify("Scene exported")
+            } else {
+                fail(FeldError.ExportFailed)
+            }
         }
     }
 
@@ -144,7 +150,11 @@ class EditorViewModel(
         viewModelScope.launch {
             val ok = attempt { input.use { session.importScene(it) } }
             if (ok) sounds.play(SoundCue.UiDone)
-            notify(if (ok) "Scene imported" else "Cannot read this file")
+            if (ok) {
+                notify("Scene imported")
+            } else {
+                fail(FeldError.ImportFailed)
+            }
         }
     }
 
@@ -152,6 +162,8 @@ class EditorViewModel(
         _messages.trySend(message)
         return false
     }
+
+    private fun fail(e: FeldError): Boolean = notify(e.toastText())
 
     private fun customSpeakers() = state.value.allSpeakers.filterNot { it.isBundled }
 

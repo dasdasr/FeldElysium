@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.settings
 
 import android.annotation.SuppressLint
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -131,6 +132,8 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     .navigationBarsPadding()
                     .testTag("settings_scroll"),
             ) {
+                val lockedStamp = "LOCKED"
+
                 FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Aspect,
@@ -165,12 +168,54 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         },
                     )
                     FeldSettingsDivider()
+                    FeldSettingSwitchRow(
+                        icon = FeldIconId.Play,
+                        title = "Autoplay",
+                        subtitle = "Scroll lines automatically",
+                        checked = settings.autoPlay,
+                        onCheckedChange = { vm.dispatch(SettingsEvent.SetAutoPlay(it)) },
+                    )
+                    FeldSettingsDivider()
+                    FeldSettingValueRow(
+                        icon = FeldIconId.Timer,
+                        title = "Autoplay speed",
+                        subtitle = "How long each line stays on screen",
+                        value = settings.autoPlaySpeed.label,
+                        enabled = settings.autoPlay,
+                        stampText = lockedStamp,
+                        onClick = {
+                            haptics.tick()
+                            vm.dispatch(SettingsEvent.SetAutoPlaySpeed(settings.autoPlaySpeed.next()))
+                        },
+                    )
+                    FeldSettingsDivider()
                     FeldSettingValueRow(
                         icon = FeldIconId.DialogueStyle,
                         title = "Typeface",
                         subtitle = "Dialogue text in playback",
                         value = PlaybackFontName,
                         onClick = { /* TODO: font picker dialog */ },
+                    )
+                }
+
+                FeldSettingsSection(title = "Video export") {
+                    FeldSettingSwitchRow(
+                        icon = FeldIconId.Export,
+                        title = "Record playback",
+                        subtitle = "Playback button records the screen to a video",
+                        checked = settings.exportEnabled,
+                        onCheckedChange = { vm.dispatch(SettingsEvent.SetExportEnabled(it)) },
+                    )
+                    FeldSettingsDivider()
+                    val audioSupported = Build.VERSION.SDK_INT >= 29
+                    FeldSettingSwitchRow(
+                        icon = FeldIconId.Sound,
+                        title = "Record sound",
+                        subtitle = if (audioSupported) "App sound goes into the video" else "Needs Android 10 or newer",
+                        checked = settings.exportAudio && audioSupported,
+                        onCheckedChange = { vm.dispatch(SettingsEvent.SetExportAudio(it)) },
+                        enabled = settings.exportEnabled && audioSupported,
+                        stampText = lockedStamp,
                     )
                 }
 
@@ -253,36 +298,13 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 }
 
                 FeldSettingsSection(title = "Coming soon") {
-                    SoonTap("Autoplay") {
+                    SoonTap("Lock landscape") {
                         FeldSettingSwitchRow(
-                            icon = FeldIconId.Play,
-                            title = "Autoplay",
-                            subtitle = "Play scene automatically",
+                            icon = FeldIconId.Aspect,
+                            title = "Lock landscape",
+                            subtitle = "Lock it",
                             checked = false,
                             onCheckedChange = {},
-                            enabled = false,
-                        )
-                    }
-
-                    FeldSettingsDivider()
-
-                    SoonTap("Line delay") {
-                        FeldSettingValueRow(
-                            icon = FeldIconId.Timer,
-                            title = "Line delay",
-                            subtitle = "Time between lines (seconds)",
-                            value = "x",
-                            enabled = false,
-                        )
-                    }
-
-                    FeldSettingsDivider()
-
-                    SoonTap("Status icons") {
-                        FeldSettingRow(
-                            icon = FeldIconId.Settings,
-                            title = "Status icons",
-                            subtitle = "Tap the icons right in playback",
                             enabled = false,
                         )
                     }

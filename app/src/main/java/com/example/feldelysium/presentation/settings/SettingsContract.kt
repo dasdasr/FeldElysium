@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.settings
 
 import com.example.feldelysium.data.settings.AppSettings
+import com.example.feldelysium.data.settings.AutoPlaySpeed
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.data.settings.BarIconState
 import com.example.feldelysium.data.settings.BarSlot
@@ -10,6 +11,10 @@ import com.example.feldelysium.data.settings.SamplesMode
 
 sealed interface SettingsEvent {
     data class SetLockAspectRatio16x9(val enabled: Boolean) : SettingsEvent
+    data class SetExportEnabled(val enabled: Boolean) : SettingsEvent
+    data class SetExportAudio(val enabled: Boolean) : SettingsEvent
+    data class SetAutoPlay(val enabled: Boolean) : SettingsEvent
+    data class SetAutoPlaySpeed(val speed: AutoPlaySpeed) : SettingsEvent
     data class SetPlaybackMoney(val value: String) : SettingsEvent
     data class SetPlaybackTime(val value: String) : SettingsEvent
     data class SetPlaybackDay(val value: String) : SettingsEvent
@@ -31,6 +36,14 @@ internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
     val d = AppSettings()
     return when (event) {
         is SettingsEvent.SetLockAspectRatio16x9 -> copy(lockAspectRatio16x9 = event.enabled)
+
+        is SettingsEvent.SetExportEnabled -> copy(exportEnabled = event.enabled)
+
+        is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
+
+        is SettingsEvent.SetAutoPlay -> copy(autoPlay = event.enabled)
+
+        is SettingsEvent.SetAutoPlaySpeed -> copy(autoPlaySpeed = event.speed)
 
         is SettingsEvent.SetPlaybackMoney -> copy(playbackMoney = event.value)
 

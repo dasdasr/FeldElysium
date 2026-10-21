@@ -1,5 +1,7 @@
 package com.example.feldelysium.presentation.editor
 
+import android.annotation.SuppressLint
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -60,6 +62,7 @@ import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHapti
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.eggs.EggEvent
@@ -71,14 +74,32 @@ import com.example.feldelysium.presentation.editor.components.EntryEditSheet
 import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.editor.components.SceneManagerDialog
 import com.example.feldelysium.presentation.editor.components.SpeakerPickerDialog
+import com.example.feldelysium.presentation.settings.SettingsViewModel
+import com.example.feldelysium.presentation.shared.FeldError
+import com.example.feldelysium.presentation.shared.toastText
+import com.example.feldelysium.record.LocalScreenRecordRequest
+import com.example.feldelysium.record.RecordResult
+import com.example.feldelysium.record.ScreenRecordService
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val container = (context.applicationContext as FeldApp).container
-    val vm: EditorViewModel = viewModel(factory = EditorViewModel.factory(container))
+
+    val activity = context as ComponentActivity
+    val settingsVm: SettingsViewModel = viewModel(
+        viewModelStoreOwner = activity,
+        factory = SettingsViewModel.factory(container),
+    )
+    val settings by settingsVm.state.collectAsStateWithLifecycle()
+    val requestRecord = LocalScreenRecordRequest.current
+
+    val vm: EditorViewModel = viewModel(
+        factory = EditorViewModel.factory(container),
+    )
     val state by vm.state.collectAsStateWithLifecycle()
 
     val haptics = rememberFeldHaptics()
@@ -107,6 +128,17 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
     }
 
     LaunchedEffect(Unit) { vm.messages.collect { toast.show(it) } }
+
+    val recordResult by ScreenRecordService.result.collectAsStateWithLifecycle()
+    LaunchedEffect(recordResult) {
+        val result = recordResult ?: return@LaunchedEffect
+        if (result is RecordResult.Saved) {
+            haptics.confirm()
+            sounds.save()
+        }
+        toast.show(result.toastText(askedForSound = settings.exportAudio))
+        ScreenRecordService.consumeResult()
+    }
 
     val decalCtx = remember(state.sceneName, state.entries.size) {
         DecalContext(
@@ -154,19 +186,44 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                 )
 
                 FeldToolbar(
-                    items = listOf(
-                        FeldToolbarItem(FeldIconId.Import, "Paste") { dialog = EditorDialog.ImportLines },
-                        FeldToolbarItem(
-                            icon = FeldIconId.Play,
-                            label = "Playback",
-                            enabled = state.entries.isNotEmpty(),
-                            onClick = {
-                                haptics.confirm()
-                                onNavigateToPlayback()
+                    items = buildList {
+                        add(
+                            FeldToolbarItem(
+                                FeldIconId.Import,
+                                "Paste",
+                            ) {
+                                dialog = EditorDialog.ImportLines
                             },
-                        ),
-                        FeldToolbarItem(FeldIconId.Settings, "Settings", onClick = onNavigateToSettings),
-                    ),
+                        )
+
+                        add(
+                            FeldToolbarItem(
+                                icon = FeldIconId.Play,
+                                label = "Playback",
+                                accent = FeldPalette.Cream,
+                                enabled = state.entries.isNotEmpty(),
+                                onClick = {
+                                    haptics.confirm()
+                                    if (settings.exportEnabled) {
+                                        requestRecord(
+                                            settings.exportAudio,
+                                            { onNavigateToPlayback() },
+                                            { toast.show(FeldError.RecordDenied.toastText(), durationMillis = 4000L) },
+                                        )
+                                    } else {
+                                        onNavigateToPlayback()
+                                    }
+                                },
+                            ),
+                        )
+                        add(
+                            FeldToolbarItem(
+                                FeldIconId.Settings,
+                                "Settings",
+                                onClick = onNavigateToSettings,
+                            ),
+                        )
+                    },
                 )
 
                 Box(Modifier.weight(1f)) {
@@ -413,4 +470,14 @@ private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
             Spacer(Modifier.height(78.dp))
         }
     }
+}
+
+private fun RecordResult.toastText(askedForSound: Boolean): String = when (this) {
+    is RecordResult.Saved -> buildString {
+        append("VIDEO SAVED\n")
+        append(if (uri != null) "Gallery › FeldElysium" else "App folder › Movies")
+        if (askedForSound && !hasAudio) append(" · no sound")
+    }
+
+    RecordResult.Failed -> FeldError.RecordFailed.toastText()
 }
