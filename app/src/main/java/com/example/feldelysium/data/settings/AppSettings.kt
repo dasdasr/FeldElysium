@@ -14,6 +14,7 @@ data class AppSettings(
     val playbackTime: String = "16:36",
     val playbackDay: String = "Day 3",
     val showContinueButton: Boolean = true,
+    val tapMode: TapMode = TapMode.WHOLE_SCREEN,
 
     val backgroundKind: BackgroundKind = BackgroundKind.COLOR,
     val backgroundColorArgb: Long = DEFAULT_BACKGROUND_COLOR,

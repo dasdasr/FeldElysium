@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.FeldApp
 import com.example.feldelysium.data.settings.AppSettings
+import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
@@ -228,10 +229,11 @@ fun PlaybackScreenContent(
                 state = state,
                 onTap = onTap,
                 onBackClick = onBackClick,
+                onContinue = onContinue,
+                onChoice = onChoice,
+                onScrollChanged = onScrollChanged,
                 background = background,
-                money = money,
-                time = time,
-                day = day,
+                money = money, time = time, day = day,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -297,9 +299,9 @@ private fun PlaybackStage(
                     isCheckRolling = state.isCheckRolling,
                     modifier = Modifier.fillMaxHeight().width(tapeWidth).align(Alignment.CenterStart),
                     onScrollActive = onScrollChanged,
-                    footer = { metrics ->
-                        PlaybackPromptFooter(state.prompt, metrics, onContinue, onChoice)
-                    },
+                    dragToScroll = background.showContinueButton &&
+                            background.tapMode == TapMode.CONTINUE_BUTTON,
+                    footer = { metrics -> PlaybackPromptFooter(state.prompt, metrics, onContinue, onChoice) },
                 )
             }
 

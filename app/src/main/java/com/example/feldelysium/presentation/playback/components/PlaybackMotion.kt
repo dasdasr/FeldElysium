@@ -18,6 +18,9 @@ object PlaybackMotion {
     const val SCROLLBAR_TOP_FRACTION = 0.22f
     const val SCROLLBAR_BOTTOM_FRACTION = 0.78f
 
+    const val FOOTER_SAFE_BOTTOM_FRACTION = 0.86f
+    const val FOOTER_LIFT_MS = 220
+
     const val SCROLLBAR_DOT_RANGE_START = 0.2f
     const val SCROLLBAR_DOT_RANGE_END = 0.8f
 

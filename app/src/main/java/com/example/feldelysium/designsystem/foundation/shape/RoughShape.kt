@@ -1,5 +1,6 @@
 package com.example.feldelysium.designsystem.foundation.shape
 
+import android.util.LruCache
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -30,6 +31,7 @@ data class RoughStyle(
     val cornerVariation: Float = 0.35f,
     val cornerJitter: Float = 0.5f,
     val inset: Dp = 1.5.dp,
+    val inkSample: Dp = 4.dp,
 
     val leftCornerScale: Float = 1f,
     val rightCornerScale: Float = 1f,
@@ -53,6 +55,27 @@ data class RoughStyle(
     val inkLevels: Int = 10,
 )
 
+internal data class RoughKey(
+    val seed: Int, val style: RoughStyle, val w: Int, val h: Int,
+    val density: Float, val inkWidth: Float,
+)
+internal class RoughGeometry(val path: Path, val ink: List<InkLayer>)
+
+internal object RoughCache {
+    private val lru = LruCache<RoughKey, RoughGeometry>(96)
+
+    fun get(shape: RoughShape, size: Size, d: Density, inkWidthPx: Float): RoughGeometry {
+        val key = RoughKey(
+            shape.seed, shape.style,
+            size.width.roundToInt(), size.height.roundToInt(), d.density, inkWidthPx,
+        )
+        return lru.get(key) ?: run {
+            val path = shape.buildPath(size, d)
+            val ink = if (inkWidthPx > 0f) shape.buildInkLayers(path, d, inkWidthPx) else emptyList()
+            RoughGeometry(path, ink).also { lru.put(key, it) }
+        }
+    }
+}
 private data class Knot(val p: Offset, val jumpNext: Boolean = false)
 
 class RoughShape(val seed: Int, val style: RoughStyle = RoughStyle()) : Shape {
@@ -237,7 +260,7 @@ fun RoughShape.buildInkLayers(outline: Path, density: Density, baseWidth: Float)
     val widthNoise = LoopNoise(seed * 17 + 3, len, cell * 1.4f)
 
     val levels = style.inkLevels.coerceAtLeast(2)
-    val samples = (len / with(density) { 2.5.dp.toPx() }).toInt().coerceAtLeast(16)
+    val samples = (len / with(density) { style.inkSample.toPx() }).toInt().coerceAtLeast(16)
 
     val outer = ArrayList<Offset>(samples)
     val inner = ArrayList<Offset>(samples)

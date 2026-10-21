@@ -251,7 +251,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                             speakerColor = Color(entry.speaker.colorArgb),
                                             text = entry.text,
                                             number = index + 1,
-                                            ambient = 0.4f,
+                                            ambient = 0.7f,
                                             seed = entry.id.hashCode(),
                                             isDragging = isDragging,
                                             dragModifier = Modifier.longPressDraggableHandle(),

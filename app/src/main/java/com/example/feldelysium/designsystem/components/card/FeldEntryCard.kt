@@ -1,6 +1,7 @@
 package com.example.feldelysium.designsystem.components.card
 
 import android.os.SystemClock
+import android.util.LruCache
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -33,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -57,11 +60,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,10 +74,8 @@ import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
 import com.example.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
-import com.example.feldelysium.designsystem.foundation.material.DistressSpec
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
-import com.example.feldelysium.designsystem.foundation.material.distressMaterial
 import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
@@ -96,6 +99,7 @@ private val EntryRough = RoughStyle(
     roughness = 0.6.dp,
     step = 44.dp,
     corner = 3.dp,
+    inkLevels = 5,
     cornerVariation = 0.05f,
     cornerJitter = 0.1f,
     tornChance = 0f,
@@ -112,18 +116,6 @@ fun entryRough(seed: Int): RoughStyle {
     )
 }
 
-private val StampDistress = DistressSpec(
-    color = Color(0xFFE9EAEC),
-    edgeSoftness = 0.4.dp, edgeRough = 0.25.dp, edgeSize = 1.2.dp,
-    edgeErode = 0.6f, bleed = 0.1f,
-    patchy = 0.35f, patchSize = 14.dp,
-    dropout = 1f, dropoutSize = 3.dp,
-    scratch = 0.9f, scratchLength = 16.dp, scratchWidth = 0.4.dp,
-    speck = 0.7f, speckSize = 1.6.dp,
-    grain = 0.5f, grainSize = 0.5.dp,
-    splatter = 0f,
-)
-
 private class SwayState {
     var angle by mutableFloatStateOf(0f)
     var velocityY = 0f
@@ -136,6 +128,14 @@ private class SwayState {
     var grabY = 0f
 }
 
+private val diamondBrushCache = LruCache<Triple<Color, Int, Float>, Brush>(128)
+
+private fun cachedDiamondBrush(color: Color, seed: Int, density: Float): Brush {
+    val key = Triple(color, seed, density)
+    return diamondBrushCache.get(key)
+        ?: wornBrush(color, seed + 1, density, wear = 0.4f, scale = 10f).also { diamondBrushCache.put(key, it) }
+}
+
 @Composable
 fun FeldEntryCard(
     speakerName: String,
@@ -145,6 +145,9 @@ fun FeldEntryCard(
     decalSpec: DecalSpec = DecalSpec.Entry,
     number: Int? = null,
     ambient: Float? = null,
+    textured: Boolean = true,
+    showDecals: Boolean = textured,
+    worn: Boolean = false,
     seed: Int = rememberSeed(),
     isDragging: Boolean = false,
     dragModifier: Modifier = Modifier,
@@ -185,9 +188,14 @@ fun FeldEntryCard(
     } else {
         null
     }
-    val ringBrush = remember(speakerColor, seed, density) {
-        wornBrush(speakerColor, seed + 2, density, wear = 0.4f, scale = 10f)
+    val diamondBrush: Brush = remember(speakerColor, seed, density) {
+        cachedDiamondBrush(speakerColor, seed, density)
     }
+    val barBrush: Brush = remember(speakerColor, seed, density, worn) {
+        if (worn) wornBrush(speakerColor, seed, density, wear = 0.6f, scale = 7f)
+        else SolidColor(speakerColor)
+    }
+    val flatBrush = remember(speakerColor) { SolidColor(speakerColor) }
 
     val sway = remember { SwayState() }
     LaunchedEffect(isDragging) {
@@ -208,8 +216,8 @@ fun FeldEntryCard(
             val fresh = isDragging && now - sway.velocityStamp < SWAY_VELOCITY_TTL_NANOS
             val velocity = if (fresh) sway.velocityY else 0f
             val torque = -SWAY_STIFFNESS * sway.angle -
-                SWAY_DAMPING * angularVelocity +
-                SWAY_GAIN * velocity * sway.dir
+                    SWAY_DAMPING * angularVelocity +
+                    SWAY_GAIN * velocity * sway.dir
 
             angularVelocity += torque * dt
             sway.angle = (sway.angle + angularVelocity * dt)
@@ -217,10 +225,6 @@ fun FeldEntryCard(
         }
         sway.angle = 0f
     }
-    val barBrush = remember(speakerColor, seed, density) {
-        wornBrush(speakerColor, seed, density, wear = 0.6f, scale = 7f)
-    }
-    val flatBrush = remember(speakerColor) { SolidColor(speakerColor) }
     val rough = remember(seed) { entryRough(seed) }
     val cardShape = remember(seed, rough) { RoughShape(seed = seed, style = rough) }
 
@@ -229,21 +233,28 @@ fun FeldEntryCard(
         baseCtx.copy(lineNumber = number, speakerName = speakerName)
     }
 
+    val swiping by remember { derivedStateOf { swipe.value > 0.5f } }
+
     FeldCard(
         modifier = modifier
-            .onGloballyPositioned { coordinates ->
-                sway.width = coordinates.size.width.toFloat().coerceAtLeast(1f)
-                if (!isDragging) return@onGloballyPositioned
-                val y = coordinates.positionInRoot().y
-                val now = SystemClock.elapsedRealtimeNanos()
-                if (!sway.lastY.isNaN() && now > sway.lastStamp) {
-                    val instant = (y - sway.lastY) / ((now - sway.lastStamp) / 1e9f)
-                    sway.velocityY = sway.velocityY * 0.6f + instant * 0.4f
-                    sway.velocityStamp = now
-                }
-                sway.lastY = y
-                sway.lastStamp = now
-            }
+            .onSizeChanged { sway.width = it.width.toFloat().coerceAtLeast(1f) }
+            .then(
+                if (isDragging) {
+                    Modifier.onGloballyPositioned { c ->
+                        val y = c.positionInRoot().y
+                        val now = SystemClock.elapsedRealtimeNanos()
+                        if (!sway.lastY.isNaN() && now > sway.lastStamp) {
+                            val instant = (y - sway.lastY) / ((now - sway.lastStamp) / 1e9f)
+                            sway.velocityY = sway.velocityY * 0.6f + instant * 0.4f
+                            sway.velocityStamp = now
+                        }
+                        sway.lastY = y
+                        sway.lastStamp = now
+                    }
+                } else {
+                    Modifier
+                },
+            )
             .graphicsLayer {
                 val s = 1f + 0.035f * lift
                 scaleX = s
@@ -295,6 +306,8 @@ fun FeldEntryCard(
             }
             .then(dragModifier),
         ambient = ambient,
+        textured = textured,
+        showDecals = showDecals,
         decalSpec = decalSpec,
         decalContext = decalCtx,
         decalInset = 7.dp,
@@ -306,7 +319,7 @@ fun FeldEntryCard(
         Box(
             Modifier
                 .fillMaxWidth()
-                .clip(cardShape),
+                .then(if (textured) Modifier.clip(cardShape) else Modifier),
         ) {
             Row(
                 Modifier
@@ -317,7 +330,10 @@ fun FeldEntryCard(
                     Modifier
                         .width(7.dp)
                         .fillMaxHeight()
-                        .drawBehind { drawTab(barBrush, seed) },
+                        .drawWithCache {
+                            val path = tabPath(this, seed, size.width, size.height)
+                            onDrawBehind { drawPath(path, barBrush) }
+                        },
                 )
 
                 Row(
@@ -329,7 +345,7 @@ fun FeldEntryCard(
                     Box(
                         modifier = Modifier
                             .size(22.dp)
-                            .drawBehind { drawDiamondBeat(ringBrush, hold, pulse?.value) },
+                            .drawBehind { drawDiamondBeat(diamondBrush, hold, pulse?.value) },
                         contentAlignment = Alignment.Center,
                     ) {
                         FeldHandDiamond(
@@ -341,6 +357,7 @@ fun FeldEntryCard(
                                 scaleX = s
                                 scaleY = s
                             },
+                            brush = diamondBrush,
                         )
                     }
                     Spacer(Modifier.width(14.dp))
@@ -394,41 +411,21 @@ fun FeldEntryCard(
                 )
             }
 
-            if (onSwipeDelete != null) {
+            if (onSwipeDelete != null && swiping) {
                 Box(
                     Modifier
                         .matchParentSize()
                         .drawBehind {
                             val p = (swipe.value / size.width.coerceAtLeast(1f)).coerceIn(0f, 1f)
-                            if (p > 0.001f) {
-                                val tabW = 7.dp.toPx()
-                                drawTab(
-                                    brush = flatBrush,
-                                    seed = seed,
-                                    barWidth = tabW + (size.width - tabW) * p,
-                                    alpha = (p / SWIPE_FILL_FULL).coerceIn(0f, 1f),
-                                )
-                            }
-                        },
-                )
-            }
-
-            if (onSwipeDelete != null) {
-                Box(
-                    Modifier
-                        .matchParentSize()
-                        .drawBehind {
-                            val p = (swipe.value / size.width.coerceAtLeast(1f)).coerceIn(0f, 1f)
-                            if (p > 0.001f) {
-                                val tabW = 7.dp.toPx()
-                                val barW = tabW + (size.width - tabW) * p
+                            val tabW = 7.dp.toPx()
+                            val barW = tabW + (size.width - tabW) * p
+                            val a = (p / SWIPE_FILL_FULL).coerceIn(0f, 1f)
+                            if (worn) {
+                                drawTab(flatBrush, seed, barW, a)
                                 drawTab(barBrush, seed, barW)
-                                drawTab(
-                                    brush = flatBrush,
-                                    seed = seed,
-                                    barWidth = barW,
-                                    alpha = (p / SWIPE_FILL_FULL).coerceIn(0f, 1f),
-                                )
+                                drawTab(flatBrush, seed, barW, a)
+                            } else {
+                                drawTab(barBrush, seed, barW)
                             }
                         },
                     contentAlignment = Alignment.CenterStart,
@@ -469,7 +466,6 @@ private fun StampNumber(number: Int, seed: Int, color: Color, modifier: Modifier
                 rotationZ = look.tilt
                 translationY = look.dy.dp.toPx()
             }
-            .distressMaterial(StampDistress, seed, bakeKey = look.format(number))
             .padding(2.dp),
     )
 }
@@ -495,11 +491,15 @@ private class StampLook(seed: Int) {
 }
 
 @Composable
-fun FeldHandDiamond(color: Color, seed: Int, size: Dp = 22.dp, modifier: Modifier = Modifier) {
+fun FeldHandDiamond(
+    color: Color,
+    seed: Int,
+    size: Dp = 22.dp,
+    modifier: Modifier = Modifier,
+    brush: Brush? = null,
+) {
     val density = LocalDensity.current.density
-    val brush = remember(color, seed, density) {
-        wornBrush(color, seed + 1, density, wear = 0.4f, scale = 10f)
-    }
+    val b = brush ?: remember(color, seed, density) { cachedDiamondBrush(color, seed, density) }
     val j = remember(seed) {
         val r = Random(seed * 131 + 5)
         FloatArray(8) { (r.nextFloat() - 0.5f) * 0.07f }
@@ -514,7 +514,7 @@ fun FeldHandDiamond(color: Color, seed: Int, size: Dp = 22.dp, modifier: Modifie
             lineTo(w * (0.02f + abs(j[6])), h * (0.5f + j[7]))
             close()
         }
-        drawPath(p, brush)
+        drawPath(p, b)
     }
 }
 
@@ -571,14 +571,14 @@ internal fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     }
 }
 
-private fun DrawScope.drawTab(brush: Brush, seed: Int, barWidth: Float = size.width, alpha: Float = 1f) {
+internal fun tabPath(d: Density, seed: Int, barWidth: Float, height: Float): Path = with(d) {
     val r = Random(seed * 17 + 3)
     val wob = 1.5.dp.toPx()
     val base = barWidth - wob
     val top = r.nextFloat() * 4.dp.toPx()
-    val bottom = size.height - r.nextFloat() * 4.dp.toPx()
+    val bottom = height - r.nextFloat() * 4.dp.toPx()
     val step = 7.dp.toPx()
-    val path = Path().apply {
+    Path().apply {
         moveTo(0f, top)
         lineTo(base + r.nextFloat() * wob, top)
         var y = top + step
@@ -590,7 +590,10 @@ private fun DrawScope.drawTab(brush: Brush, seed: Int, barWidth: Float = size.wi
         lineTo(0f, bottom)
         close()
     }
-    drawPath(path, brush, alpha = alpha)
+}
+
+private fun DrawScope.drawTab(brush: Brush, seed: Int, barWidth: Float = size.width, alpha: Float = 1f) {
+    drawPath(tabPath(this, seed, barWidth, size.height), brush, alpha = alpha)
 }
 
 @Preview(widthDp = 380, heightDp = 520, showBackground = true, backgroundColor = 0xFF0B1011)

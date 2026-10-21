@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import java.util.Collections.rotate
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.random.Random
@@ -27,8 +26,15 @@ internal fun DrawScope.drawDecals(plan: DecalPlan) {
     }
 }
 
-private val Mirrorable = setOf(DecalKind.Text, DecalKind.DataBlock, DecalKind.Counter, DecalKind.FilmStrip)
-private val UseLimit = mapOf(DecalKind.DataBlock to 1, DecalKind.Ruler to 1)
+private val Mirrorable = setOf(DecalKind.Text, DecalKind.DataBlock, DecalKind.Counter)
+private val UseLimit = mapOf(
+    DecalKind.DataBlock to 1,
+    DecalKind.Ruler to 1,
+    DecalKind.Perforation to 1,
+    DecalKind.Corner to 1,
+    DecalKind.Tape to 1,
+    DecalKind.Stitch to 1,
+)
 
 internal fun planDecals(
     seed: Int,
@@ -52,14 +58,13 @@ internal fun planDecals(
             rightSide = leftInsetPx > 0f || rng.nextBoolean(),
             color = spec.leakColor,
             strength = 0.08f + 0.10f * a,
-            seed = seed.mod(97).toFloat(),
         )
     } else {
         null
     }
 
     val areaDp = size.width * size.height / (d * d)
-    val x = a.pow(1.5f) + areaDp / 20000f * a * a * 3f
+    val x = a + areaDp / 20000f * a * a * 3f
     val budget = floor(x + rng.nextFloat()).toInt().coerceAtMost(spec.maxDecals)
     if (budget == 0) return DecalPlan(emptyList(), leak)
 
@@ -69,7 +74,7 @@ internal fun planDecals(
     val out = ArrayList<Placement>()
 
     var attempts = 0
-    while (out.size < budget && attempts++ < budget * 4) {
+    while (out.size < budget && attempts++ < budget * 5) {
         val kind = pickKind(rng, spec, a, used, size, d) ?: break
         val decal = buildDecal(kind, rng, ctx, spec, density, LayoutDirection.Ltr, measurer, size) ?: continue
         val spot = findSpot(rng, spec, decal, safe, taken, d, a) ?: continue
@@ -98,26 +103,31 @@ private fun pickKind(
 ): DecalKind? {
     val wDp = size.width / d
     val hDp = size.height / d
-    val strips = (used[DecalKind.Perforation] ?: 0) + (used[DecalKind.FilmStrip] ?: 0)
-    val w = spec.weights.mapValues { (k, base) ->
-        var v = base
-        if ((used[k] ?: 0) >= (UseLimit[k] ?: Int.MAX_VALUE)) v = 0f
-        when (k) {
-            DecalKind.Perforation, DecalKind.FilmStrip -> if (strips >= 1 || hDp < 30f) v = 0f else v *= a
-            DecalKind.DataBlock -> if (wDp < 200f || hDp < 80f) v = 0f else v *= a
-            DecalKind.Sprite -> if (spec.atlas == null) v = 0f
-            else -> {}
+
+    fun weightOf(k: DecalKind, base: Float): Float {
+        if ((used[k] ?: 0) >= (UseLimit[k] ?: Int.MAX_VALUE)) return 0f
+        return when (k) {
+            DecalKind.Perforation -> if (hDp < 30f) 0f else base * a
+            DecalKind.DataBlock -> if (wDp < 200f || hDp < 80f) 0f else base * a
+            DecalKind.Tally -> if (wDp < 80f) 0f else base
+            else -> base
         }
-        v
     }
-    val total = w.values.sum()
+
+    var total = 0f
+    for ((k, b) in spec.weights) total += weightOf(k, b)
     if (total <= 0f) return null
+
     var t = rng.nextFloat() * total
-    for ((k, v) in w) {
+    var last: DecalKind? = null
+    for ((k, b) in spec.weights) {
+        val v = weightOf(k, b)
+        if (v <= 0f) continue
+        last = k
         t -= v
-        if (t <= 0f && v > 0f) return k
+        if (t <= 0f) return k
     }
-    return w.entries.lastOrNull { it.value > 0f }?.key
+    return last
 }
 
 private class Spot(val bounds: Rect, val rotation: Float)
@@ -136,8 +146,24 @@ private fun findSpot(
     val gap = spec.gap.value * d
     val edge = spec.edgeMarginDp
     val strip = decal as? StripDecal
+    val isCorner = decal is CornerFoldDecal
 
     for (i in 0 until 10) {
+        if (isCorner) {
+            val right = rng.nextBoolean()
+            val bottom = rng.nextBoolean()
+            val cx = if (right) safe.right - w else safe.left
+            val cy = if (bottom) safe.bottom - h else safe.top
+            val rect = Rect(cx, cy, cx + w, cy + h)
+            if (taken.any { it.inflate(gap).overlaps(rect) }) continue
+            val rot = when {
+                !right && !bottom -> 0f
+                right && !bottom -> 90f
+                right && bottom -> 180f
+                else -> 270f
+            }
+            return Spot(rect, rot)
+        }
         val center = strip == null && spec.allowCenter && a > 0.7f && rng.nextFloat() < (a - 0.7f) * 2f
         val side = when {
             strip == null -> rng.nextInt(4)

@@ -34,6 +34,7 @@ import com.example.feldelysium.FeldApp
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.data.settings.SamplesMode
+import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
@@ -136,7 +137,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
 
                 FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
-                        icon = FeldIconId.Aspect,
+                        icon = FeldIconId.Cinema,
                         title = "Cinema frame",
                         subtitle = "Keep playback inside a 16:9 frame",
                         checked = settings.lockAspectRatio16x9,
@@ -147,7 +148,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingRow(
-                        icon = FeldIconId.Grid,
+                        icon = FeldIconId.PanelCalendar,
                         title = "Status line",
                         subtitle = "Reals, time and day",
                         showChevron = true,
@@ -158,7 +159,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingRow(
-                        icon = FeldIconId.Settings,
+                        icon = FeldIconId.Panel,
                         title = "Panel icons",
                         subtitle = "Choose which bar icons are highlighted",
                         showChevron = true,
@@ -169,7 +170,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingSwitchRow(
-                        icon = FeldIconId.Play,
+                        icon = FeldIconId.Autoplay,
                         title = "Autoplay",
                         subtitle = "Scroll lines automatically",
                         checked = settings.autoPlay,
@@ -177,7 +178,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
-                        icon = FeldIconId.Timer,
+                        icon = FeldIconId.Speed,
                         title = "Autoplay speed",
                         subtitle = "How long each line stays on screen",
                         value = settings.autoPlaySpeed.label,
@@ -198,7 +199,22 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
-                        icon = FeldIconId.DialogueStyle,
+                        icon = FeldIconId.Play,
+                        title = "Advance dialogue",
+                        subtitle = when (settings.tapMode) {
+                            TapMode.WHOLE_SCREEN -> "Tap anywhere on the screen"
+                            TapMode.CONTINUE_BUTTON -> "Only the Continue button. Drag the dialogue to scroll back"
+                        },
+                        enabled = settings.showContinueButton,
+                        value = settings.tapMode.label,
+                        onClick = {
+                            haptics.tick()
+                            vm.dispatch(SettingsEvent.SetTapMode(settings.tapMode.next()))
+                        },
+                    )
+                    FeldSettingsDivider()
+                    FeldSettingValueRow(
+                        icon = FeldIconId.Typeface,
                         title = "Typeface",
                         subtitle = "Dialogue text in playback",
                         value = PlaybackFontName,
@@ -208,7 +224,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
 
                 FeldSettingsSection(title = "Video export") {
                     FeldSettingSwitchRow(
-                        icon = FeldIconId.Export,
+                        icon = FeldIconId.Video,
                         title = "Record playback",
                         subtitle = "Playback button records the screen to a video",
                         checked = settings.exportEnabled,
@@ -217,7 +233,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     FeldSettingsDivider()
                     val audioSupported = Build.VERSION.SDK_INT >= 29
                     FeldSettingSwitchRow(
-                        icon = FeldIconId.Sound,
+                        icon = FeldIconId.Microphone,
                         title = "Record sound",
                         subtitle = if (audioSupported) "App sound goes into the video" else "Needs Android 10 or newer",
                         checked = settings.exportAudio && audioSupported,
@@ -263,7 +279,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingRow(
-                        icon = FeldIconId.Palette,
+                        icon = FeldIconId.Tag,
                         title = "Tags",
                         subtitle = "Rename, recolor or delete",
                         showChevron = true,
@@ -308,7 +324,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 FeldSettingsSection(title = "Coming soon") {
                     SoonTap("Lock landscape") {
                         FeldSettingSwitchRow(
-                            icon = FeldIconId.Aspect,
+                            icon = FeldIconId.Cinema,
                             title = "Lock landscape",
                             subtitle = "Lock it",
                             checked = false,

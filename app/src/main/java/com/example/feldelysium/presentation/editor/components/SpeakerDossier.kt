@@ -1,12 +1,7 @@
 package com.example.feldelysium.presentation.editor.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,7 +49,6 @@ import coil.compose.AsyncImage
 import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
-import com.example.feldelysium.designsystem.components.card.beatScale
 import com.example.feldelysium.designsystem.components.card.drawDiamondBeat
 import com.example.feldelysium.designsystem.components.card.entryRough
 import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
@@ -97,16 +91,6 @@ private fun AssetImage(@DrawableRes res: Int?, modifier: Modifier, placeholder: 
     }
 }
 
-private fun dossierCaption(number: Int, name: String): String {
-    val initials = name.trim()
-        .split(Regex("\\s+"))
-        .filter { it.isNotEmpty() }
-        .take(4)
-        .joinToString("") { "${it.first().uppercaseChar()}." }
-        .ifEmpty { "N/A" }
-    return "NO. ${"%02d".format(number)} // $initials"
-}
-
 @Composable
 fun SpeakerPhotoBlock(
     iconRes: Int?,
@@ -129,7 +113,7 @@ fun SpeakerPhotoBlock(
                 .aspectRatio(0.92f)
                 .graphicsLayer {
                     rotationZ = -1.2f
-                    val s = 1f - 0.015f * press
+                    val s = 1.05f - 0.015f * press
                     scaleX = s
                     scaleY = s
                 }
@@ -138,7 +122,8 @@ fun SpeakerPhotoBlock(
                     indication = null,
                     role = Role.Button,
                     onClick = onClick,
-                ),
+                )
+                .padding(top = 8.dp),
         ) {
             Box(
                 Modifier
@@ -171,21 +156,6 @@ fun SpeakerPhotoBlock(
                 Modifier.matchParentSize(),
             ) { drawRect(Cream, style = Stroke(FrameInset.toPx())) }
         }
-
-        Text(
-            text = dossierCaption(number, name),
-            style = FeldDecalType.Base.copy(
-                fontSize = 12.sp,
-                letterSpacing = 0.8.sp,
-            ),
-            color = FeldPalette.Muted.copy(alpha = 0.55f),
-            maxLines = 1,
-            softWrap = false,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp),
-        )
     }
 }
 
@@ -198,16 +168,6 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
     val ringBrush = remember(color, seed, density) {
         wornBrush(color, seed + 2, density, wear = 0.4f, scale = 10f)
     }
-
-    val pulse = rememberInfiniteTransition(label = "previewBeat").animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1150, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-        label = "previewPulse",
-    )
 
     Box(modifier.fillMaxWidth()) {
         FeldCard(
@@ -261,25 +221,10 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
                         Box(
                             modifier = Modifier
                                 .size(22.dp)
-                                .drawBehind {
-                                    drawDiamondBeat(
-                                        brush = ringBrush,
-                                        hold = 0f,
-                                        t = pulse.value,
-                                    )
-                                },
+                                .drawBehind { drawDiamondBeat(brush = ringBrush, hold = 0f, t = null) },
                             contentAlignment = Alignment.Center,
                         ) {
-                            FeldHandDiamond(
-                                color = color,
-                                seed = seed,
-                                size = 22.dp,
-                                modifier = Modifier.graphicsLayer {
-                                    val s = beatScale(pulse.value)
-                                    scaleX = s
-                                    scaleY = s
-                                },
-                            )
+                            FeldHandDiamond(color = color, seed = seed, size = 22.dp)
                         }
 
                         Spacer(Modifier.width(14.dp))
