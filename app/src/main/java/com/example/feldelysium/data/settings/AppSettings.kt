@@ -13,6 +13,7 @@ data class AppSettings(
     val playbackMoney: String = "40.95",
     val playbackTime: String = "16:36",
     val playbackDay: String = "Day 3",
+    val showContinueButton: Boolean = true,
 
     val backgroundKind: BackgroundKind = BackgroundKind.COLOR,
     val backgroundColorArgb: Long = DEFAULT_BACKGROUND_COLOR,

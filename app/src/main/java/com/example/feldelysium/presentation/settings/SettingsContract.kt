@@ -14,6 +14,7 @@ sealed interface SettingsEvent {
     data class SetExportEnabled(val enabled: Boolean) : SettingsEvent
     data class SetExportAudio(val enabled: Boolean) : SettingsEvent
     data class SetAutoPlay(val enabled: Boolean) : SettingsEvent
+    data class ShowContinueButton(val enabled: Boolean) : SettingsEvent
     data class SetAutoPlaySpeed(val speed: AutoPlaySpeed) : SettingsEvent
     data class SetPlaybackMoney(val value: String) : SettingsEvent
     data class SetPlaybackTime(val value: String) : SettingsEvent
@@ -42,6 +43,8 @@ internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
         is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
 
         is SettingsEvent.SetAutoPlay -> copy(autoPlay = event.enabled)
+
+        is SettingsEvent.ShowContinueButton -> copy(showContinueButton = event.enabled)
 
         is SettingsEvent.SetAutoPlaySpeed -> copy(autoPlaySpeed = event.speed)
 

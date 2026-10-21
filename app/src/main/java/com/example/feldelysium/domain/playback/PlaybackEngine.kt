@@ -24,6 +24,8 @@ class PlaybackEngine(private val entries: List<DialogueEntry>) {
         cursor = 0
     }
 
+    fun peek(): DialogueEntry? = entries.getOrNull(cursor)
+
     fun revealedEntries(): List<DialogueEntry> = entries.subList(0, cursor)
 }
 

@@ -35,6 +35,7 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.EXPORT_AUDIO] = next.exportAudio
             prefs[Keys.AUTO_PLAY] = next.autoPlay
             prefs[Keys.AUTO_PLAY_SPEED] = next.autoPlaySpeed.name
+            prefs[Keys.SHOW_CONTINUE_BUTTON] = next.showContinueButton
             next.barIcons.forEach { (slot, state) -> prefs[barKey(slot)] = state.name }
             next.inventoryIcons.forEach { (slot, icon) -> prefs[invKey(slot)] = icon.name }
         }
@@ -73,6 +74,7 @@ class SettingsRepository(private val context: Context) {
                 ?.let { runCatching { InventoryIcon.valueOf(it) }.getOrNull() }
                 ?: slot.defaultIcon
         },
+        showContinueButton = prefs[Keys.SHOW_CONTINUE_BUTTON] ?: true,
     )
 
     private object Keys {
@@ -92,6 +94,7 @@ class SettingsRepository(private val context: Context) {
         val EXPORT_AUDIO = booleanPreferencesKey("export_audio")
         val AUTO_PLAY = booleanPreferencesKey("auto_play")
         val AUTO_PLAY_SPEED = stringPreferencesKey("auto_play_speed")
+        val SHOW_CONTINUE_BUTTON = booleanPreferencesKey("show_continue_button")
     }
 
     private fun barKey(slot: BarSlot) = stringPreferencesKey("bar_icon_${slot.name.lowercase()}")

@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,8 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
@@ -38,13 +41,15 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
 
+data class FooterMetrics(val fontSize: TextUnit, val lineHeight: TextUnit, val buttonHeight: Dp)
+
 @Composable
 fun DialogueHistoryList(
     entries: List<DialogueEntry>,
     modifier: Modifier = Modifier,
     isCheckRolling: Boolean = false,
     onScrollActive: (Boolean) -> Unit = {},
-    footer: (@Composable () -> Unit)? = null,
+    footer: (@Composable (FooterMetrics) -> Unit)? = null,
 ) {
     BoxWithConstraints(modifier = modifier.clipToBounds()) {
         if (!maxWidth.value.isFinite() || !maxHeight.value.isFinite()) return@BoxWithConstraints
@@ -67,60 +72,60 @@ fun DialogueHistoryList(
         val lineHeight = with(density) { (maxHeight * PlaybackMotion.LINE_HEIGHT_FRACTION).toSp() }
         val entryGap = maxHeight * (PlaybackMotion.LINE_HEIGHT_FRACTION * PlaybackMotion.ENTRY_GAP_LINE_HEIGHTS)
 
+        val metrics = FooterMetrics(
+            fontSize, lineHeight, maxHeight * PlaybackMotion.CONTINUE_HEIGHT_FRACTION,
+        )
+        val footerGapPx = viewportPx * PlaybackMotion.CONTINUE_GAP_FRACTION
+
         TapeBackground(
             offsetPx = { anchor.tapeShift.value + anchor.rollShift.value },
             modifier = Modifier.fillMaxSize(),
         )
 
         Layout(
-            modifier = Modifier
-                .fillMaxSize()
-                .clipToBounds(),
+            modifier = Modifier.fillMaxSize().clipToBounds(),
             content = {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = textStart, end = textEndInset),
+                    verticalArrangement = Arrangement.spacedBy(entryGap),
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(entryGap),
-                    ) {
-                        entries.forEachIndexed { index, entry ->
-                            key(entry.id) {
-                                DialogueEntryItem(
-                                    entry = entry,
-                                    isLatest = index == entries.lastIndex,
-                                    fontSize = fontSize,
-                                    lineHeight = lineHeight,
-                                )
-                            }
+                    entries.forEachIndexed { index, entry ->
+                        key(entry.id) {
+                            DialogueEntryItem(
+                                entry = entry,
+                                isLatest = index == entries.lastIndex,
+                                dimmed = isCheckRolling && index == entries.lastIndex,
+                                fontSize = fontSize,
+                                lineHeight = lineHeight,
+                            )
                         }
                     }
-                    footer?.invoke()
+                }
+                if (footer != null) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = textStart, end = textEndInset),
+                    ) { footer(metrics) }
                 }
             },
         ) { measurables, constraints ->
-            val placeable = measurables.single().measure(
-                Constraints(
-                    minWidth = constraints.maxWidth,
-                    maxWidth = constraints.maxWidth,
-                    minHeight = 0,
-                    maxHeight = Constraints.Infinity,
-                ),
+            val fixed = Constraints(
+                minWidth = constraints.maxWidth, maxWidth = constraints.maxWidth,
+                minHeight = 0, maxHeight = Constraints.Infinity,
             )
+            val placeable = measurables[0].measure(fixed)
+            val footerPlaceable = measurables.getOrNull(1)?.measure(fixed)
+
             val baseY = anchor.placementY(
                 contentHeightPx = placeable.height.toFloat(),
                 restBottomPx = restBottomPx,
                 viewportHeightPx = viewportPx,
                 textShiftPx = 0f,
             )
-
-            anchor.noteScroll(
-                y = baseY,
-                contentHeightPx = placeable.height.toFloat(),
-                restBottomPx = restBottomPx,
-            )
+            anchor.noteScroll(baseY, placeable.height.toFloat(), restBottomPx)
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 val y = anchor.placementY(
@@ -130,6 +135,7 @@ fun DialogueHistoryList(
                     textShiftPx = anchor.textShift.value,
                 )
                 placeable.place(0, y.roundToInt())
+                footerPlaceable?.place(0, (y + placeable.height + footerGapPx).roundToInt())
             }
         }
 
@@ -245,8 +251,8 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
 private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
     Canvas(modifier) {
         val lineX = size.width * (
-            PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
-            )
+                PlaybackMotion.SCROLLBAR_X_FRACTION - PlaybackMotion.SCROLLBAR_X_SHIFT_FRACTION
+                )
         val lineTop = size.height * PlaybackMotion.SCROLLBAR_TOP_FRACTION
         val lineBottom = size.height * PlaybackMotion.SCROLLBAR_BOTTOM_FRACTION
         if (lineBottom <= lineTop) return@Canvas

@@ -189,6 +189,14 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         },
                     )
                     FeldSettingsDivider()
+                    FeldSettingSwitchRow(
+                        icon = FeldIconId.PlaybackText,
+                        title = "Continue button",
+                        subtitle = "Show Continue button",
+                        checked = settings.showContinueButton,
+                        onCheckedChange = { vm.dispatch(SettingsEvent.ShowContinueButton(it)) },
+                    )
+                    FeldSettingsDivider()
                     FeldSettingValueRow(
                         icon = FeldIconId.DialogueStyle,
                         title = "Typeface",
