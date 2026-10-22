@@ -3,6 +3,7 @@ package com.example.feldelysium.data.speaker
 import android.content.Context
 import android.net.Uri
 import java.io.File
+import java.security.MessageDigest
 import java.util.UUID
 
 class SpeakerIconStore(context: Context) {
@@ -20,12 +21,44 @@ class SpeakerIconStore(context: Context) {
     }
 
     fun copyIn(source: Uri): String? = runCatching {
-        val out = File(dir, "${UUID.randomUUID()}.img")
+        val tmp = File(dir, "${UUID.randomUUID()}.tmp")
+        val digest = MessageDigest.getInstance("SHA-256")
+
         appContext.contentResolver.openInputStream(source)?.use { input ->
-            out.outputStream().use { input.copyTo(it) }
-        } ?: return null
-        Uri.fromFile(out).toString()
+            tmp.outputStream().use { output ->
+                val buf = ByteArray(8192)
+                while (true) {
+                    val n = input.read(buf)
+                    if (n < 0) break
+                    digest.update(buf, 0, n)
+                    output.write(buf, 0, n)
+                }
+            }
+        } ?: run {
+            tmp.delete()
+            return null
+        }
+
+        val hash = digest.digest().joinToString("") { "%02x".format(it) }
+        val target = File(dir, "$hash.img")
+
+        if (target.exists()) {
+            tmp.delete()
+            target.setLastModified(System.currentTimeMillis())
+        } else if (!tmp.renameTo(target)) {
+            tmp.delete()
+            return null
+        }
+
+        Uri.fromFile(target).toString()
     }.getOrNull()
+
+    fun allUris(): List<String> =
+        dir.listFiles()
+            ?.filter { it.isFile }
+            ?.sortedByDescending { it.lastModified() }
+            ?.map { Uri.fromFile(it).toString() }
+            .orEmpty()
 
     fun adopt(file: File): String {
         val name = "${UUID.randomUUID()}.img"

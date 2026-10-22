@@ -190,7 +190,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     items = buildList {
                         add(
                             FeldToolbarItem(
-                                FeldIconId.Import,
+                                FeldIconId.BulkImport,
                                 "Paste",
                             ) {
                                 dialog = EditorDialog.ImportLines
