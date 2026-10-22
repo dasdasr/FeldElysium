@@ -28,8 +28,18 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,10 +52,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.io.path.Path
+import kotlin.io.path.moveTo
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.milliseconds
+
+private const val TOP_FADE_FRACTION = 0.18f
 
 @Composable
 fun DialogueHistoryList(
@@ -121,6 +135,17 @@ fun DialogueHistoryList(
             modifier = Modifier
                 .fillMaxSize()
                 .clipToBounds()
+                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                .drawWithContent {
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            TOP_FADE_FRACTION to Color.Black,
+                        ),
+                        blendMode = BlendMode.DstIn,
+                    )
+                }
                 .draggable(
                     state = dragState,
                     orientation = Orientation.Vertical,
@@ -183,12 +208,6 @@ fun DialogueHistoryList(
                 textShiftPx = 0f,
             )
 
-            anchor.noteScroll(
-                y = baseY,
-                contentHeightPx = contentHeight,
-                restBottomPx = restBottomPx,
-            )
-
             val finalY = anchor.placementY(
                 contentHeightPx = contentHeight,
                 restBottomPx = restBottomPx,
@@ -248,8 +267,8 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
     val textShift = Animatable(0f)
     val tapeShift = Animatable(0f)
 
-    var scrollFraction by mutableFloatStateOf(0f)
-        private set
+    val scrollFraction: Float
+        get() = if (maxBack > 1f) 1f - userOffset / maxBack else 1f
 
     private var bonus = 0f
     private var tapeTarget = 0f
@@ -371,16 +390,6 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
         }
     }
 
-    fun noteScroll(y: Float, contentHeightPx: Float, restBottomPx: Float) {
-        val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
-
-        scrollFraction = if (maxOffset > 1f) {
-            ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
-        } else {
-            0f
-        }
-    }
-
     private fun startScroll() {
         val gen = ++generation
         job?.cancel()
@@ -429,6 +438,22 @@ private class ColumnScrollAnchor(private val scope: CoroutineScope, private val 
     }
 }
 
+private fun DrawScope.drawChevron(x: Float, tipY: Float, up: Boolean) {
+    val w = 4.dp.toPx()
+    val h = 3.dp.toPx()
+    val legY = if (up) tipY + h else tipY - h
+    val path = Path().apply {
+        moveTo(x - w, legY)
+        quadraticBezierTo(x - w / 2f, tipY, x, tipY)
+        quadraticBezierTo(x + w / 2f, tipY, x + w, legY)
+    }
+    drawPath(
+        path = path,
+        color = Color.White.copy(alpha = 0.35f),
+        style = Stroke(width = 1.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round),
+    )
+}
+
 @Composable
 private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier = Modifier) {
     Canvas(modifier) {
@@ -443,11 +468,14 @@ private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier =
         if (lineBottom <= lineTop) return@Canvas
 
         drawLine(
-            color = Color.White.copy(alpha = 0.38f),
+            color = Color.White.copy(alpha = 0.35f),
             start = Offset(lineX, lineTop),
             end = Offset(lineX, lineBottom),
             strokeWidth = 1.dp.toPx(),
         )
+
+        drawChevron(lineX, lineTop - 2.dp.toPx(), up = true)
+        drawChevron(lineX, lineBottom + 2.dp.toPx(), up = false)
 
         val lineLength = lineBottom - lineTop
         val travelTop = lineTop +

@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.sp
+import com.example.feldelysium.theme.FeldContinueStyle
 
 @Composable
 fun ResultPlaque(text: String, color: Color, height: Dp, modifier: Modifier = Modifier) {
@@ -30,8 +30,7 @@ fun ResultPlaque(text: String, color: Color, height: Dp, modifier: Modifier = Mo
         Text(
             text = text.uppercase(),
             color = Color.White,
-            fontSize = fontSize,
-            letterSpacing = 1.5.sp,
+            style = FeldContinueStyle.copy(fontSize = fontSize),
             maxLines = 1,
             modifier = Modifier.padding(horizontal = height * 0.6f),
         )

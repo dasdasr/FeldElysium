@@ -201,7 +201,6 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                             FeldToolbarItem(
                                 icon = FeldIconId.Play,
                                 label = "Playback",
-                                accent = FeldPalette.Cream,
                                 enabled = state.entries.isNotEmpty(),
                                 onClick = {
                                     haptics.confirm()

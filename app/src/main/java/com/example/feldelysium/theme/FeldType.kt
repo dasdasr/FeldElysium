@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
 
@@ -12,6 +13,8 @@ import com.example.feldelysium.R
 
 private val SinaNova = FontFamily(Font(R.font.sina_nova_regular))
 private val BebasNeue = FontFamily(Font(R.font.bebas_neue_regular, FontWeight.Normal))
+
+private val ContinueFont = FontFamily(Font(R.font.roboto_condensed_regular, FontWeight.Medium))
 
 val FeldTypography = Typography(
     titleLarge = TextStyle(
@@ -62,4 +65,11 @@ val FeldTypography = Typography(
         letterSpacing = 0.5.sp,
         fontWeight = FontWeight.Bold,
     ),
+)
+
+val FeldContinueStyle = TextStyle(
+    fontFamily = ContinueFont,
+    fontWeight = FontWeight.Medium,
+    fontSize = 16.sp,
+    letterSpacing = 0.08.em,
 )
