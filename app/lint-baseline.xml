@@ -354,20 +354,6 @@
 
     <issue
         id="IconLocation"
-        message="Found bitmap drawable `res/drawable/speaker_change_btn.png` in densityless folder">
-        <location
-            file="src/main/res/drawable/speaker_change_btn.png"/>
-    </issue>
-
-    <issue
-        id="IconLocation"
-        message="Found bitmap drawable `res/drawable/speaker_change_btn_pressed.png` in densityless folder">
-        <location
-            file="src/main/res/drawable/speaker_change_btn_pressed.png"/>
-    </issue>
-
-    <issue
-        id="IconLocation"
         message="Found bitmap drawable `res/drawable/speaker_frame.png` in densityless folder">
         <location
             file="src/main/res/drawable/speaker_frame.png"/>

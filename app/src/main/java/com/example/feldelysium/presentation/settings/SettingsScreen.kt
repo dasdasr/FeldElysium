@@ -278,6 +278,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 }
 
                 FeldSettingsSection(title = "Speakers") {
+
                     FeldSettingRow(
                         icon = FeldIconId.Export,
                         title = "Export speakers",

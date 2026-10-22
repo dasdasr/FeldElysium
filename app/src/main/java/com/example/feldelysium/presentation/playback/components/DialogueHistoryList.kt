@@ -253,8 +253,8 @@ private fun DrawScope.drawChevron(x: Float, tipY: Float, up: Boolean) {
     val legY = if (up) tipY + h else tipY - h
     val path = Path().apply {
         moveTo(x - w, legY)
-        quadraticBezierTo(x - w / 2f, tipY, x, tipY)
-        quadraticBezierTo(x + w / 2f, tipY, x + w, legY)
+        quadraticTo(x - w / 2f, tipY, x, tipY)
+        quadraticTo(x + w / 2f, tipY, x + w, legY)
     }
     drawPath(
         path = path,
@@ -309,15 +309,15 @@ private fun DialogueHistoryListPreview() {
     DialogueHistoryList(
         entries = listOf(
             DialogueEntry(
-                speaker = PredefinedSpeakers.STEBAN,
+                speaker = PredefinedSpeakers.LEGO_HARRY,
                 text = "Go-go gyro, we are so back, so so bak, you know?",
             ),
             DialogueEntry(
-                speaker = PredefinedSpeakers.STEBAN,
+                speaker = PredefinedSpeakers.LEGO_KIM,
                 text = "Go-go gyro",
             ),
             DialogueEntry(
-                speaker = PredefinedSpeakers.STEBAN,
+                speaker = PredefinedSpeakers.YOU,
                 text = "Go-go gyro",
             ),
         ),

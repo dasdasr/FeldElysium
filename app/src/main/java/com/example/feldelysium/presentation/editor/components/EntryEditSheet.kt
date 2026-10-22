@@ -84,10 +84,10 @@ private fun EntryEditSheetPreview() {
     EntryEditSheet(
         entry = DialogueEntry(
             id = "-1",
-            speaker = PredefinedSpeakers.MEASUREHEAD,
+            speaker = PredefinedSpeakers.LEGO_KIM,
             text = "You vs al-ghoul",
         ),
-        speaker = PredefinedSpeakers.MEASUREHEAD,
+        speaker = PredefinedSpeakers.LEGO_HARRY,
         onConfirm = { _, _, _, _ -> },
         onDismiss = {},
     )
