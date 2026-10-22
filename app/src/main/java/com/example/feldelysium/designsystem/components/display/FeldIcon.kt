@@ -1,5 +1,6 @@
 package com.example.feldelysium.designsystem.components.display
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,12 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Article
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,10 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.MarkerFilmSpec
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
@@ -37,31 +33,38 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 
 enum class FeldIconId {
     Back,
+    Backing,
     More,
     MoreHoriz,
     Import,
     Play,
-    Reorder,
     Edit,
     Delete,
-    Drag,
     Add,
     Close,
     Chevron,
     DialogueStyle,
     Font,
     Palette,
-    Grid,
     FastAdd,
-    Timer,
+    Tag,
     Voice,
     Image,
-    Aspect,
+    Cinema,
     PlaybackText,
     Settings,
     Export,
+    BulkImport,
+    Video,
+    AuthorSamples,
+    Typeface,
     Save,
     Sound,
+    Microphone,
+    Autoplay,
+    Speed,
+    Panel,
+    PanelCalendar,
 }
 
 @Composable
@@ -73,37 +76,45 @@ fun FeldIcon(
     contentDescription: String? = null,
     size: Dp = 24.dp,
     film: Boolean = true,
+    tint: Color = Color.Unspecified,
 ) {
-    val v: ImageVector = when (id) {
-        FeldIconId.Back -> Icons.AutoMirrored.Filled.ArrowBack
-        FeldIconId.More -> Icons.Default.MoreVert
-        FeldIconId.MoreHoriz -> Icons.Default.MoreHoriz
-        FeldIconId.Import -> Icons.Default.Upload
-        FeldIconId.Play -> Icons.Default.PlayArrow
-        FeldIconId.Reorder -> Icons.Default.SwapVert
-        FeldIconId.Edit -> Icons.Default.Edit
-        FeldIconId.Delete -> Icons.Default.Delete
-        FeldIconId.Drag -> Icons.Default.DragIndicator
-        FeldIconId.Add -> Icons.Default.Add
-        FeldIconId.Close -> Icons.Default.Close
-        FeldIconId.Chevron -> Icons.AutoMirrored.Filled.KeyboardArrowRight
-        FeldIconId.DialogueStyle -> Icons.AutoMirrored.Filled.Article
-        FeldIconId.Font -> Icons.Default.TextFields
-        FeldIconId.Palette -> Icons.Default.Palette
-        FeldIconId.Grid -> Icons.Default.GridOn
-        FeldIconId.FastAdd -> Icons.Default.AddBox
-        FeldIconId.Timer -> Icons.Default.Timer
-        FeldIconId.Voice -> Icons.AutoMirrored.Filled.VolumeUp
-        FeldIconId.Image -> Icons.Default.Image
-        FeldIconId.Aspect -> Icons.Default.AspectRatio
-        FeldIconId.PlaybackText -> Icons.Default.Subtitles
-        FeldIconId.Settings -> Icons.Default.Settings
-        FeldIconId.Export -> Icons.Default.ImportExport
-        FeldIconId.Save -> Icons.Default.Save
-        FeldIconId.Sound -> Icons.Default.MusicNote
+    @DrawableRes val res: Int = when (id) {
+        FeldIconId.Back -> R.drawable.ic_fe_back
+        FeldIconId.Backing -> R.drawable.ic_fe_backing
+        FeldIconId.Import -> R.drawable.ic_fe_edit_import
+        FeldIconId.Play -> R.drawable.ic_fe_play
+        FeldIconId.Edit -> R.drawable.ic_fe_edit
+        FeldIconId.Delete -> R.drawable.ic_fe_trash
+        FeldIconId.Add -> R.drawable.ic_fe_add
+        FeldIconId.Tag -> R.drawable.ic_fe_tag
+        FeldIconId.AuthorSamples -> R.drawable.ic_fe_author_samples
+        FeldIconId.Close -> R.drawable.ic_fe_close
+        FeldIconId.Chevron -> R.drawable.ic_fe_chevron
+        FeldIconId.BulkImport -> R.drawable.ic_fe_bulk_import
+        FeldIconId.Typeface -> R.drawable.ic_fe_typeface
+        FeldIconId.Autoplay -> R.drawable.ic_fe_autoplay
+        FeldIconId.Font -> R.drawable.ic_fe_typeface
+        FeldIconId.Video -> R.drawable.ic_fe_video
+        FeldIconId.FastAdd -> R.drawable.ic_fe_fast_add
+        FeldIconId.Voice -> R.drawable.ic_fe_microphone
+        FeldIconId.Image -> R.drawable.ic_fe_image
+        FeldIconId.Cinema -> R.drawable.ic_fe_panel
+        FeldIconId.Settings -> R.drawable.ic_fe_settings
+        FeldIconId.Export -> R.drawable.ic_fe_export
+        FeldIconId.Save -> R.drawable.ic_fe_save
+        FeldIconId.Sound -> R.drawable.ic_fe_sound
+        FeldIconId.Microphone -> R.drawable.ic_fe_microphone
+        FeldIconId.More -> R.drawable.ic_fe_more
+        FeldIconId.MoreHoriz -> R.drawable.ic_fe_more_horiz
+        FeldIconId.DialogueStyle -> R.drawable.ic_fe_dialog
+        FeldIconId.Palette -> R.drawable.ic_fe_palette
+        FeldIconId.PlaybackText -> R.drawable.ic_fe_playback_text
+        FeldIconId.Speed -> R.drawable.ic_fe_speed
+        FeldIconId.Panel -> R.drawable.ic_fe_panel
+        FeldIconId.PanelCalendar -> R.drawable.ic_fe_panel_calendar
     }
     Icon(
-        v,
+        painter = painterResource(res),
         contentDescription = contentDescription,
         modifier = modifier
             .size(size)
@@ -118,6 +129,7 @@ fun FeldIcon(
                     Modifier
                 },
             ),
+        tint = tint,
     )
 }
 

@@ -17,9 +17,6 @@ half4 main(float2 p) {
     float edgeW = 0.10 / max(contrast, 0.5);
     float keep = 1.0 - smoothstep(t, t + edgeW, big);
 
-    float thin = smoothstep(0.55, 0.85, fbm(sp / (grainScale * 0.45) + 3.0));
-    keep *= 1.0 - thin * 0.25 * wearAmt;
-
     float3 c = float3(inkColor.rgb) * (0.92 + 0.12 * noise(sp / (grainScale * 0.6)));
     float a = keep * float(inkColor.a);
     return half4(half3(c * a), half(a));

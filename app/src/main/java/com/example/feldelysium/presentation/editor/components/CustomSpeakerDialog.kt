@@ -1,5 +1,6 @@
 package com.example.feldelysium.presentation.editor.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -7,8 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -22,6 +21,7 @@ import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.button.FeldFieldButton
 import com.example.feldelysium.designsystem.components.button.FeldTextButton
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
@@ -89,7 +89,10 @@ fun CustomSpeakerDialog(
             )
         },
     ) {
-        Row(Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
             SpeakerPhotoBlock(
                 iconRes = iconRes,
                 iconUri = iconUri,
@@ -100,8 +103,6 @@ fun CustomSpeakerDialog(
                     {}
                 },
                 modifier = Modifier.width(132.dp),
-                name = name,
-                number = fileNo,
             )
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
@@ -121,7 +122,7 @@ fun CustomSpeakerDialog(
                 FeldFieldButton(
                     text = type.takeUnless { it.isCustom }?.name,
                     placeholder = "No tag",
-                    leading = Icons.Filled.LocalOffer,
+                    leadingIconId = FeldIconId.Tag,
                     onClick = { showTags = true },
                 )
             }

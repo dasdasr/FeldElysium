@@ -11,6 +11,7 @@ import com.example.feldelysium.di.AppContainer
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.DialogueScene
+import com.example.feldelysium.domain.model.ReplyChoices
 import com.example.feldelysium.domain.model.SceneInfo
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
@@ -63,7 +64,7 @@ class EditorViewModel(
 
     val messages = _messages.receiveAsFlow()
 
-    fun addEntry(speakerId: String, text: String, check: SkillCheck?, damage: DamageEffect?) {
+    fun addEntry(speakerId: String, text: String, check: SkillCheck?, damage: DamageEffect?, replies: ReplyChoices?) {
         val speaker = state.value.speaker(speakerId) ?: return
         val allowed = speaker.type.allowsChecks
         session.addEntry(
@@ -72,6 +73,7 @@ class EditorViewModel(
                 text = text.trim(),
                 check = check.takeIf { allowed },
                 damage = damage.takeIf { allowed },
+                replies = replies.takeIf { speaker.type == SpeakerType.YOU },
             ),
         )
     }

@@ -49,6 +49,8 @@ fun FeldCard(
     decalInset: Dp = 0.dp,
     contentPadding: PaddingValues = PaddingValues(16.dp),
     revealOnEnter: Boolean = false,
+    textured: Boolean = true,
+    showDecals: Boolean = textured,
     revealMillis: Int = 300,
     pressScale: Float = 0.012f,
     pressMillis: Int = 90,
@@ -69,9 +71,9 @@ fun FeldCard(
     }
 
     val shape = remember(seed, rough) { RoughShape(seed = seed, style = rough) }
-    val decals = rememberDecalLayer(ambient, seed, decalSpec, decalContext, decalInset)
-    val decalKey = remember(ambient, decalSpec, decalContext, decalInset) {
-        listOf(ambient, decalSpec, decalContext, decalInset)
+    val decals = if (showDecals) rememberDecalLayer(ambient, seed, decalSpec, decalContext, decalInset) else null
+    val decalKey = remember(showDecals, ambient, decalSpec, decalContext, decalInset) {
+        listOf(showDecals, ambient, decalSpec, decalContext, decalInset)
     }
 
     Column(
@@ -89,6 +91,7 @@ fun FeldCard(
                 press = { press },
                 decals = decals,
                 decalKey = decalKey,
+                textured = textured,
             )
             .then(
                 if (onClick != null) {

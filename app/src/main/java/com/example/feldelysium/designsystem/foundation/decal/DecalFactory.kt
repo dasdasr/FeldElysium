@@ -1,5 +1,6 @@
 package com.example.feldelysium.designsystem.foundation.decal
 
+import android.util.LruCache
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
@@ -9,11 +10,20 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.sp
 import kotlin.random.Random
 
+private data class TextKey(
+    val s: String,
+    val style: TextStyle,
+    val sizeSp: Float,
+    val density: Float,
+    val ld: LayoutDirection,
+)
+
+private val textCache = LruCache<TextKey, TextLayoutResult>(64)
+
 internal fun buildDecal(
     kind: DecalKind,
     rng: Random,
     ctx: DecalContext,
-    spec: DecalSpec,
     density: Density,
     ld: LayoutDirection,
     measurer: TextMeasurer,
@@ -22,13 +32,16 @@ internal fun buildDecal(
     val d = density.density
     fun r(lo: Float, hi: Float) = lo + rng.nextFloat() * (hi - lo)
 
-    fun layout(s: String, base: TextStyle, sizeSp: Float): TextLayoutResult = measurer.measure(
-        s,
-        base.copy(fontSize = sizeSp.sp, lineHeight = (sizeSp * 1.35f).sp),
-        softWrap = false,
-        layoutDirection = ld,
-        density = density,
-    )
+    fun layout(s: String, base: TextStyle, sizeSp: Float): TextLayoutResult {
+        val key = TextKey(s, base, sizeSp, density.density, ld)
+        return textCache.get(key) ?: measurer.measure(
+            s,
+            base.copy(fontSize = sizeSp.sp, lineHeight = (sizeSp * 1.35f).sp),
+            softWrap = false,
+            layoutDirection = ld,
+            density = density,
+        ).also { textCache.put(key, it) }
+    }
 
     return when (kind) {
         DecalKind.Ruler -> RulerDecal(
@@ -39,20 +52,13 @@ internal fun buildDecal(
             0.7f * d,
         )
 
-        DecalKind.Perforation, DecalKind.FilmStrip -> {
+        DecalKind.Perforation -> {
             val vertical = cardSize.height / d >= 140f && rng.nextBoolean()
             val edge = if (vertical) cardSize.height else cardSize.width
             val hole = 2.4f * d
-            val text = if (kind == DecalKind.FilmStrip) {
-                layout(DecalText.strip(rng, ctx), FeldDecalType.Base, r(5.5f, 6.5f))
-            } else {
-                null
-            }
-            val thick = if (text != null) hole * 2 + text.size.height + 3f * d else hole
-            var len = edge * r(0.45f, 0.85f)
-            if (text != null) len = maxOf(len, text.size.width + 14f * d)
+            val len = edge * r(0.45f, 0.85f)
             if (len > edge - 8f * d) return null
-            StripDecal(len, thick, hole, hole * 2.6f, text, vertical)
+            StripDecal(len, hole, hole, hole * 2.6f, null, vertical)
         }
 
         DecalKind.Text -> {
@@ -82,10 +88,10 @@ internal fun buildDecal(
             ),
         )
 
-        DecalKind.Glyph -> GlyphDecal(GlyphShape.values().random(rng), r(7f, 11f) * d, 0.7f * d)
+        DecalKind.Glyph -> GlyphDecal(GlyphShape.entries.random(rng), r(7f, 11f) * d, 0.7f * d)
 
         DecalKind.Mark -> {
-            val shape = MarkShape.values().random(rng)
+            val shape = MarkShape.entries.random(rng)
             val big = shape == MarkShape.Circle
             MarkDecal(
                 shape,
@@ -96,10 +102,16 @@ internal fun buildDecal(
             )
         }
 
-        DecalKind.Sprite -> spec.atlas?.takeIf { it.sprites.isNotEmpty() }?.let { atlas ->
-            val src = atlas.sprites.random(rng)
-            val k = r(0.5f, 1f) * d / 3f
-            SpriteDecal(atlas.bitmap, src, Size(src.width * k, src.height * k))
-        }
+        DecalKind.Tape -> TapeDecal(r(26f, 44f) * d, r(9f, 13f) * d)
+
+        DecalKind.Ring -> RingDecal(r(9f, 16f) * d, 0.8f * d)
+
+        DecalKind.Stitch -> StitchDecal(r(40f, 90f) * d, r(2.5f, 4f) * d, 0.8f * d)
+
+        DecalKind.Staple -> StapleDecal(r(8f, 11f) * d, r(5f, 7f) * d, 1f * d)
+
+        DecalKind.Corner -> CornerFoldDecal(r(10f, 16f) * d)
+
+        DecalKind.Tally -> TallyDecal(rng.nextInt(3, 9), r(7f, 10f) * d, r(2f, 2.6f) * d, 0.7f * d)
     }
 }

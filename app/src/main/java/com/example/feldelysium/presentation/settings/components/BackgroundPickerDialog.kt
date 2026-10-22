@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,10 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.Videocam
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,9 +38,11 @@ import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
+import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.dialog.FeldDialogFooter
 import com.example.feldelysium.designsystem.components.display.FeldDivider
+import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
@@ -146,7 +146,23 @@ private fun MediaPane(
         MediaPreview(settings)
         Spacer(Modifier.height(12.dp))
 
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            MediaPickButton(
+                iconId = FeldIconId.Video,
+                label = "Video",
+                onClick = { videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly)) },
+                modifier = Modifier.weight(1f),
+            )
+            MediaPickButton(
+                iconId = FeldIconId.Image,
+                label = "Image",
+                onClick = { imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
+                modifier = Modifier.weight(1f),
+            )
+        }
+
         if (video) {
+            Spacer(Modifier.height(4.dp))
             FeldDivider()
             FeldSettingRow(
                 icon = FeldIconId.Voice,
@@ -156,59 +172,57 @@ private fun MediaPane(
                 contentPadding = rowPadding,
                 onClick = { onVideoSound(!settings.backgroundVideoSound) },
                 trailing = {
-                    FeldSwitch(
-                        checked = !settings.backgroundVideoSound,
-                        onCheckedChange = { },
-                    )
+                    FeldSwitch(checked = !settings.backgroundVideoSound, onCheckedChange = { })
                 },
             )
             FeldDivider()
             FeldSettingRow(
-                icon = FeldIconId.Aspect,
+                icon = FeldIconId.Cinema,
                 title = "Fill screen",
                 subtitle = "Crop videos to fit the screen.",
                 role = Role.Switch,
                 contentPadding = rowPadding,
                 onClick = { onVideoFill(!settings.backgroundVideoFill) },
                 trailing = {
-                    FeldSwitch(
-                        checked = settings.backgroundVideoFill,
-                        onCheckedChange = { },
-                    )
+                    FeldSwitch(checked = settings.backgroundVideoFill, onCheckedChange = { })
                 },
             )
+            FeldDivider()
         }
+    }
+}
 
-        FeldDivider()
-        FeldSettingRow(
-            icon = FeldIconId.Voice,
-            title = "Video",
-            subtitle = "Add custom video",
-            showChevron = true,
-            contentPadding = rowPadding,
-            onClick = { videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly)) },
-        )
-        FeldDivider()
-        FeldSettingRow(
-            icon = FeldIconId.FastAdd,
-            title = "Image",
-            subtitle = "Add custom image",
-            showChevron = true,
-            contentPadding = rowPadding,
-            onClick = { imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
-        )
-        FeldDivider()
+@Composable
+private fun MediaPickButton(iconId: FeldIconId, label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    FeldCard(
+        modifier = modifier,
+        seed = label.hashCode(),
+        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
+        onClick = onClick,
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FeldIcon(id = iconId, modifier = Modifier)
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = label.uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
     }
 }
 
 @Composable
 private fun MediaHeader(video: Boolean) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = if (video) Icons.Filled.Videocam else Icons.Filled.Image,
-            contentDescription = null,
-            tint = FeldPalette.Muted,
-            modifier = Modifier.size(24.dp),
+        val iconId = if (video) FeldIconId.Video else FeldIconId.Image
+        FeldIcon(
+            id = iconId,
+            modifier = Modifier,
         )
         Spacer(Modifier.width(16.dp))
         Text(

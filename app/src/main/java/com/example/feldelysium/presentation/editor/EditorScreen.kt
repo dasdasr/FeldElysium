@@ -38,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -244,6 +245,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                     LaunchedEffect(isDragging) { if (isDragging) haptics.thud() }
 
                                     val edit = { dialog = EditorDialog.EditEntry(entry.id, entry.speaker.id) }
+                                    val selected = menuEntryId == entry.id
 
                                     Box {
                                         FeldEntryCard(
@@ -251,27 +253,34 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                             speakerColor = Color(entry.speaker.colorArgb),
                                             text = entry.text,
                                             number = index + 1,
-                                            ambient = 0.4f,
+                                            ambient = 0.7f,
                                             seed = entry.id.hashCode(),
                                             isDragging = isDragging,
+                                            selected = selected,
                                             dragModifier = Modifier.longPressDraggableHandle(),
-                                            onClick = edit,
-                                            onMore = {
+                                            onClick = {
                                                 haptics.tick()
                                                 menuEntryId = entry.id
                                             },
                                             onSwipeArmed = { haptics.tick() },
                                             onSwipeDelete = { deleteEntry(entry) },
                                         )
-                                        FeldMenu(
-                                            expanded = menuEntryId == entry.id,
-                                            onDismiss = { menuEntryId = null },
-                                            seed = entry.id.hashCode(),
-                                            items = listOf(
-                                                FeldMenuItem("Edit", onClick = edit),
-                                                FeldMenuItem("Delete", destructive = true) { deleteEntry(entry) },
-                                            ),
-                                        )
+                                        Box(Modifier.align(Alignment.Center)) {
+                                            FeldMenu(
+                                                expanded = selected,
+                                                onDismiss = { menuEntryId = null },
+                                                seed = entry.id.hashCode(),
+                                                offset = DpOffset(0.dp, 0.dp),
+                                                items = listOf(
+                                                    FeldMenuItem("Edit", FeldIconId.Edit, onClick = edit),
+                                                    FeldMenuItem(
+                                                        "Delete",
+                                                        FeldIconId.Delete,
+                                                        destructive = true,
+                                                    ) { deleteEntry(entry) },
+                                                ),
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -321,9 +330,9 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     speaker = speaker,
                     onSpeakerClick = { dialog = EditorDialog.NewEntry(null) },
                     onEditSpeaker = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
-                    onConfirm = { text, check, damage ->
+                    onConfirm = { text, check, damage, replies ->
                         eggs?.report(EggEvent.EntryAdd, speaker.name)
-                        vm.addEntry(speaker.id, text, check, damage)
+                        vm.addEntry(speaker.id, text, check, damage, replies)
                         close()
                     },
                     onDismiss = close,
@@ -351,9 +360,17 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     speaker = speaker,
                     onSpeakerClick = { dialog = d.copy(pickingSpeaker = true) },
                     onEditSpeaker = { dialog = EditorDialog.EditSpeaker(it.id, back = d) },
-                    onConfirm = { text, check, damage ->
+                    onConfirm = { text, check, damage, replies ->
                         eggs?.report(EggEvent.EntryEdit, entry.speaker.name)
-                        vm.updateEntry(entry.copy(speaker = speaker, text = text, check = check, damage = damage))
+                        vm.updateEntry(
+                            entry.copy(
+                                speaker = speaker,
+                                text = text,
+                                check = check,
+                                damage = damage,
+                                replies = replies,
+                            ),
+                        )
                         close()
                     },
                     onDismiss = close,

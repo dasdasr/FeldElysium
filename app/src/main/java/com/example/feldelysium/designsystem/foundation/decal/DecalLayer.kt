@@ -42,7 +42,7 @@ fun rememberDecalLayer(
     leftInset: Dp = 0.dp,
     style: TextStyle = FeldDecalType.Base,
 ): DecalLayer? {
-    val measurer = rememberTextMeasurer(cacheSize = 8)
+    val measurer = rememberTextMeasurer(cacheSize = 64)
     return remember(ambient, seed, spec, context, leftInset, style, measurer) {
         if (ambient == null || ambient <= 0f) {
             null
