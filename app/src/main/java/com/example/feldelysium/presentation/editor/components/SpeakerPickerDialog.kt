@@ -226,7 +226,7 @@ fun SpeakerPickerDialog(
                                         pair = pair,
                                         rowIndex = ri,
                                         roughs = roughs,
-                                        top = if (ri == 0) 18.dp else 6.dp,
+                                        top = if (ri == 0) 10.dp else 2.dp,
                                         onSelect = onSpeakerSelected,
                                         onEdit = onEditCustom,
                                     )
@@ -330,7 +330,7 @@ private fun SpeakerRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = top),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         pair.forEachIndexed { ci, speaker ->
             val variant = (rowIndex * 2 + ci) % CHIP_VARIANTS
