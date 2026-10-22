@@ -15,12 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +39,9 @@ import coil.compose.AsyncImage
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
@@ -82,6 +84,11 @@ fun ChooseImageDialog(
     var resId by remember { mutableStateOf(selectedResId) }
     var uri by remember { mutableStateOf(selectedUri) }
     val iconStore = remember { SpeakerStorage.icons(context) }
+    var customUris by remember { mutableStateOf(iconStore.allUris()) }
+
+    LaunchedEffect(Unit) {
+        customUris = withContext(Dispatchers.IO) { iconStore.allUris() }
+    }
 
     val picker = rememberLauncherForActivityResult(PickVisualMedia()) { picked ->
         if (picked != null) {
@@ -90,6 +97,7 @@ fun ChooseImageDialog(
                 if (saved != null) {
                     uri = saved
                     resId = null
+                    customUris = listOf(saved) + customUris.filter { it != saved }
                 }
             }
         }
@@ -97,7 +105,7 @@ fun ChooseImageDialog(
 
     val tiles = buildList<IconTile> {
         add(IconTile.Add)
-        uri?.let { add(IconTile.Custom(it)) }
+        customUris.forEach { add(IconTile.Custom(it)) }
         iconResIds.forEach { add(IconTile.Res(it)) }
     }
 
@@ -118,8 +126,8 @@ fun ChooseImageDialog(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(bottom = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 repeat(Columns) { c ->
                     val tile = rowTiles.getOrNull(c)
@@ -141,37 +149,45 @@ fun ChooseImageDialog(
                                 modifier = Modifier.align(Alignment.Center),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = null,
-                                    tint = Dark,
-                                    modifier = Modifier.size(24.dp),
+                                FeldIcon(
+                                    id = FeldIconId.Add,
+                                    markerFilmSpec = FeldMarker.Ink,
+                                    size = 12.dp,
                                 )
                                 Text(
-                                    text = "ADD CUSTOM IMAGE",
+                                    text = "Add custom image",
                                     style = MaterialTheme.typography.labelSmall.copy(
-                                        fontSize = 9.sp,
-                                        lineHeight = 11.sp,
+                                        fontSize = 11.sp,
+                                        lineHeight = 10.sp,
                                         textAlign = TextAlign.Center,
                                     ),
                                     color = Dark,
+                                    modifier = Modifier.padding(top = 2.dp, start = 2.dp, end = 2.dp)
                                 )
                             }
                         }
 
-                        is IconTile.Custom -> TileBox(
-                            modifier = tileModifier,
-                            spec = selectedSpec(true),
-                            onClick = { uri = null },
-                        ) {
-                            AsyncImage(
-                                model = tile.uri,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(6.dp),
-                            )
+                        is IconTile.Custom -> {
+                            val selected = uri == tile.uri
+                            TileBox(
+                                modifier = tileModifier,
+                                spec = selectedSpec(selected),
+                                onClick = {
+                                    if (selected) {
+                                        uri = null
+                                    } else {
+                                        uri = tile.uri
+                                        resId = null
+                                    }
+                                },
+                            ) {
+                                AsyncImage(
+                                    model = tile.uri,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize().padding(6.dp),
+                                )
+                            }
                         }
 
                         is IconTile.Res -> {

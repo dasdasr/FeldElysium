@@ -38,6 +38,7 @@ import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
+import com.example.feldelysium.designsystem.components.settings.FeldSettingStatus
 import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
@@ -133,7 +134,6 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     .navigationBarsPadding()
                     .testTag("settings_scroll"),
             ) {
-                val lockedStamp = "LOCKED"
 
                 FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
@@ -182,8 +182,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         title = "Autoplay speed",
                         subtitle = "How long each line stays on screen",
                         value = settings.autoPlaySpeed.label,
-                        enabled = settings.autoPlay,
-                        stampText = lockedStamp,
+                        status = if (settings.autoPlay) null else FeldSettingStatus.LOCK,
                         onClick = {
                             haptics.tick()
                             vm.dispatch(SettingsEvent.SetAutoPlaySpeed(settings.autoPlaySpeed.next()))
@@ -205,7 +204,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                             TapMode.WHOLE_SCREEN -> "Tap anywhere on the screen"
                             TapMode.CONTINUE_BUTTON -> "Only the Continue button. Drag the dialogue to scroll back"
                         },
-                        enabled = settings.showContinueButton,
+                        status = if (settings.showContinueButton) null else FeldSettingStatus.LOCK,
                         value = settings.tapMode.label,
                         onClick = {
                             haptics.tick()
@@ -238,8 +237,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         subtitle = if (audioSupported) "App sound goes into the video" else "Needs Android 10 or newer",
                         checked = settings.exportAudio && audioSupported,
                         onCheckedChange = { vm.dispatch(SettingsEvent.SetExportAudio(it)) },
-                        enabled = settings.exportEnabled && audioSupported,
-                        stampText = lockedStamp,
+                        status = if (settings.exportEnabled && audioSupported) null else FeldSettingStatus.LOCK,
                     )
                 }
 
@@ -290,7 +288,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
-                        icon = FeldIconId.Palette,
+                        icon = FeldIconId.AuthorSamples,
                         title = "Author's samples",
                         subtitle = when (settings.samplesMode) {
                             SamplesMode.AUTO ->
@@ -329,7 +327,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                             subtitle = "Lock it",
                             checked = false,
                             onCheckedChange = {},
-                            enabled = false,
+                            status = FeldSettingStatus.SOON,
                         )
                     }
                 }

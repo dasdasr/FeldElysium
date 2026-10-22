@@ -22,14 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.Reply
-import androidx.compose.material.icons.filled.Casino
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.RadioButtonChecked
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +50,7 @@ import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.button.FeldLabeledBlock
 import com.example.feldelysium.designsystem.components.card.FeldCard
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
+import com.example.feldelysium.designsystem.components.display.FeldIcon
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.input.FeldTextField
@@ -201,7 +193,7 @@ fun EntryEditSheet(
                 }
 
                 if (isYou) {
-                    ToggleRow("REPLY OPTIONS", Icons.AutoMirrored.Filled.Reply, replies != null) { on ->
+                    ToggleRow("REPLY OPTIONS", FeldIconId.Oprions, replies != null) { on ->
                         replies = if (on) {
                             ReplyChoices(listOf(text.take(ReplyChoices.MAX_LENGTH), ""))
                         } else {
@@ -218,7 +210,7 @@ fun EntryEditSheet(
                 }
 
                 if (speaker?.type?.allowsChecks == true) {
-                    ToggleRow("SKILL CHECK", Icons.Filled.Casino, check != null) {
+                    ToggleRow("SKILL CHECK", FeldIconId.Casino, check != null) {
                         check = if (it) SkillCheck() else null
                     }
                     AnimatedVisibility(
@@ -229,7 +221,7 @@ fun EntryEditSheet(
                         EntryCheckEditor(speaker = speaker, check = check ?: lastCheck, onChange = { check = it })
                     }
 
-                    ToggleRow("DAMAGE", Icons.Filled.Favorite, damage != null) {
+                    ToggleRow("DAMAGE", FeldIconId.Heart, damage != null) {
                         damage = if (it) DamageEffect() else null
                     }
                     AnimatedVisibility(
@@ -274,11 +266,9 @@ private fun Modifier.bleedBottom(bleed: Dp): Modifier = layout { measurable, con
 
 @Composable
 private fun Chevron() {
-    Icon(
-        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-        contentDescription = null,
-        tint = FeldPalette.Muted,
-        modifier = Modifier.size(22.dp),
+    FeldIcon(
+        id = FeldIconId.Chevron,
+        size = 16.dp,
     )
 }
 
@@ -310,11 +300,10 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
                     .feldClickable(onClick = onEdit),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
+                FeldIcon(
+                    id = FeldIconId.Edit,
                     contentDescription = "Edit speaker",
-                    tint = FeldPalette.Muted,
-                    modifier = Modifier.size(22.dp),
+                    size = 22.dp,
                 )
             }
         }
@@ -323,18 +312,16 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
 }
 
 @Composable
-private fun ToggleRow(label: String, icon: ImageVector, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+private fun ToggleRow(label: String, iconId: FeldIconId, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = FeldPalette.Muted,
-            modifier = Modifier.size(20.dp),
+        FeldIcon(
+            iconId,
+            size = 20.dp,
         )
         Spacer(Modifier.width(12.dp))
         Text(
@@ -357,11 +344,11 @@ private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> 
         )
         value.options.forEachIndexed { i, option ->
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = if (i == value.chosenIndex) {
-                        Icons.Filled.RadioButtonChecked
+                FeldIcon(
+                    id = if (i == value.chosenIndex) {
+                        FeldIconId.RadioButtonChecked
                     } else {
-                        Icons.Filled.RadioButtonUnchecked
+                        FeldIconId.RadioButtonUnchecked
                     },
                     contentDescription = "Spoken by YOU",
                     tint = FeldPalette.Muted,

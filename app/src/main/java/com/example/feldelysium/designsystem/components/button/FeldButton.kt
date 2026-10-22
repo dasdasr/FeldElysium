@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -130,14 +126,6 @@ private fun FeldButtonPreview() {
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 FeldButton("Cancel", {}, Modifier.weight(1f), seed = 21)
-                FeldButton(
-                    "Save",
-                    {},
-                    Modifier.weight(1f),
-                    seed = 8,
-                    spec = FeldButtonDefaults.Orange,
-                    icon = { Icon(Icons.Default.Check, null, Modifier.size(20.dp)) },
-                )
             }
             FeldButton(
                 "Delete line",
