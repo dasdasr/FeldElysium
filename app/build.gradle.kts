@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui)

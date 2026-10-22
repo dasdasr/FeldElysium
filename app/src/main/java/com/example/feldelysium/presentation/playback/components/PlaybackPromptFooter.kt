@@ -79,13 +79,12 @@ private fun ReplyOptions(p: Prompt.Choices, m: FooterMetrics, onChoice: () -> Un
     val interaction = remember { MutableInteractionSource() }
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         p.options.forEachIndexed { i, option ->
-            if (p.selected && i != p.chosenIndex) return@forEachIndexed
             Text(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)) {
                         append("${i + 1}.- ")
                     }
-                    withStyle(SpanStyle(color = if (p.selected) Color.White else OptionOrange)) {
+                    withStyle(SpanStyle(color = if (p.selected && i == p.chosenIndex) Color.White else OptionOrange)) {
                         append(option)
                     }
                 },

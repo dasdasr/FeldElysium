@@ -33,6 +33,7 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 
 enum class FeldIconId {
     Back,
+    Accept,
     BackingCube,
     BackingCircle,
     More,
@@ -47,6 +48,7 @@ enum class FeldIconId {
     DialogueStyle,
     Font,
     Palette,
+    Reals,
     FastAdd,
     Tag,
     Voice,
@@ -66,6 +68,8 @@ enum class FeldIconId {
     Speed,
     Panel,
     PanelCalendar,
+    Calendar,
+    Time,
     Logo,
     Heart,
     Paste,
@@ -89,6 +93,7 @@ fun FeldIcon(
 ) {
     @DrawableRes val res: Int = when (id) {
         FeldIconId.Back -> R.drawable.ic_fe_back
+        FeldIconId.Accept -> R.drawable.ic_fe_accept
         FeldIconId.BackingCube -> R.drawable.ic_fe_backing_cube
         FeldIconId.BackingCircle -> R.drawable.ic_fe_backing_circle
         FeldIconId.Import -> R.drawable.ic_fe_edit_import
@@ -130,6 +135,9 @@ fun FeldIcon(
         FeldIconId.Oprions -> R.drawable.ic_fe_options
         FeldIconId.RadioButtonChecked -> R.drawable.ic_fe_radio_button_cheked
         FeldIconId.RadioButtonUnchecked -> R.drawable.ic_fe_radio_button_uncheked
+        FeldIconId.Reals -> R.drawable.ic_fe_real
+        FeldIconId.Calendar -> R.drawable.ic_fe_calendar
+        FeldIconId.Time -> R.drawable.ic_fe_time
     }
     Icon(
         painter = painterResource(res),

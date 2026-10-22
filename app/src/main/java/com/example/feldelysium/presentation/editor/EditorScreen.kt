@@ -81,6 +81,8 @@ import com.example.feldelysium.presentation.shared.toastText
 import com.example.feldelysium.record.LocalScreenRecordRequest
 import com.example.feldelysium.record.RecordResult
 import com.example.feldelysium.record.ScreenRecordService
+import com.example.feldelysium.theme.fontDir
+import com.example.feldelysium.theme.rememberPlaybackFontFamily
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -93,9 +95,10 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
     val activity = context as ComponentActivity
     val settingsVm: SettingsViewModel = viewModel(
         viewModelStoreOwner = activity,
-        factory = SettingsViewModel.factory(container),
+        factory = SettingsViewModel.factory(container, activity.fontDir()),
     )
     val settings by settingsVm.state.collectAsStateWithLifecycle()
+    val fontFamily = rememberPlaybackFontFamily(settings)
     val requestRecord = LocalScreenRecordRequest.current
 
     val vm: EditorViewModel = viewModel(
@@ -257,6 +260,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                             isDragging = isDragging,
                                             selected = selected,
                                             dragModifier = Modifier.longPressDraggableHandle(),
+                                            fontFamily = fontFamily,
                                             onClick = {
                                                 haptics.tick()
                                                 menuEntryId = entry.id

@@ -1,14 +1,17 @@
 package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.BarIconState
@@ -103,4 +106,18 @@ fun PlaybackBottomBar(
             }
         }
     }
+}
+
+@Preview(
+    name = "Playback Bottom Bar",
+    showBackground = true,
+    backgroundColor = 0xFF000000,
+)
+@Composable
+private fun PlaybackBottomBarPreview() {
+    PlaybackBottomBar(
+        icons = emptyMap(),
+        inventory = emptyMap(),
+        modifier = Modifier.fillMaxWidth(),
+    )
 }

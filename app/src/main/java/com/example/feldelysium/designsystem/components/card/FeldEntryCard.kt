@@ -86,6 +86,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.exp
 import kotlin.random.Random
+import androidx.compose.ui.text.font.FontFamily
 
 private const val SWAY_STIFFNESS = 140f
 private const val SWAY_DAMPING = 9f
@@ -152,6 +153,7 @@ fun FeldEntryCard(
     isDragging: Boolean = false,
     selected: Boolean = false,
     dragModifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
     onClick: (() -> Unit)? = null,
     onSwipeDelete: (() -> Unit)? = null,
     onSwipeArmed: () -> Unit = {},
@@ -376,7 +378,9 @@ fun FeldEntryCard(
 
                         Text(
                             text = text,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodyMedium.let { s ->
+                                if (fontFamily != null) s.copy(fontFamily = fontFamily) else s
+                            },
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(top = 3.dp),
                         )
