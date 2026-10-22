@@ -59,7 +59,6 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.LocalTapOutsideRegistry
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
-import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
@@ -263,7 +262,7 @@ private fun EditableTitle(
         )
 
         FeldIconButton(
-            if (editing) FeldIconId.Save else FeldIconId.Edit,
+            id = if (editing) FeldIconId.Save else FeldIconId.Edit,
             onClick = {
                 if (editing) {
                     haptics.confirm()
@@ -274,7 +273,6 @@ private fun EditableTitle(
                     startEditing()
                 }
             },
-            markerFilmSpec = if (editing) FeldMarker.Dry else FeldMarker.Chalk,
             modifier = Modifier.align(Alignment.CenterEnd),
         )
 

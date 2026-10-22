@@ -22,7 +22,11 @@ internal data class EntryData(
     val text: String,
     val check: CheckData? = null,
     val damage: DamageData? = null,
+    val replies: RepliesData? = null,
 )
+
+@Serializable
+internal data class RepliesData(val options: List<String>, val chosenIndex: Int = 0)
 
 @Serializable
 internal data class CheckData(

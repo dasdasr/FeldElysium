@@ -6,6 +6,7 @@ import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DamageType
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.DialogueScene
+import com.example.feldelysium.domain.model.ReplyChoices
 import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
@@ -21,6 +22,7 @@ internal fun DialogueScene.toFile() = SceneFile(
             text = e.text,
             check = e.check?.let { c -> CheckData(c.difficulty.name, c.result.name, c.active, c.die1, c.die2) },
             damage = e.damage?.let { d -> DamageData(d.type.name, d.amount) },
+            replies = e.replies?.let { RepliesData(it.options, it.chosenIndex) },
         )
     },
     speakers = entries.map { it.speaker }
@@ -53,6 +55,7 @@ internal fun SceneFile.toScene(): DialogueScene {
                 text = e.text,
                 check = e.check?.toDomain(),
                 damage = e.damage?.toDomain(),
+                replies = e.replies?.let { ReplyChoices(it.options, it.chosenIndex).normalized() },
             )
         },
     )

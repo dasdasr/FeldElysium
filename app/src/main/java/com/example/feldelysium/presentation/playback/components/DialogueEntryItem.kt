@@ -2,6 +2,8 @@ package com.example.feldelysium.presentation.playback.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +20,9 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.designsystem.components.display.FeldDivider
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 
@@ -28,15 +32,31 @@ private const val HANGING_INDENT_EM = 14f / 12f
 @Preview(showBackground = true, backgroundColor = 0xFF000000)
 @Composable
 private fun DialogueEntryItemPreview() {
-    DialogueEntryItem(
-        entry = DialogueEntry(
-            speaker = PredefinedSpeakers.STEBAN,
-            text = "Go-go Gyro",
-        ),
-        isLatest = true,
-        fontSize = 9.sp,
-        lineHeight = 12.sp,
-    )
+    Column(
+        modifier = Modifier.padding(16.dp),
+    ) {
+        DialogueEntryItem(
+            entry = DialogueEntry(
+                speaker = PredefinedSpeakers.YOU,
+                text = "Go-go Gyro",
+            ),
+            isLatest = false,
+            fontSize = 9.sp,
+            lineHeight = 12.sp,
+        )
+
+        FeldDivider()
+
+        DialogueEntryItem(
+            entry = DialogueEntry(
+                speaker = PredefinedSpeakers.WORLDWRIGHT,
+                text = "Make joestared",
+            ),
+            isLatest = true,
+            fontSize = 9.sp,
+            lineHeight = 12.sp,
+        )
+    }
 }
 
 @Composable
@@ -61,28 +81,48 @@ fun DialogueEntryItem(
     val labelColor = MaterialTheme.colorScheme.onSurfaceVariant
     val bodyStyle = MaterialTheme.typography.bodyMedium
     val speakerColor = Color(entry.speaker.colorArgb)
+
+    val bodySpanStyle = SpanStyle(
+        color = bodyColor,
+        fontSize = fontSize,
+    )
+
+    val nameStyle = SpanStyle(
+        color = speakerColor,
+        fontSize = fontSize,
+        letterSpacing = fontSize * NAME_TRACKING_EM,
+    )
+
     Text(
         text = buildAnnotatedString {
-            val nameStyle = SpanStyle(
-                color = speakerColor,
-                fontSize = fontSize,
-                letterSpacing = fontSize * NAME_TRACKING_EM,
-            )
-            withStyle(nameStyle) { append(entry.speaker.name.uppercase()) }
-            entry.check?.let { c ->
-                withStyle(SpanStyle(color = labelColor, fontSize = fontSize)) {
-                    append(" [${c.difficulty.name}: ${c.result.name}]")
+            withStyle(nameStyle) {
+                append(entry.speaker.name.uppercase())
+            }
+
+            entry.check?.let { check ->
+                withStyle(
+                    SpanStyle(color = labelColor, fontSize = fontSize),
+                ) {
+                    append(" [${check.difficulty.name}: ${check.result.name}]")
                 }
             }
-            withStyle(nameStyle) { append(" – ") }
-            withStyle(SpanStyle(color = bodyColor, fontSize = fontSize)) { append(entry.text) }
+
+            withStyle(bodySpanStyle) {
+                append(" – ")
+                append(entry.text)
+            }
         },
-        modifier = modifier.graphicsLayer { this.alpha = animatedAlpha },
+        modifier = modifier.graphicsLayer {
+            this.alpha = animatedAlpha
+        },
         style = bodyStyle.copy(
             color = bodyColor,
             fontSize = fontSize,
             lineHeight = lineHeight,
-            textIndent = TextIndent(firstLine = 0.sp, restLine = fontSize * HANGING_INDENT_EM),
+            textIndent = TextIndent(
+                firstLine = 0.sp,
+                restLine = fontSize * HANGING_INDENT_EM,
+            ),
             platformStyle = PlatformTextStyle(includeFontPadding = false),
             lineHeightStyle = LineHeightStyle(
                 alignment = LineHeightStyle.Alignment.Proportional,

@@ -22,12 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldRough
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
@@ -43,7 +45,7 @@ fun FeldFieldButton(
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Field,
-    leading: ImageVector? = null,
+    leadingIconId: FeldIconId? = null,
     minHeight: Dp = 48.dp,
     enabled: Boolean = true,
 ) {
@@ -67,8 +69,12 @@ fun FeldFieldButton(
             .padding(horizontal = 14.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (leading != null) {
-            Icon(leading, null, tint = FeldPalette.Muted, modifier = Modifier.size(16.dp))
+        if (leadingIconId != null) {
+            FeldIcon(
+                leadingIconId,
+                markerFilmSpec = FeldMarker.Chalk.copy(color = FeldPalette.Muted),
+                size = 22.dp,
+            )
             Spacer(Modifier.width(10.dp))
         }
         Text(

@@ -8,12 +8,15 @@ import com.example.feldelysium.data.settings.BarSlot
 import com.example.feldelysium.data.settings.InventoryIcon
 import com.example.feldelysium.data.settings.InventorySlot
 import com.example.feldelysium.data.settings.SamplesMode
+import com.example.feldelysium.data.settings.TapMode
 
 sealed interface SettingsEvent {
     data class SetLockAspectRatio16x9(val enabled: Boolean) : SettingsEvent
     data class SetExportEnabled(val enabled: Boolean) : SettingsEvent
     data class SetExportAudio(val enabled: Boolean) : SettingsEvent
     data class SetAutoPlay(val enabled: Boolean) : SettingsEvent
+    data class ShowContinueButton(val enabled: Boolean) : SettingsEvent
+    data class SetTapMode(val mode: TapMode) : SettingsEvent
     data class SetAutoPlaySpeed(val speed: AutoPlaySpeed) : SettingsEvent
     data class SetPlaybackMoney(val value: String) : SettingsEvent
     data class SetPlaybackTime(val value: String) : SettingsEvent
@@ -42,6 +45,10 @@ internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
         is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
 
         is SettingsEvent.SetAutoPlay -> copy(autoPlay = event.enabled)
+
+        is SettingsEvent.SetTapMode -> copy(tapMode = event.mode)
+
+        is SettingsEvent.ShowContinueButton -> copy(showContinueButton = event.enabled)
 
         is SettingsEvent.SetAutoPlaySpeed -> copy(autoPlaySpeed = event.speed)
 

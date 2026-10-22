@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.feldelysium.data.settings.AppSettings
+import com.example.feldelysium.data.settings.SettingsRepository
+import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.di.AppContainer
 import com.example.feldelysium.domain.model.DamageEffect
+import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.playback.PlaybackAudio
 import com.example.feldelysium.domain.playback.PlaybackEngine
 import com.example.feldelysium.domain.playback.PlaybackStep
@@ -14,24 +18,37 @@ import com.example.feldelysium.presentation.shared.SceneSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : ViewModel() {
+class PlaybackViewModel(
+    scene: SceneSource,
+    private val audio: PlaybackAudio,
+    private val settings: SettingsRepository,
+) : ViewModel() {
     private val entries = scene.scene.value.entries
     private val engine = PlaybackEngine(entries)
     private var checkJob: Job? = null
     private var damageJob: Job? = null
     private var autoJob: Job? = null
+    private var promptJob: Job? = null
 
     private val _autoPlayDone = MutableStateFlow(false)
     val autoPlayDone: StateFlow<Boolean> = _autoPlayDone.asStateFlow()
 
     private val _state = MutableStateFlow(PlaybackUiState(allEntries = entries))
     val state: StateFlow<PlaybackUiState> = _state.asStateFlow()
+
+    private val prefs = settings.settings.stateIn(viewModelScope, SharingStarted.Eagerly, AppSettings())
+
+    private fun tapAnywhere(): Boolean =
+        prefs.value.let { !it.showContinueButton || it.tapMode == TapMode.WHOLE_SCREEN }
 
     init {
         viewModelScope.launch {
@@ -40,20 +57,27 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
         }
     }
 
-    fun dispatch(event: PlaybackEvent) = when (event) {
-        PlaybackEvent.Tap -> onTap()
+    fun dispatch(event: PlaybackEvent) {
+        when (event) {
+            PlaybackEvent.Tap -> onTap()
 
-        PlaybackEvent.Reset -> reset()
+            PlaybackEvent.Reset -> reset()
 
-        PlaybackEvent.ScreenStopped -> audio.stop()
+            PlaybackEvent.ScreenStopped -> audio.stop()
 
-        is PlaybackEvent.ScrollChanged -> {
-            if (!_state.value.isPanelOpen) {
-                Unit
-            } else if (event.active) {
-                audio.startScrollLoop()
-            } else {
-                audio.stopScrollLoop()
+            PlaybackEvent.ContinueClicked -> {
+                if (_state.value.prompt is Prompt.Continue) advance()
+            }
+
+            PlaybackEvent.ChoiceClicked -> {
+                val p = _state.value.prompt
+                if (p is Prompt.Choices && !p.selected) viewModelScope.launch { step() }
+            }
+
+            is PlaybackEvent.ScrollChanged -> {
+                if (_state.value.isPanelOpen) {
+                    if (event.active) audio.startScrollLoop() else audio.stopScrollLoop()
+                }
             }
         }
     }
@@ -68,8 +92,10 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
         autoJob = viewModelScope.launch {
             delay(START_HOLD_MS.milliseconds)
             while (!_state.value.isFinished) {
-                advance()
-                while (_state.value.isCheckRolling) delay(CHECK_POLL_MS.milliseconds)
+                step()
+                while (_state.value.isCheckRolling || _state.value.prompt is Prompt.Pending) {
+                    delay(CHECK_POLL_MS.milliseconds)
+                }
                 val text = _state.value.revealedEntries.lastOrNull()?.text.orEmpty()
                 val readMs = ((BASE_READ_MS + text.length * MS_PER_CHAR) / speed).toLong()
                 delay(readMs.milliseconds)
@@ -84,10 +110,31 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
         val s = _state.value
         when {
             s.isCheckRolling -> Unit
+
             !s.isPanelOpen -> reset()
+
             s.isFinished -> close()
-            else -> advance()
+
+            else -> when (val p = s.prompt) {
+                Prompt.None -> advance()
+
+                Prompt.Pending -> Unit
+
+                is Prompt.Continue -> if (tapAnywhere()) advance()
+
+                is Prompt.Choices ->
+                    if (tapAnywhere() && !p.selected) viewModelScope.launch { step() }
+            }
         }
+    }
+
+    private suspend fun step() {
+        val p = _state.value.prompt
+        if (p is Prompt.Choices && !p.selected) {
+            _state.update { it.copy(prompt = p.copy(selected = true)) }
+            delay(CHOICE_HIGHLIGHT_MS.milliseconds)
+        }
+        advance()
     }
 
     private fun open() {
@@ -98,7 +145,13 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
         cancelTimers()
         audio.panelOut()
         _state.update {
-            it.copy(isPanelOpen = false, isCheckRolling = false, checkOverlay = null, damageOverlay = null)
+            it.copy(
+                isPanelOpen = false,
+                isCheckRolling = false,
+                checkOverlay = null,
+                damageOverlay = null,
+                prompt = Prompt.None,
+            )
         }
     }
 
@@ -111,7 +164,9 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
     }
 
     private fun advance() {
+        promptJob?.cancel()
         val step = engine.advance() ?: return
+        _state.update { it.copy(prompt = Prompt.None) }
         val entry = step.entry
         val allowed = entry.speaker.type.allowsChecks
         val check = entry.check?.takeIf { it.active && allowed }
@@ -167,9 +222,37 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
             )
         }
         audio.lineRevealed(step.entry)
+        schedulePrompt(step)
+    }
+
+    private fun schedulePrompt(step: PlaybackStep) {
+        promptJob?.cancel()
+        if (step.isLast) return
+        val next = engine.peek() ?: return
+        val replies = next.replies?.takeIf { next.speaker.type == SpeakerType.YOU }
+        _state.update { it.copy(prompt = Prompt.Pending) }
+        promptJob = viewModelScope.launch {
+            val continueOn = settings.settings.first().showContinueButton
+            if (replies == null && !continueOn) {
+                _state.update { it.copy(prompt = Prompt.None) }
+                return@launch
+            }
+            delay(PROMPT_DELAY_MS.milliseconds)
+            _state.update {
+                it.copy(
+                    prompt = if (replies != null) {
+                        Prompt.Choices(replies.options, replies.chosenIndex)
+                    } else {
+                        Prompt.Continue(next.speaker.colorArgb)
+                    },
+                )
+            }
+        }
     }
 
     private fun cancelTimers() {
+        promptJob?.cancel()
+        promptJob = null
         autoJob?.cancel()
         autoJob = null
         checkJob?.cancel()
@@ -184,6 +267,8 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
     }
 
     companion object {
+        private const val PROMPT_DELAY_MS = 260L
+        private const val CHOICE_HIGHLIGHT_MS = 350L
         private const val START_HOLD_MS = 800L
         private const val CHECK_POLL_MS = 50L
         private const val BASE_READ_MS = 2800L
@@ -191,7 +276,7 @@ class PlaybackViewModel(scene: SceneSource, private val audio: PlaybackAudio) : 
         private const val END_HOLD_MS = 2000L
 
         fun factory(c: AppContainer) = viewModelFactory {
-            initializer { PlaybackViewModel(c.sceneSession, c.playbackAudio()) }
+            initializer { PlaybackViewModel(c.sceneSession, c.playbackAudio(), c.settingsRepository) }
         }
     }
 }

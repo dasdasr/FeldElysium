@@ -186,20 +186,20 @@ private fun FeldSettingRowPreview() {
     DiscoDialogueTheme {
         Column {
             FeldSettingSwitchRow(
-                icon = FeldIconId.Aspect,
+                icon = FeldIconId.Cinema,
                 title = "Cinema frame",
                 subtitle = "Keep playback inside 16:9",
                 checked = true,
                 onCheckedChange = {},
             )
             FeldSettingValueRow(
-                icon = FeldIconId.Aspect,
+                icon = FeldIconId.Cinema,
                 title = "Typeface",
                 value = "Sina Nova Regular",
                 onClick = {},
             )
             FeldSettingRow(
-                icon = FeldIconId.Aspect,
+                icon = FeldIconId.Cinema,
                 title = "Autoplay",
                 subtitle = "Play scene automatically",
                 enabled = false,

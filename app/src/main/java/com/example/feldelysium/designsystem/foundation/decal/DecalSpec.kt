@@ -2,21 +2,32 @@ package com.example.feldelysium.designsystem.foundation.decal
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 
-enum class DecalKind { Ruler, Perforation, FilmStrip, Text, DataBlock, Counter, Glyph, Mark, Sprite }
-
-/** A single WebP sheet (grayscale + alpha, sprites up to 256px) and a rectangle table */
-class DecalAtlas(val bitmap: ImageBitmap, val sprites: List<IntRect>)
+enum class DecalKind {
+    Ruler,
+    Perforation,
+    Text,
+    DataBlock,
+    Counter,
+    Glyph,
+    Mark,
+    Tape,
+    Ring,
+    Stitch,
+    Staple,
+    Corner,
+    Tally,
+}
 
 private val DefaultAlphaCap = mapOf(
-    DecalKind.Ruler to 0.07f, DecalKind.Perforation to 0.10f, DecalKind.FilmStrip to 0.13f,
+    DecalKind.Ruler to 0.07f, DecalKind.Perforation to 0.10f,
     DecalKind.Text to 0.14f, DecalKind.DataBlock to 0.12f, DecalKind.Counter to 0.17f,
-    DecalKind.Glyph to 0.10f, DecalKind.Mark to 0.15f, DecalKind.Sprite to 0.12f,
+    DecalKind.Glyph to 0.10f, DecalKind.Mark to 0.15f,
+    DecalKind.Tape to 0.09f, DecalKind.Ring to 0.08f, DecalKind.Stitch to 0.12f,
+    DecalKind.Staple to 0.14f, DecalKind.Corner to 0.10f, DecalKind.Tally to 0.14f,
 )
 
 private val DarkTones = listOf(
@@ -39,9 +50,8 @@ data class DecalSpec(
     val gap: Dp = 8.dp,
     val edgeMarginDp: ClosedFloatingPointRange<Float> = 2f..7f,
     val allowCenter: Boolean = true,
-    val leakChance: Float = 0.25f,
+    val leakChance: Float = 0.05f,
     val leakColor: Color = FeldPalette.Orange,
-    val atlas: DecalAtlas? = null,
 ) {
     companion object {
         val Entry = DecalSpec(
@@ -51,22 +61,30 @@ data class DecalSpec(
                 DecalKind.Glyph to 1.5f,
                 DecalKind.Mark to 1f,
                 DecalKind.Perforation to 0.5f,
-                DecalKind.FilmStrip to 0.6f,
+                DecalKind.Stitch to 0.8f,
+                DecalKind.Tally to 0.8f,
+                DecalKind.Corner to 0.5f,
+                DecalKind.Staple to 0.5f,
             ),
-            maxDecals = 2,
+            maxDecals = 4,
             allowCenter = false,
-            leakChance = 0.15f,
+            leakChance = 0.05f,
         )
         val Dialog = DecalSpec(
             weights = mapOf(
                 DecalKind.Ruler to 0.8f,
                 DecalKind.Perforation to 0.8f,
-                DecalKind.FilmStrip to 1.2f,
                 DecalKind.Text to 3f,
                 DecalKind.DataBlock to 2f,
                 DecalKind.Counter to 1.5f,
                 DecalKind.Glyph to 2f,
                 DecalKind.Mark to 1.5f,
+                DecalKind.Tape to 1f,
+                DecalKind.Ring to 0.8f,
+                DecalKind.Stitch to 1f,
+                DecalKind.Staple to 0.8f,
+                DecalKind.Corner to 0.8f,
+                DecalKind.Tally to 1f,
             ),
             maxDecals = 4,
         )
