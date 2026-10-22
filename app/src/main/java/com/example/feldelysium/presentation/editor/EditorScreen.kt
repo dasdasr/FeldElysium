@@ -63,7 +63,6 @@ import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHapti
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.eggs.EggEvent

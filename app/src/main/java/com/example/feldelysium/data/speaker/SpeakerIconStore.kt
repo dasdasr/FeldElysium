@@ -53,12 +53,11 @@ class SpeakerIconStore(context: Context) {
         Uri.fromFile(target).toString()
     }.getOrNull()
 
-    fun allUris(): List<String> =
-        dir.listFiles()
-            ?.filter { it.isFile }
-            ?.sortedByDescending { it.lastModified() }
-            ?.map { Uri.fromFile(it).toString() }
-            .orEmpty()
+    fun allUris(): List<String> = dir.listFiles()
+        ?.filter { it.isFile }
+        ?.sortedByDescending { it.lastModified() }
+        ?.map { Uri.fromFile(it).toString() }
+        .orEmpty()
 
     fun adopt(file: File): String {
         val name = "${UUID.randomUUID()}.img"

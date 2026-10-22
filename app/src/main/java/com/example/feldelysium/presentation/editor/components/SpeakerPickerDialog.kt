@@ -23,9 +23,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -241,8 +241,12 @@ fun SpeakerPickerDialog(
                         .align(Alignment.TopCenter)
                         .fillMaxWidth()
                         .height(32.dp)
-                        .background(Brush.verticalGradient(colorStops = FadeStops.map { (t, a) -> t to bg.copy(alpha = a) }
-                            .toTypedArray())),
+                        .background(
+                            Brush.verticalGradient(
+                                colorStops = FadeStops.map { (t, a) -> t to bg.copy(alpha = a) }
+                                    .toTypedArray(),
+                            ),
+                        ),
                 )
             }
 
@@ -461,7 +465,7 @@ private fun FilmButton(text: String, onClick: () -> Unit, modifier: Modifier = M
             for (k in -1..count) {
                 val x = 6.dp.toPx() + k * pitch - shift
                 val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                        ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
+                    ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
                 if (a <= 0f) continue
                 val hole = Color.Black.copy(alpha = a)
                 val r = CornerRadius(1.dp.toPx())

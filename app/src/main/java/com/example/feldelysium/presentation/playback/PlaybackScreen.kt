@@ -338,7 +338,7 @@ private fun PlaybackStage(
             status = StatusLine(money, time, day),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .width(maxWidth * StageRef.BOTTOM_BAR_WIDTH)
+                .width(maxWidth * StageRef.BOTTOM_BAR_WIDTH),
         )
     }
 }

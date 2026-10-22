@@ -33,10 +33,21 @@ object PredefinedSpeakers {
 
     val YOU = Speaker("you", "You", SpeakerColor.PLAIN.argb, null, type = SpeakerType.YOU, isBundled = true)
     val LEGO_HARRY =
-        Speaker("lego_harry", "Harry Du Brick", SpeakerColor.PLAIN.argb, R.drawable.ic_lego_harry, type = SpeakerType.NPC, isBundled = true)
+        Speaker(
+            "lego_harry",
+            "Harry Du Brick",
+            SpeakerColor.PLAIN.argb,
+            R.drawable.ic_lego_harry,
+            type = SpeakerType.NPC,
+            isBundled = true,
+        )
     val LEGO_KIM = Speaker(
-        "lego_kim", "Kim Legoragi", SpeakerColor.PLAIN.argb, R.drawable.ic_lego_kim,
-        type = SpeakerType.NPC, isBundled = true,
+        "lego_kim",
+        "Kim Legoragi",
+        SpeakerColor.PLAIN.argb,
+        R.drawable.ic_lego_kim,
+        type = SpeakerType.NPC,
+        isBundled = true,
     )
 
     val WORTH = skill("worth", "Worth", R.drawable.ic_worth, INTELLECT_TAG, sample = true)
@@ -52,14 +63,19 @@ object PredefinedSpeakers {
     val OFF_KILTER = skill("off_kilter", "Off-Kilter", R.drawable.ic_off_kilter, MOTORICS_TAG, sample = true)
 
     val SKILLS: List<Speaker> = listOf(
-        WORTH, WORLDWRIGHT,
-        TENDERNESS, THE_UNSAID,
-        GROUNDING, BREATHWARDEN,
-        EVASION, OFF_KILTER,
+        WORTH,
+        WORLDWRIGHT,
+        TENDERNESS,
+        THE_UNSAID,
+        GROUNDING,
+        BREATHWARDEN,
+        EVASION,
+        OFF_KILTER,
     )
 
     val NPCS: List<Speaker> = listOf(
-        LEGO_HARRY, LEGO_KIM,
+        LEGO_HARRY,
+        LEGO_KIM,
     )
 
     val ALL: List<Speaker> = SKILLS + NPCS + YOU
