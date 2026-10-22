@@ -64,27 +64,19 @@ import com.example.feldelysium.presentation.playback.components.PanelMotion
 import com.example.feldelysium.presentation.playback.components.PlaybackBackground
 import com.example.feldelysium.presentation.playback.components.PlaybackBottomBar
 import com.example.feldelysium.presentation.playback.components.PlaybackPromptFooter
+import com.example.feldelysium.presentation.playback.components.StageRef
 import com.example.feldelysium.presentation.settings.SettingsViewModel
 import com.example.feldelysium.record.RecordState
 import com.example.feldelysium.record.ScreenRecordCoordinator
 import com.example.feldelysium.record.ScreenRecordService
 import com.example.feldelysium.record.realScreenSize
 import com.example.feldelysium.theme.ChromaKeyGreen
+import com.example.feldelysium.theme.ProvidePlaybackFont
+import com.example.feldelysium.theme.fontDir
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
-
-private const val REFERENCE_WIDTH_PX = 1920f
-private const val REFERENCE_HEIGHT_PX = 1080f
-private const val TAPE_WIDTH_PX = 614f
-private const val TAPE_RIGHT_MARGIN_PX = 111f
-private const val PORTRAIT_LEFT_PX = 1022f
-private const val PORTRAIT_TOP_PX = 232f
-private const val PORTRAIT_WIDTH_PX = 177f
-private const val PORTRAIT_HEIGHT_PX = 250f
-private const val PORTRAIT_BACKDROP_INSET_RATIO = 0.12f
-private const val BOTTOM_BAR_WIDTH_PX = 770f
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -104,7 +96,7 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
 
     val settingsVm: SettingsViewModel = viewModel(
         viewModelStoreOwner = activity,
-        factory = SettingsViewModel.factory(container),
+        factory = SettingsViewModel.factory(container, activity.fontDir()),
     )
 
     val vm: PlaybackViewModel = viewModel(
@@ -171,20 +163,22 @@ fun PlaybackScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
         }
     }
 
-    PlaybackScreenContent(
-        state = state,
-        lockAspectRatio16x9 = settings.lockAspectRatio16x9,
-        background = settings,
-        money = settings.playbackMoney,
-        time = settings.playbackTime,
-        day = settings.playbackDay,
-        onTap = { vm.dispatch(PlaybackEvent.Tap) },
-        onBackClick = onNavigateBack,
-        onScrollChanged = { vm.dispatch(PlaybackEvent.ScrollChanged(it)) },
-        onContinue = { vm.dispatch(PlaybackEvent.ContinueClicked) },
-        onChoice = { vm.dispatch(PlaybackEvent.ChoiceClicked) },
-        modifier = modifier,
-    )
+    ProvidePlaybackFont(settings) {
+        PlaybackScreenContent(
+            state = state,
+            lockAspectRatio16x9 = settings.lockAspectRatio16x9,
+            background = settings,
+            money = settings.playbackMoney,
+            time = settings.playbackTime,
+            day = settings.playbackDay,
+            onTap = { vm.dispatch(PlaybackEvent.Tap) },
+            onBackClick = onNavigateBack,
+            onScrollChanged = { vm.dispatch(PlaybackEvent.ScrollChanged(it)) },
+            onContinue = { vm.dispatch(PlaybackEvent.ContinueClicked) },
+            onChoice = { vm.dispatch(PlaybackEvent.ChoiceClicked) },
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
@@ -262,13 +256,13 @@ private fun PlaybackStage(
                 onClick = onTap,
             ),
     ) {
-        val tapeWidth = maxWidth * (TAPE_WIDTH_PX / REFERENCE_WIDTH_PX)
-        val tapeRightMargin = maxWidth * (TAPE_RIGHT_MARGIN_PX / REFERENCE_WIDTH_PX)
-        val portraitLeft = maxWidth * (PORTRAIT_LEFT_PX / REFERENCE_WIDTH_PX)
-        val portraitTop = maxHeight * (PORTRAIT_TOP_PX / REFERENCE_HEIGHT_PX)
-        val portraitWidth = maxWidth * (PORTRAIT_WIDTH_PX / REFERENCE_WIDTH_PX)
-        val portraitHeight = maxHeight * (PORTRAIT_HEIGHT_PX / REFERENCE_HEIGHT_PX)
-        val portraitBackdropInset = portraitWidth * PORTRAIT_BACKDROP_INSET_RATIO
+        val tapeWidth = maxWidth * StageRef.TAPE_WIDTH
+        val tapeRightMargin = maxWidth * StageRef.TAPE_RIGHT_MARGIN
+        val portraitLeft = maxWidth * StageRef.PORTRAIT_LEFT
+        val portraitTop = maxHeight * StageRef.PORTRAIT_TOP
+        val portraitWidth = maxWidth * StageRef.PORTRAIT_WIDTH
+        val portraitHeight = maxHeight * StageRef.PORTRAIT_HEIGHT
+        val portraitBackdropInset = portraitWidth * StageRef.PORTRAIT_BACKDROP_INSET_RATIO
 
         val panelShift by animateFloatAsState(
             targetValue = if (state.isPanelOpen) 0f else 1f,
@@ -344,7 +338,7 @@ private fun PlaybackStage(
             status = StatusLine(money, time, day),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .width(maxWidth * (BOTTOM_BAR_WIDTH_PX / REFERENCE_WIDTH_PX)),
+                .width(maxWidth * StageRef.BOTTOM_BAR_WIDTH)
         )
     }
 }

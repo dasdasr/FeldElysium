@@ -18,7 +18,7 @@ object PlaybackMotion {
     const val SCROLLBAR_TOP_FRACTION = 0.22f
     const val SCROLLBAR_BOTTOM_FRACTION = 0.78f
 
-    const val FOOTER_SAFE_BOTTOM_FRACTION = 0.86f
+    const val FOOTER_SAFE_BOTTOM_FRACTION = 0.78f
     const val FOOTER_LIFT_MS = 220
 
     const val SCROLLBAR_DOT_RANGE_START = 0.2f
@@ -47,16 +47,17 @@ object PlaybackMotion {
     val scrollPolicy: PlaybackScrollPolicy = PlaybackScrollPolicy.ReturnToRestAnchor
 }
 
-private val filmYankEasing: Easing = Easing { t ->
-    val yank = PlaybackMotion.SCROLL_YANK_FRACTION.coerceIn(0.05f, 0.95f)
-    val distance = PlaybackMotion.SCROLL_YANK_DISTANCE.coerceIn(0.5f, 0.99f)
-    if (t <= yank) {
-        (t / yank) * distance
-    } else {
-        val u = ((t - yank) / (1f - yank)).coerceIn(0f, 1f)
-        val brake = 1f - (1f - u) * (1f - u)
-        distance + (1f - distance) * brake
-    }
+internal object StageRef {
+    private const val W = 1920f
+    private const val H = 1080f
+    const val TAPE_WIDTH = 614f / W
+    const val TAPE_RIGHT_MARGIN = 111f / W
+    const val PORTRAIT_LEFT = 1022f / W
+    const val PORTRAIT_TOP = 232f / H
+    const val PORTRAIT_WIDTH = 177f / W
+    const val PORTRAIT_HEIGHT = 250f / H
+    const val PORTRAIT_BACKDROP_INSET_RATIO = 0.12f
+    const val BOTTOM_BAR_WIDTH = 770f / W
 }
 
 enum class PlaybackScrollPolicy {
@@ -77,5 +78,18 @@ internal fun scrollDeltaForHeightIncrease(
     PlaybackScrollPolicy.ScrollOnlyWhenExceedsScreen -> {
         val overflow = (pinnedTopPx + contentHeightPx - viewportHeightPx).coerceAtLeast(0f)
         (overflow - settledScrollPx).coerceAtLeast(0f)
+    }
+}
+
+
+private val filmYankEasing: Easing = Easing { t ->
+    val yank = PlaybackMotion.SCROLL_YANK_FRACTION.coerceIn(0.05f, 0.95f)
+    val distance = PlaybackMotion.SCROLL_YANK_DISTANCE.coerceIn(0.5f, 0.99f)
+    if (t <= yank) {
+        (t / yank) * distance
+    } else {
+        val u = ((t - yank) / (1f - yank)).coerceIn(0f, 1f)
+        val brake = 1f - (1f - u) * (1f - u)
+        distance + (1f - distance) * brake
     }
 }

@@ -66,12 +66,26 @@ class PlaybackViewModel(
             PlaybackEvent.ScreenStopped -> audio.stop()
 
             PlaybackEvent.ContinueClicked -> {
-                if (_state.value.prompt is Prompt.Continue) advance()
+                if (
+                    prefs.value.tapMode != TapMode.NOWHERE &&
+                    _state.value.prompt is Prompt.Continue
+                ) {
+                    advance()
+                }
             }
 
             PlaybackEvent.ChoiceClicked -> {
                 val p = _state.value.prompt
-                if (p is Prompt.Choices && !p.selected) viewModelScope.launch { step() }
+
+                if (
+                    prefs.value.tapMode != TapMode.NOWHERE &&
+                    p is Prompt.Choices &&
+                    !p.selected
+                ) {
+                    viewModelScope.launch {
+                        step()
+                    }
+                }
             }
 
             is PlaybackEvent.ScrollChanged -> {
@@ -106,8 +120,10 @@ class PlaybackViewModel(
     }
 
     private fun onTap() {
-        if (autoJob?.isActive == true) return
+        if (prefs.value.tapMode == TapMode.NOWHERE || autoJob?.isActive == true) return
+
         val s = _state.value
+
         when {
             s.isCheckRolling -> Unit
 
@@ -120,10 +136,15 @@ class PlaybackViewModel(
 
                 Prompt.Pending -> Unit
 
-                is Prompt.Continue -> if (tapAnywhere()) advance()
+                is Prompt.Continue ->
+                    if (tapAnywhere()) advance()
 
                 is Prompt.Choices ->
-                    if (tapAnywhere() && !p.selected) viewModelScope.launch { step() }
+                    if (tapAnywhere() && !p.selected) {
+                        viewModelScope.launch {
+                            step()
+                        }
+                    }
             }
         }
     }
