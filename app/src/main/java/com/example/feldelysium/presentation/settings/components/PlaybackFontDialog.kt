@@ -3,14 +3,6 @@ package com.example.feldelysium.presentation.settings.components
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -92,7 +84,7 @@ private val Samples = listOf(
     Sample(
         "Electrochemistry",
         SkillColor.Physique.color,
-        "Oh, this one f*cks. Look at those curves. Look at that filthy little lowercase g."
+        "Oh, this one f*cks. Look at those curves. Look at that filthy little lowercase g.",
     ),
     Sample("Encyclopedia", SkillColor.Intellect.color, "Historically, the serif emerged as a response to—"),
     Sample("Inland Empire", SkillColor.Psyche.color, "Close your eyes. Listen to the letters."),
@@ -101,7 +93,7 @@ private val Samples = listOf(
     Sample(
         "Authority",
         SkillColor.Psyche.color,
-        "You will choose the serif. You will respect the serif. You will not ask."
+        "You will choose the serif. You will respect the serif. You will not ask.",
     ),
     Sample("Volition", SkillColor.Psyche.color, "We are making an interface, not a suicide note."),
     Sample("Electrochemistry", SkillColor.Physique.color, "The bold one. The f*cking bold one."),
@@ -111,12 +103,12 @@ private val Samples = listOf(
     Sample(
         "Rhetoric",
         SkillColor.Intellect.color,
-        "Sans-serif is a bourgeois conspiracy to make everything look like a startup."
+        "Sans-serif is a bourgeois conspiracy to make everything look like a startup.",
     ),
     Sample(
         "Inland Empire",
         SkillColor.Psyche.color,
-        "This one smells like wet concrete and an inspiration you can no longer access."
+        "This one smells like wet concrete and an inspiration you can no longer access.",
     ),
     Sample("Authority", SkillColor.Psyche.color, "Commit. To. The. Font. Detective."),
 )

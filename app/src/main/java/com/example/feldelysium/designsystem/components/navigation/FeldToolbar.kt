@@ -68,8 +68,8 @@ fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, see
     }
 }
 
-private const val IconFull = 32f
-private const val IconSmall = 24f
+private const val ICON_FULL = 32f
+private const val ICON_SMALL = 24f
 
 @Composable
 private fun RowScope.ToolbarCell(item: FeldToolbarItem) {
@@ -115,8 +115,8 @@ private fun RowScope.ToolbarCell(item: FeldToolbarItem) {
         }
     }
 
-    val iconDp = (IconSmall + (IconFull - IconSmall) * t).dp
-    val iconScale = (IconSmall + (IconFull - IconSmall) * t) / IconFull
+    val iconDp = (ICON_SMALL + (ICON_FULL - ICON_SMALL) * t).dp
+    val iconScale = (ICON_SMALL + (ICON_FULL - ICON_SMALL) * t) / ICON_FULL
     val textScale = 1f + 0.12f * t
 
     Column(
@@ -131,7 +131,7 @@ private fun RowScope.ToolbarCell(item: FeldToolbarItem) {
         Box(Modifier.size(iconDp), contentAlignment = Alignment.Center) {
             FeldIcon(
                 id = item.icon,
-                size = IconFull.dp,
+                size = ICON_FULL.dp,
                 film = true,
                 markerFilmSpec = if (item.accent != null && item.enabled) {
                     FeldMarker.Chalk.copy(color = item.accent)

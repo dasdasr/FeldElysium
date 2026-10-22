@@ -25,9 +25,8 @@ import java.io.File
 class SettingsViewModel(
     private val repository: SettingsRepository,
     private val resolver: ContentResolver,
-    private val fontDir: File
-) :
-    ViewModel() {
+    private val fontDir: File,
+) : ViewModel() {
 
     val state: StateFlow<AppSettings> =
         repository.settings.stateIn(viewModelScope, SharingStarted.Eagerly, AppSettings())

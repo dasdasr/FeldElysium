@@ -81,7 +81,6 @@ internal fun scrollDeltaForHeightIncrease(
     }
 }
 
-
 private val filmYankEasing: Easing = Easing { t ->
     val yank = PlaybackMotion.SCROLL_YANK_FRACTION.coerceIn(0.05f, 0.95f)
     val distance = PlaybackMotion.SCROLL_YANK_DISTANCE.coerceIn(0.5f, 0.99f)

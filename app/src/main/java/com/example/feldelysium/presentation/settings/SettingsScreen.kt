@@ -141,7 +141,6 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     .navigationBarsPadding()
                     .testTag("settings_scroll"),
             ) {
-
                 FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Cinema,
@@ -223,8 +222,8 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                             haptics.tick()
                             vm.dispatch(
                                 SettingsEvent.SetTapMode(
-                                    settings.tapMode.next(settings.autoPlay)
-                                )
+                                    settings.tapMode.next(settings.autoPlay),
+                                ),
                             )
                         },
                     )
@@ -278,7 +277,6 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 }
 
                 FeldSettingsSection(title = "Speakers") {
-
                     FeldSettingRow(
                         icon = FeldIconId.Export,
                         title = "Export speakers",

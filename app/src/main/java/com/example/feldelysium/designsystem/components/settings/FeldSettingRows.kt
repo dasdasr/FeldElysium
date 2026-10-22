@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.example.feldelysium.designsystem.components.settings
 
 import androidx.compose.foundation.border
@@ -151,7 +153,7 @@ fun FeldSettingSwitchRow(
         title = title,
         subtitle = subtitle,
         modifier = modifier,
-       status = status,
+        status = status,
         role = Role.Switch,
         onClick = { onCheckedChange(!checked) },
         trailing = {

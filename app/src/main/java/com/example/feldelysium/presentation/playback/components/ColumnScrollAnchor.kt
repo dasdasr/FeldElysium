@@ -127,7 +127,7 @@ internal class ColumnScrollAnchor(private val scope: CoroutineScope, private val
             if (scrollDelta > 1f) {
                 bonus += scrollDelta
                 tapeTarget += scrollDelta *
-                        PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
+                    PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
                 startScroll()
             }
         }

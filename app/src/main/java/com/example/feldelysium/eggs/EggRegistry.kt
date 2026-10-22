@@ -123,7 +123,8 @@ object EggRegistry {
         say(WORTH, "Soon: adverb. Meaning: not yet. Hence the label."),
         skillCheck(GROUNDING, "You can wait. You have waited for worse.", Difficulty.Easy),
         say(
-            THE_UNSAID, "Autoplay? You trust others to press buttons for you?",
+            THE_UNSAID,
+            "Autoplay? You trust others to press buttons for you?",
             scope = SoonFeature.Autoplay,
         ),
         say(
@@ -200,4 +201,3 @@ object EggRegistry {
         //     trigger = whenValue("status.reals") { it.toIntOrNull() != null }, chance = 0.03f)
     )
 }
-
