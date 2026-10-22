@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.feldelysium.data.settings.SettingsRepository
 import com.example.feldelysium.data.speaker.PackFormatException
+import com.example.feldelysium.data.speaker.SpeakerIconStore
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.domain.model.ImportPolicy
 import com.example.feldelysium.domain.model.ImportReport

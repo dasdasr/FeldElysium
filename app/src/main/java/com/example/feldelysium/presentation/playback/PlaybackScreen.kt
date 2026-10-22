@@ -351,7 +351,7 @@ private fun PlaybackStage(
 )
 @Composable
 private fun PlaybackScreenPreview() {
-    val skillSpeaker = PredefinedSpeakers.LOGIC
+    val skillSpeaker = PredefinedSpeakers.WORLDWRIGHT
     val npcSpeaker = Speaker(
         id = "kim",
         name = "Kim Kitsuragi",

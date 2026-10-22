@@ -30,7 +30,7 @@ private const val FRAME_SCALE_Y = 1.02f
 @Composable
 private fun LatestSpeakerPortraitPreview() {
     LatestSpeakerPortrait(
-        speaker = PredefinedSpeakers.STEBAN,
+        speaker = PredefinedSpeakers.LEGO_HARRY,
         modifier = Modifier.size(width = 192.dp, height = 281.dp),
     )
 }
