@@ -78,5 +78,11 @@ private fun CheckData.toDomain() = SkillCheck(
 
 private fun DamageData.toDomain() = DamageEffect(enumOr(type, DamageType.Morale), amount.coerceIn(1, 5))
 
+internal fun SceneFile.barcodeColors(max: Int = 40): List<Long> {
+    val custom = speakers.associate { it.id to it.color }
+    val bundled = PredefinedSpeakers.ALL.associate { it.id to it.colorArgb }
+    val all = entries.mapNotNull { custom[it.speakerId] ?: bundled[it.speakerId] }
+    return if (all.size <= max) all else List(max) { all[it * all.size / max] }
+}
 private inline fun <reified E : Enum<E>> enumOr(name: String, default: E): E =
     enumValues<E>().firstOrNull { it.name == name } ?: default
