@@ -85,6 +85,14 @@ class SceneSession(
         if (id == _scene.value.id) _scene.value = blankScene()
     }
 
+    suspend fun clearScene(id: String) {
+        if (id == _scene.value.id) { clear(); return }
+        switchLock.withLock {
+            repository.open(id)?.let { repository.save(it.copy(entries = emptyList())) }
+            repository.save(_scene.value)
+        }
+    }
+
     suspend fun importScene(input: InputStream) = switchLock.withLock {
         repository.save(_scene.value)
         val imported = reconciler.reconcile(repository.import(input))

@@ -127,6 +127,13 @@ class EditorViewModel(
         }
     }
 
+    fun clearSceneById(id: String) {
+        viewModelScope.launch {
+            session.clear()
+            refreshScenes()
+        }
+    }
+
     fun saveScene() {
         viewModelScope.launch {
             session.save()
