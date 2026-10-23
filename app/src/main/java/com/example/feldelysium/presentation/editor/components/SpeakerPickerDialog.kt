@@ -45,6 +45,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -67,7 +68,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -131,6 +131,7 @@ private val FadeStops = listOf(
 
 private val avatarCache = LruCache<String, ImageBitmap>(64)
 
+@Suppress("ReturnCount")
 private fun decodeAvatar(uri: String, targetPx: Int): ImageBitmap? {
     avatarCache.get(uri)?.let { return it }
     val path = Uri.parse(uri).path ?: return null
@@ -290,7 +291,7 @@ fun SpeakerPickerDialog(
                         }
                     }
 
-                    itemsIndexed(items, key = { _, it -> it.key }) { index, item ->
+                    itemsIndexed(items, key = { _, pit -> pit.key }) { index, item ->
                         Box(Modifier.entrance(item.key, seen, index, animate = settled)) {
                             when (item) {
                                 is PickerItem.Header -> {
@@ -678,7 +679,7 @@ private fun FilmButton(text: String, onClick: () -> Unit, modifier: Modifier = M
             for (k in -1..count) {
                 val x = 6.dp.toPx() + k * pitch - shift
                 val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                        ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
+                    ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
                 if (a <= 0f) continue
                 val hole = Color.Black.copy(alpha = a)
                 val r = CornerRadius(1.dp.toPx())

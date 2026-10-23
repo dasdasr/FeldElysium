@@ -86,7 +86,10 @@ class SceneSession(
     }
 
     suspend fun clearScene(id: String) {
-        if (id == _scene.value.id) { clear(); return }
+        if (id == _scene.value.id) {
+            clear()
+            return
+        }
         switchLock.withLock {
             repository.open(id)?.let { repository.save(it.copy(entries = emptyList())) }
             repository.save(_scene.value)
