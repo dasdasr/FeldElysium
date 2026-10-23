@@ -129,7 +129,7 @@ class EditorViewModel(
 
     fun clearSceneById(id: String) {
         viewModelScope.launch {
-            session.clear()
+            session.deleteScene(id)
             refreshScenes()
         }
     }

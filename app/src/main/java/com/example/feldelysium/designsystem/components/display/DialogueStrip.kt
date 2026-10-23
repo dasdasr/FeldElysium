@@ -47,13 +47,23 @@ fun DialogueStrip(
         val lineW = 1.dp.toPx()
         val base = size.height - 4.dp.toPx()
 
-        drawLine(lineColor.copy(alpha = 0.55f), Offset(0f, base + 1.dp.toPx()), Offset(size.width, base + 1.dp.toPx()), lineW)
+        drawLine(
+            lineColor.copy(alpha = 0.55f),
+            Offset(0f, base + 1.dp.toPx()),
+            Offset(size.width, base + 1.dp.toPx()),
+            lineW,
+        )
         val tickStep = 8.dp.toPx()
         var x = 0f
         var i = 0
         while (x <= size.width) {
             val tall = if (i % 5 == 0) 4.dp.toPx() else 2.dp.toPx()
-            drawLine(lineColor.copy(alpha = 0.4f), Offset(x, base + 1.dp.toPx()), Offset(x, base + 1.dp.toPx() + tall), lineW)
+            drawLine(
+                lineColor.copy(alpha = 0.4f),
+                Offset(x, base + 1.dp.toPx()),
+                Offset(x, base + 1.dp.toPx() + tall),
+                lineW,
+            )
             x += tickStep
             i++
         }

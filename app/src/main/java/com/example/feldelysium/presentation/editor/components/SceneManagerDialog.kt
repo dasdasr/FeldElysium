@@ -190,12 +190,14 @@ fun SceneManagerDialog(
                         },
                     )
                 }
-                item(key = "new-scene", span = { GridItemSpan(maxLineSpan) }) {   NewSceneCard(
-                    onClick = {
-                        haptics.tick()
-                        onNew()
-                    },
-                ) }
+                item(key = "new-scene", span = { GridItemSpan(maxLineSpan) }) {
+                    NewSceneCard(
+                        onClick = {
+                            haptics.tick()
+                            onNew()
+                        },
+                    )
+                }
             }
 
             ActionBar(
@@ -302,7 +304,13 @@ private fun SceneFolder(
     val sub = if (featured) Ink.copy(alpha = 0.62f) else FeldPalette.Muted
     val lineWord = if (scene.lines == 1) "LINE" else "LINES"
 
-    val tilt = if (featured) 0f else if (index % 2 == 0) -0.5f else 0.6f
+    val tilt = if (featured) {
+        0f
+    } else if (index % 2 == 0) {
+        -0.5f
+    } else {
+        0.6f
+    }
     val dropY = if (!featured && index % 2 == 0) 8.dp else 0.dp
 
     val interaction = remember { MutableInteractionSource() }
@@ -637,7 +645,7 @@ private fun FilmAction(text: String, icon: FeldIconId, onClick: () -> Unit, modi
             for (k in -1..count) {
                 val x = 6.dp.toPx() + k * pitch - shift
                 val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                        ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
+                    ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
                 if (a <= 0f) continue
                 val hole = Color.Black.copy(alpha = a)
                 val r = CornerRadius(1.dp.toPx())
