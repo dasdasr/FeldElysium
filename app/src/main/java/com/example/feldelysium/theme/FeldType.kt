@@ -15,14 +15,11 @@ internal val Alegreya = FontFamily(
     Font(R.font.alegreya_bold, FontWeight.Bold),
 )
 
-private val BebasNeue = FontFamily(
-    Font(R.font.bebas_neue_regular, FontWeight.Normal),
-)
-
 private val RobotoCondensed = FontFamily(
     Font(R.font.roboto_condensed_regular, FontWeight.Normal),
     Font(R.font.roboto_condensed_regular, FontWeight.Medium),
     Font(R.font.roboto_condensed_bold, FontWeight.Bold),
+    Font(R.font.roboto_condensed_bold, FontWeight.Black),
 )
 
 val FeldTypography = Typography(
@@ -31,7 +28,7 @@ val FeldTypography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         lineHeight = 32.sp,
-        letterSpacing = 1.2.sp,
+        letterSpacing = 0.5.sp,
     ),
     titleMedium = TextStyle(
         fontFamily = RobotoCondensed,
@@ -61,10 +58,10 @@ val FeldTypography = Typography(
     ),
     labelMedium = TextStyle(
         fontFamily = RobotoCondensed,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Black,
         fontSize = 16.sp,
         lineHeight = 20.sp,
-        letterSpacing = 1.sp,
+        letterSpacing = (-0.2.sp),
     ),
     labelSmall = TextStyle(
         fontSize = 12.sp,

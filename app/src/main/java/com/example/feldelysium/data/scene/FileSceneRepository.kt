@@ -63,7 +63,19 @@ class FileSceneRepository(context: Context, private val io: CoroutineDispatcher 
 
     override suspend fun list(): List<SceneInfo> = withContext(io) {
         dir.listFiles(FileFilter { it.extension == "json" }).orEmpty()
-            .mapNotNull { f -> read(f)?.let { SceneInfo(it.id, it.title, it.entries.size, f.lastModified()) } }
+            .mapNotNull { f ->
+                read(f)?.toScene()?.let { sc ->
+                    SceneInfo(
+                        id = sc.id,
+                        title = sc.title,
+                        lines = sc.entries.size,
+                        lengths = sc.entries.map { it.text.length },
+                        modified = f.lastModified(),
+                        preview = sc.entries.firstOrNull()?.text.orEmpty().take(140),
+                        barcode = sc.entries.map { it.speaker.colorArgb },
+                    )
+                }
+            }
             .sortedByDescending { it.modified }
     }
 
