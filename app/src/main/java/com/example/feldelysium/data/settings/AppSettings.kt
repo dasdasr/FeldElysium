@@ -8,6 +8,10 @@ data class AppSettings(
     val exportEnabled: Boolean = true,
     val exportAudio: Boolean = true,
 
+    val customFontFile: String = "",
+    val customFontName: String = "",
+    val fontChoice: String = "",
+
     val autoPlay: Boolean = false,
     val autoPlaySpeed: AutoPlaySpeed = AutoPlaySpeed.NORMAL,
     val playbackMoney: String = "40.95",

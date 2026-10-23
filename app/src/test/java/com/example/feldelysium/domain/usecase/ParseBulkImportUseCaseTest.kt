@@ -13,10 +13,10 @@ class ParseBulkImportUseCaseTest {
 
     @Test
     fun knownSpeaker_isKept_andCreatesNothing() {
-        val result = useCase.execute("VOLITION:\nStay calm.")
+        val result = useCase.execute("WORTH:\nStay calm.")
 
         assertEquals(1, result.entries.size)
-        assertEquals("volition", result.entries.single().speaker.id)
+        assertEquals("worth", result.entries.single().speaker.id)
         assertTrue(result.newSpeakers.isEmpty())
     }
 
@@ -67,7 +67,7 @@ class ParseBulkImportUseCaseTest {
 
     @Test
     fun emptyBlock_createsNeitherLineNorSpeaker() {
-        val result = useCase.execute("GHOST:\n\nVOLITION:\nHi.")
+        val result = useCase.execute("GHOST:\n\nWORTH:\nHi.")
 
         assertTrue(result.newSpeakers.isEmpty())
         assertEquals(listOf("Hi."), result.entries.map { it.text })

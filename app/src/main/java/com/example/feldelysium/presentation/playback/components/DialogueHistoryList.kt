@@ -1,9 +1,5 @@
 package com.example.feldelysium.presentation.playback.components
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -21,15 +17,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,15 +41,9 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.max
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.milliseconds
+
+private const val TOP_FADE_FRACTION = 0.18f
 
 @Composable
 fun DialogueHistoryList(
@@ -121,6 +119,17 @@ fun DialogueHistoryList(
             modifier = Modifier
                 .fillMaxSize()
                 .clipToBounds()
+                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                .drawWithContent {
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            TOP_FADE_FRACTION to Color.Black,
+                        ),
+                        blendMode = BlendMode.DstIn,
+                    )
+                }
                 .draggable(
                     state = dragState,
                     orientation = Orientation.Vertical,
@@ -183,12 +192,6 @@ fun DialogueHistoryList(
                 textShiftPx = 0f,
             )
 
-            anchor.noteScroll(
-                y = baseY,
-                contentHeightPx = contentHeight,
-                restBottomPx = restBottomPx,
-            )
-
             val finalY = anchor.placementY(
                 contentHeightPx = contentHeight,
                 restBottomPx = restBottomPx,
@@ -244,189 +247,20 @@ fun DialogueHistoryList(
     }
 }
 
-private class ColumnScrollAnchor(private val scope: CoroutineScope, private val onScrollActive: (Boolean) -> Unit) {
-    val textShift = Animatable(0f)
-    val tapeShift = Animatable(0f)
-
-    var scrollFraction by mutableFloatStateOf(0f)
-        private set
-
-    private var bonus = 0f
-    private var tapeTarget = 0f
-    private var anchoredHeight = 0f
-    private var pinnedTop = 0f
-    private var hasAnchor = false
-    private var generation = 0
-    private var job: Job? = null
-
-    val rollShift = Animatable(0f)
-    private var rollTarget = 0f
-
-    val footerLift = Animatable(0f)
-    private var liftTarget = 0f
-    private var maxBack = 0f
-
-    var userOffset by mutableFloatStateOf(0f)
-        private set
-
-    fun roll(distancePx: Float) {
-        rollTarget += distancePx
-        val target = rollTarget
-
-        scope.launch {
-            delay(
-                CheckMotion.TAPE_ROLL_START_DELAY_MS.toLong().milliseconds,
-            )
-            rollShift.animateTo(
-                targetValue = target,
-                animationSpec = tween(
-                    durationMillis = CheckMotion.TAPE_ROLL_MS,
-                    easing = CheckMotion.TAPE_ROLL_EASING,
-                ),
-            )
-        }
+private fun DrawScope.drawChevron(x: Float, tipY: Float, up: Boolean) {
+    val w = 4.dp.toPx()
+    val h = 3.dp.toPx()
+    val legY = if (up) tipY + h else tipY - h
+    val path = Path().apply {
+        moveTo(x - w, legY)
+        quadraticTo(x - w / 2f, tipY, x, tipY)
+        quadraticTo(x + w / 2f, tipY, x + w, legY)
     }
-
-    fun updateFooterLift(overflowPx: Float, hasFooter: Boolean) {
-        val target = if (hasFooter) {
-            max(liftTarget, overflowPx)
-        } else {
-            0f
-        }
-
-        if (abs(target - liftTarget) < 1f) return
-
-        liftTarget = target
-
-        scope.launch {
-            footerLift.animateTo(
-                targetValue = target,
-                animationSpec = tween(
-                    durationMillis = PlaybackMotion.FOOTER_LIFT_MS,
-                    easing = FastOutSlowInEasing,
-                ),
-            )
-        }
-    }
-
-    fun noteDragBounds(finalY: Float) {
-        maxBack = (-(finalY - liftTarget)).coerceAtLeast(0f)
-        userOffset = userOffset.coerceIn(0f, maxBack)
-    }
-
-    fun dragBy(delta: Float) {
-        userOffset = (userOffset + delta).coerceIn(0f, maxBack)
-    }
-
-    suspend fun settleUser() {
-        if (userOffset == 0f) return
-
-        animate(
-            initialValue = userOffset,
-            targetValue = 0f,
-            animationSpec = tween(150),
-        ) { value, _ ->
-            userOffset = value
-        }
-    }
-
-    fun placementY(contentHeightPx: Float, restBottomPx: Float, viewportHeightPx: Float, textShiftPx: Float): Float {
-        if (!hasAnchor) {
-            if (contentHeightPx < 1f || viewportHeightPx < 1f) {
-                return restBottomPx
-            }
-
-            hasAnchor = true
-            anchoredHeight = contentHeightPx
-            pinnedTop = restBottomPx - contentHeightPx
-        } else if (contentHeightPx > anchoredHeight + 1f) {
-            val heightIncrease = contentHeightPx - anchoredHeight
-            anchoredHeight = contentHeightPx
-
-            val scrollDelta = scrollDeltaForHeightIncrease(
-                policy = PlaybackMotion.scrollPolicy,
-                heightIncreasePx = heightIncrease,
-                pinnedTopPx = pinnedTop,
-                contentHeightPx = contentHeightPx,
-                viewportHeightPx = viewportHeightPx,
-                settledScrollPx = bonus,
-            )
-
-            if (scrollDelta > 1f) {
-                bonus += scrollDelta
-                tapeTarget += scrollDelta *
-                    PlaybackMotion.TAPE_SCROLL_DISTANCE_FACTOR
-                startScroll()
-            }
-        }
-
-        val appliedShift = textShiftPx.coerceIn(0f, bonus)
-
-        return when (PlaybackMotion.scrollPolicy) {
-            PlaybackScrollPolicy.ReturnToRestAnchor ->
-                restBottomPx - contentHeightPx + (bonus - appliedShift)
-
-            PlaybackScrollPolicy.ScrollOnlyWhenExceedsScreen ->
-                pinnedTop - appliedShift
-        }
-    }
-
-    fun noteScroll(y: Float, contentHeightPx: Float, restBottomPx: Float) {
-        val maxOffset = (contentHeightPx - restBottomPx).coerceAtLeast(0f)
-
-        scrollFraction = if (maxOffset > 1f) {
-            ((-y).coerceAtLeast(0f) / maxOffset).coerceIn(0f, 1f)
-        } else {
-            0f
-        }
-    }
-
-    private fun startScroll() {
-        val gen = ++generation
-        job?.cancel()
-
-        job = scope.launch {
-            textShift.stop()
-            tapeShift.stop()
-
-            delay(PlaybackMotion.SCROLL_START_DELAY_MS.milliseconds)
-
-            if (gen != generation) return@launch
-
-            val textTarget = bonus
-            val tapeDestination = tapeTarget
-
-            onScrollActive(true)
-
-            try {
-                coroutineScope {
-                    launch {
-                        textShift.animateTo(
-                            targetValue = textTarget,
-                            animationSpec = tween(
-                                durationMillis = PlaybackMotion.COLUMN_SCROLL_DURATION_MS,
-                                easing = PlaybackMotion.columnScrollEasing,
-                            ),
-                        )
-                    }
-
-                    launch {
-                        tapeShift.animateTo(
-                            targetValue = tapeDestination,
-                            animationSpec = tween(
-                                durationMillis = PlaybackMotion.TAPE_SCROLL_DURATION_MS,
-                                easing = PlaybackMotion.tapeScrollEasing,
-                            ),
-                        )
-                    }
-                }
-            } finally {
-                if (gen == generation) {
-                    onScrollActive(false)
-                }
-            }
-        }
-    }
+    drawPath(
+        path = path,
+        color = Color.White.copy(alpha = 0.35f),
+        style = Stroke(width = 1.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round),
+    )
 }
 
 @Composable
@@ -443,11 +277,14 @@ private fun TapeScrollIndicator(anchor: ColumnScrollAnchor, modifier: Modifier =
         if (lineBottom <= lineTop) return@Canvas
 
         drawLine(
-            color = Color.White.copy(alpha = 0.38f),
+            color = Color.White.copy(alpha = 0.35f),
             start = Offset(lineX, lineTop),
             end = Offset(lineX, lineBottom),
             strokeWidth = 1.dp.toPx(),
         )
+
+        drawChevron(lineX, lineTop - 2.dp.toPx(), up = true)
+        drawChevron(lineX, lineBottom + 2.dp.toPx(), up = false)
 
         val lineLength = lineBottom - lineTop
         val travelTop = lineTop +
@@ -472,15 +309,15 @@ private fun DialogueHistoryListPreview() {
     DialogueHistoryList(
         entries = listOf(
             DialogueEntry(
-                speaker = PredefinedSpeakers.STEBAN,
+                speaker = PredefinedSpeakers.LEGO_HARRY,
                 text = "Go-go gyro, we are so back, so so bak, you know?",
             ),
             DialogueEntry(
-                speaker = PredefinedSpeakers.STEBAN,
+                speaker = PredefinedSpeakers.LEGO_KIM,
                 text = "Go-go gyro",
             ),
             DialogueEntry(
-                speaker = PredefinedSpeakers.STEBAN,
+                speaker = PredefinedSpeakers.YOU,
                 text = "Go-go gyro",
             ),
         ),

@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.example.feldelysium.designsystem.components.settings
 
 import androidx.compose.foundation.border
@@ -7,12 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,20 +29,25 @@ import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.theme.DiscoDialogueTheme
 
+enum class FeldSettingStatus {
+    SOON,
+    LOCK,
+}
+
 @Composable
 fun FeldSettingRow(
     icon: FeldIconId,
     title: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    enabled: Boolean = true,
-    stampText: String? = null,
+    status: FeldSettingStatus? = null,
     showChevron: Boolean = false,
     role: Role = Role.Button,
     onClick: (() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
     trailing: (@Composable () -> Unit)? = null,
 ) {
+    val enabled = status == null
     val clickable = if (enabled && onClick != null) {
         Modifier.feldClickable(role = role, onClick = onClick)
     } else {
@@ -85,18 +88,17 @@ fun FeldSettingRow(
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (!enabled) {
-                FeldStamp(stampText)
+            if (status != null) {
+                FeldStamp(status)
             } else {
                 trailing?.invoke()
+
                 if (showChevron) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = FeldPalette.Muted,
-                        modifier = Modifier
-                            .padding(start = 4.dp)
-                            .size(22.dp),
+                    FeldIcon(
+                        id = FeldIconId.Chevron,
+                        size = 18.dp,
+                        modifier = Modifier.padding(start = 4.dp),
+                        seed = title.hashCode(),
                     )
                 }
             }
@@ -111,8 +113,7 @@ fun FeldSettingValueRow(
     value: String,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    enabled: Boolean = true,
-    stampText: String? = null,
+    status: FeldSettingStatus? = null,
     onClick: (() -> Unit)? = null,
 ) {
     FeldSettingRow(
@@ -120,8 +121,7 @@ fun FeldSettingValueRow(
         title = title,
         subtitle = subtitle,
         modifier = modifier,
-        enabled = enabled,
-        stampText = stampText,
+        status = status,
         showChevron = true,
         onClick = onClick,
         trailing = {
@@ -145,8 +145,7 @@ fun FeldSettingSwitchRow(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    enabled: Boolean = true,
-    stampText: String? = null,
+    status: FeldSettingStatus? = null,
     seed: Int = rememberSeed(),
 ) {
     FeldSettingRow(
@@ -154,8 +153,7 @@ fun FeldSettingSwitchRow(
         title = title,
         subtitle = subtitle,
         modifier = modifier,
-        enabled = enabled,
-        stampText = stampText,
+        status = status,
         role = Role.Switch,
         onClick = { onCheckedChange(!checked) },
         trailing = {
@@ -169,9 +167,9 @@ fun FeldSettingSwitchRow(
 }
 
 @Composable
-private fun FeldStamp(stampText: String? = null) {
+private fun FeldStamp(status: FeldSettingStatus) {
     Text(
-        text = stampText ?: "SOON",
+        text = status.name,
         style = MaterialTheme.typography.labelSmall,
         color = FeldPalette.Muted,
         modifier = Modifier
@@ -193,16 +191,16 @@ private fun FeldSettingRowPreview() {
                 onCheckedChange = {},
             )
             FeldSettingValueRow(
-                icon = FeldIconId.Cinema,
+                icon = FeldIconId.Typeface,
                 title = "Typeface",
                 value = "Sina Nova Regular",
                 onClick = {},
             )
             FeldSettingRow(
-                icon = FeldIconId.Cinema,
+                icon = FeldIconId.Autoplay,
                 title = "Autoplay",
                 subtitle = "Play scene automatically",
-                enabled = false,
+                status = FeldSettingStatus.LOCK,
             )
         }
     }

@@ -1,9 +1,9 @@
 package com.example.feldelysium.presentation.playback.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
 import com.example.feldelysium.R
@@ -57,8 +58,9 @@ fun PlaybackStatusHud(money: String, time: String, day: String, modifier: Modifi
         Layout(
             modifier = Modifier.fillMaxSize(),
             content = {
-                Image(
-                    painter = painterResource(R.drawable.ic_real_placeholder),
+                Icon(
+                    painter = painterResource(R.drawable.ic_fe_real),
+                    tint = gray(1f),
                     contentDescription = null,
                     modifier = Modifier.size(iconSize),
                 )
@@ -117,4 +119,20 @@ private fun StatusLabel(text: String, fontSize: TextUnit, brightness: Float) {
 private fun gray(brightness: Float): Color {
     val channel = (brightness * 255f).roundToInt().coerceIn(0, 255)
     return Color(channel, channel, channel)
+}
+
+@Preview(
+    name = "Playback Status HUD",
+    showBackground = true,
+    backgroundColor = 0xFF000000,
+    widthDp = 360,
+    heightDp = 100,
+)
+@Composable
+private fun PlaybackStatusHudPreview() {
+    PlaybackStatusHud(
+        money = "40.95",
+        time = "16:36",
+        day = "Day 3",
+    )
 }

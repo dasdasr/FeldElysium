@@ -12,12 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +34,8 @@ import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.designsystem.components.display.FeldIcon
+import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
@@ -110,11 +108,11 @@ fun FeldBackgroundRow(
             )
         }
 
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = FeldPalette.Muted,
-            modifier = Modifier.size(22.dp),
+        FeldIcon(
+            id = FeldIconId.Chevron,
+            size = 12.dp,
+            modifier = Modifier.padding(start = 6.dp),
+            seed = currentLabel.hashCode() + 1,
         )
     }
 }

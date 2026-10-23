@@ -63,7 +63,6 @@ import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHapti
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.eggs.EggEvent
@@ -81,6 +80,8 @@ import com.example.feldelysium.presentation.shared.toastText
 import com.example.feldelysium.record.LocalScreenRecordRequest
 import com.example.feldelysium.record.RecordResult
 import com.example.feldelysium.record.ScreenRecordService
+import com.example.feldelysium.theme.fontDir
+import com.example.feldelysium.theme.rememberPlaybackFontFamily
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -93,9 +94,10 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
     val activity = context as ComponentActivity
     val settingsVm: SettingsViewModel = viewModel(
         viewModelStoreOwner = activity,
-        factory = SettingsViewModel.factory(container),
+        factory = SettingsViewModel.factory(container, activity.fontDir()),
     )
     val settings by settingsVm.state.collectAsStateWithLifecycle()
+    val fontFamily = rememberPlaybackFontFamily(settings)
     val requestRecord = LocalScreenRecordRequest.current
 
     val vm: EditorViewModel = viewModel(
@@ -190,7 +192,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     items = buildList {
                         add(
                             FeldToolbarItem(
-                                FeldIconId.Import,
+                                FeldIconId.BulkImport,
                                 "Paste",
                             ) {
                                 dialog = EditorDialog.ImportLines
@@ -201,7 +203,6 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                             FeldToolbarItem(
                                 icon = FeldIconId.Play,
                                 label = "Playback",
-                                accent = FeldPalette.Cream,
                                 enabled = state.entries.isNotEmpty(),
                                 onClick = {
                                     haptics.confirm()
@@ -258,6 +259,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                             isDragging = isDragging,
                                             selected = selected,
                                             dragModifier = Modifier.longPressDraggableHandle(),
+                                            fontFamily = fontFamily,
                                             onClick = {
                                                 haptics.tick()
                                                 menuEntryId = entry.id

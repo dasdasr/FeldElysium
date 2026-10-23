@@ -5,61 +5,78 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
 
-// TODO: replace with matching the Disco Elysium UI font
+internal val Alegreya = FontFamily(
+    Font(R.font.alegreya_regular, FontWeight.Normal),
+    Font(R.font.alegreya_medium, FontWeight.Medium),
+    Font(R.font.alegreya_bold, FontWeight.Bold),
+)
 
-private val SinaNova = FontFamily(Font(R.font.sina_nova_regular))
-private val BebasNeue = FontFamily(Font(R.font.bebas_neue_regular, FontWeight.Normal))
+private val BebasNeue = FontFamily(
+    Font(R.font.bebas_neue_regular, FontWeight.Normal),
+)
+
+private val RobotoCondensed = FontFamily(
+    Font(R.font.roboto_condensed_regular, FontWeight.Normal),
+    Font(R.font.roboto_condensed_regular, FontWeight.Medium),
+    Font(R.font.roboto_condensed_bold, FontWeight.Bold),
+)
 
 val FeldTypography = Typography(
     titleLarge = TextStyle(
-        fontFamily = BebasNeue,
-        fontWeight = FontWeight.Normal,
+        fontFamily = RobotoCondensed,
+        fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         lineHeight = 32.sp,
         letterSpacing = 1.2.sp,
     ),
     titleMedium = TextStyle(
-        fontFamily = BebasNeue,
-        fontWeight = FontWeight.Normal,
+        fontFamily = RobotoCondensed,
+        fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 24.sp,
         letterSpacing = 1.2.sp,
     ),
     bodyMedium = TextStyle(
         fontSize = 16.sp,
-        fontFamily = SinaNova,
+        fontFamily = Alegreya,
         lineHeight = 20.sp,
         fontWeight = FontWeight.Normal,
-        letterSpacing = 0.1.sp,
     ),
     bodySmall = TextStyle(
         fontSize = 14.sp,
-        fontFamily = SinaNova,
+        fontFamily = Alegreya,
         lineHeight = 18.sp,
-        fontWeight = FontWeight.SemiBold,
-        letterSpacing = 0.1.sp,
+        fontWeight = FontWeight.Medium,
     ),
     labelLarge = TextStyle(
-        fontFamily = BebasNeue,
-        fontWeight = FontWeight.Normal,
+        fontFamily = RobotoCondensed,
+        fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 24.sp,
         letterSpacing = 1.2.sp,
     ),
     labelMedium = TextStyle(
-        fontFamily = BebasNeue,
-        fontWeight = FontWeight.Normal,
+        fontFamily = RobotoCondensed,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 20.sp,
         letterSpacing = 1.sp,
     ),
     labelSmall = TextStyle(
         fontSize = 12.sp,
-        fontFamily = SinaNova,
+        fontFamily = Alegreya,
         letterSpacing = 0.5.sp,
         fontWeight = FontWeight.Bold,
     ),
+)
+
+val FeldContinueStyle = TextStyle(
+    fontFamily = RobotoCondensed,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp,
+    letterSpacing = 0.08.em,
 )

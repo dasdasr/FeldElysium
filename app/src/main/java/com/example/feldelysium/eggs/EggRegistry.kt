@@ -1,89 +1,91 @@
 package com.example.feldelysium.eggs
 
-import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.AUTHORITY
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.DRAMA
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.ELECTROCHEMISTRY
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.EMPATHY
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.ENDURANCE
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.HALF_LIGHT
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.HAND_EYE_COORD
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.INLAND_EMPIRE
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.LOGIC
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.RHETORIC
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.SUGGESTION
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.VISUAL_CALCULUS
-import com.example.feldelysium.domain.registry.PredefinedSpeakers.VOLITION
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.BREATHWARDEN
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.EVASION
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.GROUNDING
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.OFF_KILTER
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.TENDERNESS
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.THE_UNSAID
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.WORLDWRIGHT
+import com.example.feldelysium.domain.registry.PredefinedSpeakers.WORTH
 import com.example.feldelysium.eggs.EggRarity.Frequent
 import kotlin.time.Duration.Companion.seconds
 
 object EggRegistry {
 
     private val diamondReplies = listOf(
-        skillCheck(PredefinedSpeakers.COMPOSURE, "You are, technically, holding a phone.", Difficulty.Easy),
         skillCheck(
-            PredefinedSpeakers.PERCEPTION,
-            "Seven taps. The diamond didn't blink. Neither did you.",
+            BREATHWARDEN,
+            "You're holding your breath. For a diamond. On a phone. Get a grip.",
+            Difficulty.Easy,
+        ),
+        skillCheck(
+            OFF_KILTER,
+            "Seven taps. The diamond hasn't blinked. You have. Probably.",
             Difficulty.Medium,
         ),
-        skillCheck(LOGIC, "A decorative diamond. Seven taps of evidence.", Difficulty.Easy),
-        say(ELECTROCHEMISTRY, "Tap it again. Tap it for me."),
+        skillCheck(WORTH, "A decorative diamond. Seven taps of evidence.", Difficulty.Easy),
+        say(
+            OFF_KILTER,
+            "Tap it again. Maybe the eighth time it'll grow a little hat.",
+        ),
         skillCheck(
-            INLAND_EMPIRE,
+            WORLDWRIGHT,
             "The diamond hums back. Faintly. You pretend not to hear it.",
             Difficulty.Challenging,
         ),
         skillCheck(
-            VOLITION,
+            BREATHWARDEN,
             "You could stop. You won't.",
             Difficulty.Medium,
             CheckResult.Failure,
         ),
-        skillCheck(HALF_LIGHT, "It's watching you. Probably.", Difficulty.Heroic),
+        skillCheck(OFF_KILTER, "It's watching you. Probably.", Difficulty.Heroic),
         skillCheck(
-            PredefinedSpeakers.INTERFACING,
+            WORLDWRIGHT,
             "Settings. Where machines confess what they can do.",
             Difficulty.Medium,
             scope = EggScreen.Settings,
         ),
         skillCheck(
-            AUTHORITY,
-            "You are tuning the tool. Good. Own it.",
+            WORTH,
+            "You are tuning the tool. Finally, something you can control without disappointing anyone.",
             Difficulty.Easy,
             scope = EggScreen.Settings,
         ),
         skillCheck(
-            RHETORIC,
+            THE_UNSAID,
             "Seven taps. A dramatic pause before your next line.",
             Difficulty.Medium,
             scope = EggScreen.SceneEditor,
         ),
         skillCheck(
-            DRAMA,
-            "Nobody is watching. Perform anyway.",
+            THE_UNSAID,
+            "Nobody is watching. Which is exactly what someone would say if they were watching.",
             Difficulty.Challenging,
             scope = EggScreen.SceneEditor,
         ),
         skillCheck(
-            EMPATHY,
+            TENDERNESS,
             "They are all waiting. Every one of them wants to speak.",
             Difficulty.Easy,
             scope = EggScreen.ChooseSpeaker,
         ),
         skillCheck(
-            SUGGESTION,
-            "Pick the loudest one. Or the quietest. They'll both talk.",
+            TENDERNESS,
+            "Pick the loudest one.",
             Difficulty.Medium,
             scope = EggScreen.ChooseSpeaker,
         ),
     )
 
     private val switchReplies = listOf(
-        say(ELECTROCHEMISTRY, "Again. Again."),
-        say(ELECTROCHEMISTRY, "Click. Click. Click. More."),
-        skillCheck(HAND_EYE_COORD, "Your thumb has found its rhythm.", Difficulty.Easy),
+        say(OFF_KILTER, "Again. Again. The button knows what it did."),
+        say(OFF_KILTER, "Click. Click. Click. There. You've intimidated the rectangle."),
+        say(OFF_KILTER, "Another click-clack. Which side is it on now? Wait, which side are you on?"),
+        skillCheck(EVASION, "Your thumb has found its rhythm.", Difficulty.Easy),
         skillCheck(
-            VOLITION,
+            BREATHWARDEN,
             "It's a switch. It has two states. You've seen both.",
             Difficulty.Medium,
             CheckResult.Failure,
@@ -91,43 +93,47 @@ object EggRegistry {
     )
 
     private val nothingToResetReplies = listOf(
-        say(VOLITION, "Nothing to reset. You are who you are."),
-        say(LOGIC, "Resetting the unchanged. A closed loop."),
-        skillCheck(AUTHORITY, "No change detected. Carry on.", Difficulty.Trivial),
+        say(BREATHWARDEN, "Nothing to reset. You are who you are."),
+        say(WORTH, "Resetting the unchanged. A closed loop."),
+        skillCheck(
+            GROUNDING,
+            "No change detected. For now.",
+            Difficulty.Trivial,
+        ),
     )
 
     private val fabReplies = listOf(
         skillCheck(
-            AUTHORITY,
-            "You couldn't decide. So I decided for you.",
+            EVASION,
+            "You couldn't decide. So...",
             result = CheckResult.Success,
         ),
-        skillCheck(SUGGESTION, "Don't think. Let the chips fall.", Difficulty.Easy),
+        skillCheck(OFF_KILTER, "Don't think. Let the chips fall. Falling is a skill.", Difficulty.Easy),
         skillCheck(
-            INLAND_EMPIRE,
+            WORLDWRIGHT,
             "The speaker chose you. Not the other way around.",
             Difficulty.Challenging,
         ),
     )
 
     private val soonReplies = listOf(
-        skillCheck(VOLITION, "Patience. It's called 'Soon', not 'Now'.", Difficulty.Medium),
-        say(ELECTROCHEMISTRY, "Now. NOW. Why isn't it NOW?"),
-        say(AUTHORITY, "You can't tap a feature into existence."),
-        say(LOGIC, "Soon: adverb. Meaning: not yet. Hence the label."),
-        skillCheck(ENDURANCE, "You can wait. You have waited for worse.", Difficulty.Easy),
+        skillCheck(BREATHWARDEN, "Patience. It's called 'Soon', not 'Now'.", Difficulty.Medium),
+        say(EVASION, "Now. NOW. Why isn't it NOW? Fine. Leaving. Coming back. Still 'Soon'."),
+        say(WORLDWRIGHT, "You can't tap a feature into existence."),
+        say(WORTH, "Soon: adverb. Meaning: not yet. Hence the label."),
+        skillCheck(GROUNDING, "You can wait. You have waited for worse.", Difficulty.Easy),
         say(
-            ELECTROCHEMISTRY,
-            "Autoplay. As if you'd ever stop pressing things yourself.",
+            THE_UNSAID,
+            "Autoplay? You trust others to press buttons for you?",
             scope = SoonFeature.Autoplay,
         ),
         say(
-            LOGIC,
+            WORTH,
             "A delay between lines. Time is just a number you can set later.",
             scope = SoonFeature.LineDelay,
         ),
         skillCheck(
-            VISUAL_CALCULUS,
+            WORLDWRIGHT,
             "Icons that you will tap. Eventually. Calculated.",
             Difficulty.Medium,
             scope = SoonFeature.StatusIcons,
@@ -171,27 +177,27 @@ object EggRegistry {
         //
         // Action pattern: opened Editor → added → immediately deleted → added again
         // Egg("pattern.add.delete.add", Rare,
-        //     replies = listOf(say(PredefinedSpeakers.LOGIC, "A perfectly rational sequence of events.")),
+        //     replies = listOf(say(WORTH, "A perfectly rational sequence of events.")),
         //     trigger = inOrder("entry.add", "entry.delete", "entry.add", within = 15.seconds))
         //
         // "Anomalous" behavior within a limited time window
         // Egg("anomaly.cinema", Frequent,
-        //     replies = listOf(say(PredefinedSpeakers.ELECTROCHEMISTRY, "Cinema. No cinema. Cinema. No cinema.")),
+        //     replies = listOf(say(OFF_KILTER, "Cinema. No cinema. Cinema. No cinema.")),
         //     trigger = burst("switch.toggle", 4, 8.seconds, value = "Cinema frame"))
         //
         // Time-based: the app is opened late at night (Rare: multiple replies → up to N times per day, without repeats)
         // Egg("time.night", Rare,
-        //     replies = listOf(say("Shivers", "The city is drowning in the shroud of sleep.")),
+        //     replies = listOf(say(BREATHWARDEN, "3 a.m. Your body is asking why you're awake.")),
         //     trigger = timeBetween(1, 5))
         //
         // Secret based on a specific value: report("status.reals", "130") and report("status.day", "1")
         // Egg("secret.130", Secret,
-        //     replies = listOf(skillCheck(PredefinedSpeakers.LOGIC, "130 réal. The exact amount of your outstanding debt. Fascinating.")),
+        //     replies = listOf(skillCheck(WORTH, "130 réal. The exact amount of your outstanding debt. Fascinating.")),
         //     trigger = onEvent("status.reals", "130"))
         //
         // UltraRare: any number with a small chance
         // Egg("ultra.number", UltraRare,
-        //     replies = listOf(say(PredefinedSpeakers.LOGIC, "This number means nothing. Obviously.")),
+        //     replies = listOf(say(WORTH, "This number means nothing. Obviously.")),
         //     trigger = whenValue("status.reals") { it.toIntOrNull() != null }, chance = 0.03f)
     )
 }
