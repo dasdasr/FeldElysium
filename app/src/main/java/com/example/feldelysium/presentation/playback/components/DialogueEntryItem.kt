@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
@@ -90,6 +91,7 @@ fun DialogueEntryItem(
     val nameStyle = SpanStyle(
         color = speakerColor,
         fontSize = fontSize,
+        fontWeight = FontWeight.Medium,
         letterSpacing = fontSize * NAME_TRACKING_EM,
     )
 

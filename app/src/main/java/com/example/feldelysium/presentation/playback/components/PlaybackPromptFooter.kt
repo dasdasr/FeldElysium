@@ -9,15 +9,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,24 +34,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
 import com.example.feldelysium.presentation.playback.Prompt
+import com.example.feldelysium.theme.FeldContinueStyle
 import kotlin.math.max
 import kotlin.math.min
 
 private val OptionOrange = Color(0xFFD9482B)
-private val ContinueOrange = Color(0xFFE0281E)
+private val ContinueOrange = Color(0xFFB5361D)
 
 @Composable
 fun PlaybackPromptFooter(prompt: Prompt, metrics: FooterMetrics, onContinue: () -> Unit, onChoice: () -> Unit) {
@@ -75,13 +79,12 @@ private fun ReplyOptions(p: Prompt.Choices, m: FooterMetrics, onChoice: () -> Un
     val interaction = remember { MutableInteractionSource() }
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         p.options.forEachIndexed { i, option ->
-            if (p.selected && i != p.chosenIndex) return@forEachIndexed
             Text(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)) {
                         append("${i + 1}.- ")
                     }
-                    withStyle(SpanStyle(color = if (p.selected) Color.White else OptionOrange)) {
+                    withStyle(SpanStyle(color = if (p.selected && i == p.chosenIndex) Color.White else OptionOrange)) {
                         append(option)
                     }
                 },
@@ -102,6 +105,9 @@ private fun ReplyOptions(p: Prompt.Choices, m: FooterMetrics, onChoice: () -> Un
         }
     }
 }
+
+private val ContinueJitter = listOf(0f, -0.02f, 0.02f, -0.015f, 0.02f, -0.02f, 0.01f, -0.01f)
+private val ContinueSpacing = listOf(0.07f, 0.10f, 0.06f, 0.09f, 0.07f, 0.10f, 0.08f, 0.00f)
 
 @Composable
 private fun ContinueButton(speakerColor: Long, m: FooterMetrics, onClick: () -> Unit) {
@@ -124,21 +130,36 @@ private fun ContinueButton(speakerColor: Long, m: FooterMetrics, onClick: () -> 
                 modifier = Modifier.matchParentSize(),
             )
         }
-        Row(Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                "CONTINUE",
-                color = Color.White,
-                fontSize = m.fontSize,
-                letterSpacing = m.fontSize * 0.12f,
-            )
-            Spacer(Modifier.width(8.dp))
-            Icon(
-                Icons.AutoMirrored.Filled.ArrowRight,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(with(LocalDensity.current) { m.fontSize.toDp() * 1.4f }),
-            )
-        }
+        val arrowSize = m.fontSize * 0.9f
+        Text(
+            text = buildAnnotatedString {
+                "CONTINUE".forEachIndexed { i, ch ->
+                    withStyle(
+                        SpanStyle(
+                            baselineShift = BaselineShift(ContinueJitter[i]),
+                            letterSpacing = ContinueSpacing[i].em,
+                        ),
+                    ) { append(ch) }
+                }
+                append("  ")
+                appendInlineContent("arrow", "▶")
+            },
+            inlineContent = mapOf(
+                "arrow" to InlineTextContent(
+                    Placeholder(arrowSize, arrowSize, PlaceholderVerticalAlign.TextCenter),
+                ) {
+                    Icon(
+                        Icons.Filled.PlayArrow,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                },
+            ),
+            color = Color.White,
+            style = FeldContinueStyle.copy(fontSize = m.fontSize * 1.1f),
+            modifier = Modifier.padding(start = 12.dp).offset(y = 1.dp),
+        )
     }
 }
 

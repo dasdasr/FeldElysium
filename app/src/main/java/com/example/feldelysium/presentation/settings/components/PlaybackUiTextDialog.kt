@@ -63,7 +63,7 @@ fun PlaybackUiTextDialog(
         },
     ) {
         PlaybackField(
-            icon = FeldIconId.More,
+            icon = FeldIconId.Reals,
             label = "Reals",
             value = moneyText,
             maxLength = 6,
@@ -75,7 +75,7 @@ fun PlaybackUiTextDialog(
         )
         FeldDivider(seed = 51)
         PlaybackField(
-            icon = FeldIconId.More,
+            icon = FeldIconId.Time,
             label = "Time",
             value = timeText,
             maxLength = 5,
@@ -87,7 +87,7 @@ fun PlaybackUiTextDialog(
         )
         FeldDivider(seed = 52)
         PlaybackField(
-            icon = FeldIconId.More,
+            icon = FeldIconId.Calendar,
             label = "Day",
             value = dayText,
             maxLength = 6,

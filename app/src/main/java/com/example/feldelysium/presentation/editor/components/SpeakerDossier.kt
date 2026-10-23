@@ -64,15 +64,6 @@ object SpeakerDossierAssets {
     val FramePressed: Int? = R.drawable.speaker_frame_pressed
 
     @DrawableRes
-    val Sticker: Int? = R.drawable.speaker_sticker
-
-    @DrawableRes
-    val ChangeBtn: Int? = R.drawable.speaker_change_btn
-
-    @DrawableRes
-    val ChangeBtnPressed: Int? = R.drawable.speaker_change_btn_pressed
-
-    @DrawableRes
     val Paperclip: Int? = R.drawable.paperclip
 
     @DrawableRes

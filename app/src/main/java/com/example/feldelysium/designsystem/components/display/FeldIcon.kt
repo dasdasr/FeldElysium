@@ -33,7 +33,9 @@ import com.example.feldelysium.theme.DiscoDialogueTheme
 
 enum class FeldIconId {
     Back,
-    Backing,
+    Accept,
+    BackingCube,
+    BackingCircle,
     More,
     MoreHoriz,
     Import,
@@ -46,6 +48,7 @@ enum class FeldIconId {
     DialogueStyle,
     Font,
     Palette,
+    Reals,
     FastAdd,
     Tag,
     Voice,
@@ -65,6 +68,16 @@ enum class FeldIconId {
     Speed,
     Panel,
     PanelCalendar,
+    Calendar,
+    Time,
+    Logo,
+    Heart,
+    Paste,
+    Search,
+    Casino,
+    Oprions,
+    RadioButtonChecked,
+    RadioButtonUnchecked,
 }
 
 @Composable
@@ -80,7 +93,9 @@ fun FeldIcon(
 ) {
     @DrawableRes val res: Int = when (id) {
         FeldIconId.Back -> R.drawable.ic_fe_back
-        FeldIconId.Backing -> R.drawable.ic_fe_backing
+        FeldIconId.Accept -> R.drawable.ic_fe_accept
+        FeldIconId.BackingCube -> R.drawable.ic_fe_backing_cube
+        FeldIconId.BackingCircle -> R.drawable.ic_fe_backing_circle
         FeldIconId.Import -> R.drawable.ic_fe_edit_import
         FeldIconId.Play -> R.drawable.ic_fe_play
         FeldIconId.Edit -> R.drawable.ic_fe_edit
@@ -88,7 +103,7 @@ fun FeldIcon(
         FeldIconId.Add -> R.drawable.ic_fe_add
         FeldIconId.Tag -> R.drawable.ic_fe_tag
         FeldIconId.AuthorSamples -> R.drawable.ic_fe_author_samples
-        FeldIconId.Close -> R.drawable.ic_fe_close
+        FeldIconId.Close -> R.drawable.ic_fe_cancel
         FeldIconId.Chevron -> R.drawable.ic_fe_chevron
         FeldIconId.BulkImport -> R.drawable.ic_fe_bulk_import
         FeldIconId.Typeface -> R.drawable.ic_fe_typeface
@@ -98,7 +113,7 @@ fun FeldIcon(
         FeldIconId.FastAdd -> R.drawable.ic_fe_fast_add
         FeldIconId.Voice -> R.drawable.ic_fe_microphone
         FeldIconId.Image -> R.drawable.ic_fe_image
-        FeldIconId.Cinema -> R.drawable.ic_fe_panel
+        FeldIconId.Cinema -> R.drawable.ic_fe_tape
         FeldIconId.Settings -> R.drawable.ic_fe_settings
         FeldIconId.Export -> R.drawable.ic_fe_export
         FeldIconId.Save -> R.drawable.ic_fe_save
@@ -112,6 +127,17 @@ fun FeldIcon(
         FeldIconId.Speed -> R.drawable.ic_fe_speed
         FeldIconId.Panel -> R.drawable.ic_fe_panel
         FeldIconId.PanelCalendar -> R.drawable.ic_fe_panel_calendar
+        FeldIconId.Logo -> R.drawable.ic_fe_feld_elysium
+        FeldIconId.Heart -> R.drawable.ic_fe_heart
+        FeldIconId.Paste -> R.drawable.ic_fe_paste
+        FeldIconId.Search -> R.drawable.ic_fe_search
+        FeldIconId.Casino -> R.drawable.ic_fe_dice_5
+        FeldIconId.Oprions -> R.drawable.ic_fe_options
+        FeldIconId.RadioButtonChecked -> R.drawable.ic_fe_radio_button_cheked
+        FeldIconId.RadioButtonUnchecked -> R.drawable.ic_fe_radio_button_uncheked
+        FeldIconId.Reals -> R.drawable.ic_fe_real
+        FeldIconId.Calendar -> R.drawable.ic_fe_calendar
+        FeldIconId.Time -> R.drawable.ic_fe_time
     }
     Icon(
         painter = painterResource(res),

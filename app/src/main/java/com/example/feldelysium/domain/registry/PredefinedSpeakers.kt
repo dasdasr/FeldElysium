@@ -31,91 +31,51 @@ object PredefinedSpeakers {
         isSample = sample,
     )
 
-    private fun npc(id: String, name: String, iconResId: Int?) = Speaker(
-        id = id,
-        name = name,
-        colorArgb = SpeakerColor.PLAIN.argb,
-        iconResId = iconResId,
+    val YOU = Speaker("you", "You", SpeakerColor.PLAIN.argb, null, type = SpeakerType.YOU, isBundled = true)
+    val LEGO_HARRY =
+        Speaker(
+            "lego_harry",
+            "Harry Du Brick",
+            SpeakerColor.PLAIN.argb,
+            R.drawable.ic_lego_harry,
+            type = SpeakerType.NPC,
+            isBundled = true,
+        )
+    val LEGO_KIM = Speaker(
+        "lego_kim",
+        "Kim Legoragi",
+        SpeakerColor.PLAIN.argb,
+        R.drawable.ic_lego_kim,
         type = SpeakerType.NPC,
         isBundled = true,
     )
 
-    val YOU = Speaker("you", "You", SpeakerColor.PLAIN.argb, null, type = SpeakerType.YOU, isBundled = true)
-
     val WORTH = skill("worth", "Worth", R.drawable.ic_worth, INTELLECT_TAG, sample = true)
     val WORLDWRIGHT = skill("worldwright", "Worldwright", R.drawable.ic_worldwright, INTELLECT_TAG, sample = true)
-
-    val LOGIC = skill("logic", "Logic", R.drawable.ic_logic, INTELLECT_TAG)
-    val ENCYCLOPEDIA = skill("encyclopedia", "Encyclopedia", null, INTELLECT_TAG)
-    val RHETORIC = skill("rhetoric", "Rhetoric", R.drawable.ic_rhetoric, INTELLECT_TAG)
-    val DRAMA = skill("drama", "Drama", R.drawable.ic_drama, INTELLECT_TAG)
-    val CONCEPTUALIZATION = skill("conceptualization", "Conceptualization", null, INTELLECT_TAG)
-    val VISUAL_CALCULUS = skill("visual_calculus", "Visual Calculus", null, INTELLECT_TAG)
 
     val TENDERNESS = skill("tenderness", "Tenderness", R.drawable.ic_tenderness, PSYCHE_TAG, sample = true)
     val THE_UNSAID = skill("the_unsaid", "The Unsaid", R.drawable.ic_the_unsaid, PSYCHE_TAG, sample = true)
 
-    val VOLITION = skill("volition", "Volition", null, PSYCHE_TAG)
-    val INLAND_EMPIRE =
-        skill("inland_empire", "Inland Empire", R.drawable.ic_inland_empire, PSYCHE_TAG)
-    val EMPATHY = skill("empathy", "Empathy", null, PSYCHE_TAG)
-    val AUTHORITY = skill("authority", "Authority", R.drawable.ic_authority, PSYCHE_TAG)
-    val ESPRIT_DE_CORPS = skill("esprit_de_corps", "Esprit De Corps", null, PSYCHE_TAG)
-    val SUGGESTION = skill("suggestion", "Suggestion", null, PSYCHE_TAG)
-
     val GROUNDING = skill("grounding", "Grounding", R.drawable.ic_grounding, PHYSIQUE_TAG, sample = true)
     val BREATHWARDEN = skill("breathwarden", "Breathwarden", R.drawable.ic_breathwarden, PHYSIQUE_TAG, sample = true)
-
-    val ENDURANCE = skill("endurance", "Endurance", null, PHYSIQUE_TAG)
-    val PAIN_THRESHOLD = skill("pain_threshold", "Pain Threshold", null, PHYSIQUE_TAG)
-    val PHYSICAL_INSTRUMENT = skill(
-        "physical_instrument",
-        "Physical Instrument",
-        R.drawable.ic_physical_instrument,
-        PHYSIQUE_TAG,
-    )
-    val ELECTROCHEMISTRY =
-        skill("electrochemistry", "Electrochemistry", R.drawable.ic_electrochemistry, PHYSIQUE_TAG)
-    val SHIVERS = skill("shivers", "Shivers", null, PHYSIQUE_TAG)
-    val HALF_LIGHT = skill("half_light", "Half Light", null, PHYSIQUE_TAG)
 
     val EVASION = skill("evasion", "Evasion", R.drawable.ic_evasion, MOTORICS_TAG, sample = true)
     val OFF_KILTER = skill("off_kilter", "Off-Kilter", R.drawable.ic_off_kilter, MOTORICS_TAG, sample = true)
 
-    val HAND_EYE_COORD = skill("hand_eye_coord", "Hand/Eye Coordination", null, MOTORICS_TAG)
-    val PERCEPTION = skill("perception", "Perception", null, MOTORICS_TAG)
-    val REACTION_SPEED = skill("reaction_speed", "Reaction Speed", null, MOTORICS_TAG)
-    val SAVOIR_FAIRE = skill("savoir_faire", "Savoir Faire", null, MOTORICS_TAG)
-    val INTERFACING = skill("interfacing", "Interfacing", null, MOTORICS_TAG)
-    val COMPOSURE = skill("composure", "Composure", null, MOTORICS_TAG)
-
-    val KIM_KITSURAGI = npc("kim_kitsuragi", "Kim Kitsuragi", null)
-    val CUNO = npc("cuno", "Cuno", null)
-    val JOYCE_MESSIER = npc("joyce_messier", "Joyce Messier", null)
-    val KLAASJE = npc("klaasje", "Klaasje", null)
-    val EVRART_CLAIRE = npc("evrart_claire", "Evrart Claire", null)
-    val HARRY_DU_BOIS = npc("harry_du_bois", "Harry Du Bois", R.drawable.ic_harry)
-    val STEBAN = npc("steban", "Steban", R.drawable.ic_steban)
-    val MEASUREHEAD = npc("measurehead", "Measurehead", R.drawable.ic_measurehead)
-
     val SKILLS: List<Speaker> = listOf(
-        LOGIC, ENCYCLOPEDIA, RHETORIC, DRAMA, CONCEPTUALIZATION, VISUAL_CALCULUS,
-        VOLITION, INLAND_EMPIRE, EMPATHY, AUTHORITY, ESPRIT_DE_CORPS, SUGGESTION,
-        ENDURANCE, PAIN_THRESHOLD, PHYSICAL_INSTRUMENT, ELECTROCHEMISTRY, SHIVERS, HALF_LIGHT,
-        HAND_EYE_COORD, PERCEPTION, REACTION_SPEED, SAVOIR_FAIRE, INTERFACING, COMPOSURE,
-
-        WORTH, WORLDWRIGHT, TENDERNESS, THE_UNSAID, GROUNDING, BREATHWARDEN, EVASION, OFF_KILTER,
+        WORTH,
+        WORLDWRIGHT,
+        TENDERNESS,
+        THE_UNSAID,
+        GROUNDING,
+        BREATHWARDEN,
+        EVASION,
+        OFF_KILTER,
     )
 
     val NPCS: List<Speaker> = listOf(
-        KIM_KITSURAGI,
-        CUNO,
-        JOYCE_MESSIER,
-        KLAASJE,
-        EVRART_CLAIRE,
-        HARRY_DU_BOIS,
-        MEASUREHEAD,
-        STEBAN,
+        LEGO_HARRY,
+        LEGO_KIM,
     )
 
     val ALL: List<Speaker> = SKILLS + NPCS + YOU

@@ -65,6 +65,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalViewConfiguration
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -152,6 +153,7 @@ fun FeldEntryCard(
     isDragging: Boolean = false,
     selected: Boolean = false,
     dragModifier: Modifier = Modifier,
+    fontFamily: FontFamily? = null,
     onClick: (() -> Unit)? = null,
     onSwipeDelete: (() -> Unit)? = null,
     onSwipeArmed: () -> Unit = {},
@@ -376,7 +378,9 @@ fun FeldEntryCard(
 
                         Text(
                             text = text,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodyMedium.let { s ->
+                                if (fontFamily != null) s.copy(fontFamily = fontFamily) else s
+                            },
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(top = 3.dp),
                         )

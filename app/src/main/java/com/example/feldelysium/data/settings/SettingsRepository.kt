@@ -39,6 +39,9 @@ class SettingsRepository(private val context: Context) {
             prefs[Keys.TAP_MODE] = next.tapMode.name
             next.barIcons.forEach { (slot, state) -> prefs[barKey(slot)] = state.name }
             next.inventoryIcons.forEach { (slot, icon) -> prefs[invKey(slot)] = icon.name }
+            prefs[Keys.CUSTOM_FONT_FILE] = next.customFontFile
+            prefs[Keys.CUSTOM_FONT_NAME] = next.customFontName
+            prefs[Keys.FONT_CHOICE] = next.fontChoice
         }
     }
 
@@ -79,6 +82,9 @@ class SettingsRepository(private val context: Context) {
                 ?: slot.defaultIcon
         },
         showContinueButton = prefs[Keys.SHOW_CONTINUE_BUTTON] ?: true,
+        customFontFile = prefs[Keys.CUSTOM_FONT_FILE] ?: "",
+        customFontName = prefs[Keys.CUSTOM_FONT_NAME] ?: "",
+        fontChoice = prefs[Keys.FONT_CHOICE] ?: "",
     )
 
     private object Keys {
@@ -100,6 +106,9 @@ class SettingsRepository(private val context: Context) {
         val AUTO_PLAY_SPEED = stringPreferencesKey("auto_play_speed")
         val SHOW_CONTINUE_BUTTON = booleanPreferencesKey("show_continue_button")
         val TAP_MODE = stringPreferencesKey("tap_mode")
+        val CUSTOM_FONT_FILE = stringPreferencesKey("custom_font_file")
+        val CUSTOM_FONT_NAME = stringPreferencesKey("custom_font_name")
+        val FONT_CHOICE = stringPreferencesKey("font_choice")
     }
 
     private fun barKey(slot: BarSlot) = stringPreferencesKey("bar_icon_${slot.name.lowercase()}")

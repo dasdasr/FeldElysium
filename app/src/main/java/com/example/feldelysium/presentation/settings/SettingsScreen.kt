@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
@@ -38,6 +39,7 @@ import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
+import com.example.feldelysium.designsystem.components.settings.FeldSettingStatus
 import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
@@ -52,9 +54,13 @@ import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.settings.components.BackgroundPickerDialog
 import com.example.feldelysium.presentation.settings.components.BarIconsDialog
 import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
+import com.example.feldelysium.presentation.settings.components.PlaybackFontDialog
 import com.example.feldelysium.presentation.settings.components.PlaybackUiTextDialog
-
-private const val PlaybackFontName = "Sina Nova Regular"
+import com.example.feldelysium.theme.FONT_CUSTOM
+import com.example.feldelysium.theme.fontDir
+import com.example.feldelysium.theme.prettyFontName
+import kotlinx.coroutines.launch
+import java.io.File
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -64,8 +70,10 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
 
     val vm: SettingsViewModel = viewModel(
         viewModelStoreOwner = activity,
-        factory = SettingsViewModel.factory(container),
+        factory = SettingsViewModel.factory(container, activity.fontDir()),
     )
+    val scope = rememberCoroutineScope()
+    var showFont by remember { mutableStateOf(false) }
     val settings by vm.state.collectAsStateWithLifecycle()
     val haptics = rememberFeldHaptics()
     val eggs = LocalEasterEggs.current
@@ -133,8 +141,6 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     .navigationBarsPadding()
                     .testTag("settings_scroll"),
             ) {
-                val lockedStamp = "LOCKED"
-
                 FeldSettingsSection(title = "Playback") {
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Cinema,
@@ -182,8 +188,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         title = "Autoplay speed",
                         subtitle = "How long each line stays on screen",
                         value = settings.autoPlaySpeed.label,
-                        enabled = settings.autoPlay,
-                        stampText = lockedStamp,
+                        status = if (settings.autoPlay) null else FeldSettingStatus.LOCK,
                         onClick = {
                             haptics.tick()
                             vm.dispatch(SettingsEvent.SetAutoPlaySpeed(settings.autoPlaySpeed.next()))
@@ -202,14 +207,24 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         icon = FeldIconId.Play,
                         title = "Advance dialogue",
                         subtitle = when (settings.tapMode) {
-                            TapMode.WHOLE_SCREEN -> "Tap anywhere on the screen"
-                            TapMode.CONTINUE_BUTTON -> "Only the Continue button. Drag the dialogue to scroll back"
+                            TapMode.WHOLE_SCREEN ->
+                                "Tap anywhere to show the next line"
+
+                            TapMode.CONTINUE_BUTTON ->
+                                "Use Continue to advance. Scroll through dialogue history"
+
+                            TapMode.NOWHERE ->
+                                "Autoplay only"
                         },
-                        enabled = settings.showContinueButton,
+                        status = if (settings.showContinueButton) null else FeldSettingStatus.LOCK,
                         value = settings.tapMode.label,
                         onClick = {
                             haptics.tick()
-                            vm.dispatch(SettingsEvent.SetTapMode(settings.tapMode.next()))
+                            vm.dispatch(
+                                SettingsEvent.SetTapMode(
+                                    settings.tapMode.next(settings.autoPlay),
+                                ),
+                            )
                         },
                     )
                     FeldSettingsDivider()
@@ -217,8 +232,15 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         icon = FeldIconId.Typeface,
                         title = "Typeface",
                         subtitle = "Dialogue text in playback",
-                        value = PlaybackFontName,
-                        onClick = { /* TODO: font picker dialog */ },
+                        value = when (settings.fontChoice) {
+                            "" -> "Alegreya"
+                            FONT_CUSTOM -> settings.customFontName
+                            else -> prettyFontName(File(settings.fontChoice))
+                        },
+                        onClick = {
+                            haptics.tick()
+                            showFont = true
+                        },
                     )
                 }
 
@@ -238,8 +260,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                         subtitle = if (audioSupported) "App sound goes into the video" else "Needs Android 10 or newer",
                         checked = settings.exportAudio && audioSupported,
                         onCheckedChange = { vm.dispatch(SettingsEvent.SetExportAudio(it)) },
-                        enabled = settings.exportEnabled && audioSupported,
-                        stampText = lockedStamp,
+                        status = if (settings.exportEnabled && audioSupported) null else FeldSettingStatus.LOCK,
                     )
                 }
 
@@ -290,7 +311,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                     FeldSettingsDivider()
                     FeldSettingValueRow(
-                        icon = FeldIconId.Palette,
+                        icon = FeldIconId.AuthorSamples,
                         title = "Author's samples",
                         subtitle = when (settings.samplesMode) {
                             SamplesMode.AUTO ->
@@ -329,7 +350,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                             subtitle = "Lock it",
                             checked = false,
                             onCheckedChange = {},
-                            enabled = false,
+                            status = FeldSettingStatus.SOON,
                         )
                     }
                 }
@@ -409,6 +430,20 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 vm.dispatch(SettingsEvent.ResetBarIcons)
             },
             onDismiss = { showBarIcons = false },
+        )
+    }
+
+    if (showFont) {
+        PlaybackFontDialog(
+            settings = settings,
+            onSelect = vm::selectFont,
+            onReset = { vm.selectFont("") },
+            onUpload = { uri ->
+                scope.launch {
+                    if (!vm.importFont(uri)) toast.show("That's not a usable font file")
+                }
+            },
+            onDismiss = { showFont = false },
         )
     }
 
