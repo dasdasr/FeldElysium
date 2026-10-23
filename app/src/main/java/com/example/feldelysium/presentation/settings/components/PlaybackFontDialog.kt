@@ -310,17 +310,10 @@ private fun FontTileCard(tile: FontTile, selected: Boolean, onClick: () -> Unit)
             .feldClickable(onClick = onClick),
     ) {
         if (selected) {
-            Text(
-                text = "✓",
-                color = FeldPalette.Orange,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 4.dp, end = 8.dp),
-            )
             FeldIcon(
                 id = FeldIconId.Accept,
                 markerFilmSpec = FeldMarker.Chalk.copy(color = FeldPalette.Orange),
-                size = 16.dp,
+                size = 18.dp,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 4.dp, end = 8.dp),

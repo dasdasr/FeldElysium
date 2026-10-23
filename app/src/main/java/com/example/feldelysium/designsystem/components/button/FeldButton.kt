@@ -63,6 +63,7 @@ fun FeldButton(
     contentColor: Color = FeldButtonDefaults.InkDark,
     textStyle: TextStyle = MaterialTheme.typography.labelLarge.copy(
         letterSpacing = 1.6.sp,
+        fontSize = 18.sp,
     ),
     icon: (@Composable () -> Unit)? = null,
     iconSpacing: Dp = 10.dp,

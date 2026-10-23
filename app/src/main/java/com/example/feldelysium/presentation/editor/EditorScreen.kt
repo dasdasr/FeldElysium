@@ -431,6 +431,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                     close()
                 },
                 onDelete = vm::deleteScene,
+                onClearScene = vm::clearSceneById,
                 onExport = { exportLauncher.launch("${state.sceneName.ifBlank { "scene" }}.json") },
                 onImport = { importLauncher.launch(arrayOf("*/*")) },
                 onClear = vm::clearScene,
