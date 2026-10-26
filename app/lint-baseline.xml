@@ -367,13 +367,6 @@
     </issue>
 
     <issue
-        id="IconLocation"
-        message="Found bitmap drawable `res/drawable/speaker_sticker.png` in densityless folder">
-        <location
-            file="src/main/res/drawable/speaker_sticker.png"/>
-    </issue>
-
-    <issue
         id="UseKtx"
         message="Use the KTX extension function `SharedPreferences.edit` instead?"
         errorLine1="                if (old.isNotEmpty()) prefs.edit().putBoolean(&quot;scene_custom_speakers_v1&quot;, true).apply()"
