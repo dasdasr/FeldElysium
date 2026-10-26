@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -72,7 +73,6 @@ fun EntryCheckEditor(
         FieldLabel("Result")
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             CheckResult.entries.forEach { r ->
-                // Changing the result resets custom dice so they never contradict it
                 CheckChip(r.name, check.result == r) {
                     onChange(check.copy(result = r, die1 = null, die2 = null))
                 }
@@ -88,7 +88,8 @@ fun EntryCheckEditor(
                     CheckChip(
                         "$n",
                         d1 == n,
-                        modifier = Modifier.size(32.dp),
+                        height = 32.dp,
+                        width = 32.dp,
                         shape = FeldChipShape.Rectangle,
                         sidePad = 0.dp,
                     ) { onChange(check.copy(die1 = n, die2 = d2)) }
@@ -101,7 +102,8 @@ fun EntryCheckEditor(
                     CheckChip(
                         "$n",
                         d2 == n,
-                        modifier = Modifier.size(32.dp),
+                        height = 32.dp,
+                        width = 32.dp,
                         shape = FeldChipShape.Rectangle,
                         sidePad = 0.dp,
                     ) { onChange(check.copy(die1 = d1, die2 = n)) }
@@ -115,7 +117,9 @@ fun EntryCheckEditor(
 private fun CheckChip(
     text: String,
     selected: Boolean,
-    modifier: Modifier = Modifier.height(30.dp),
+    modifier: Modifier = Modifier,
+    height: Dp = 30.dp,
+    width: Dp = Dp.Unspecified,
     shape: FeldChipShape = FeldChipShape.Chamfer,
     outline: Boolean = true,
     sidePad: Dp = Dp.Unspecified,
@@ -126,7 +130,8 @@ private fun CheckChip(
         text = text,
         selected = selected,
         onClick = onClick,
-        modifier = modifier,
+        modifier = if (width != Dp.Unspecified) modifier.width(width) else modifier,
+        height = height,
         accent = accent,
         shape = shape,
         outline = outline,
@@ -154,7 +159,8 @@ fun EntryDamageEditor(damage: DamageEffect?, onChange: (DamageEffect) -> Unit, m
                 CheckChip(
                     "$n",
                     d.amount == n,
-                    modifier = Modifier.size(32.dp),
+                    height = 32.dp,
+                    width = 32.dp,
                     shape = FeldChipShape.Rectangle,
                     sidePad = 0.dp,
                     accent = CheckAssets.DamageColor(d.type),
