@@ -57,6 +57,8 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.FeldDistressedTitle
 import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
@@ -162,34 +165,42 @@ fun SceneManagerDialog(
                 }
                 itemsIndexed(
                     ordered,
-                    key = { _, s -> s.id },
-                    span = { _, s -> if (s.id == currentId) GridItemSpan(maxLineSpan) else GridItemSpan(1) },
-                ) { index, s ->
-                    val isCurrent = s.id == currentId
+                    key = { _, scene -> scene.id },
+                    span = { _, scene ->
+                        if (scene.id == currentId) {
+                            GridItemSpan(maxLineSpan)
+                        } else {
+                            GridItemSpan(1)
+                        }
+                    },
+                ) { index, scene ->
+                    val isCurrent = scene.id == currentId
+
                     SceneFolder(
-                        scene = s,
+                        scene = scene,
                         index = index,
                         featured = isCurrent,
-                        menuOpen = menuId == s.id,
+                        menuOpen = menuId == scene.id,
                         onClick = {
                             haptics.tick()
-                            onOpen(s.id)
+                            onOpen(scene.id)
                         },
                         onLongClick = {
                             haptics.thud()
-                            menuId = s.id
+                            menuId = scene.id
                         },
                         onDismissMenu = { menuId = null },
                         onClear = {
                             menuId = null
-                            if (isCurrent) onClear() else onClearScene(s.id)
+                            if (isCurrent) onClear() else onClearScene(scene.id)
                         },
                         onDelete = {
                             menuId = null
-                            onDelete(s.id)
+                            onDelete(scene.id)
                         },
                     )
                 }
+
                 item(key = "new-scene", span = { GridItemSpan(maxLineSpan) }) {
                     NewSceneCard(
                         onClick = {
@@ -219,22 +230,26 @@ private fun ManagerTopBar(count: Int, onBack: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FeldIconButton(FeldIconId.Back, onBack)
+
         Text(
-            text = "DIALOGUE EDITOR",
+            text = stringResource(R.string.scenes_top_bar_title),
             style = FeldDecalType.Base.copy(fontSize = 12.sp, letterSpacing = 1.6.sp),
             color = FeldPalette.Cream,
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 4.dp),
         )
+
         Text(
             text = count.toString().padStart(2, '0'),
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 28.sp, lineHeight = 28.sp),
             color = FeldPalette.Orange,
         )
+
         Spacer(Modifier.width(6.dp))
+
         Text(
-            text = if (count == 1) "SAVED" else "SAVED",
+            text = stringResource(R.string.scenes_saved),
             style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.4.sp),
             color = FeldPalette.Muted,
         )
@@ -253,7 +268,7 @@ private fun ManagerTitle() {
                 },
         ) {
             FeldDistressedTitle(
-                text = "SCENES",
+                text = stringResource(R.string.scenes_title),
                 seed = 1,
                 spec = FeldDistressedTitles.Large,
                 textStyle = MaterialTheme.typography.titleLarge.copy(
@@ -263,7 +278,9 @@ private fun ManagerTitle() {
                 ),
             )
         }
+
         Spacer(Modifier.height(6.dp))
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 Modifier
@@ -271,13 +288,16 @@ private fun ManagerTitle() {
                     .height(4.dp)
                     .background(FeldPalette.Orange),
             )
+
             Spacer(Modifier.width(10.dp))
+
             Text(
-                text = "HOLD A FOLDER FOR MORE",
+                text = stringResource(R.string.scenes_hint_hold_folder),
                 style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.6.sp),
                 color = FeldPalette.Muted,
             )
         }
+
         Spacer(Modifier.height(10.dp))
         FeldDivider(seed = 7)
     }
@@ -302,7 +322,6 @@ private fun SceneFolder(
 
     val fg = if (featured) Ink else MaterialTheme.colorScheme.onSurface
     val sub = if (featured) Ink.copy(alpha = 0.62f) else FeldPalette.Muted
-    val lineWord = if (scene.lines == 1) "LINE" else "LINES"
 
     val tilt = if (featured) {
         0f
@@ -311,20 +330,28 @@ private fun SceneFolder(
     } else {
         0.6f
     }
+
     val dropY = if (!featured && index % 2 == 0) 8.dp else 0.dp
 
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val lift by animateFloatAsState(if (pressed) 1f else 0f, tween(90), label = "lift")
+    val lift by animateFloatAsState(
+        if (pressed) 1f else 0f,
+        tween(90),
+        label = "lift",
+    )
+
+    val clearLabel = stringResource(R.string.scenes_menu_clear_lines)
+    val deleteLabel = stringResource(R.string.common_delete)
 
     Box(
         Modifier
             .offset(y = dropY)
             .graphicsLayer {
                 rotationZ = tilt
-                val s = 1f - 0.025f * lift
-                scaleX = s
-                scaleY = s
+                val scale = 1f - 0.025f * lift
+                scaleX = scale
+                scaleY = scale
             }
             .combinedClickable(
                 interactionSource = interaction,
@@ -366,26 +393,37 @@ private fun SceneFolder(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+
                 Spacer(Modifier.height(4.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "${scene.lines} $lineWord",
-                        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.2.sp),
+                        text = pluralStringResource(
+                            R.plurals.scene_lines_count,
+                            scene.lines,
+                            scene.lines,
+                        ),
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            letterSpacing = 1.2.sp,
+                        ),
                         color = sub,
                         modifier = Modifier.weight(1f),
                     )
+
                     if (featured) {
                         Text(
-                            text = "HOLD FOR MORE",
+                            text = stringResource(R.string.scenes_hold_for_more),
                             style = MaterialTheme.typography.labelSmall,
                             color = sub.copy(alpha = 0.5f),
                         )
                     }
                 }
+
                 Spacer(Modifier.height(6.dp))
+
                 if (scene.preview.isBlank()) {
                     Text(
-                        text = "NOTHING ON TAPE YET",
+                        text = stringResource(R.string.scenes_empty_tape),
                         style = MaterialTheme.typography.labelSmall,
                         color = sub.copy(alpha = 0.7f),
                     )
@@ -400,9 +438,12 @@ private fun SceneFolder(
                             color = FeldPalette.Orange,
                             modifier = Modifier.padding(end = 4.dp),
                         )
+
                         Text(
                             text = scene.preview.trim(),
-                            style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontStyle = FontStyle.Italic,
+                            ),
                             color = fg.copy(alpha = 0.82f),
                             maxLines = if (featured) 3 else 2,
                             overflow = TextOverflow.Ellipsis,
@@ -411,12 +452,18 @@ private fun SceneFolder(
                     }
                 }
             }
+
             Spacer(Modifier.height(8.dp))
+
             Box(
                 Modifier
                     .fillMaxWidth()
                     .height(if (featured) 26.dp else 18.dp)
-                    .markerFilmMaterial(FeldMarker.Ink.copy(color = Color.Unspecified), seed, bake = false),
+                    .markerFilmMaterial(
+                        FeldMarker.Ink.copy(color = Color.Unspecified),
+                        seed,
+                        bake = false,
+                    ),
             ) {
                 DialogueStrip(
                     colors = scene.barcode,
@@ -426,17 +473,25 @@ private fun SceneFolder(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
+
             Spacer(Modifier.height(12.dp))
         }
 
         val ghost = if (featured) 130.sp else 88.sp
+
         Text(
             text = scene.lines.toString().padStart(2, '0'),
-            style = MaterialTheme.typography.titleLarge.copy(fontSize = ghost, lineHeight = ghost * 0.85f),
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontSize = ghost,
+                lineHeight = ghost * 0.85f,
+            ),
             color = fg.copy(alpha = 0.06f),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 10.dp, bottom = if (featured) 40.dp else 32.dp),
+                .padding(
+                    end = 10.dp,
+                    bottom = if (featured) 40.dp else 32.dp,
+                ),
         )
 
         if (featured) {
@@ -450,7 +505,7 @@ private fun SceneFolder(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "CURRENT",
+                    text = stringResource(R.string.common_current),
                     style = MaterialTheme.typography.labelMedium.copy(
                         letterSpacing = 3.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -472,8 +527,24 @@ private fun SceneFolder(
                 seed = seed,
                 offset = DpOffset(0.dp, 0.dp),
                 items = buildList {
-                    if (scene.lines > 0) add(FeldMenuItem("Clear lines", FeldIconId.Close, onClick = onClear))
-                    add(FeldMenuItem("Delete", FeldIconId.Delete, destructive = true, onClick = onDelete))
+                    if (scene.lines > 0) {
+                        add(
+                            FeldMenuItem(
+                                clearLabel,
+                                FeldIconId.Close,
+                                onClick = onClear,
+                            ),
+                        )
+                    }
+
+                    add(
+                        FeldMenuItem(
+                            deleteLabel,
+                            FeldIconId.Delete,
+                            destructive = true,
+                            onClick = onDelete,
+                        ),
+                    )
                 },
             )
         }
@@ -483,6 +554,7 @@ private fun SceneFolder(
 @Composable
 private fun NewSceneCard(onClick: () -> Unit) {
     val dash = FeldPalette.Muted
+
     Row(
         Modifier
             .fillMaxWidth()
@@ -492,11 +564,16 @@ private fun NewSceneCard(onClick: () -> Unit) {
                 drawRoundRect(
                     color = dash,
                     topLeft = Offset(inset, inset),
-                    size = Size(size.width - inset * 2, size.height - inset * 2),
+                    size = Size(
+                        size.width - inset * 2,
+                        size.height - inset * 2,
+                    ),
                     cornerRadius = CornerRadius(4.dp.toPx()),
                     style = Stroke(
                         width = 1.5.dp.toPx(),
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10.dp.toPx(), 7.dp.toPx())),
+                        pathEffect = PathEffect.dashPathEffect(
+                            floatArrayOf(10.dp.toPx(), 7.dp.toPx()),
+                        ),
                     ),
                 )
             }
@@ -509,15 +586,20 @@ private fun NewSceneCard(onClick: () -> Unit) {
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 44.sp),
             color = FeldPalette.Cream,
         )
+
         Spacer(Modifier.width(14.dp))
+
         Text(
-            text = "NEW SCENE",
-            style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 3.sp),
+            text = stringResource(R.string.scenes_new),
+            style = MaterialTheme.typography.labelMedium.copy(
+                letterSpacing = 3.sp,
+            ),
             color = FeldPalette.Muted,
             modifier = Modifier.weight(1f),
         )
+
         Text(
-            text = "TAP TO CREATE",
+            text = stringResource(R.string.scenes_tap_to_create),
             style = MaterialTheme.typography.labelSmall,
             color = FeldPalette.Muted.copy(alpha = 0.5f),
         )
@@ -525,33 +607,66 @@ private fun NewSceneCard(onClick: () -> Unit) {
 }
 
 @Composable
-private fun ActionBar(canClear: Boolean, onClear: () -> Unit, onImport: () -> Unit, onExport: () -> Unit) {
+private fun ActionBar(
+    canClear: Boolean,
+    onClear: () -> Unit,
+    onImport: () -> Unit,
+    onExport: () -> Unit,
+) {
     Column(Modifier.fillMaxWidth()) {
         FeldDivider()
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 12.dp),
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 14.dp,
+                    bottom = 12.dp,
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ClearControl(enabled = canClear, onConfirm = onClear)
+
             Box(
                 Modifier
                     .width(1.dp)
                     .height(32.dp)
                     .background(FeldPalette.Muted.copy(alpha = 0.4f)),
             )
-            GhostAction("Import", FeldIconId.Import, onImport, Modifier.weight(1f), seed = 31)
-            FilmAction("Export", FeldIconId.Export, onExport, Modifier.weight(1f), seed = 8)
+
+            GhostAction(
+                text = stringResource(R.string.common_import),
+                icon = FeldIconId.Import,
+                onClick = onImport,
+                modifier = Modifier.weight(1f),
+                seed = 31,
+            )
+
+            FilmAction(
+                text = stringResource(R.string.common_export),
+                icon = FeldIconId.Export,
+                onClick = onExport,
+                modifier = Modifier.weight(1f),
+                seed = 8,
+            )
         }
     }
 }
 
 @Composable
-private fun GhostAction(text: String, icon: FeldIconId, onClick: () -> Unit, modifier: Modifier, seed: Int) {
+private fun GhostAction(
+    text: String,
+    icon: FeldIconId,
+    onClick: () -> Unit,
+    modifier: Modifier,
+    seed: Int,
+) {
     val haptics = rememberFeldHaptics()
     val rough = remember(seed) { entryRough(seed) }
+
     FeldCard(
         modifier = modifier,
         seed = seed,
@@ -572,7 +687,9 @@ private fun GhostAction(text: String, icon: FeldIconId, onClick: () -> Unit, mod
             horizontalArrangement = Arrangement.Center,
         ) {
             FeldIcon(icon, size = 20.dp, markerFilmSpec = FeldMarker.Chalk)
+
             Spacer(Modifier.width(10.dp))
+
             Box(Modifier.markerFilmMaterial(FeldMarker.Chalk, seed + 1)) {
                 Text(
                     text = text.uppercase(),
@@ -589,23 +706,41 @@ private fun GhostAction(text: String, icon: FeldIconId, onClick: () -> Unit, mod
 }
 
 @Composable
-private fun FilmAction(text: String, icon: FeldIconId, onClick: () -> Unit, modifier: Modifier, seed: Int) {
+private fun FilmAction(
+    text: String,
+    icon: FeldIconId,
+    onClick: () -> Unit,
+    modifier: Modifier,
+    seed: Int,
+) {
     val haptics = rememberFeldHaptics()
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val press by animateFloatAsState(if (pressed) 1f else 0f, tween(if (pressed) 75 else 150), label = "press")
+    val press by animateFloatAsState(
+        if (pressed) 1f else 0f,
+        tween(if (pressed) 75 else 150),
+        label = "press",
+    )
     val density = LocalDensity.current.density
+
     val body = remember(seed, density) {
-        accentBrush(AccentOrange, seed, density, fade = 0.5f, glow = 0.3f, grain = 0.04f)
+        accentBrush(
+            AccentOrange,
+            seed,
+            density,
+            fade = 0.5f,
+            glow = 0.3f,
+            grain = 0.04f,
+        )
     }
 
     Box(
         modifier
             .height(56.dp)
             .graphicsLayer {
-                val s = 1f - 0.02f * press
-                scaleX = s
-                scaleY = s
+                val scale = 1f - 0.02f * press
+                scaleX = scale
+                scaleY = scale
                 translationY = 1.5f * press
             }
             .shadow(
@@ -629,9 +764,14 @@ private fun FilmAction(text: String, icon: FeldIconId, onClick: () -> Unit, modi
         Canvas(
             Modifier
                 .fillMaxSize()
-                .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen },
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                },
         ) {
-            drawRoundRect(brush = body, cornerRadius = CornerRadius(4.dp.toPx()))
+            drawRoundRect(
+                brush = body,
+                cornerRadius = CornerRadius(4.dp.toPx()),
+            )
 
             val pitch = 10.dp.toPx()
             val hw = 5.dp.toPx()
@@ -644,24 +784,37 @@ private fun FilmAction(text: String, icon: FeldIconId, onClick: () -> Unit, modi
 
             for (k in -1..count) {
                 val x = 6.dp.toPx() + k * pitch - shift
-                val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                    ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
-                if (a <= 0f) continue
-                val hole = Color.Black.copy(alpha = a)
-                val r = CornerRadius(1.dp.toPx())
-                drawRoundRect(hole, Offset(x, inset), Size(hw, hh), r, blendMode = BlendMode.DstOut)
+                val alpha = ((x - edge) / fade).coerceIn(0f, 1f) *
+                        ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
+
+                if (alpha <= 0f) continue
+
+                val hole = Color.Black.copy(alpha = alpha)
+                val radius = CornerRadius(1.dp.toPx())
+
+                drawRoundRect(
+                    hole,
+                    Offset(x, inset),
+                    Size(hw, hh),
+                    radius,
+                    blendMode = BlendMode.DstOut,
+                )
+
                 drawRoundRect(
                     hole,
                     Offset(x, size.height - inset - hh),
                     Size(hw, hh),
-                    r,
+                    radius,
                     blendMode = BlendMode.DstOut,
                 )
             }
         }
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             FeldIcon(icon, size = 18.dp, markerFilmSpec = FeldMarker.Ink)
+
             Spacer(Modifier.width(8.dp))
+
             Box(Modifier.markerFilmMaterial(FeldMarker.Ink, seed + 1)) {
                 Text(
                     text = text.uppercase(),
@@ -689,7 +842,10 @@ private fun ClearControl(enabled: Boolean, onConfirm: () -> Unit) {
             armed = false
         }
     }
-    LaunchedEffect(enabled) { if (!enabled) armed = false }
+
+    LaunchedEffect(enabled) {
+        if (!enabled) armed = false
+    }
 
     Box(
         Modifier
@@ -711,8 +867,11 @@ private fun ClearControl(enabled: Boolean, onConfirm: () -> Unit) {
                     .padding(horizontal = 12.dp, vertical = 10.dp),
             ) {
                 Text(
-                    text = "SURE?",
-                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 18.sp, letterSpacing = 1.6.sp),
+                    text = stringResource(R.string.scenes_clear_confirm),
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontSize = 18.sp,
+                        letterSpacing = 1.6.sp,
+                    ),
                     color = Ink,
                 )
             }

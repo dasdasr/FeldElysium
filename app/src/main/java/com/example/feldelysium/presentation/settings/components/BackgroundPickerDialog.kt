@@ -30,8 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
@@ -96,21 +98,21 @@ fun BackgroundPickerDialog(
         isMedia && settings.backgroundMediaIsVideo && settings.backgroundMediaUri.isNotBlank()
 
     FeldDialog(
-        title = "Background",
-        eyebrow = if (animated) "Animated" else "Plain",
-        subtitle = "Set a visual tone for your scene.",
+        title = stringResource(R.string.settings_background_section),
+        eyebrow = stringResource(if (animated) R.string.background_eyebrow_animated else R.string.background_eyebrow_plain),
+        subtitle = stringResource(R.string.background_subtitle),
         onDismiss = onDismiss,
         footer = {
             FeldDialogFooter(
                 onReset = onReset,
                 onCancel = onDismiss,
-                confirmLabel = "Save",
+                confirmLabel = stringResource(R.string.common_save),
                 buttonSpec = FeldButtonDefaults.Cream,
             )
         },
     ) {
         FeldSegmentedControl(
-            options = listOf("Media", "Color"),
+            options = listOf(stringResource(R.string.background_tab_media), stringResource(R.string.settings_background_color)),
             selectedIndex = if (isMedia) 0 else 1,
             onSelect = { onKind(if (it == 0) BackgroundKind.MEDIA else BackgroundKind.COLOR) },
         )
@@ -145,13 +147,13 @@ private fun MediaPane(
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             MediaPickButton(
                 iconId = FeldIconId.Video,
-                label = "Video",
+                label = stringResource(R.string.background_video),
                 onClick = { videoPicker.launch(PickVisualMediaRequest(PickVisualMedia.VideoOnly)) },
                 modifier = Modifier.weight(1f),
             )
             MediaPickButton(
                 iconId = FeldIconId.Image,
-                label = "Image",
+                label = stringResource(R.string.background_image),
                 onClick = { imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
                 modifier = Modifier.weight(1f),
             )
@@ -162,8 +164,8 @@ private fun MediaPane(
             FeldDivider()
             FeldSettingSwitchRow(
                 icon = FeldIconId.Sound,
-                title = "Mute sound",
-                subtitle = "Mute video sound.",
+                title = stringResource(R.string.background_mute_title),
+                subtitle = stringResource(R.string.background_mute_subtitle),
                 checked = !settings.backgroundVideoSound,
                 onCheckedChange = { onVideoSound(!it) },
                 contentPadding = rowPadding,
@@ -171,8 +173,8 @@ private fun MediaPane(
             FeldDivider()
             FeldSettingSwitchRow(
                 icon = FeldIconId.Cinema,
-                title = "Fill screen",
-                subtitle = "Crop videos to fit the screen.",
+                title = stringResource(R.string.background_fill_title),
+                subtitle = stringResource(R.string.background_fill_subtitle),
                 checked = settings.backgroundVideoFill,
                 onCheckedChange = onVideoFill,
                 contentPadding = rowPadding,
@@ -216,7 +218,7 @@ private fun MediaHeader(video: Boolean) {
         )
         Spacer(Modifier.width(16.dp))
         Text(
-            text = if (video) "VIDEO" else "IMAGE",
+            text = if (video) stringResource(R.string.background_video).uppercase() else stringResource(R.string.background_image).uppercase(),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -250,7 +252,7 @@ private fun MediaPreview(settings: AppSettings) {
         )
         if (uri.isBlank()) {
             Text(
-                text = "NO MEDIA YET",
+                text = stringResource(R.string.background_no_media),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.Black.copy(alpha = 0.55f),
             )

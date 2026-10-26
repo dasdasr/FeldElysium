@@ -15,8 +15,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldChip
@@ -42,12 +44,12 @@ fun ChooseTagDialog(
     val all = (listOf(SpeakerType.CUSTOM) + existing + created + current).distinctBy { it.id }
 
     FeldDialog(
-        title = "Choose tag",
-        eyebrow = "Speaker tag",
+        title = stringResource(R.string.choose_tag_title),
+        eyebrow = stringResource(R.string.choose_tag_eyebrow),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = "Select",
+                confirmLabel = stringResource(R.string.choose_tag_select),
                 onConfirm = { onConfirm(current) },
                 onCancel = onDismiss,
             )
@@ -59,7 +61,11 @@ fun ChooseTagDialog(
         ) {
             all.forEach { t ->
                 FeldChip(
-                    text = if (t.isCustom) "No tag" else t.name,
+                    text = if (t.isCustom) {
+                        stringResource(R.string.choose_tag_none)
+                    } else {
+                        t.name
+                    },
                     selected = t.id == current.id,
                     onClick = { current = t },
                     height = 34.dp,
@@ -67,7 +73,7 @@ fun ChooseTagDialog(
                 )
             }
             FeldChip(
-                text = "+ New",
+                text = stringResource(R.string.choose_tag_new),
                 selected = creating,
                 onClick = { creating = !creating },
                 height = 34.dp,
@@ -75,7 +81,7 @@ fun ChooseTagDialog(
             )
             if (onManage != null) {
                 FeldChip(
-                    text = "Edit tags",
+                    text = stringResource(R.string.choose_tag_edit),
                     selected = false,
                     onClick = onManage,
                     height = 34.dp,
@@ -97,7 +103,7 @@ fun ChooseTagDialog(
                     value = draft,
                     onValueChange = { draft = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = "Tag name",
+                    placeholder = stringResource(R.string.choose_tag_name_placeholder),
                     maxLength = SpeakerType.MAX_NAME,
                     showLength = false,
                     minHeight = 44.dp,
@@ -108,7 +114,7 @@ fun ChooseTagDialog(
                 )
 
                 FeldChip(
-                    text = "Allow checks",
+                    text = stringResource(R.string.choose_tag_allow_checks),
                     selected = allowsChecks,
                     onClick = { allowsChecks = !allowsChecks },
                     height = 30.dp,
@@ -117,7 +123,7 @@ fun ChooseTagDialog(
                 )
 
                 FeldChip(
-                    text = "Add",
+                    text = stringResource(R.string.choose_tag_add),
                     selected = false,
                     enabled = draft.isNotBlank(),
                     onClick = {

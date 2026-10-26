@@ -29,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.FeldApp
+import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.BackgroundKind
 import com.example.feldelysium.data.settings.SamplesMode
@@ -64,7 +66,10 @@ import java.io.File
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
+fun SettingsScreen(
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val activity = LocalContext.current as ComponentActivity
     val container = (activity.application as FeldApp).container
 
@@ -91,6 +96,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     var showBarIcons by remember { mutableStateOf(false) }
 
     BackHandler(enabled = !leaving) { leaving = true }
+
     LaunchedEffect(leaving) {
         if (leaving) {
             withFrameNanos { }
@@ -104,15 +110,16 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     ) { uri ->
         uri?.let { packVm.export(activity.contentResolver.openOutputStream(it)) }
     }
+
     val importLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let { packVm.prepareImport(activity.contentResolver.openInputStream(it)) }
     }
 
-    pack.message?.let { m ->
-        LaunchedEffect(m) {
-            toast.show(m)
+    pack.message?.let { message ->
+        LaunchedEffect(message) {
+            toast.show(message)
             packVm.consumeMessage()
         }
     }
@@ -128,9 +135,9 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 .statusBarsPadding(),
         ) {
             FeldScreenHeader(
-                title = "Settings",
-                eyebrow = "The workshop",
-                subtitle = "Make it work for you.",
+                title = stringResource(R.string.settings_title),
+                eyebrow = stringResource(R.string.settings_eyebrow),
+                subtitle = stringResource(R.string.settings_subtitle),
                 onNav = { leaving = true },
             )
 
@@ -141,82 +148,115 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     .navigationBarsPadding()
                     .testTag("settings_scroll"),
             ) {
-                FeldSettingsSection(title = "Playback") {
+                FeldSettingsSection(
+                    title = stringResource(R.string.settings_playback_section),
+                ) {
+                    val cinemaFrameTitle =
+                        stringResource(R.string.settings_cinema_frame_title)
+
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Cinema,
-                        title = "Cinema frame",
-                        subtitle = "Keep playback inside a 16:9 frame",
+                        title = cinemaFrameTitle,
+                        subtitle = stringResource(R.string.settings_cinema_frame_subtitle),
                         checked = settings.lockAspectRatio16x9,
                         onCheckedChange = {
-                            eggs?.report(EggEvent.SwitchToggle, "Cinema frame")
+                            eggs?.report(EggEvent.SwitchToggle, cinemaFrameTitle)
                             vm.dispatch(SettingsEvent.SetLockAspectRatio16x9(it))
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingRow(
                         icon = FeldIconId.PanelCalendar,
-                        title = "Status line",
-                        subtitle = "Reals, time and day",
+                        title = stringResource(R.string.settings_status_line_title),
+                        subtitle = stringResource(R.string.settings_status_line_subtitle),
                         showChevron = true,
                         onClick = {
                             haptics.tick()
                             showPlaybackUiText = true
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingRow(
                         icon = FeldIconId.Panel,
-                        title = "Panel icons",
-                        subtitle = "Choose which bar icons are highlighted",
+                        title = stringResource(R.string.settings_panel_icons_title),
+                        subtitle = stringResource(R.string.settings_panel_icons_subtitle),
                         showChevron = true,
                         onClick = {
                             haptics.tick()
                             showBarIcons = true
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Autoplay,
-                        title = "Autoplay",
-                        subtitle = "Scroll lines automatically",
+                        title = stringResource(R.string.settings_autoplay_title),
+                        subtitle = stringResource(R.string.settings_autoplay_subtitle),
                         checked = settings.autoPlay,
-                        onCheckedChange = { vm.dispatch(SettingsEvent.SetAutoPlay(it)) },
+                        onCheckedChange = {
+                            vm.dispatch(SettingsEvent.SetAutoPlay(it))
+                        },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingValueRow(
                         icon = FeldIconId.Speed,
-                        title = "Autoplay speed",
-                        subtitle = "How long each line stays on screen",
+                        title = stringResource(R.string.settings_autoplay_speed_title),
+                        subtitle = stringResource(R.string.settings_autoplay_speed_subtitle),
                         value = settings.autoPlaySpeed.label,
-                        status = if (settings.autoPlay) null else FeldSettingStatus.LOCK,
+                        status = if (settings.autoPlay) {
+                            null
+                        } else {
+                            FeldSettingStatus.LOCK
+                        },
                         onClick = {
                             haptics.tick()
-                            vm.dispatch(SettingsEvent.SetAutoPlaySpeed(settings.autoPlaySpeed.next()))
+                            vm.dispatch(
+                                SettingsEvent.SetAutoPlaySpeed(
+                                    settings.autoPlaySpeed.next(),
+                                ),
+                            )
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingSwitchRow(
                         icon = FeldIconId.PlaybackText,
-                        title = "Continue button",
-                        subtitle = "Show Continue button",
+                        title = stringResource(R.string.settings_continue_button_title),
+                        subtitle = stringResource(R.string.settings_continue_button_subtitle),
                         checked = settings.showContinueButton,
-                        onCheckedChange = { vm.dispatch(SettingsEvent.ShowContinueButton(it)) },
+                        onCheckedChange = {
+                            vm.dispatch(SettingsEvent.ShowContinueButton(it))
+                        },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingValueRow(
                         icon = FeldIconId.Play,
-                        title = "Advance dialogue",
+                        title = stringResource(R.string.settings_advance_dialogue_title),
                         subtitle = when (settings.tapMode) {
                             TapMode.WHOLE_SCREEN ->
-                                "Tap anywhere to show the next line"
+                                stringResource(R.string.settings_advance_whole_screen)
 
                             TapMode.CONTINUE_BUTTON ->
-                                "Use Continue to advance. Scroll through dialogue history"
+                                stringResource(R.string.settings_advance_continue_button)
 
                             TapMode.NOWHERE ->
-                                "Autoplay only"
+                                stringResource(R.string.settings_advance_autoplay_only)
                         },
-                        status = if (settings.showContinueButton) null else FeldSettingStatus.LOCK,
+                        status = if (settings.showContinueButton) {
+                            null
+                        } else {
+                            FeldSettingStatus.LOCK
+                        },
                         value = settings.tapMode.label,
                         onClick = {
                             haptics.tick()
@@ -227,11 +267,13 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                             )
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingValueRow(
                         icon = FeldIconId.Typeface,
-                        title = "Typeface",
-                        subtitle = "Dialogue text in playback",
+                        title = stringResource(R.string.settings_typeface_title),
+                        subtitle = stringResource(R.string.settings_typeface_subtitle),
                         value = when (settings.fontChoice) {
                             "" -> "Alegreya"
                             FONT_CUSTOM -> settings.customFontName
@@ -244,27 +286,48 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                 }
 
-                FeldSettingsSection(title = "Video export") {
+                FeldSettingsSection(
+                    title = stringResource(R.string.settings_video_export_section),
+                ) {
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Video,
-                        title = "Record playback",
-                        subtitle = "Playback button records the screen to a video",
+                        title = stringResource(R.string.settings_record_playback_title),
+                        subtitle = stringResource(R.string.settings_record_playback_subtitle),
                         checked = settings.exportEnabled,
-                        onCheckedChange = { vm.dispatch(SettingsEvent.SetExportEnabled(it)) },
+                        onCheckedChange = {
+                            vm.dispatch(SettingsEvent.SetExportEnabled(it))
+                        },
                     )
+
                     FeldSettingsDivider()
+
                     val audioSupported = Build.VERSION.SDK_INT >= 29
+
                     FeldSettingSwitchRow(
                         icon = FeldIconId.Microphone,
-                        title = "Record sound",
-                        subtitle = if (audioSupported) "App sound goes into the video" else "Needs Android 10 or newer",
+                        title = stringResource(R.string.settings_record_sound_title),
+                        subtitle = stringResource(
+                            if (audioSupported) {
+                                R.string.settings_record_sound_subtitle
+                            } else {
+                                R.string.settings_android_10_required
+                            },
+                        ),
                         checked = settings.exportAudio && audioSupported,
-                        onCheckedChange = { vm.dispatch(SettingsEvent.SetExportAudio(it)) },
-                        status = if (settings.exportEnabled && audioSupported) null else FeldSettingStatus.LOCK,
+                        onCheckedChange = {
+                            vm.dispatch(SettingsEvent.SetExportAudio(it))
+                        },
+                        status = if (settings.exportEnabled && audioSupported) {
+                            null
+                        } else {
+                            FeldSettingStatus.LOCK
+                        },
                     )
                 }
 
-                FeldSettingsSection(title = "Background") {
+                FeldSettingsSection(
+                    title = stringResource(R.string.settings_background_section),
+                ) {
                     FeldBackgroundRow(
                         settings = settings,
                         currentLabel = backgroundLabel(settings),
@@ -276,59 +339,75 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                 }
 
-                FeldSettingsSection(title = "Speakers") {
+                FeldSettingsSection(
+                    title = stringResource(R.string.settings_speakers_section),
+                ) {
                     FeldSettingRow(
                         icon = FeldIconId.Export,
-                        title = "Export speakers",
-                        subtitle = "Save your speakers and tags to a file",
+                        title = stringResource(R.string.settings_export_speakers_title),
+                        subtitle = stringResource(R.string.settings_export_speakers_subtitle),
                         showChevron = true,
                         onClick = {
                             haptics.tick()
                             exportLauncher.launch("speakers.feldpack")
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingRow(
                         icon = FeldIconId.Import,
-                        title = "Import speakers",
-                        subtitle = "Add speakers and tags from a pack",
+                        title = stringResource(R.string.settings_import_speakers_title),
+                        subtitle = stringResource(R.string.settings_import_speakers_subtitle),
                         showChevron = true,
                         onClick = {
                             haptics.tick()
                             importLauncher.launch(arrayOf("*/*"))
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingRow(
                         icon = FeldIconId.Tag,
-                        title = "Tags",
-                        subtitle = "Rename, recolor or delete",
+                        title = stringResource(R.string.settings_tags_title),
+                        subtitle = stringResource(R.string.settings_tags_subtitle),
                         showChevron = true,
                         onClick = {
                             haptics.tick()
                             showTags = true
                         },
                     )
+
                     FeldSettingsDivider()
+
                     FeldSettingValueRow(
                         icon = FeldIconId.AuthorSamples,
-                        title = "Author's samples",
+                        title = stringResource(R.string.settings_author_samples_title),
                         subtitle = when (settings.samplesMode) {
-                            SamplesMode.AUTO ->
+                            SamplesMode.AUTO -> {
                                 if (settings.packImported) {
-                                    "Pack imported, samples are hidden"
+                                    stringResource(R.string.settings_samples_imported_hidden)
                                 } else {
-                                    "They'll hide after your first pack import"
+                                    stringResource(R.string.settings_samples_hide_after_import)
                                 }
+                            }
 
-                            SamplesMode.ALWAYS_SHOW -> "Always visible in the picker"
+                            SamplesMode.ALWAYS_SHOW ->
+                                stringResource(R.string.settings_samples_always_visible)
 
-                            SamplesMode.ALWAYS_HIDE -> "Always hidden"
+                            SamplesMode.ALWAYS_HIDE ->
+                                stringResource(R.string.settings_samples_always_hidden)
                         },
                         value = when (settings.samplesMode) {
-                            SamplesMode.AUTO -> "Auto"
-                            SamplesMode.ALWAYS_SHOW -> "Show"
-                            SamplesMode.ALWAYS_HIDE -> "Hide"
+                            SamplesMode.AUTO ->
+                                stringResource(R.string.settings_samples_auto)
+
+                            SamplesMode.ALWAYS_SHOW ->
+                                stringResource(R.string.settings_samples_show)
+
+                            SamplesMode.ALWAYS_HIDE ->
+                                stringResource(R.string.settings_samples_hide)
                         },
                         onClick = {
                             haptics.tick()
@@ -342,12 +421,17 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                     )
                 }
 
-                FeldSettingsSection(title = "Coming soon") {
-                    SoonTap("Lock landscape") {
+                FeldSettingsSection(
+                    title = stringResource(R.string.settings_coming_soon_section),
+                ) {
+                    val lockLandscapeTitle =
+                        stringResource(R.string.settings_lock_landscape_title)
+
+                    SoonTap(lockLandscapeTitle) {
                         FeldSettingSwitchRow(
                             icon = FeldIconId.Cinema,
-                            title = "Lock landscape",
-                            subtitle = "Lock it",
+                            title = lockLandscapeTitle,
+                            subtitle = stringResource(R.string.settings_lock_landscape_subtitle),
                             checked = false,
                             onCheckedChange = {},
                             status = FeldSettingStatus.SOON,
@@ -370,12 +454,20 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             money = settings.playbackMoney,
             time = settings.playbackTime,
             day = settings.playbackDay,
-            onMoneyChange = { vm.dispatch(SettingsEvent.SetPlaybackMoney(it)) },
-            onTimeChange = { vm.dispatch(SettingsEvent.SetPlaybackTime(it)) },
-            onDayChange = { vm.dispatch(SettingsEvent.SetPlaybackDay(it)) },
+            onMoneyChange = {
+                vm.dispatch(SettingsEvent.SetPlaybackMoney(it))
+            },
+            onTimeChange = {
+                vm.dispatch(SettingsEvent.SetPlaybackTime(it))
+            },
+            onDayChange = {
+                vm.dispatch(SettingsEvent.SetPlaybackDay(it))
+            },
             onReset = {
                 haptics.thud()
-                if (settings.playbackTextIsDefault()) eggs?.report(EggEvent.ResetUnchanged)
+                if (settings.playbackTextIsDefault()) {
+                    eggs?.report(EggEvent.ResetUnchanged)
+                }
                 vm.dispatch(SettingsEvent.ResetPlaybackUiText)
             },
             onDismiss = { showPlaybackUiText = false },
@@ -390,11 +482,17 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             onMedia = { uri, isVideo ->
                 vm.dispatch(SettingsEvent.SetBackgroundMedia(uri, isVideo))
             },
-            onVideoSound = { vm.dispatch(SettingsEvent.SetBackgroundVideoSound(it)) },
-            onVideoFill = { vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it)) },
+            onVideoSound = {
+                vm.dispatch(SettingsEvent.SetBackgroundVideoSound(it))
+            },
+            onVideoFill = {
+                vm.dispatch(SettingsEvent.SetBackgroundVideoFill(it))
+            },
             onReset = {
                 haptics.thud()
-                if (settings.backgroundIsDefault()) eggs?.report(EggEvent.ResetUnchanged)
+                if (settings.backgroundIsDefault()) {
+                    eggs?.report(EggEvent.ResetUnchanged)
+                }
                 vm.dispatch(SettingsEvent.ResetBackground)
             },
             onDismiss = { showBackground = false },
@@ -440,7 +538,11 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
             onReset = { vm.selectFont("") },
             onUpload = { uri ->
                 scope.launch {
-                    if (!vm.importFont(uri)) toast.show("That's not a usable font file")
+                    if (!vm.importFont(uri)) {
+                        toast.show(
+                            activity.getString(R.string.settings_font_invalid),
+                        )
+                    }
                 }
             },
             onDismiss = { showFont = false },
@@ -456,36 +558,50 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
 private fun backgroundLabel(settings: AppSettings): String = when {
-    settings.backgroundKind == BackgroundKind.COLOR -> "Color"
-    settings.backgroundMediaUri.isBlank() -> "Default"
-    else -> "Custom"
+    settings.backgroundKind == BackgroundKind.COLOR ->
+        stringResource(R.string.settings_background_color)
+
+    settings.backgroundMediaUri.isBlank() ->
+        stringResource(R.string.settings_background_default)
+
+    else ->
+        stringResource(R.string.settings_background_custom)
 }
 
 @Composable
-private fun SoonTap(title: String, content: @Composable () -> Unit) {
+private fun SoonTap(
+    title: String,
+    content: @Composable () -> Unit,
+) {
     val eggs = LocalEasterEggs.current
+
     Box(
         Modifier.clickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-        ) { eggs?.report(EggEvent.SoonTap, title) },
-    ) { content() }
+        ) {
+            eggs?.report(EggEvent.SoonTap, title)
+        },
+    ) {
+        content()
+    }
 }
 
 private fun AppSettings.playbackTextIsDefault(): Boolean {
-    val d = AppSettings()
-    return playbackMoney == d.playbackMoney &&
-        playbackTime == d.playbackTime &&
-        playbackDay == d.playbackDay
+    val default = AppSettings()
+    return playbackMoney == default.playbackMoney &&
+            playbackTime == default.playbackTime &&
+            playbackDay == default.playbackDay
 }
 
 private fun AppSettings.backgroundIsDefault(): Boolean {
-    val d = AppSettings()
-    return backgroundKind == d.backgroundKind &&
-        backgroundColorArgb == d.backgroundColorArgb &&
-        backgroundMediaUri == d.backgroundMediaUri &&
-        backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
-        backgroundVideoSound == d.backgroundVideoSound &&
-        backgroundVideoFill == d.backgroundVideoFill
+    val default = AppSettings()
+    return backgroundKind == default.backgroundKind &&
+            backgroundColorArgb == default.backgroundColorArgb &&
+            backgroundMediaUri == default.backgroundMediaUri &&
+            backgroundMediaIsVideo == default.backgroundMediaIsVideo &&
+            backgroundVideoSound == default.backgroundVideoSound &&
+            backgroundVideoFill == default.backgroundVideoFill
 }

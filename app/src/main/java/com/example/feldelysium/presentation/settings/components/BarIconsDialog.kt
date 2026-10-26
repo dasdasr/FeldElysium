@@ -14,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.BarIconState
 import com.example.feldelysium.data.settings.BarSlot
 import com.example.feldelysium.data.settings.InventoryIcon
@@ -44,21 +46,21 @@ fun BarIconsDialog(
     onDismiss: () -> Unit,
 ) {
     FeldDialog(
-        title = "Panel icons",
-        eyebrow = "Playback",
+        title = stringResource(R.string.settings_panel_icons_title),
+        eyebrow = stringResource(R.string.settings_playback_section),
         onDismiss = onDismiss,
         seed = 21,
         footer = {
             FeldDialogFooter(
                 onReset = onReset,
                 onCancel = onDismiss,
-                cancelLabel = "RESET",
-                confirmLabel = "OK",
+                cancelLabel = stringResource(R.string.common_cancel),
+                confirmLabel = stringResource(R.string.common_ok),
                 seed = 22,
             )
         },
     ) {
-        SectionLabel("Panel", hint = "Tap to cycle: off, on, alert")
+        SectionLabel(stringResource(R.string.bar_icons_panel), hint = stringResource(R.string.bar_icons_panel_hint))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             BarSlot.entries.forEachIndexed { i, slot ->
                 val state = icons[slot] ?: slot.defaultState
@@ -78,7 +80,7 @@ fun BarIconsDialog(
         FeldDivider(seed = 41)
         Spacer(Modifier.height(16.dp))
 
-        SectionLabel("Inventory", hint = "Tap to switch the item")
+        SectionLabel(stringResource(R.string.bar_icons_inventory), hint = stringResource(R.string.bar_icons_inventory_hint))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             InventorySlot.entries.forEachIndexed { i, slot ->
                 val icon = inventory[slot] ?: slot.defaultIcon

@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.editor.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
@@ -50,26 +53,37 @@ fun ManageTagsDialog(
 ) {
     var editing by remember { mutableStateOf<SpeakerType?>(null) }
     var deleting by remember { mutableStateOf<SpeakerType?>(null) }
-    val counts = remember(speakers) { speakers.groupingBy { it.type.id }.eachCount() }
+    val counts = remember(speakers) {
+        speakers.groupingBy { it.type.id }.eachCount()
+    }
 
     FeldDialog(
-        title = "Tags",
-        eyebrow = "Manage tags",
+        title = stringResource(R.string.tags_title),
+        eyebrow = stringResource(R.string.tags_manage_eyebrow),
         onDismiss = onDismiss,
-        footer = { FeldDialogActions(confirmLabel = "Done", onConfirm = onDismiss) },
+        footer = {
+            FeldDialogActions(
+                confirmLabel = stringResource(R.string.common_done),
+                onConfirm = onDismiss,
+            )
+        },
     ) {
         val list = tags.filterNot { it.isCustom }
+
         if (list.none { !PredefinedSpeakers.isBundledTag(it.id) }) {
             Text(
-                "You have no tags yet. Create one while choosing a tag for a speaker.",
+                stringResource(R.string.tags_empty_message),
                 style = MaterialTheme.typography.bodySmall,
                 color = FeldPalette.Muted,
                 modifier = Modifier.padding(bottom = 12.dp),
             )
         }
+
         list.forEachIndexed { i, tag ->
             if (i > 0) FeldDivider(Modifier.padding(vertical = 2.dp))
+
             val builtIn = PredefinedSpeakers.isBundledTag(tag.id)
+
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -82,6 +96,7 @@ fun ManageTagsDialog(
                     14.dp,
                 )
                 Spacer(Modifier.width(12.dp))
+
                 Text(
                     tag.name.uppercase(),
                     style = MaterialTheme.typography.labelLarge,
@@ -94,9 +109,10 @@ fun ManageTagsDialog(
                     color = FeldPalette.Muted,
                 )
                 Spacer(Modifier.width(12.dp))
+
                 if (builtIn) {
                     Text(
-                        "BUILT-IN",
+                        stringResource(R.string.tags_built_in),
                         style = MaterialTheme.typography.labelSmall,
                         color = FeldPalette.Muted,
                     )
@@ -121,7 +137,9 @@ fun ManageTagsDialog(
     editing?.let { tag ->
         EditTagDialog(
             tag = tag,
-            takenNames = tags.filter { it.id != tag.id }.map { it.name.lowercase() }.toSet(),
+            takenNames = tags.filter { it.id != tag.id }
+                .map { it.name.lowercase() }
+                .toSet(),
             onSave = {
                 onSave(it)
                 editing = null
@@ -132,13 +150,14 @@ fun ManageTagsDialog(
 
     deleting?.let { tag ->
         val n = counts[tag.id] ?: 0
+
         FeldDialog(
-            title = "Delete tag",
+            title = stringResource(R.string.tags_delete_title),
             eyebrow = tag.name,
             onDismiss = { deleting = null },
             footer = {
                 FeldDialogActions(
-                    confirmLabel = "Delete",
+                    confirmLabel = stringResource(R.string.common_delete),
                     onConfirm = {
                         onDelete(tag)
                         deleting = null
@@ -149,9 +168,9 @@ fun ManageTagsDialog(
         ) {
             Text(
                 if (n == 0) {
-                    "This tag is not used by any speaker."
+                    stringResource(R.string.tags_delete_unused_message)
                 } else {
-                    "$n speaker(s) will lose this tag and move to Custom. Their colors stay."
+                    stringResource(R.string.tags_delete_used_message, n)
                 },
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -173,20 +192,25 @@ private fun EditTagDialog(
 
     val clean = SpeakerType.normalizeName(name)
     val valid = clean.isNotEmpty() && clean.lowercase() !in takenNames
+
     val palette = remember {
         val c = tag.colorArgb
-        if (c != null && SpeakerColor.isCustom(c)) SpeakerColor.AllArgb + c else SpeakerColor.AllArgb
+        if (c != null && SpeakerColor.isCustom(c)) {
+            SpeakerColor.AllArgb + c
+        } else {
+            SpeakerColor.AllArgb
+        }
     }
 
     var allowsChecks by remember { mutableStateOf(tag.allowsChecks) }
 
     FeldDialog(
-        title = "Edit tag",
+        title = stringResource(R.string.tags_edit_title),
         eyebrow = tag.name,
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = "Save",
+                confirmLabel = stringResource(R.string.common_save),
                 onConfirm = {
                     onSave(
                         tag.copy(
@@ -202,7 +226,7 @@ private fun EditTagDialog(
             )
         },
     ) {
-        FieldLabel("Name")
+        FieldLabel(stringResource(R.string.tags_name_label))
         FeldTextField(
             value = name,
             onValueChange = { name = it },
@@ -211,23 +235,25 @@ private fun EditTagDialog(
             minHeight = 48.dp,
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
         )
+
         if (clean.lowercase() in takenNames) {
             Text(
-                "A tag with this name already exists",
+                stringResource(R.string.tags_duplicate_name),
                 style = MaterialTheme.typography.labelSmall,
                 color = FeldPalette.Orange,
             )
         }
 
         Spacer(Modifier.height(18.dp))
-        FieldLabel("Default color", optional = true)
+        FieldLabel(stringResource(R.string.tags_default_color), optional = true)
         FeldChip(
-            text = "None",
+            text = stringResource(R.string.common_none),
             selected = color == null,
             onClick = { color = null },
             modifier = Modifier.height(30.dp),
             accent = FeldChipColors.Cream,
         )
+
         Spacer(Modifier.height(10.dp))
         FeldColorSwatches(
             colors = palette,
@@ -238,7 +264,7 @@ private fun EditTagDialog(
         )
 
         Spacer(Modifier.height(18.dp))
-        FieldLabel("Sound")
+        FieldLabel(stringResource(R.string.tags_sound_label))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -248,16 +274,19 @@ private fun EditTagDialog(
                 FeldChip(
                     text = key,
                     selected = on,
-                    onClick = { sound = key.takeUnless { it == SoundKeys.DEFAULT } },
+                    onClick = {
+                        sound = key.takeUnless { it == SoundKeys.DEFAULT }
+                    },
                     modifier = Modifier.height(30.dp),
                     accent = FeldChipColors.Orange,
                 )
             }
         }
+
         Spacer(Modifier.height(18.dp))
-        FieldLabel("Skill checks")
+        FieldLabel(stringResource(R.string.tags_skill_checks_label))
         FeldChip(
-            text = "Allow skill checks",
+            text = stringResource(R.string.tags_allow_skill_checks),
             selected = allowsChecks,
             onClick = { allowsChecks = !allowsChecks },
             modifier = Modifier.height(30.dp),

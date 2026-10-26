@@ -16,7 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.button.FeldFieldButton
 import com.example.feldelysium.designsystem.components.button.FeldTextButton
@@ -66,12 +68,12 @@ fun CustomSpeakerDialog(
     val accent = Color(color)
 
     FeldDialog(
-        title = if (editing) "Edit speaker" else "Create speaker",
-        eyebrow = "Custom speaker",
+        title = if (editing) stringResource(R.string.speaker_edit_title) else stringResource(R.string.speaker_create_title),
+        eyebrow = stringResource(R.string.speaker_eyebrow),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = if (editing) "Save" else "Create",
+                confirmLabel = if (editing) stringResource(R.string.speaker_save) else stringResource(R.string.speaker_create),
                 onConfirm = {
                     onConfirm(
                         Speaker(
@@ -106,11 +108,11 @@ fun CustomSpeakerDialog(
             )
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
-                FieldLabel("Name")
+                FieldLabel(stringResource(R.string.speaker_name_label))
                 FeldTextField(
                     value = name,
                     onValueChange = { name = it },
-                    placeholder = "Speaker name",
+                    placeholder = stringResource(R.string.speaker_name_placeholder),
                     maxLength = 32,
                     showLength = false,
                     minHeight = 48.dp,
@@ -118,10 +120,10 @@ fun CustomSpeakerDialog(
                 )
 
                 Spacer(Modifier.height(14.dp))
-                FieldLabel("Tag", optional = true)
+                FieldLabel(stringResource(R.string.speaker_tag_label), optional = true)
                 FeldFieldButton(
                     text = type.takeUnless { it.isCustom }?.name,
-                    placeholder = "No tag",
+                    placeholder = stringResource(R.string.speaker_no_tag),
                     leadingIconId = FeldIconId.Tag,
                     onClick = { showTags = true },
                 )
@@ -129,7 +131,7 @@ fun CustomSpeakerDialog(
         }
 
         Spacer(Modifier.height(20.dp))
-        FieldLabel("Color")
+        FieldLabel(stringResource(R.string.speaker_color_label))
         FeldColorSwatches(
             colors = palette,
             selected = color,
@@ -146,7 +148,7 @@ fun CustomSpeakerDialog(
         SpeakerPreview(name = name, color = accent, seed = seed)
         if (onDelete != null) {
             Spacer(Modifier.height(10.dp))
-            FeldTextButton("Delete speaker", onClick = onDelete)
+            FeldTextButton(stringResource(R.string.speaker_delete), onClick = onDelete)
         }
     }
 

@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.FeldApp
+import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.TapMode
 import com.example.feldelysium.domain.model.DialogueEntry
@@ -327,7 +329,7 @@ private fun PlaybackStage(
         ) {
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
-                "Back",
+                stringResource(R.string.common_back),
                 tint = ChromaKeyGreen.copy(alpha = 0.0f),
             )
         }

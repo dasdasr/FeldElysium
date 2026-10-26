@@ -1,6 +1,8 @@
 package com.example.feldelysium.presentation.editor
 
+import android.content.Context
 import androidx.compose.runtime.saveable.Saver
+import com.example.feldelysium.R
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.SceneInfo
 import com.example.feldelysium.domain.model.Speaker
@@ -22,16 +24,15 @@ data class EditorUiState(
     fun entry(id: String) = entries.firstOrNull { it.id == id }
 }
 
-data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
-    val caption: String
-        get() {
-            if (lineCount == 0) return "No lines"
-            val lines = if (lineCount == 1) "1 line" else "$lineCount lines"
-            if (newSpeakerCount == 0) return lines
-            val speakers =
-                if (newSpeakerCount == 1) "1 new speaker" else "$newSpeakerCount new speakers"
-            return "$lines · $speakers"
-        }
+data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int)
+
+fun ImportPreview.caption(context: Context): String {
+    if (lineCount == 0) return context.getString(R.string.import_preview_no_lines)
+    val res = context.resources
+    val lines = res.getQuantityString(R.plurals.import_preview_lines, lineCount, lineCount)
+    if (newSpeakerCount == 0) return lines
+    val speakers = res.getQuantityString(R.plurals.import_preview_new_speakers, newSpeakerCount, newSpeakerCount)
+    return "$lines · $speakers"
 }
 
 @Serializable

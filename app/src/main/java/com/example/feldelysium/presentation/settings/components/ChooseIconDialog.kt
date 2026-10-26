@@ -30,11 +30,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.feldelysium.R
 import com.example.feldelysium.data.speaker.SpeakerStorage
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
@@ -109,9 +111,9 @@ fun ChooseImageDialog(
     }
 
     FeldDialog(
-        title = "Choose icon",
-        eyebrow = "Speaker icon",
-        subtitle = "Pick a picture for the speaker.",
+        title = stringResource(R.string.choose_icon_title),
+        eyebrow = stringResource(R.string.choose_icon_eyebrow),
+        subtitle = stringResource(R.string.choose_icon_subtitle),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
@@ -154,7 +156,7 @@ fun ChooseImageDialog(
                                     size = 12.dp,
                                 )
                                 Text(
-                                    text = "Add custom image",
+                                    text = stringResource(R.string.choose_icon_add_custom),
                                     style = MaterialTheme.typography.labelSmall.copy(
                                         fontSize = 11.sp,
                                         lineHeight = 10.sp,
@@ -184,7 +186,9 @@ fun ChooseImageDialog(
                                     model = tile.uri,
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize().padding(6.dp),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(6.dp),
                                 )
                             }
                         }

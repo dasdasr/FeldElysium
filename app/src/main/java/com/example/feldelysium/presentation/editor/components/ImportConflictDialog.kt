@@ -14,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldChip
@@ -28,33 +30,39 @@ import com.example.feldelysium.domain.model.ImportPreview
 fun ImportConflictDialog(preview: ImportPreview, onConfirm: (ImportPolicy) -> Unit, onDismiss: () -> Unit) {
     var policy by remember { mutableStateOf(ImportPolicy.SKIP) }
     val names = preview.conflicts.take(5).joinToString { it.name } +
-        if (preview.conflicts.size > 5) "…" else ""
+            if (preview.conflicts.size > 5) "…" else ""
 
     FeldDialog(
-        title = "Already exists",
-        eyebrow = "Import pack",
+        title = stringResource(R.string.import_conflict_title),
+        eyebrow = stringResource(R.string.import_conflict_eyebrow),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = "Import",
+                confirmLabel = stringResource(R.string.import_conflict_confirm),
                 onConfirm = { onConfirm(policy) },
                 onCancel = onDismiss,
             )
         },
     ) {
         Text(
-            "${preview.conflicts.size} speaker(s) from the pack are already in your list: $names",
+            stringResource(
+                R.string.import_conflict_count,
+                preview.conflicts.size,
+                names,
+            ),
             style = MaterialTheme.typography.bodyMedium,
         )
+
         Spacer(Modifier.height(16.dp))
+
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(
-                ImportPolicy.SKIP to "Skip",
-                ImportPolicy.REPLACE to "Replace",
-                ImportPolicy.KEEP_BOTH to "Keep both",
-            ).forEach { (p, label) ->
+                ImportPolicy.SKIP to R.string.import_conflict_skip,
+                ImportPolicy.REPLACE to R.string.import_conflict_replace,
+                ImportPolicy.KEEP_BOTH to R.string.import_conflict_keep_both,
+            ).forEach { (p, labelRes) ->
                 FeldChip(
-                    label,
+                    text = stringResource(labelRes),
                     selected = policy == p,
                     onClick = { policy = p },
                     modifier = Modifier.height(34.dp),
@@ -62,20 +70,33 @@ fun ImportConflictDialog(preview: ImportPreview, onConfirm: (ImportPolicy) -> Un
                 )
             }
         }
+
         Spacer(Modifier.height(10.dp))
+
         Text(
-            when (policy) {
-                ImportPolicy.SKIP -> "Existing speakers stay as they are."
-                ImportPolicy.REPLACE -> "Existing speakers are overwritten by the pack versions."
-                ImportPolicy.KEEP_BOTH -> "Pack speakers are added as new copies."
-            },
+            stringResource(
+                when (policy) {
+                    ImportPolicy.SKIP ->
+                        R.string.import_conflict_skip_description
+
+                    ImportPolicy.REPLACE ->
+                        R.string.import_conflict_replace_description
+
+                    ImportPolicy.KEEP_BOTH ->
+                        R.string.import_conflict_keep_both_description
+                },
+            ),
             style = MaterialTheme.typography.labelSmall,
             color = FeldPalette.Muted,
             modifier = Modifier.padding(bottom = 4.dp),
         )
+
         if (preview.bundledSkipped > 0) {
             Text(
-                "${preview.bundledSkipped} built-in speaker(s) in the pack are always skipped.",
+                stringResource(
+                    R.string.import_conflict_bundled_skipped,
+                    preview.bundledSkipped,
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = FeldPalette.Muted,
             )
