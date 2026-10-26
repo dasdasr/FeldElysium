@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.editor
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -130,7 +132,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
         }
     }
 
-    LaunchedEffect(Unit) { vm.messages.collect { toast.show(it) } }
+    LaunchedEffect(Unit) { vm.messages.collect { toast.show(it.resolve(context)) } }
 
     val recordResult by ScreenRecordService.result.collectAsStateWithLifecycle()
     LaunchedEffect(recordResult) {
@@ -139,7 +141,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
             haptics.confirm()
             sounds.save()
         }
-        toast.show(result.toastText(askedForSound = settings.exportAudio))
+        toast.show(result.toastText(context, askedForSound = settings.exportAudio))
         ScreenRecordService.consumeResult()
     }
 
@@ -175,9 +177,9 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
             ) {
                 FeldScreenHeader(
                     title = state.sceneName,
-                    eyebrow = "SCENE EDITOR",
-                    metaStart = "${state.entries.size} LINES",
-                    metaEnd = "DIALOGUE SCENE",
+                    eyebrow = stringResource(R.string.editor_eyebrow),
+                    metaStart = stringResource(R.string.editor_lines_count, state.entries.size),
+                    metaEnd = stringResource(R.string.editor_scene_meta),
                     navIcon = null,
                     onTitleChange = { vm.renameScene(it.take(60)) },
                     onDiamondClick = { eggs?.report(EggEvent.HeaderDiamond, EggScreen.Settings) },
@@ -193,7 +195,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                         add(
                             FeldToolbarItem(
                                 FeldIconId.BulkImport,
-                                "Paste",
+                                stringResource(R.string.editor_paste)
                             ) {
                                 dialog = EditorDialog.ImportLines
                             },
@@ -202,7 +204,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                         add(
                             FeldToolbarItem(
                                 icon = FeldIconId.Play,
-                                label = "Playback",
+                                label = stringResource(R.string.editor_playback),
                                 enabled = state.entries.isNotEmpty(),
                                 onClick = {
                                     haptics.confirm()
@@ -210,7 +212,12 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                         requestRecord(
                                             settings.exportAudio,
                                             { onNavigateToPlayback() },
-                                            { toast.show(FeldError.RecordDenied.toastText(), durationMillis = 4000L) },
+                                            {
+                                                toast.show(
+                                                    FeldError.RecordDenied.toastText(context),
+                                                    durationMillis = 4000L
+                                                )
+                                            },
                                         )
                                     } else {
                                         onNavigateToPlayback()
@@ -221,7 +228,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                         add(
                             FeldToolbarItem(
                                 FeldIconId.Settings,
-                                "Settings",
+                                stringResource(R.string.editor_settings),
                                 onClick = onNavigateToSettings,
                             ),
                         )
@@ -274,12 +281,18 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                                                 seed = entry.id.hashCode(),
                                                 offset = DpOffset(0.dp, 0.dp),
                                                 items = listOf(
-                                                    FeldMenuItem("Edit", FeldIconId.Edit, onClick = edit),
                                                     FeldMenuItem(
-                                                        "Delete",
+                                                        stringResource(R.string.editor_menu_edit),
+                                                        FeldIconId.Edit,
+                                                        onClick = edit,
+                                                    ),
+                                                    FeldMenuItem(
+                                                        stringResource(R.string.editor_menu_delete),
                                                         FeldIconId.Delete,
                                                         destructive = true,
-                                                    ) { deleteEntry(entry) },
+                                                    ) {
+                                                        deleteEntry(entry)
+                                                    }
                                                 ),
                                             )
                                         }
@@ -302,7 +315,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(16.dp),
-                        contentDescription = "Add dialogue entry",
+                        contentDescription = stringResource(R.string.editor_add_entry),
                     )
                     FeldToastHost(toast, Modifier.align(Alignment.BottomCenter))
                 }
@@ -480,7 +493,7 @@ private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "Paste a script or\nadd a line.",
+                text = stringResource(R.string.editor_empty_state),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorScheme.onSurface.copy(alpha = 0.62f),
                 textAlign = TextAlign.Center,
@@ -492,12 +505,25 @@ private fun EmptyState(onImport: () -> Unit, modifier: Modifier = Modifier) {
     }
 }
 
-private fun RecordResult.toastText(askedForSound: Boolean): String = when (this) {
-    is RecordResult.Saved -> buildString {
-        append("VIDEO SAVED\n")
-        append(if (uri != null) "Gallery › FeldElysium" else "App folder › Movies")
-        if (askedForSound && !hasAudio) append(" · no sound")
-    }
+private fun RecordResult.toastText(
+    context: Context,
+    askedForSound: Boolean,
+): String = when (this) {
+    is RecordResult.Saved -> context.getString(
+        R.string.record_video_saved_message,
+        context.getString(
+            if (uri != null) {
+                R.string.record_gallery_location
+            } else {
+                R.string.record_app_folder_location
+            },
+        ),
+        if (askedForSound && !hasAudio) {
+            context.getString(R.string.record_no_sound_suffix)
+        } else {
+            ""
+        },
+    )
 
-    RecordResult.Failed -> FeldError.RecordFailed.toastText()
+    RecordResult.Failed -> FeldError.RecordFailed.toastText(context)
 }

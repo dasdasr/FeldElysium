@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.dialog.FeldDialog
 import com.example.feldelysium.designsystem.components.input.FeldTextField
@@ -68,13 +70,13 @@ fun BulkImportDialog(
     }
 
     FeldDialog(
-        title = "Paste dialogue",
-        eyebrow = "Quick add",
-        subtitle = "Known names: any case. New ones: CAPS.",
+        title = stringResource(R.string.bulk_import_title),
+        eyebrow = stringResource(R.string.bulk_import_eyebrow),
+        subtitle = stringResource(R.string.bulk_import_subtitle),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = "Import",
+                confirmLabel = stringResource(R.string.bulk_import_button),
                 onConfirm = onConfirm,
                 onCancel = onDismiss,
                 confirmEnabled = text.isNotBlank(),
@@ -84,7 +86,7 @@ fun BulkImportDialog(
         FeldTextField(
             value = text,
             onValueChange = onText,
-            placeholder = "VOLITION: This city is trying to kill you.\nKIM KITSURAGI: Let's focus.",
+            placeholder = "WORTH: I have a plan.\nYOU: Is it legal?",
             minLines = 8,
             textStyle = ImportTextStyle,
             visualTransformation = transformation,

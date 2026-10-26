@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -176,7 +177,7 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
         ) {
             Column {
                 Text(
-                    "› PREVIEW",
+                    stringResource(R.string.speaker_preview_label),
                     style = FeldDecalType.Base.copy(
                         fontSize = 11.sp,
                         letterSpacing = 1.6.sp,
@@ -220,7 +221,7 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
 
                         Column(Modifier.weight(1f)) {
                             Text(
-                                text = name.ifBlank { "Speaker name" }.uppercase(),
+                                text = name.ifBlank { stringResource(R.string.speaker_name_placeholder) }.uppercase(),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = color,
                                 maxLines = 1,
@@ -228,7 +229,7 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
                             )
 
                             Text(
-                                text = "“Sample dialogue line…”",
+                                text = stringResource(R.string.speaker_preview_sample),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.padding(top = 3.dp),
@@ -256,6 +257,8 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
 
 @Composable
 fun FieldLabel(text: String, optional: Boolean = false) {
+    val optionalSuffix = stringResource(R.string.field_optional)
+
     Text(
         text = buildAnnotatedString {
             append(text.uppercase())
@@ -266,7 +269,7 @@ fun FieldLabel(text: String, optional: Boolean = false) {
                         fontWeight = FontWeight.Normal,
                         color = FeldPalette.Muted.copy(alpha = 0.7f),
                     ),
-                ) { append("  (OPTIONAL)") }
+                ) {  append(optionalSuffix) }
             }
         },
         style = FeldDecalType.Label.copy(fontSize = 11.sp, letterSpacing = 1.4.sp),

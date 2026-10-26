@@ -3,6 +3,7 @@ package com.example.feldelysium.presentation.settings.components
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -49,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.card.FeldEntryCard
@@ -70,9 +73,6 @@ import java.io.File
 
 private val SampleTexture: Int? = null
 
-@Immutable
-private class Sample(val speaker: String, val color: Color, val text: String)
-
 private enum class SkillColor(val color: Color) {
     Intellect(Color(0xFF5BB9C3)),
     Psyche(Color(0xFF8F6FD6)),
@@ -80,37 +80,28 @@ private enum class SkillColor(val color: Color) {
     Motorics(Color(0xFFCDB03A)),
 }
 
+@Immutable
+private class Sample(
+    @StringRes val speaker: Int,
+    val color: Color,
+    @StringRes val text: Int,
+)
+
 private val Samples = listOf(
-    Sample(
-        "Electrochemistry",
-        SkillColor.Physique.color,
-        "Oh, this one f*cks. Look at those curves. Look at that filthy little lowercase g.",
-    ),
-    Sample("Encyclopedia", SkillColor.Intellect.color, "Historically, the serif emerged as a response to—"),
-    Sample("Inland Empire", SkillColor.Psyche.color, "Close your eyes. Listen to the letters."),
-    Sample("Savoir Faire", SkillColor.Motorics.color, "Go with the ugly one. Make it look intentional."),
-    Sample("Perception", SkillColor.Motorics.color, "Look at that lowercase ‘a’. Something is deeply wrong with it."),
-    Sample(
-        "Authority",
-        SkillColor.Psyche.color,
-        "You will choose the serif. You will respect the serif. You will not ask.",
-    ),
-    Sample("Volition", SkillColor.Psyche.color, "We are making an interface, not a suicide note."),
-    Sample("Electrochemistry", SkillColor.Physique.color, "The bold one. The f*cking bold one."),
-    Sample("Authority", SkillColor.Psyche.color, "Nobody respects a man whose letters look cheap."),
-    Sample("Volition", SkillColor.Psyche.color, "Choose something readable."),
-    Sample("Electrochemistry", SkillColor.Physique.color, "Choose something unreasonably sexy."),
-    Sample(
-        "Rhetoric",
-        SkillColor.Intellect.color,
-        "Sans-serif is a bourgeois conspiracy to make everything look like a startup.",
-    ),
-    Sample(
-        "Inland Empire",
-        SkillColor.Psyche.color,
-        "This one smells like wet concrete and an inspiration you can no longer access.",
-    ),
-    Sample("Authority", SkillColor.Psyche.color, "Commit. To. The. Font. Detective."),
+    Sample(R.string.skill_electrochemistry, SkillColor.Physique.color, R.string.font_sample_01),
+    Sample(R.string.skill_encyclopedia, SkillColor.Intellect.color, R.string.font_sample_02),
+    Sample(R.string.skill_inland_empire, SkillColor.Psyche.color, R.string.font_sample_03),
+    Sample(R.string.skill_savoir_faire, SkillColor.Motorics.color, R.string.font_sample_04),
+    Sample(R.string.skill_perception, SkillColor.Motorics.color, R.string.font_sample_05),
+    Sample(R.string.skill_authority, SkillColor.Psyche.color, R.string.font_sample_06),
+    Sample(R.string.skill_volition, SkillColor.Psyche.color, R.string.font_sample_07),
+    Sample(R.string.skill_electrochemistry, SkillColor.Physique.color, R.string.font_sample_08),
+    Sample(R.string.skill_authority, SkillColor.Psyche.color, R.string.font_sample_09),
+    Sample(R.string.skill_volition, SkillColor.Psyche.color, R.string.font_sample_10),
+    Sample(R.string.skill_electrochemistry, SkillColor.Physique.color, R.string.font_sample_11),
+    Sample(R.string.skill_rhetoric, SkillColor.Intellect.color, R.string.font_sample_12),
+    Sample(R.string.skill_inland_empire, SkillColor.Psyche.color, R.string.font_sample_13),
+    Sample(R.string.skill_authority, SkillColor.Psyche.color, R.string.font_sample_14),
 )
 
 @Stable
@@ -157,9 +148,9 @@ fun PlaybackFontDialog(
     }
 
     FeldDialog(
-        title = "Typeface",
-        eyebrow = "Playback",
-        subtitle = "The right font changes the whole mood.",
+        title = stringResource(R.string.settings_typeface_title),
+        eyebrow = stringResource(R.string.settings_playback_section),
+        subtitle = stringResource(R.string.font_dialog_subtitle),
         onDismiss = onDismiss,
         modifier = modifier,
         footer = {
@@ -169,13 +160,13 @@ fun PlaybackFontDialog(
                     onReset()
                 },
                 onCancel = onDismiss,
-                confirmLabel = "Done",
+                confirmLabel = stringResource(R.string.common_done),
                 buttonSpec = FeldButtonDefaults.Cream,
             )
         },
     ) {
         Text(
-            text = "TAP A CARD TO CHANGE THE LINES  › › ›",
+            text = stringResource(R.string.font_dialog_hint),
             style = MaterialTheme.typography.labelSmall,
             color = FeldPalette.Muted,
         )
@@ -214,8 +205,10 @@ fun PlaybackFontDialog(
         Spacer(Modifier.height(16.dp))
 
         DashedAddButton(
-            label = if (custom == null) "ADD YOUR OWN FONT" else "REPLACE YOUR FONT",
-            hint = ".ttf or .otf",
+            label = stringResource(
+                if (custom == null) R.string.font_add_own else R.string.font_replace_own
+            ),
+            hint = stringResource(R.string.font_file_hint),
             onClick = {
                 haptics.tick()
                 picker.launch(arrayOf("*/*"))
@@ -282,9 +275,9 @@ private fun SampleCard(
 ) {
     Box(modifier.graphicsLayer { rotationZ = tilt }) {
         FeldEntryCard(
-            speakerName = sample.speaker,
+            speakerName = stringResource(sample.speaker),
             speakerColor = sample.color,
-            text = sample.text,
+            text = stringResource(sample.text),
             number = number,
             ambient = 0.7f,
             seed = seed,
@@ -326,7 +319,7 @@ private fun FontTileCard(tile: FontTile, selected: Boolean, onClick: () -> Unit)
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Aa",
+                text = stringResource(R.string.font_tile_glyph),
                 style = TextStyle(fontFamily = tile.family, fontSize = 34.sp),
                 color = FeldPalette.Cream,
             )

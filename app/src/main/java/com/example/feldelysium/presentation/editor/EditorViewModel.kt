@@ -1,9 +1,11 @@
 package com.example.feldelysium.presentation.editor
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.feldelysium.R
 import com.example.feldelysium.data.settings.AppSettings
 import com.example.feldelysium.data.settings.SamplesMode
 import com.example.feldelysium.data.settings.SettingsRepository
@@ -60,7 +62,7 @@ class EditorViewModel(
         editorUiState(session.scene.value, PredefinedSpeakers.ALL, PredefinedSpeakers.TAGS, AppSettings(), emptyList()),
     )
 
-    private val _messages = Channel<String>(Channel.BUFFERED)
+    private val _messages = Channel<EditorMessage>(Channel.BUFFERED)
 
     val messages = _messages.receiveAsFlow()
 
@@ -137,7 +139,7 @@ class EditorViewModel(
     fun saveScene() {
         viewModelScope.launch {
             session.save()
-            notify("Scene saved")
+            notify(R.string.message_scene_saved)
         }
     }
 
@@ -147,7 +149,7 @@ class EditorViewModel(
             val ok = attempt { output.use { session.exportScene(it) } }
             if (ok) sounds.play(SoundCue.UiExport)
             if (ok) {
-                notify("Scene exported")
+                notify(R.string.message_scene_exported)
             } else {
                 fail(FeldError.ExportFailed)
             }
@@ -160,19 +162,22 @@ class EditorViewModel(
             val ok = attempt { input.use { session.importScene(it) } }
             if (ok) sounds.play(SoundCue.UiDone)
             if (ok) {
-                notify("Scene imported")
+                notify(R.string.message_scene_imported)
             } else {
                 fail(FeldError.ImportFailed)
             }
         }
     }
 
-    private fun notify(message: String): Boolean {
-        _messages.trySend(message)
+    private fun notify(@StringRes message: Int): Boolean {
+        _messages.trySend(EditorMessage.Text(message))
         return false
     }
 
-    private fun fail(e: FeldError): Boolean = notify(e.toastText())
+    private fun fail(e: FeldError): Boolean {
+        _messages.trySend(EditorMessage.Error(e))
+        return false
+    }
 
     private fun customSpeakers() = state.value.allSpeakers.filterNot { it.isBundled }
 
