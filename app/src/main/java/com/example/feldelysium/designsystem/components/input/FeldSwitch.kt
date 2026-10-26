@@ -115,7 +115,9 @@ fun FeldSwitch(
 
     LaunchedEffect(checked) {
         val t = if (checked) 0f else 1f
-        if (!(pos.isRunning && pos.targetValue == t)) pos.animateTo(t, Settle)
+        if (pos.targetValue != t) {
+            pos.animateTo(t, Settle)
+        }
     }
 
     val press by animateFloatAsState(if (pressed) 1f else 0f, tween(90), label = "press")
@@ -160,7 +162,7 @@ fun FeldSwitch(
         if (newChecked != currentChecked) {
             haptics.confirm()
             sounds.toggle(seed)
-            currentOnChange(!currentChecked)
+            currentOnChange(newChecked)
         }
     }
 

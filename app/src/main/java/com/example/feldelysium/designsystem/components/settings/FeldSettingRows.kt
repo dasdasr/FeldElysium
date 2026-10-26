@@ -146,6 +146,7 @@ fun FeldSettingSwitchRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     status: FeldSettingStatus? = null,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
     seed: Int = rememberSeed(),
 ) {
     FeldSettingRow(
@@ -155,11 +156,13 @@ fun FeldSettingSwitchRow(
         modifier = modifier,
         status = status,
         role = Role.Switch,
+        contentPadding = contentPadding,
         onClick = { onCheckedChange(!checked) },
         trailing = {
             FeldSwitch(
                 checked = checked,
-                onCheckedChange = { },
+                onCheckedChange = onCheckedChange,
+                enabled = status == null,
                 seed = seed,
             )
         },

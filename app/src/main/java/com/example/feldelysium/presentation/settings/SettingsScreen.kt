@@ -128,9 +128,9 @@ fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
                 .statusBarsPadding(),
         ) {
             FeldScreenHeader(
-                title = "App settings",
-                eyebrow = "Settings",
-                subtitle = "Tune your scenes. Keep the vibe.",
+                title = "Settings",
+                eyebrow = "The workshop",
+                subtitle = "Make it work for you.",
                 onNav = { leaving = true },
             )
 
