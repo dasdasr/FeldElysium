@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.data.settings.AppSettings
@@ -46,9 +45,8 @@ import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
 import com.example.feldelysium.designsystem.components.input.FeldSliderColors
-import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.input.swatchSpec
-import com.example.feldelysium.designsystem.components.settings.FeldSettingRow
+import com.example.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
@@ -162,28 +160,22 @@ private fun MediaPane(
         if (video) {
             Spacer(Modifier.height(4.dp))
             FeldDivider()
-            FeldSettingRow(
+            FeldSettingSwitchRow(
                 icon = FeldIconId.Sound,
                 title = "Mute sound",
                 subtitle = "Mute video sound.",
-                role = Role.Switch,
+                checked = !settings.backgroundVideoSound,
+                onCheckedChange = { onVideoSound(!it) },
                 contentPadding = rowPadding,
-                onClick = { onVideoSound(!settings.backgroundVideoSound) },
-                trailing = {
-                    FeldSwitch(checked = !settings.backgroundVideoSound, onCheckedChange = { })
-                },
             )
             FeldDivider()
-            FeldSettingRow(
+            FeldSettingSwitchRow(
                 icon = FeldIconId.Cinema,
                 title = "Fill screen",
                 subtitle = "Crop videos to fit the screen.",
-                role = Role.Switch,
+                checked = settings.backgroundVideoFill,
+                onCheckedChange = onVideoFill,
                 contentPadding = rowPadding,
-                onClick = { onVideoFill(!settings.backgroundVideoFill) },
-                trailing = {
-                    FeldSwitch(checked = settings.backgroundVideoFill, onCheckedChange = { })
-                },
             )
             FeldDivider()
         }
