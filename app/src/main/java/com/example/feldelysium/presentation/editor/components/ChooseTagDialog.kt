@@ -62,7 +62,7 @@ fun ChooseTagDialog(
                     text = if (t.isCustom) "No tag" else t.name,
                     selected = t.id == current.id,
                     onClick = { current = t },
-                    modifier = Modifier.height(34.dp),
+                    height = 34.dp,
                     accent = FeldChipColors.Cream,
                 )
             }
@@ -70,7 +70,7 @@ fun ChooseTagDialog(
                 text = "+ New",
                 selected = creating,
                 onClick = { creating = !creating },
-                modifier = Modifier.height(34.dp),
+                height = 34.dp,
                 accent = FeldChipColors.Orange,
             )
             if (onManage != null) {
@@ -78,7 +78,7 @@ fun ChooseTagDialog(
                     text = "Edit tags",
                     selected = false,
                     onClick = onManage,
-                    modifier = Modifier.height(34.dp),
+                    height = 34.dp,
                     accent = FeldChipColors.Cream,
                     outline = false,
                 )
@@ -111,7 +111,7 @@ fun ChooseTagDialog(
                     text = "Allow checks",
                     selected = allowsChecks,
                     onClick = { allowsChecks = !allowsChecks },
-                    modifier = Modifier.height(30.dp),
+                    height = 30.dp,
                     accent = FeldChipColors.Teal,
                     outline = false,
                 )
@@ -134,7 +134,7 @@ fun ChooseTagDialog(
                         allowsChecks = false
                         creating = false
                     },
-                    modifier = Modifier.height(34.dp),
+                    height = 34.dp,
                     accent = FeldChipColors.Orange,
                 )
             }
