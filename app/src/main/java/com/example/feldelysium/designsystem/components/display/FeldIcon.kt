@@ -61,6 +61,7 @@ enum class FeldIconId {
     Video,
     AuthorSamples,
     Typeface,
+    Language,
     Save,
     Sound,
     Microphone,
@@ -138,6 +139,7 @@ fun FeldIcon(
         FeldIconId.Reals -> R.drawable.ic_fe_real
         FeldIconId.Calendar -> R.drawable.ic_fe_calendar
         FeldIconId.Time -> R.drawable.ic_fe_time
+        FeldIconId.Language -> R.drawable.ic_fe_language
     }
     Icon(
         painter = painterResource(res),

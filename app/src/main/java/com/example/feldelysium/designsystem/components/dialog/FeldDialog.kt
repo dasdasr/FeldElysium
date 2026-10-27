@@ -58,7 +58,7 @@ fun FeldDialog(
     headerNote: String? = "Feld Elysium\n// UI system",
     ambient: Float? = 0.6f,
     seed: Int = rememberSeed(),
-    footer: @Composable () -> Unit,
+    footer: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Dialog(
@@ -96,8 +96,12 @@ fun FeldDialog(
                 Spacer(Modifier.height(8.dp))
             }
 
-            FeldDivider(seed = seed + 3)
-            footer()
+            if (footer != null) {
+                FeldDivider(seed = seed + 3)
+                footer()
+            } else {
+                Spacer(Modifier.height(20.dp))
+            }
         }
     }
 }

@@ -129,8 +129,12 @@ half4 main(float2 p) {
     rgb += (grain - 0.5) * grainStrength;
     rgb += (fiber - 0.5) * fiberStrength;
     rgb = mix(rgb, float3(crackColor.rgb), scuff * 0.08);
+    rgb *= 1.05 - 0.12 * (p.y / size.y);
+    rgb *= 1.0 - 0.10 * (1.0 - smoothstep(1.0, 8.0, depth - cut));
     rgb += 0.05 * (1.0 - smoothstep(0.0, 1.6, depth - cut));
     rgb = mix(rgb, float3(crackColor.rgb), crack * crackStrength);
+    float speck = step(0.994, noise(sp / 1.4));
+    rgb = mix(rgb, float3(crackColor.rgb), speck * 0.45);   
     rgb *= 1.0 - pressShade * press;
 
     float a = float(baseColor.a) * edgeAlpha;

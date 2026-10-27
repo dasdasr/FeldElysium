@@ -17,6 +17,7 @@
     <string name="common_current">CURRENT</string>
     <string name="common_reset">RESET</string>
     <string name="common_confirm">Confirm</string>
+    <string name="common_apply">Apply</string>
 
     <!-- Settings header -->
     <string name="settings_title">Settings</string>
@@ -34,20 +35,23 @@
     <string name="settings_autoplay_title">Autoplay</string>
     <string name="settings_autoplay_subtitle">Scroll lines automatically</string>
     <string name="settings_autoplay_speed_title">Autoplay speed</string>
-    <string name="settings_autoplay_speed_subtitle">How long each line stays on screen</string>
+    <string name="settings_autoplay_speed_subtitle">Time each line stays on screen</string>
     <string name="settings_continue_button_title">Continue button</string>
-    <string name="settings_continue_button_subtitle">Show Continue button</string>
+    <string name="settings_continue_button_subtitle">Show the Continue button in Playback</string>
     <string name="settings_advance_dialogue_title">Advance dialogue</string>
     <string name="settings_advance_whole_screen">Tap anywhere to show the next line</string>
     <string name="settings_advance_continue_button">Use Continue to advance. Scroll through dialogue history</string>
     <string name="settings_advance_autoplay_only">Autoplay only</string>
     <string name="settings_typeface_title">Typeface</string>
     <string name="settings_typeface_subtitle">Dialogue text in playback</string>
+    <string name="settings_tap_mode_whole_screen">Anywhere</string>
+    <string name="settings_tap_mode_continue_button">Button</string>
+    <string name="settings_tap_mode_nowhere">Nowhere</string>
 
     <!-- Video export -->
     <string name="settings_video_export_section">Video export</string>
     <string name="settings_record_playback_title">Record playback</string>
-    <string name="settings_record_playback_subtitle">Playback button records the screen to a video</string>
+    <string name="settings_record_playback_subtitle">Playback button records your screen</string>
     <string name="settings_record_sound_title">Record sound</string>
     <string name="settings_record_sound_subtitle">App sound goes into the video</string>
     <string name="settings_android_10_required">Needs Android 10 or newer</string>
@@ -110,7 +114,7 @@
     <!-- Tags -->
     <string name="tags_title">Tags</string>
     <string name="tags_manage_eyebrow">Manage tags</string>
-    <string name="tags_empty_message">You have no tags yet. Create one while choosing a tag for a speaker.</string>
+    <string name="tags_empty_message">No tags yet. Add one when editing a speaker.</string>
     <string name="tags_built_in">BUILT-IN</string>
     <string name="tags_delete_title">Delete tag</string>
     <string name="tags_delete_unused_message">This tag is not used by any speaker.</string>
@@ -200,7 +204,7 @@
     <string name="scenes_top_bar_title">DIALOGUE EDITOR</string>
     <string name="scenes_saved">SAVED</string>
     <string name="scenes_title">SCENES</string>
-    <string name="scenes_hint_hold_folder">HOLD A FOLDER FOR MORE</string>
+    <string name="scenes_hint_hold_folder">HOLD TO MANAGE</string>
     <string name="scenes_hold_for_more">HOLD FOR MORE</string>
     <string name="scenes_empty_tape">NOTHING ON TAPE YET</string>
     <string name="scenes_menu_clear_lines">Clear lines</string>
@@ -228,14 +232,14 @@
     <!-- Background dialog -->
     <string name="background_eyebrow_animated">Animated</string>
     <string name="background_eyebrow_plain">Plain</string>
-    <string name="background_subtitle">Set a visual tone for your scene.</string>
+    <string name="background_subtitle">Scene background</string>
     <string name="background_tab_media">Media</string>
     <string name="background_video">Video</string>
     <string name="background_image">Image</string>
     <string name="background_mute_title">Mute sound</string>
-    <string name="background_mute_subtitle">Mute video sound.</string>
+    <string name="background_mute_subtitle">Mute video audio.</string>
     <string name="background_fill_title">Fill screen</string>
-    <string name="background_fill_subtitle">Crop videos to fit the screen.</string>
+    <string name="background_fill_subtitle">Crop video to fill the frame.</string>
     <string name="background_no_media">NO MEDIA YET</string>
 
     <!-- Bar icons dialog -->
@@ -260,13 +264,13 @@
     <!-- Playback UI text dialog -->
     <string name="playback_ui_title">Scene info</string>
     <string name="playback_ui_eyebrow">Set details</string>
-    <string name="playback_ui_subtitle">Add some context to your scene.</string>
+    <string name="playback_ui_subtitle">Scene details</string>
     <string name="playback_ui_reals">Reals</string>
     <string name="playback_ui_time">Time</string>
     <string name="playback_ui_day">Day</string>
 
     <!-- Font dialog -->
-    <string name="font_dialog_subtitle">The right font changes the whole mood.</string>
+    <string name="font_dialog_subtitle">Try another typeface.</string>
     <string name="font_dialog_hint">TAP A CARD TO CHANGE THE LINES  › › ›</string>
     <string name="font_add_own">ADD YOUR OWN FONT</string>
     <string name="font_replace_own">REPLACE YOUR FONT</string>
@@ -314,7 +318,7 @@
     <string name="settings_font_invalid">That\'s not a usable font file</string>
     <string name="error_record_denied">NO TAPE, NO SHOW\nAllow screen recording, or turn off «Record playback» in Settings</string>
     <string name="error_record_failed">TAPE JAMMED\nVideo wasn\'t saved. The record choked, try again</string>
-    <string name="error_export_failed">EXPORT FAILED\nThe scene refused to leave</string>
+    <string name="error_export_failed">EXPORT FAILED\nCouldn\'t export the scene</string>
     <string name="error_import_failed">CAN\'T READ THIS\nThat file is not what I was expecting</string>
     <string name="error_empty_import">NOTHING FOUND\nTry «NAME: text»</string>
     <string name="error_no_script_pasted">EMPTY\nPaste some lines first, I can\'t read minds</string>
@@ -323,5 +327,6 @@
     <string name="settings_language_title">Language</string>
     <string name="settings_language_subtitle">App interface language</string>
     <string name="settings_language_system">System</string>
+    <string name="settings_language_eyebrow">Choose language</string>
 
 </resources>

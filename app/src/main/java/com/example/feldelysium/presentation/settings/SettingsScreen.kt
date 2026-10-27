@@ -56,6 +56,7 @@ import com.example.feldelysium.presentation.editor.components.ManageTagsDialog
 import com.example.feldelysium.presentation.settings.components.BackgroundPickerDialog
 import com.example.feldelysium.presentation.settings.components.BarIconsDialog
 import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
+import com.example.feldelysium.presentation.settings.components.LanguageDialog
 import com.example.feldelysium.presentation.settings.components.PlaybackFontDialog
 import com.example.feldelysium.presentation.settings.components.PlaybackUiTextDialog
 import com.example.feldelysium.theme.FONT_CUSTOM
@@ -94,6 +95,7 @@ fun SettingsScreen(
     var showTags by remember { mutableStateOf(false) }
     var leaving by remember { mutableStateOf(false) }
     var showBarIcons by remember { mutableStateOf(false) }
+    var showLanguage by remember { mutableStateOf(false) }
 
     BackHandler(enabled = !leaving) { leaving = true }
 
@@ -257,7 +259,7 @@ fun SettingsScreen(
                         } else {
                             FeldSettingStatus.LOCK
                         },
-                        value = settings.tapMode.label,
+                        value = settings.tapMode.localizedLabel(),
                         onClick = {
                             haptics.tick()
                             vm.dispatch(
@@ -427,7 +429,7 @@ fun SettingsScreen(
                     val language = AppLanguage.current()
 
                     FeldSettingValueRow(
-                        icon = FeldIconId.Typeface,
+                        icon = FeldIconId.Language,
                         title = stringResource(R.string.settings_language_title),
                         subtitle = stringResource(R.string.settings_language_subtitle),
                         value = when (language) {
@@ -437,8 +439,7 @@ fun SettingsScreen(
                         },
                         onClick = {
                             haptics.tick()
-                            val next = AppLanguage.entries[(language.ordinal + 1) % AppLanguage.entries.size]
-                            AppLanguage.apply(next)
+                            showLanguage = true
                         },
                     )
                 }
@@ -571,6 +572,14 @@ fun SettingsScreen(
         )
     }
 
+    if (showLanguage) {
+        LanguageDialog(
+            current = AppLanguage.current(),
+            onSelect = { AppLanguage.apply(it) },
+            onDismiss = { showLanguage = false },
+        )
+    }
+
     pack.pending?.let { pending ->
         ImportConflictDialog(
             preview = pending.preview,
@@ -626,4 +635,16 @@ private fun AppSettings.backgroundIsDefault(): Boolean {
             backgroundMediaIsVideo == default.backgroundMediaIsVideo &&
             backgroundVideoSound == default.backgroundVideoSound &&
             backgroundVideoFill == default.backgroundVideoFill
+}
+
+@Composable
+private fun TapMode.localizedLabel(): String = when (this) {
+    TapMode.WHOLE_SCREEN ->
+        stringResource(R.string.settings_tap_mode_whole_screen)
+
+    TapMode.CONTINUE_BUTTON ->
+        stringResource(R.string.settings_tap_mode_continue_button)
+
+    TapMode.NOWHERE ->
+        stringResource(R.string.settings_tap_mode_nowhere)
 }

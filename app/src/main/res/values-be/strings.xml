@@ -14,9 +14,10 @@
     <string name="common_ok">OK</string>
     <string name="common_import">Імпарт</string>
     <string name="common_export">Экспарт</string>
-    <string name="common_current">ПАТАЧНЫ</string>
+    <string name="common_current">БЯГУЧЫ</string>
     <string name="common_reset">СКІНУЦЬ</string>
     <string name="common_confirm">Пацвердзіць</string>
+    <string name="common_apply">Ужыць</string>
 
     <!-- Settings header -->
     <string name="settings_title">Налады</string>
@@ -30,33 +31,36 @@
     <string name="settings_status_line_title">Радок стану</string>
     <string name="settings_status_line_subtitle">Рэалы, час і дзень</string>
     <string name="settings_panel_icons_title">Значкі панэлі</string>
-    <string name="settings_panel_icons_subtitle">Абяры, якія значкі панэлі падсвечаны</string>
+    <string name="settings_panel_icons_subtitle">Выберы, якія значкі панэлі вылучаны</string>
     <string name="settings_autoplay_title">Аўтапрайграванне</string>
     <string name="settings_autoplay_subtitle">Аўтаматычна пракручваць рэплікі</string>
     <string name="settings_autoplay_speed_title">Хуткасць аўтапрайгравання</string>
-    <string name="settings_autoplay_speed_subtitle">Колькі часу рэпліка застаецца на экране</string>
+    <string name="settings_autoplay_speed_subtitle">Як доўга паказваць кожную рэпліку</string>
     <string name="settings_continue_button_title">Кнопка «Далей»</string>
-    <string name="settings_continue_button_subtitle">Паказваць кнопку «Далей»</string>
-    <string name="settings_advance_dialogue_title">Перагортванне дыялогу</string>
+    <string name="settings_continue_button_subtitle">Паказваць кнопку «Далей» у рэжыме прайгравання</string>
+    <string name="settings_advance_dialogue_title">Пераход да наступнай рэплікі</string>
     <string name="settings_advance_whole_screen">Націсні ў любым месцы, каб паказаць наступную рэпліку</string>
-    <string name="settings_advance_continue_button">Націскай «Далей», каб ісці наперад. Гісторыю дыялогу можна пракручваць</string>
+    <string name="settings_advance_continue_button">Націсні «Далей», каб перайсці да наступнай рэплікі Гісторыю дыялогу можна пракручваць</string>
     <string name="settings_advance_autoplay_only">Толькі аўтапрайграванне</string>
     <string name="settings_typeface_title">Шрыфт</string>
     <string name="settings_typeface_subtitle">Тэкст дыялогу пры прайграванні</string>
+    <string name="settings_tap_mode_whole_screen">Увесь экран</string>
+    <string name="settings_tap_mode_continue_button">Кнопка</string>
+    <string name="settings_tap_mode_nowhere">Нідзе</string>
 
     <!-- Video export -->
     <string name="settings_video_export_section">Экспарт відэа</string>
     <string name="settings_record_playback_title">Запіс прайгравання</string>
-    <string name="settings_record_playback_subtitle">Кнопка прайгравання запісвае экран у відэа</string>
+    <string name="settings_record_playback_subtitle">Кнопка прайгравання запісвае экран</string>
     <string name="settings_record_sound_title">Запіс гуку</string>
-    <string name="settings_record_sound_subtitle">Гук праграмы тrапляе ў відэа</string>
+    <string name="settings_record_sound_subtitle">Гук праграмы запісваецца ў відэа</string>
     <string name="settings_android_10_required">Патрэбны Android 10 або навейшы</string>
 
     <!-- Background -->
     <string name="settings_background_section">Фон</string>
     <string name="settings_background_color">Колер</string>
     <string name="settings_background_default">Стандартны</string>
-    <string name="settings_background_custom">Свой</string>
+    <string name="settings_background_custom">Уласны</string>
 
     <!-- Speakers -->
     <string name="settings_speakers_section">Спікеры</string>
@@ -71,14 +75,14 @@
     <string name="settings_samples_hide_after_import">Схаваюцца пасля першага імпарту пакета</string>
     <string name="settings_samples_always_visible">Заўсёды бачныя ў спісе выбару</string>
     <string name="settings_samples_always_hidden">Заўсёды схаваныя</string>
-    <string name="settings_samples_auto">Аўто</string>
+    <string name="settings_samples_auto">Аўтаматычна</string>
     <string name="settings_samples_show">Паказваць</string>
     <string name="settings_samples_hide">Хаваць</string>
 
     <!-- Coming soon -->
     <string name="settings_coming_soon_section">Хутка</string>
     <string name="settings_lock_landscape_title">Заблакаваць альбомную арыентацыю</string>
-    <string name="settings_lock_landscape_subtitle">Замкні яго</string>
+    <string name="settings_lock_landscape_subtitle">Замацаваць альбомную арыентацыю</string>
 
     <!-- Editor screen -->
     <string name="editor_eyebrow">Рэдактар сцэны</string>
@@ -114,7 +118,7 @@
     <!-- Tags -->
     <string name="tags_title">Тэгі</string>
     <string name="tags_manage_eyebrow">Кіраванне тэгамі</string>
-    <string name="tags_empty_message">Тэгаў пакуль няма. Стварыць тэг можна, калі выбіраеш яго для спікера.</string>
+    <string name="tags_empty_message">Тэгаў пакуль няма. Дадай тэг пры рэдагаванні спікера.</string>
     <string name="tags_built_in">УБУДАВАНЫЯ</string>
     <string name="tags_delete_title">Выдаліць тэг</string>
     <string name="tags_delete_unused_message">Гэты тэг не выкарыстоўваецца ніводным спікерам.</string>
@@ -156,7 +160,7 @@
     <!-- Bulk import dialog -->
     <string name="bulk_import_title">Устаўка дыялогу</string>
     <string name="bulk_import_eyebrow">Хуткае даданне</string>
-    <string name="bulk_import_subtitle">Вядомыя імёны — у любым рэгістры. Новыя — ВЯЛІКІМІ.</string>
+    <string name="bulk_import_subtitle">Знаёмыя імёны — незалежна ад рэгістру. Новыя пішы ВЯЛІКІМІ.</string>
     <string name="bulk_import_button">Імпарт</string>
 
     <!-- Entry check editor -->
@@ -166,13 +170,13 @@
     <string name="check_active">Актыўная</string>
     <string name="check_difficulty">Складанасць</string>
     <string name="check_result">Вынік</string>
-    <string name="check_left_die">Левая косць</string>
-    <string name="check_right_die">Правая косць</string>
+    <string name="check_left_die">Левы кубік</string>
+    <string name="check_right_die">Правы кубік</string>
     <string name="check_difficulty_trivial">Трывіяльная</string>
     <string name="check_difficulty_easy">Лёгкая</string>
     <string name="check_difficulty_medium">Сярэдняя</string>
     <string name="check_difficulty_challenging">Складаная</string>
-    <string name="check_difficulty_formidable">Грозная</string>
+    <string name="check_difficulty_formidable">Гранічна складаная</string>
     <string name="check_difficulty_legendary">Легендарная</string>
     <string name="check_difficulty_heroic">Гераічная</string>
     <string name="check_difficulty_godly">Боская</string>
@@ -204,7 +208,7 @@
     <string name="scenes_top_bar_title">РЭДАКТАР ДЫЯЛОГАЎ</string>
     <string name="scenes_saved">ЗАХАВАНА</string>
     <string name="scenes_title">СЦЭНЫ</string>
-    <string name="scenes_hint_hold_folder">ЗАЦІСНІ ПАПКУ, КАБ ПАБАЧЫЦЬ БОЛЬШ</string>
+    <string name="scenes_hint_hold_folder">ЗАЦІСНІ, КАБ КІРАВАЦЬ ПАПКАЙ</string>
     <string name="scenes_hold_for_more">ЗАЦІСНІ, КАБ ПАБАЧЫЦЬ БОЛЬШ</string>
     <string name="scenes_empty_tape">НА КАСЕЦЕ ПАКУЛЬ НІЧОГА</string>
     <string name="scenes_menu_clear_lines">Ачысціць рэплікі</string>
@@ -234,14 +238,14 @@
     <!-- Background dialog -->
     <string name="background_eyebrow_animated">Анімаваны</string>
     <string name="background_eyebrow_plain">Звычайны</string>
-    <string name="background_subtitle">Задай візуальны тон сваёй сцэне.</string>
+    <string name="background_subtitle">Фон сцэны</string>
     <string name="background_tab_media">Медыя</string>
     <string name="background_video">Відэа</string>
     <string name="background_image">Выява</string>
     <string name="background_mute_title">Выключыць гук</string>
-    <string name="background_mute_subtitle">Выключыць гук у відэа.</string>
+    <string name="background_mute_subtitle">Выключыць гук відэа.</string>
     <string name="background_fill_title">На ўвесь экран</string>
-    <string name="background_fill_subtitle">Абрэзаць відэа пад памер экрана.</string>
+    <string name="background_fill_subtitle">Абрэзаць відэа, каб запоўніць кадр.</string>
     <string name="background_no_media">МЕДЫЯ ПАКУЛЬ НЯМА</string>
 
     <!-- Bar icons dialog -->
@@ -266,13 +270,13 @@
     <!-- Playback UI text dialog -->
     <string name="playback_ui_title">Пра сцэну</string>
     <string name="playback_ui_eyebrow">Падрабязнасці</string>
-    <string name="playback_ui_subtitle">Дадай трохі кантэксту да сцэны.</string>
+    <string name="playback_ui_subtitle">Падрабязнасці сцэны</string>
     <string name="playback_ui_reals">Рэалы</string>
     <string name="playback_ui_time">Час</string>
     <string name="playback_ui_day">Дзень</string>
 
     <!-- Font dialog -->
-    <string name="font_dialog_subtitle">Правільны шрыфт змяняе ўвесь настрой.</string>
+    <string name="font_dialog_subtitle">Паспрабуй іншы шрыфт.</string>
     <string name="font_dialog_hint">НАЦІСНІ НА КАРТКУ, КАБ ЗМЯНІЦЬ РЭПЛІКІ  › › ›</string>
     <string name="font_add_own">ДАДАЦЬ СВОЙ ШРЫФТ</string>
     <string name="font_replace_own">ЗАМЯНІЦЬ СВОЙ ШРЫФТ</string>
@@ -289,11 +293,11 @@
     <string name="skill_rhetoric">Рыторыка</string>
 
     <!-- Font dialog: sample lines -->
-    <string name="font_sample_01">Ого, гэты — проста б*мба. Глянь, якія выгібы. Глянь на гэтую брудную маленькую «g».</string>
+    <string name="font_sample_01">Ого, гэты — проста бомба. Глянь, якія выгібы. Глянь на гэтую брудную маленькую «д».</string>
     <string name="font_sample_02">Гістарычна засечка ўзнікла як адказ на…</string>
     <string name="font_sample_03">Закрый вочы. Паслухай літары.</string>
     <string name="font_sample_04">Бяры непрыгожы. Зрабі выгляд, што так і было задумана.</string>
-    <string name="font_sample_05">Глянь на гэтую малую «a». З ёй штосьці глыбока не так.</string>
+    <string name="font_sample_05">Глянь на гэтую малую «а». З ёй штосьці глыбока не так.</string>
     <string name="font_sample_06">Ты абярэш шрыфт з засечкамі. Ты будзеш яго паважаць. Ты не будзеш перапытваць.</string>
     <string name="font_sample_07">Мы робім інтэрфейс, а не суіцыдальную запіску.</string>
     <string name="font_sample_08">Тоўсты. Той самы, чорт яго бяры, тоўсты.</string>
@@ -303,12 +307,12 @@
     <string name="font_sample_12">Шрыфты без засечак — буржуазная змова, каб усё выглядала як стартап.</string>
     <string name="font_sample_13">Гэты пахне мокрым бетонам і натхненнем, да якога ты ўжо не дацягнешся.</string>
     <string name="font_sample_14">Трымайся. Свайго. Шрыфту. Дэтэктыў.</string>
-    <string name="font_tile_glyph">Aa</string>
+    <string name="font_tile_glyph">Аа</string>
 
     <!-- Choose icon dialog -->
     <string name="choose_icon_title">Выбар значка</string>
     <string name="choose_icon_eyebrow">Значок спікера</string>
-    <string name="choose_icon_subtitle">Абяры карцінку для спікера.</string>
+    <string name="choose_icon_subtitle">Выберы выяву для спікера.</string>
     <string name="choose_icon_add_custom">Дадаць сваю выяву</string>
 
     <!-- Editor toasts -->
@@ -317,10 +321,10 @@
     <string name="message_scene_imported">Сцэна імпартавана</string>
 
     <!-- Errors -->
-    <string name="settings_font_invalid">Гэта не прыдатны файл шрыфта</string>
+    <string name="settings_font_invalid">Гэты файл не падыходзіць для шрыфта</string>
     <string name="error_record_denied">НЯМА ЗАПІСУ — НЯМА ПАКАЗУ\nДазволь запіс экрана або выключы «Запіс прайгравання» ў наладах</string>
     <string name="error_record_failed">КАСЕТУ ЖУЮЦЬ\nВідэа не захавалася. Запіс заглух, паспрабуй яшчэ раз</string>
-    <string name="error_export_failed">ЭКСПАРТ НЕ ЎДАЎСЯ\nСцэна не захацела з’язджаць</string>
+    <string name="error_export_failed">ЭКСПАРТ НЕ ЎДАЎСЯ\nНе ўдалося экспартаваць сцэну</string>
     <string name="error_import_failed">НЕ МАГУ ПРАЧЫТАЦЬ\nГэта не той файл, якога я чакаў</string>
     <string name="error_empty_import">НІЧОГА НЕ ЗНОЙДЗЕНА\nПаспрабуй «ІМЯ: тэкст»</string>
     <string name="error_no_script_pasted">ПУСТА\nСпачатку ўстаў рэплікі, я не ўмею чытаць думкі</string>
@@ -329,5 +333,6 @@
     <string name="settings_language_title">Мова</string>
     <string name="settings_language_subtitle">Мова інтэрфейсу праграмы</string>
     <string name="settings_language_system">Сістэмная</string>
+    <string name="settings_language_eyebrow">Выбар мовы</string>
 
 </resources>
