@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.feldelysium.R
-import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.data.settings.SamplesMode
-import com.example.feldelysium.data.settings.SettingsRepository
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.SamplesMode
+import com.example.feldelysium.data.settings.DataStoreSettingsRepository
 import com.example.feldelysium.di.AppContainer
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
@@ -19,13 +19,13 @@ import com.example.feldelysium.domain.model.SkillCheck
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.domain.repository.SettingsRepository
 import com.example.feldelysium.domain.repository.SpeakerRepository
 import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.domain.sound.SoundPlayer
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase
 import com.example.feldelysium.presentation.shared.FeldError
-import com.example.feldelysium.presentation.shared.SceneSession
-import com.example.feldelysium.presentation.shared.toastText
+import com.example.feldelysium.domain.scene.SceneSession
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -131,7 +131,7 @@ class EditorViewModel(
 
     fun clearSceneById(id: String) {
         viewModelScope.launch {
-            session.deleteScene(id)
+            session.clearScene(id)
             refreshScenes()
         }
     }
@@ -166,6 +166,19 @@ class EditorViewModel(
             } else {
                 fail(FeldError.ImportFailed)
             }
+        }
+    }
+
+    fun renameSceneById(id: String, title: String) {
+        if (id == session.scene.value.id) {
+            renameScene(title)
+            saveScene()
+            return
+        }
+
+        viewModelScope.launch {
+            session.renameSceneById(id, title)
+            sceneList.value = session.listScenes()
         }
     }
 

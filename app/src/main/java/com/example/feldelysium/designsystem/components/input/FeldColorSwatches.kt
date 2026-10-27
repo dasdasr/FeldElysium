@@ -26,15 +26,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.card.FeldHandDiamond
-import com.example.feldelysium.designsystem.components.card.entryRough
+import com.example.feldelysium.designsystem.components.container.FeldHandDiamond
+import com.example.feldelysium.designsystem.components.container.entryRough
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 
 private val Cream = Color(0xFFE6DCC4)
 private val InkDark = Color(0xFF1B1612)

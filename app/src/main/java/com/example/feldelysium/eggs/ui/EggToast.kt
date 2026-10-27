@@ -39,8 +39,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.speaker.FeldSpeakerDiamond
-import com.example.feldelysium.designsystem.components.title.FeldTitleTag
+import com.example.feldelysium.designsystem.components.content.FeldSpeakerDiamond
+import com.example.feldelysium.designsystem.components.content.FeldTitleTag
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.eggs.EasterEggs
 import com.example.feldelysium.eggs.EggReply

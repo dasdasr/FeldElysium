@@ -46,8 +46,7 @@ import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.example.feldelysium.designsystem.foundation.material.ChipTexture
 import com.example.feldelysium.designsystem.foundation.material.ChipTextures
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import kotlin.math.roundToInt
 
 enum class FeldChipShape { Chamfer, Pill, Rectangle }

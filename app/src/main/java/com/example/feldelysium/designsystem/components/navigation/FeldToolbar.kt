@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.display.FeldDivider
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.container.FeldDivider
+import com.example.feldelysium.designsystem.components.content.FeldIcon
+import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 

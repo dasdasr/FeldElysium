@@ -23,8 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
-import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.data.settings.BackgroundKind
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.BackgroundKind
 
 @Composable
 fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {

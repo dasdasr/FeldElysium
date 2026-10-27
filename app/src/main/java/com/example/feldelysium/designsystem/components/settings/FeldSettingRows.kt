@@ -21,13 +21,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.content.FeldIcon
+import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.components.input.FeldPalette
+import com.example.feldelysium.designsystem.components.input.feldClickable
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 
 enum class FeldSettingStatus {
     SOON,

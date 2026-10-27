@@ -1,6 +1,7 @@
 package com.example.feldelysium.presentation.editor
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.runtime.saveable.Saver
 import com.example.feldelysium.R
 import com.example.feldelysium.domain.model.DialogueEntry
@@ -8,6 +9,8 @@ import com.example.feldelysium.domain.model.SceneInfo
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.presentation.shared.FeldError
+import com.example.feldelysium.presentation.shared.toastText
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -61,3 +64,13 @@ val EditorDialogSaver = Saver<EditorDialog, String>(
     save = { Json.encodeToString(EditorDialog.serializer(), it) },
     restore = { Json.decodeFromString(EditorDialog.serializer(), it) },
 )
+
+sealed interface EditorMessage {
+    data class Text(@StringRes val resId: Int) : EditorMessage
+    data class Error(val error: FeldError) : EditorMessage
+}
+
+fun EditorMessage.resolve(context: Context): String = when (this) {
+    is EditorMessage.Text -> context.getString(resId)
+    is EditorMessage.Error -> error.toastText(context)
+}

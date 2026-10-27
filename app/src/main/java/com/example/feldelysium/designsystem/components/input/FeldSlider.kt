@@ -45,8 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.material.accentBrush
 import com.example.feldelysium.designsystem.foundation.material.agsl.SLIDER_TRACK_AGSL
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import kotlin.math.abs
 
 enum class FeldThumb { Diamond, Rectangle, Circle }

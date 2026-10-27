@@ -52,7 +52,7 @@ import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.accentBrush
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -178,31 +178,7 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
 
             drawRoundRect(brush = body, cornerRadius = CornerRadius(4.dp.toPx()))
 
-            val pitch = 10.dp.toPx()
-            val hw = 5.dp.toPx()
-            val hh = 3.5.dp.toPx()
-            val inset = 3.dp.toPx()
-            val edge = 3.dp.toPx()
-            val fade = pitch * 0.6f
-            val shift = pitch * 0.5f * press()
-            val count = (size.width / pitch).toInt() + 2
-
-            for (k in -1..count) {
-                val x = 6.dp.toPx() + k * pitch - shift
-                val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                        ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
-                if (a <= 0f) continue
-                val hole = Color.Black.copy(alpha = a)
-                val r = CornerRadius(1.dp.toPx())
-                drawRoundRect(hole, Offset(x, inset), Size(hw, hh), r, blendMode = BlendMode.DstOut)
-                drawRoundRect(
-                    hole,
-                    Offset(x, size.height - inset - hh),
-                    Size(hw, hh),
-                    r,
-                    blendMode = BlendMode.DstOut,
-                )
-            }
+            drawFilmPerforation(press())
         }
         Box(
             Modifier

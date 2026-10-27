@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.example.feldelysium.designsystem.foundation.material.dryPaperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 
 object FeldButtonDefaults {
     val ContentPadding = PaddingValues(horizontal = 40.dp, vertical = 18.dp)

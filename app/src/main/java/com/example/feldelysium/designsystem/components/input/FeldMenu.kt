@@ -20,15 +20,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.display.FeldDivider
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.container.FeldDivider
+import com.example.feldelysium.designsystem.components.content.FeldIcon
+import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
 
 data class FeldMenuItem(
     val label: String,
