@@ -418,9 +418,11 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
         EditorDialog.ImportLines -> {
             var text by rememberSaveable { mutableStateOf("") }
             val preview = remember(text, state.allSpeakers) { vm.previewImport(text) }
+            val previewCaption = preview?.caption(context)
+
             BulkImportDialog(
                 text = text,
-                preview = preview,
+                previewCaption = previewCaption,
                 onText = { text = it },
                 onConfirm = {
                     haptics.confirm()

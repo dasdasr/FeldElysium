@@ -24,6 +24,7 @@ uiautomator = "2.4.0"
 benchmarkMacroJunit4 = "1.5.0"
 uiTextGoogleFonts = "1.12.1"
 ui = "1.12.1"
+appcompat = "1.8.0"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -53,6 +54,7 @@ detekt-rules-ktlint-wrapper = { module = "dev.detekt:detekt-rules-ktlint-wrapper
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

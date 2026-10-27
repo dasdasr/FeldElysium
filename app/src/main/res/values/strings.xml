@@ -319,4 +319,9 @@
     <string name="error_empty_import">NOTHING FOUND\nTry «NAME: text»</string>
     <string name="error_no_script_pasted">EMPTY\nPaste some lines first, I can\'t read minds</string>
 
+    <!-- Language -->
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_subtitle">App interface language</string>
+    <string name="settings_language_system">System</string>
+
 </resources>
