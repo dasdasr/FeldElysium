@@ -45,7 +45,7 @@ object FeldButtonDefaults {
 
     val OrangeFresh = DryPaperSpec(
         base = Color(0xFFDB6A2C), crack = Color(0xFF7A3414),
-        tearDepth = 1.1.dp, tearScale = 16.dp, tearCoverage = 0.22f, bow = 0.6.dp,
+        tearDepth = 1.1.dp, tearScale = 16.dp, tearCoverage = 0.22f, bow = 0.3.dp,
         crackScale = 22.dp, crackDepth = 7.dp, crackWidth = 0.8.dp,
         crackStrength = 0.55f, crackCoverage = 0.10f,
         grainScale = 0.8.dp, grainStrength = 0.075f, fiberStrength = 0.02f,

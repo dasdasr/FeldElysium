@@ -61,7 +61,7 @@ fun Modifier.dryPaperMaterial(spec: DryPaperSpec, seed: Int = 0, press: () -> Fl
                 setFloatUniform("mottleScale", spec.mottleScale.toPx())
                 setFloatUniform("mottleStrength", spec.mottleStrength)
                 setFloatUniform("pressShade", spec.pressShade)
-                setColorUniform("baseColor", WHITE)
+                setColorUniform("baseColor", spec.base.toArgb())
                 setColorUniform("crackColor", spec.crack.toArgb())
             }
             val brush = ShaderBrush(shader)

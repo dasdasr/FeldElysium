@@ -85,6 +85,8 @@ import com.example.feldelysium.designsystem.components.display.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.settings.FeldSectionHeader
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.ChipTexture
+import com.example.feldelysium.designsystem.foundation.material.ChipTextures
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.accentBrush
@@ -746,19 +748,6 @@ private fun FilmButton(
         label = "press",
     )
 
-    val density = LocalDensity.current.density
-
-    val body = remember(seed, density) {
-        accentBrush(
-            Color(0xFFE45720),
-            seed,
-            density,
-            fade = 0.5f,
-            glow = 0.3f,
-            grain = 0.04f,
-        )
-    }
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -794,6 +783,15 @@ private fun FilmButton(
                     compositingStrategy = CompositingStrategy.Offscreen
                 },
         ) {
+            val body = ChipTextures.brush(
+                Color(0xFFE45720),
+                ChipTexture.Base,
+                density,
+                size.width.toInt(),
+                size.height.toInt(),
+                seed,
+            )
+
             drawRoundRect(
                 brush = body,
                 cornerRadius = CornerRadius(4.dp.toPx()),

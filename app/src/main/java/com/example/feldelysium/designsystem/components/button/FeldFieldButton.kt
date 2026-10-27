@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.display.FeldIcon
@@ -86,4 +87,14 @@ fun FeldFieldButton(
             size = 20.dp,
         )
     }
+}
+
+@Preview
+@Composable
+private fun FeldFieldButtonPreview() {
+    FeldFieldButton(
+        text = "Button",
+        placeholder = "Go with it",
+        onClick = {}
+    )
 }

@@ -112,7 +112,7 @@ private fun ChipTextureBaker() {
     LaunchedEffect(gc, density, damageColors) {
         ChipTextures.prewarm(
             density = density,
-            base = listOf(Color(0xFF111A1A), Color(0xFF131817)),
+            base = listOf(Color(0xFF111A1A), Color(0xFF131817), Color(0xFFE45720)),
             filled = listOf(FeldPalette.Orange, FeldPalette.Teal, FeldPalette.Cream) + damageColors,
             rim = listOf(FeldPalette.Cream, FeldPalette.Line),
         )

@@ -1,10 +1,9 @@
 package com.example.feldelysium.data.settings
 
-enum class TapMode(val label: String) {
-    WHOLE_SCREEN("Anywhere"),
-    CONTINUE_BUTTON("Button"),
-    NOWHERE("Nowhere"),
-    ;
+enum class TapMode {
+    WHOLE_SCREEN,
+    CONTINUE_BUTTON,
+    NOWHERE;
 
     fun next(autoPlay: Boolean): TapMode {
         val available = if (autoPlay) {
