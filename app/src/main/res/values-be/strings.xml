@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App name -->
+    <string name="app_name">Feld Elysium</string>
+
+    <!-- Common -->
+    <string name="common_done">Гатова</string>
+    <string name="common_delete">Выдаліць</string>
+    <string name="common_save">Захаваць</string>
+    <string name="common_none">Няма</string>
+    <string name="common_back">Назад</string>
+    <string name="common_cancel">Скасаваць</string>
+    <string name="common_ok">OK</string>
+    <string name="common_import">Імпарт</string>
+    <string name="common_export">Экспарт</string>
+    <string name="common_current">ПАТАЧНЫ</string>
+    <string name="common_reset">СКІНУЦЬ</string>
+    <string name="common_confirm">Пацвердзіць</string>
+
+    <!-- Settings header -->
+    <string name="settings_title">Налады</string>
+    <string name="settings_eyebrow">Майстэрня</string>
+    <string name="settings_subtitle">Наладзь пад сябе.</string>
+
+    <!-- Playback -->
+    <string name="settings_playback_section">Прайграванне</string>
+    <string name="settings_cinema_frame_title">Кінакадр</string>
+    <string name="settings_cinema_frame_subtitle">Паказваць прайграванне ў кадры 16:9</string>
+    <string name="settings_status_line_title">Радок стану</string>
+    <string name="settings_status_line_subtitle">Рэалы, час і дзень</string>
+    <string name="settings_panel_icons_title">Значкі панэлі</string>
+    <string name="settings_panel_icons_subtitle">Абяры, якія значкі панэлі падсвечаны</string>
+    <string name="settings_autoplay_title">Аўтапрайграванне</string>
+    <string name="settings_autoplay_subtitle">Аўтаматычна пракручваць рэплікі</string>
+    <string name="settings_autoplay_speed_title">Хуткасць аўтапрайгравання</string>
+    <string name="settings_autoplay_speed_subtitle">Колькі часу рэпліка застаецца на экране</string>
+    <string name="settings_continue_button_title">Кнопка «Далей»</string>
+    <string name="settings_continue_button_subtitle">Паказваць кнопку «Далей»</string>
+    <string name="settings_advance_dialogue_title">Перагортванне дыялогу</string>
+    <string name="settings_advance_whole_screen">Націсні ў любым месцы, каб паказаць наступную рэпліку</string>
+    <string name="settings_advance_continue_button">Націскай «Далей», каб ісці наперад. Гісторыю дыялогу можна пракручваць</string>
+    <string name="settings_advance_autoplay_only">Толькі аўтапрайграванне</string>
+    <string name="settings_typeface_title">Шрыфт</string>
+    <string name="settings_typeface_subtitle">Тэкст дыялогу пры прайграванні</string>
+
+    <!-- Video export -->
+    <string name="settings_video_export_section">Экспарт відэа</string>
+    <string name="settings_record_playback_title">Запіс прайгравання</string>
+    <string name="settings_record_playback_subtitle">Кнопка прайгравання запісвае экран у відэа</string>
+    <string name="settings_record_sound_title">Запіс гуку</string>
+    <string name="settings_record_sound_subtitle">Гук праграмы тrапляе ў відэа</string>
+    <string name="settings_android_10_required">Патрэбны Android 10 або навейшы</string>
+
+    <!-- Background -->
+    <string name="settings_background_section">Фон</string>
+    <string name="settings_background_color">Колер</string>
+    <string name="settings_background_default">Стандартны</string>
+    <string name="settings_background_custom">Свой</string>
+
+    <!-- Speakers -->
+    <string name="settings_speakers_section">Спікеры</string>
+    <string name="settings_export_speakers_title">Экспарт спікераў</string>
+    <string name="settings_export_speakers_subtitle">Захаваць спікераў і тэгі ў файл</string>
+    <string name="settings_import_speakers_title">Імпарт спікераў</string>
+    <string name="settings_import_speakers_subtitle">Дадаць спікераў і тэгі з пакета</string>
+    <string name="settings_tags_title">Тэгі</string>
+    <string name="settings_tags_subtitle">Пераназваць, перафарбаваць або выдаліць</string>
+    <string name="settings_author_samples_title">Аўтарскія прыклады</string>
+    <string name="settings_samples_imported_hidden">Пакет імпартаваны, прыклады схаваны</string>
+    <string name="settings_samples_hide_after_import">Схаваюцца пасля першага імпарту пакета</string>
+    <string name="settings_samples_always_visible">Заўсёды бачныя ў спісе выбару</string>
+    <string name="settings_samples_always_hidden">Заўсёды схаваныя</string>
+    <string name="settings_samples_auto">Аўто</string>
+    <string name="settings_samples_show">Паказваць</string>
+    <string name="settings_samples_hide">Хаваць</string>
+
+    <!-- Coming soon -->
+    <string name="settings_coming_soon_section">Хутка</string>
+    <string name="settings_lock_landscape_title">Заблакаваць альбомную арыентацыю</string>
+    <string name="settings_lock_landscape_subtitle">Замкні яго</string>
+
+    <!-- Editor screen -->
+    <string name="editor_eyebrow">Рэдактар сцэны</string>
+    <string name="editor_lines_count">Рэплік: %1$d</string>
+    <string name="editor_scene_meta">Дыялогавая сцэна</string>
+    <string name="editor_paste">Уставіць</string>
+    <string name="editor_playback">Прайграванне</string>
+    <string name="editor_settings">Налады</string>
+    <string name="editor_menu_edit">Рэдагаваць</string>
+    <string name="editor_menu_delete">Выдаліць</string>
+    <string name="editor_add_entry">Дадаць рэпліку</string>
+    <string name="editor_empty_state">Устаў сцэнар або\nдадай рэпліку.</string>
+    <string name="import_preview_no_lines">Няма рэплік</string>
+    <plurals name="import_preview_lines">
+        <item quantity="one">%d рэпліка</item>
+        <item quantity="few">%d рэплікі</item>
+        <item quantity="many">%d рэплік</item>
+        <item quantity="other">%d рэплікі</item>
+    </plurals>
+    <plurals name="import_preview_new_speakers">
+        <item quantity="one">%d новы спікер</item>
+        <item quantity="few">%d новыя спікеры</item>
+        <item quantity="many">%d новых спікераў</item>
+        <item quantity="other">%d новага спікера</item>
+    </plurals>
+
+    <!-- Screen recording result -->
+    <string name="record_video_saved_message">ВІДЭА ЗАХАВАНА\n%1$s%2$s</string>
+    <string name="record_gallery_location">Галерэя › FeldElysium</string>
+    <string name="record_app_folder_location">Папка праграмы › Movies</string>
+    <string name="record_no_sound_suffix">" · без гуку"</string>
+
+    <!-- Tags -->
+    <string name="tags_title">Тэгі</string>
+    <string name="tags_manage_eyebrow">Кіраванне тэгамі</string>
+    <string name="tags_empty_message">Тэгаў пакуль няма. Стварыць тэг можна, калі выбіраеш яго для спікера.</string>
+    <string name="tags_built_in">УБУДАВАНЫЯ</string>
+    <string name="tags_delete_title">Выдаліць тэг</string>
+    <string name="tags_delete_unused_message">Гэты тэг не выкарыстоўваецца ніводным спікерам.</string>
+    <string name="tags_delete_used_message">Спікераў з гэтым тэгам: %1$d. Яны страцяць яго і пяройдуць у «Свае». Колеры застануцца.</string>
+    <string name="tags_edit_title">Рэдагаваць тэг</string>
+    <string name="tags_name_label">Назва</string>
+    <string name="tags_duplicate_name">Тэг з такой назвай ужо існуе</string>
+    <string name="tags_default_color">Колер па змаўчанні</string>
+    <string name="tags_sound_label">Гук</string>
+    <string name="tags_skill_checks_label">Праверкі навыкаў</string>
+    <string name="tags_allow_skill_checks">Дазволіць праверкі навыкаў</string>
+
+    <!-- Choose tag dialog -->
+    <string name="choose_tag_title">Выбар тэга</string>
+    <string name="choose_tag_eyebrow">Тэг спікера</string>
+    <string name="choose_tag_select">Выбраць</string>
+    <string name="choose_tag_none">Без тэга</string>
+    <string name="choose_tag_new">+ Новы</string>
+    <string name="choose_tag_edit">Змяніць тэгі</string>
+    <string name="choose_tag_name_placeholder">Назва тэга</string>
+    <string name="choose_tag_allow_checks">Дазволіць праверкі</string>
+    <string name="choose_tag_add">Дадаць</string>
+
+    <!-- Custom speaker dialog -->
+    <string name="speaker_edit_title">Рэдагаванне спікера</string>
+    <string name="speaker_create_title">Стварэнне спікера</string>
+    <string name="speaker_eyebrow">Свой спікер</string>
+    <string name="speaker_save">Захаваць</string>
+    <string name="speaker_create">Стварыць</string>
+    <string name="speaker_name_label">Імя</string>
+    <string name="speaker_name_placeholder">Імя спікера</string>
+    <string name="speaker_tag_label">Тэг</string>
+    <string name="speaker_no_tag">Без тэга</string>
+    <string name="speaker_color_label">Колер</string>
+    <string name="speaker_delete">Выдаліць спікера</string>
+    <string name="speaker_no_speaker">Без спікера</string>
+    <string name="speaker_edit_accessibility">Рэдагаваць спікера</string>
+
+    <!-- Bulk import dialog -->
+    <string name="bulk_import_title">Устаўка дыялогу</string>
+    <string name="bulk_import_eyebrow">Хуткае даданне</string>
+    <string name="bulk_import_subtitle">Вядомыя імёны — у любым рэгістры. Новыя — ВЯЛІКІМІ.</string>
+    <string name="bulk_import_button">Імпарт</string>
+
+    <!-- Entry check editor -->
+    <string name="check_label">Праверка</string>
+    <string name="check_none">Няма</string>
+    <string name="check_passive">Пасіўная</string>
+    <string name="check_active">Актыўная</string>
+    <string name="check_difficulty">Складанасць</string>
+    <string name="check_result">Вынік</string>
+    <string name="check_left_die">Левая косць</string>
+    <string name="check_right_die">Правая косць</string>
+    <string name="check_difficulty_trivial">Трывіяльная</string>
+    <string name="check_difficulty_easy">Лёгкая</string>
+    <string name="check_difficulty_medium">Сярэдняя</string>
+    <string name="check_difficulty_challenging">Складаная</string>
+    <string name="check_difficulty_formidable">Грозная</string>
+    <string name="check_difficulty_legendary">Легендарная</string>
+    <string name="check_difficulty_heroic">Гераічная</string>
+    <string name="check_difficulty_godly">Боская</string>
+    <string name="check_difficulty_impossible">Немагчымая</string>
+    <string name="check_result_success">Поспех</string>
+    <string name="check_result_failure">Правал</string>
+
+    <!-- Damage -->
+    <string name="damage_type">Тып</string>
+    <string name="damage_amount">Колькасць</string>
+    <string name="damage_type_morale">Мараль</string>
+    <string name="damage_type_health">Здароўе</string>
+
+    <!-- Entry edit sheet -->
+    <string name="entry_new_title">НОВАЯ РЭПЛІКА</string>
+    <string name="entry_edit_title">РЭДАГАВАННЕ РЭПЛІКІ</string>
+    <string name="entry_dialogue_label">Дыялог</string>
+    <string name="entry_dialogue_placeholder">Тэкст дыялогу</string>
+    <string name="entry_reply_options">ВАРЫЯНТЫ АДКАЗУ</string>
+    <string name="entry_skill_check">ПРАВЕРКА НАВЫКУ</string>
+    <string name="entry_damage">ШКОДА</string>
+    <string name="entry_confirm">Пацвердзіць</string>
+    <string name="entry_select_reply">Абяры адзін варыянт для дыялогу</string>
+    <string name="entry_spoken_by_you">Кажа ТЫ</string>
+    <string name="entry_reply_option">Варыянт %1$d</string>
+    <string name="entry_add_option">+ ДАДАЦЬ ВАРЫЯНТ</string>
+
+    <!-- Scene manager -->
+    <string name="scenes_top_bar_title">РЭДАКТАР ДЫЯЛОГАЎ</string>
+    <string name="scenes_saved">ЗАХАВАНА</string>
+    <string name="scenes_title">СЦЭНЫ</string>
+    <string name="scenes_hint_hold_folder">ЗАЦІСНІ ПАПКУ, КАБ ПАБАЧЫЦЬ БОЛЬШ</string>
+    <string name="scenes_hold_for_more">ЗАЦІСНІ, КАБ ПАБАЧЫЦЬ БОЛЬШ</string>
+    <string name="scenes_empty_tape">НА КАСЕЦЕ ПАКУЛЬ НІЧОГА</string>
+    <string name="scenes_menu_clear_lines">Ачысціць рэплікі</string>
+    <string name="scenes_new">НОВАЯ СЦЭНА</string>
+    <string name="scenes_tap_to_create">НАЦІСНІ, КАБ СТВАРЫЦЬ</string>
+    <string name="scenes_clear_confirm">УПЭЎНЕНЫ?</string>
+    <plurals name="scene_lines_count">
+        <item quantity="one">%d РЭПЛІКА</item>
+        <item quantity="few">%d РЭПЛІКІ</item>
+        <item quantity="many">%d РЭПЛІК</item>
+        <item quantity="other">%d РЭПЛІКІ</item>
+    </plurals>
+
+    <!-- Speaker picker -->
+    <string name="picker_title">Выбар спікера</string>
+    <string name="picker_eyebrow">Рэпліка</string>
+    <string name="picker_search">ПОШУК</string>
+    <string name="picker_empty">СПІКЕРАЎ НЕ ЗНОЙДЗЕНА</string>
+    <string name="picker_create_custom">СТВАРЫЦЬ СВАЙГО СПІКЕРА</string>
+    <string name="picker_group_custom">Свае</string>
+
+    <!-- Speaker dossier -->
+    <string name="speaker_preview_label">› ПРАГЛЕД</string>
+    <string name="speaker_preview_sample">“Узор рэплікі…”</string>
+    <string name="field_optional">"  (НЕАБАВЯЗКОВА)"</string>
+
+    <!-- Background dialog -->
+    <string name="background_eyebrow_animated">Анімаваны</string>
+    <string name="background_eyebrow_plain">Звычайны</string>
+    <string name="background_subtitle">Задай візуальны тон сваёй сцэне.</string>
+    <string name="background_tab_media">Медыя</string>
+    <string name="background_video">Відэа</string>
+    <string name="background_image">Выява</string>
+    <string name="background_mute_title">Выключыць гук</string>
+    <string name="background_mute_subtitle">Выключыць гук у відэа.</string>
+    <string name="background_fill_title">На ўвесь экран</string>
+    <string name="background_fill_subtitle">Абрэзаць відэа пад памер экрана.</string>
+    <string name="background_no_media">МЕДЫЯ ПАКУЛЬ НЯМА</string>
+
+    <!-- Bar icons dialog -->
+    <string name="bar_icons_panel">Панэль</string>
+    <string name="bar_icons_panel_hint">Націсні, каб перабраць: выкл., укл., сігнал</string>
+    <string name="bar_icons_inventory">Інвентар</string>
+    <string name="bar_icons_inventory_hint">Націсні, каб змяніць прадмет</string>
+
+    <!-- Import conflict dialog -->
+    <string name="import_conflict_title">Ужо існуе</string>
+    <string name="import_conflict_eyebrow">Імпарт пакета</string>
+    <string name="import_conflict_confirm">Імпарт</string>
+    <string name="import_conflict_count">Спікеры з пакета, якія ўжо ёсць у тваім спісе (%1$d): %2$s</string>
+    <string name="import_conflict_skip">Прапусціць</string>
+    <string name="import_conflict_replace">Замяніць</string>
+    <string name="import_conflict_keep_both">Пакінуць абодвух</string>
+    <string name="import_conflict_skip_description">Існуючыя спікеры застануцца без змен.</string>
+    <string name="import_conflict_replace_description">Існуючых спікераў заменяць версіі з пакета.</string>
+    <string name="import_conflict_keep_both_description">Спікеры з пакета дадуцца як новыя копіі.</string>
+    <string name="import_conflict_bundled_skipped">Убудаваныя спікеры з пакета (%1$d) заўсёды прапускаюцца.</string>
+
+    <!-- Playback UI text dialog -->
+    <string name="playback_ui_title">Пра сцэну</string>
+    <string name="playback_ui_eyebrow">Падрабязнасці</string>
+    <string name="playback_ui_subtitle">Дадай трохі кантэксту да сцэны.</string>
+    <string name="playback_ui_reals">Рэалы</string>
+    <string name="playback_ui_time">Час</string>
+    <string name="playback_ui_day">Дзень</string>
+
+    <!-- Font dialog -->
+    <string name="font_dialog_subtitle">Правільны шрыфт змяняе ўвесь настрой.</string>
+    <string name="font_dialog_hint">НАЦІСНІ НА КАРТКУ, КАБ ЗМЯНІЦЬ РЭПЛІКІ  › › ›</string>
+    <string name="font_add_own">ДАДАЦЬ СВОЙ ШРЫФТ</string>
+    <string name="font_replace_own">ЗАМЯНІЦЬ СВОЙ ШРЫФТ</string>
+    <string name="font_file_hint">.ttf або .otf</string>
+
+    <!-- Font dialog: sample speakers -->
+    <string name="skill_electrochemistry">Электрахімія</string>
+    <string name="skill_encyclopedia">Энцыклапедыя</string>
+    <string name="skill_inland_empire">Унутраная імперыя</string>
+    <string name="skill_savoir_faire">Спрыт</string>
+    <string name="skill_perception">Успрыманне</string>
+    <string name="skill_authority">Аўтарытэт</string>
+    <string name="skill_volition">Воля</string>
+    <string name="skill_rhetoric">Рыторыка</string>
+
+    <!-- Font dialog: sample lines -->
+    <string name="font_sample_01">Ого, гэты — проста б*мба. Глянь, якія выгібы. Глянь на гэтую брудную маленькую «g».</string>
+    <string name="font_sample_02">Гістарычна засечка ўзнікла як адказ на…</string>
+    <string name="font_sample_03">Закрый вочы. Паслухай літары.</string>
+    <string name="font_sample_04">Бяры непрыгожы. Зрабі выгляд, што так і было задумана.</string>
+    <string name="font_sample_05">Глянь на гэтую малую «a». З ёй штосьці глыбока не так.</string>
+    <string name="font_sample_06">Ты абярэш шрыфт з засечкамі. Ты будзеш яго паважаць. Ты не будзеш перапытваць.</string>
+    <string name="font_sample_07">Мы робім інтэрфейс, а не суіцыдальную запіску.</string>
+    <string name="font_sample_08">Тоўсты. Той самы, чорт яго бяры, тоўсты.</string>
+    <string name="font_sample_09">Ніхто не паважае чалавека, у якога літары выглядаюць танна.</string>
+    <string name="font_sample_10">Абяры нешта чытэльнае.</string>
+    <string name="font_sample_11">Абяры нешта непрыстойна прывабнае.</string>
+    <string name="font_sample_12">Шрыфты без засечак — буржуазная змова, каб усё выглядала як стартап.</string>
+    <string name="font_sample_13">Гэты пахне мокрым бетонам і натхненнем, да якога ты ўжо не дацягнешся.</string>
+    <string name="font_sample_14">Трымайся. Свайго. Шрыфту. Дэтэктыў.</string>
+    <string name="font_tile_glyph">Aa</string>
+
+    <!-- Choose icon dialog -->
+    <string name="choose_icon_title">Выбар значка</string>
+    <string name="choose_icon_eyebrow">Значок спікера</string>
+    <string name="choose_icon_subtitle">Абяры карцінку для спікера.</string>
+    <string name="choose_icon_add_custom">Дадаць сваю выяву</string>
+
+    <!-- Editor toasts -->
+    <string name="message_scene_saved">Сцэна захавана</string>
+    <string name="message_scene_exported">Сцэна экспартавана</string>
+    <string name="message_scene_imported">Сцэна імпартавана</string>
+
+    <!-- Errors -->
+    <string name="settings_font_invalid">Гэта не прыдатны файл шрыфта</string>
+    <string name="error_record_denied">НЯМА ЗАПІСУ — НЯМА ПАКАЗУ\nДазволь запіс экрана або выключы «Запіс прайгравання» ў наладах</string>
+    <string name="error_record_failed">КАСЕТУ ЖУЮЦЬ\nВідэа не захавалася. Запіс заглух, паспрабуй яшчэ раз</string>
+    <string name="error_export_failed">ЭКСПАРТ НЕ ЎДАЎСЯ\nСцэна не захацела з’язджаць</string>
+    <string name="error_import_failed">НЕ МАГУ ПРАЧЫТАЦЬ\nГэта не той файл, якога я чакаў</string>
+    <string name="error_empty_import">НІЧОГА НЕ ЗНОЙДЗЕНА\nПаспрабуй «ІМЯ: тэкст»</string>
+    <string name="error_no_script_pasted">ПУСТА\nСпачатку ўстаў рэплікі, я не ўмею чытаць думкі</string>
+
+    <!-- Language -->
+    <string name="settings_language_title">Мова</string>
+    <string name="settings_language_subtitle">Мова інтэрфейсу праграмы</string>
+    <string name="settings_language_system">Сістэмная</string>
+
+</resources>

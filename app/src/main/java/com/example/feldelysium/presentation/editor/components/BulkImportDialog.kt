@@ -41,7 +41,7 @@ private val ImportTextStyle: TextStyle
 private fun BulkImportDialogPreview() {
     BulkImportDialog(
         text = "VOLITION: This city is trying to kill you.\nKIM KITSURAGI:\nLet's focus.",
-        preview = ImportPreview(lineCount = 2, newSpeakerCount = 0),
+        previewCaption = "2 lines",
         onText = {},
         onConfirm = {},
         onDismiss = {},
@@ -51,7 +51,7 @@ private fun BulkImportDialogPreview() {
 @Composable
 fun BulkImportDialog(
     text: String,
-    preview: ImportPreview?,
+    previewCaption: String?,
     onText: (String) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
@@ -91,10 +91,10 @@ fun BulkImportDialog(
             textStyle = ImportTextStyle,
             visualTransformation = transformation,
         )
-        if (preview != null) {
+        if (previewCaption != null) {
             Spacer(Modifier.height(12.dp))
             Text(
-                text = preview.caption.uppercase(),
+                text = previewCaption.uppercase(),
                 style = MaterialTheme.typography.labelSmall,
                 color = FeldPalette.Muted,
             )

@@ -422,6 +422,28 @@ fun SettingsScreen(
                 }
 
                 FeldSettingsSection(
+                    title = stringResource(R.string.settings_language_title),
+                ) {
+                    val language = AppLanguage.current()
+
+                    FeldSettingValueRow(
+                        icon = FeldIconId.Typeface,
+                        title = stringResource(R.string.settings_language_title),
+                        subtitle = stringResource(R.string.settings_language_subtitle),
+                        value = when (language) {
+                            AppLanguage.SYSTEM -> stringResource(R.string.settings_language_system)
+                            AppLanguage.ENGLISH -> "English"
+                            AppLanguage.BELARUSIAN -> "Беларуская"
+                        },
+                        onClick = {
+                            haptics.tick()
+                            val next = AppLanguage.entries[(language.ordinal + 1) % AppLanguage.entries.size]
+                            AppLanguage.apply(next)
+                        },
+                    )
+                }
+
+                FeldSettingsSection(
                     title = stringResource(R.string.settings_coming_soon_section),
                 ) {
                     val lockLandscapeTitle =
