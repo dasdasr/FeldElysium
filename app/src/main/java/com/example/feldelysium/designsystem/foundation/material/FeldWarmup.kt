@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.material.agsl.DRY_PAPER_AGSL
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.domain.model.DamageType
 import com.example.feldelysium.presentation.playback.components.CheckAssets
 

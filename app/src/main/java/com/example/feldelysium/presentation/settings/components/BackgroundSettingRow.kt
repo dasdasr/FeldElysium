@@ -34,14 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.feldelysium.R
-import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.data.settings.BackgroundKind
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.BackgroundKind
+import com.example.feldelysium.designsystem.components.content.FeldIcon
+import com.example.feldelysium.designsystem.components.content.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldPalette
+import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

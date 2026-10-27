@@ -25,6 +25,7 @@
     <string name="settings_subtitle">Наладзь пад сябе.</string>
 
     <!-- Playback -->
+    <string name="settings_appearance_section">Выгляд</string>
     <string name="settings_playback_section">Прайграванне</string>
     <string name="settings_cinema_frame_title">Кінакадр</string>
     <string name="settings_cinema_frame_subtitle">Паказваць прайграванне ў кадры 16:9</string>
@@ -108,6 +109,13 @@
         <item quantity="many">%d новых спікераў</item>
         <item quantity="other">%d новага спікера</item>
     </plurals>
+    <string name="pack_exported">Пакет экспартаваны</string>
+    <string name="pack_export_failed">Не ўдалося экспартаваць пакет</string>
+    <string name="pack_cannot_read">Не ўдалося прачытаць гэты файл</string>
+    <string name="pack_not_a_pack">Гэта не пакет спікераў</string>
+    <string name="pack_added">Дададзена: %1$d</string>
+    <string name="pack_replaced">, заменена: %1$d</string>
+    <string name="pack_skipped">, прапушчана: %1$d</string>
 
     <!-- Screen recording result -->
     <string name="record_video_saved_message">ВІДЭА ЗАХАВАНА\n%1$s%2$s</string>
@@ -215,6 +223,8 @@
     <string name="scenes_new">НОВАЯ СЦЭНА</string>
     <string name="scenes_tap_to_create">НАЦІСНІ, КАБ СТВАРЫЦЬ</string>
     <string name="scenes_clear_confirm">УПЭЎНЕНЫ?</string>
+    <string name="scenes_menu_rename">Перайменаваць</string>
+    <string name="scenes_rename_title">Перайменаваць сцэну</string>
     <plurals name="scene_lines_count">
         <item quantity="one">%d РЭПЛІКА</item>
         <item quantity="few">%d РЭПЛІКІ</item>

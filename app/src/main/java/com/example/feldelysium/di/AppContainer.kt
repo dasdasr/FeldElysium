@@ -3,15 +3,16 @@ package com.example.feldelysium.di
 import android.app.Application
 import android.content.ContentResolver
 import com.example.feldelysium.data.scene.FileSceneRepository
-import com.example.feldelysium.data.settings.SettingsRepository
+import com.example.feldelysium.data.settings.DataStoreSettingsRepository
 import com.example.feldelysium.data.sound.SoundManager
 import com.example.feldelysium.data.speaker.SpeakerStorage
-import com.example.feldelysium.domain.SceneSpeakerReconciler
+import com.example.feldelysium.domain.scene.SceneSpeakerReconciler
 import com.example.feldelysium.domain.playback.PlaybackAudio
 import com.example.feldelysium.domain.repository.SceneRepository
+import com.example.feldelysium.domain.repository.SettingsRepository
 import com.example.feldelysium.domain.repository.SpeakerRepository
 import com.example.feldelysium.domain.sound.SoundPlayer
-import com.example.feldelysium.presentation.shared.SceneSession
+import com.example.feldelysium.domain.scene.SceneSession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +21,7 @@ class AppContainer(app: Application) {
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     val speakerRepository: SpeakerRepository = SpeakerStorage.repository(app)
-    val settingsRepository = SettingsRepository(app)
+    val settingsRepository: SettingsRepository = DataStoreSettingsRepository(app)
     val contentResolver: ContentResolver = app.contentResolver
     val soundPlayer: SoundPlayer by lazy { SoundManager(app) }
 

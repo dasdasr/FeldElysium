@@ -63,6 +63,7 @@
     <string name="settings_background_custom">Custom</string>
 
     <!-- Speakers -->
+    <string name="settings_appearance_section">Appearance</string>
     <string name="settings_speakers_section">Speakers</string>
     <string name="settings_export_speakers_title">Export speakers</string>
     <string name="settings_export_speakers_subtitle">Save your speakers and tags to a file</string>
@@ -104,6 +105,13 @@
         <item quantity="one">%d new speaker</item>
         <item quantity="other">%d new speakers</item>
     </plurals>
+    <string name="pack_exported">Pack exported</string>
+    <string name="pack_export_failed">Export failed</string>
+    <string name="pack_cannot_read">Cannot read this file</string>
+    <string name="pack_not_a_pack">Not a speaker pack</string>
+    <string name="pack_added">Added %1$d</string>
+    <string name="pack_replaced">, replaced %1$d</string>
+    <string name="pack_skipped">, skipped %1$d</string>
 
     <!-- Screen recording result -->
     <string name="record_video_saved_message">VIDEO SAVED\n%1$s%2$s</string>
@@ -211,6 +219,8 @@
     <string name="scenes_new">NEW SCENE</string>
     <string name="scenes_tap_to_create">TAP TO CREATE</string>
     <string name="scenes_clear_confirm">SURE?</string>
+    <string name="scenes_menu_rename">Rename</string>
+    <string name="scenes_rename_title">Rename scene</string>
     <plurals name="scene_lines_count">
         <item quantity="one">%d LINE</item>
         <item quantity="other">%d LINES</item>

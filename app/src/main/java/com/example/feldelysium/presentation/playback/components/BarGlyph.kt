@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import com.example.feldelysium.data.settings.BarIconState
+import com.example.feldelysium.domain.model.settings.BarIconState
 
 @Composable
 internal fun BarGlyph(
