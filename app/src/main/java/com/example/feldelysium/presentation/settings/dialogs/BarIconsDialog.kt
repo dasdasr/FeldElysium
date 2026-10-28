@@ -54,7 +54,7 @@ fun BarIconsDialog(
             FeldDialogFooter(
                 onReset = onReset,
                 onCancel = onDismiss,
-                cancelLabel = stringResource(R.string.common_cancel),
+                cancelLabel = stringResource(R.string.common_cancel).uppercase(),
                 confirmLabel = stringResource(R.string.common_ok),
                 seed = 22,
             )

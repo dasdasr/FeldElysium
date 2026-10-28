@@ -92,6 +92,7 @@ fun CustomSpeakerDialog(
                 },
                 onCancel = onDismiss,
                 confirmEnabled = name.isNotBlank(),
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {

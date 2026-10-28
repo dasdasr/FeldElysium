@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App name -->
+    <string name="app_name">Feld Elysium</string>
+
+    <!-- Common -->
+    <string name="common_done">Bitti</string>
+    <string name="common_delete">Sil</string>
+    <string name="common_save">Kaydet</string>
+    <string name="common_none">Yok</string>
+    <string name="common_back">Geri</string>
+    <string name="common_cancel">İptal</string>
+    <string name="common_ok">Tamam</string>
+    <string name="common_import">İçe aktar</string>
+    <string name="common_export">Dışa aktar</string>
+    <string name="common_current">SEÇİLİ</string>
+    <string name="common_reset">SIFIRLA</string>
+    <string name="common_confirm">Onayla</string>
+    <string name="common_apply">Uygula</string>
+
+    <!-- Settings header -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_eyebrow">Atölye</string>
+    <string name="settings_subtitle">Kendine göre ayarla.</string>
+
+    <!-- Playback -->
+    <string name="settings_appearance_section">Görünüm</string>
+    <string name="settings_playback_section">Oynatma</string>
+    <string name="settings_cinema_frame_title">Sinema karesi</string>
+    <string name="settings_cinema_frame_subtitle">Oynatmayı 16:9 kare içinde tut</string>
+    <string name="settings_status_line_title">Durum satırı</string>
+    <string name="settings_status_line_subtitle">Reals, saat ve gün</string>
+    <string name="settings_panel_icons_title">Panel simgeleri</string>
+    <string name="settings_panel_icons_subtitle">Vurgulanacak çubuk simgelerini seç</string>
+    <string name="settings_autoplay_title">Otomatik oynatma</string>
+    <string name="settings_autoplay_subtitle">Replikleri otomatik kaydır</string>
+    <string name="settings_autoplay_speed_title">Otomatik oynatma hızı</string>
+    <string name="settings_autoplay_speed_subtitle">Her replik ekranda ne kadar kalsın</string>
+    <string name="settings_continue_button_title">“Continue” düğmesi</string>
+    <string name="settings_continue_button_subtitle">Oynatmada “Continue” düğmesini göster</string>
+    <string name="settings_advance_dialogue_title">Sonraki replike geç</string>
+    <string name="settings_advance_whole_screen">Sonraki repliği göstermek için herhangi bir yere dokun</string>
+    <string name="settings_advance_continue_button">İlerlemek için Continue’ya dokun. Diyalog geçmişini kaydırabilirsin</string>
+    <string name="settings_advance_autoplay_only">Yalnızca otomatik oynatma</string>
+    <string name="settings_typeface_title">Yazı tipi</string>
+    <string name="settings_typeface_subtitle">Oynatmadaki diyalog metni</string>
+    <string name="settings_tap_mode_whole_screen">Her yer</string>
+    <string name="settings_tap_mode_continue_button">Düğme</string>
+    <string name="settings_tap_mode_nowhere">Hiçbir yer</string>
+
+    <!-- Video export -->
+    <string name="settings_video_export_section">Video dışa aktarma</string>
+    <string name="settings_record_playback_title">Oynatmayı kaydet</string>
+    <string name="settings_record_playback_subtitle">Oynatma düğmesi ekranını kaydeder</string>
+    <string name="settings_record_sound_title">Sesi kaydet</string>
+    <string name="settings_record_sound_subtitle">Uygulama sesi videoya girer</string>
+    <string name="settings_android_10_required">Android 10 veya üstü gerekir</string>
+
+    <!-- Background -->
+    <string name="settings_background_section">Arka plan</string>
+    <string name="settings_background_color">Renk</string>
+    <string name="settings_background_default">Varsayılan</string>
+    <string name="settings_background_custom">Özel</string>
+
+    <!-- Speakers -->
+    <string name="settings_speakers_section">Konuşmacılar</string>
+    <string name="settings_export_speakers_title">Konuşmacıları dışa aktar</string>
+    <string name="settings_export_speakers_subtitle">Konuşmacılarını ve etiketlerini bir dosyaya kaydet</string>
+    <string name="settings_import_speakers_title">Konuşmacıları içe aktar</string>
+    <string name="settings_import_speakers_subtitle">Bir paketten konuşmacı ve etiket ekle</string>
+    <string name="settings_tags_title">Etiketler</string>
+    <string name="settings_tags_subtitle">Yeniden adlandır, rengini değiştir veya sil</string>
+    <string name="settings_author_samples_title">Yazarın örnekleri</string>
+    <string name="settings_samples_imported_hidden">Paket içe aktarıldı, örnekler gizli</string>
+    <string name="settings_samples_hide_after_import">İlk paket içe aktarmandan sonra gizlenir</string>
+    <string name="settings_samples_always_visible">Seçicide her zaman görünür</string>
+    <string name="settings_samples_always_hidden">Her zaman gizli</string>
+    <string name="settings_samples_auto">Otomatik</string>
+    <string name="settings_samples_show">Göster</string>
+    <string name="settings_samples_hide">Gizle</string>
+
+    <!-- Coming soon -->
+    <string name="settings_coming_soon_section">Yakında</string>
+    <string name="settings_lock_landscape_title">Yatay yönü kilitle</string>
+    <string name="settings_lock_landscape_subtitle">Ekranı yatay tut</string>
+
+    <!-- Editor screen -->
+    <string name="editor_eyebrow">Sahne düzenleyici</string>
+    <string name="editor_lines_count">Replik: %1$d</string>
+    <string name="editor_scene_meta">Diyalog sahnesi</string>
+    <string name="editor_paste">Yapıştır</string>
+    <string name="editor_playback">Oynatma</string>
+    <string name="editor_settings">Ayarlar</string>
+    <string name="editor_menu_edit">Düzenle</string>
+    <string name="editor_menu_delete">Sil</string>
+    <string name="editor_add_entry">Replik ekle</string>
+    <string name="editor_empty_state">Bir senaryo yapıştır ya da\nbir replik ekle.</string>
+    <string name="import_preview_no_lines">Replik yok</string>
+    <plurals name="import_preview_lines">
+        <item quantity="one">%d replik</item>
+        <item quantity="other">%d replik</item>
+    </plurals>
+    <plurals name="import_preview_new_speakers">
+        <item quantity="one">%d yeni konuşmacı</item>
+        <item quantity="other">%d yeni konuşmacı</item>
+    </plurals>
+    <string name="pack_exported">Paket dışa aktarıldı</string>
+    <string name="pack_export_failed">Dışa aktarma başarısız</string>
+    <string name="pack_cannot_read">Bu dosya okunamıyor</string>
+    <string name="pack_not_a_pack">Bu bir konuşmacı paketi değil</string>
+    <string name="pack_added">Eklenen: %1$d</string>
+    <string name="pack_replaced">, değiştirilen: %1$d</string>
+    <string name="pack_skipped">, atlanan: %1$d</string>
+
+    <!-- Screen recording result -->
+    <string name="record_video_saved_message">VİDEO KAYDEDİLDİ\n%1$s%2$s</string>
+    <string name="record_gallery_location">Galeri › FeldElysium</string>
+    <string name="record_app_folder_location">Uygulama klasörü › Movies</string>
+    <string name="record_no_sound_suffix">" · sessiz"</string>
+
+    <!-- Tags -->
+    <string name="tags_title">Etiketler</string>
+    <string name="tags_manage_eyebrow">Etiketleri yönet</string>
+    <string name="tags_empty_message">Henüz etiket yok. Bir konuşmacıyı düzenlerken ekle.</string>
+    <string name="tags_built_in">YERLEŞİK</string>
+    <string name="tags_delete_title">Etiketi sil</string>
+    <string name="tags_delete_unused_message">Bu etiketi hiçbir konuşmacı kullanmıyor.</string>
+    <string name="tags_delete_used_message">%1$d konuşmacı bu etiketi kaybedip “Özel” grubuna geçecek. Renkleri kalır.</string>
+    <string name="tags_edit_title">Etiketi düzenle</string>
+    <string name="tags_name_label">Ad</string>
+    <string name="tags_duplicate_name">Bu adda bir etiket zaten var</string>
+    <string name="tags_default_color">Varsayılan renk</string>
+    <string name="tags_sound_label">Ses</string>
+    <string name="tags_skill_checks_label">Beceri kontrolleri</string>
+    <string name="tags_allow_skill_checks">Beceri kontrollerine izin ver</string>
+
+    <!-- Choose tag dialog -->
+    <string name="choose_tag_title">Etiket seç</string>
+    <string name="choose_tag_eyebrow">Konuşmacı etiketi</string>
+    <string name="choose_tag_select">Seç</string>
+    <string name="choose_tag_none">Etiket yok</string>
+    <string name="choose_tag_new">+ Yeni</string>
+    <string name="choose_tag_edit">Etiketleri düzenle</string>
+    <string name="choose_tag_name_placeholder">Etiket adı</string>
+    <string name="choose_tag_allow_checks">Kontrollere izin ver</string>
+    <string name="choose_tag_add">Ekle</string>
+
+    <!-- Custom speaker dialog -->
+    <string name="speaker_edit_title">Konuşmacıyı düzenle</string>
+    <string name="speaker_create_title">Konuşmacı oluştur</string>
+    <string name="speaker_eyebrow">Özel konuşmacı</string>
+    <string name="speaker_save">Kaydet</string>
+    <string name="speaker_create">Oluştur</string>
+    <string name="speaker_name_label">Ad</string>
+    <string name="speaker_name_placeholder">Konuşmacı adı</string>
+    <string name="speaker_tag_label">Etiket</string>
+    <string name="speaker_no_tag">Etiket yok</string>
+    <string name="speaker_color_label">Renk</string>
+    <string name="speaker_delete">Konuşmacıyı sil</string>
+    <string name="speaker_no_speaker">Konuşmacı yok</string>
+    <string name="speaker_edit_accessibility">Konuşmacıyı düzenle</string>
+
+    <!-- Bulk import dialog -->
+    <string name="bulk_import_title">Diyalog yapıştır</string>
+    <string name="bulk_import_eyebrow">Hızlı ekle</string>
+    <string name="bulk_import_subtitle">Bilinen adlar: büyük/küçük harf fark etmez. Yeniler: BÜYÜK HARF.</string>
+
+    <!-- Entry check editor -->
+    <string name="check_label">Kontrol</string>
+    <string name="check_none">Yok</string>
+    <string name="check_passive">Pasif</string>
+    <string name="check_active">Aktif</string>
+    <string name="check_difficulty">Zorluk</string>
+    <string name="check_result">Sonuç</string>
+    <string name="check_left_die">Sol zar</string>
+    <string name="check_right_die">Sağ zar</string>
+    <string name="check_difficulty_trivial">Önemsiz</string>
+    <string name="check_difficulty_easy">Kolay</string>
+    <string name="check_difficulty_medium">Orta</string>
+    <string name="check_difficulty_challenging">Zorlu</string>
+    <string name="check_difficulty_formidable">Çetin</string>
+    <string name="check_difficulty_legendary">Efsanevi</string>
+    <string name="check_difficulty_heroic">Kahramanca</string>
+    <string name="check_difficulty_godly">İlahi</string>
+    <string name="check_difficulty_impossible">İmkânsız</string>
+    <string name="check_result_success">Başarı</string>
+    <string name="check_result_failure">Başarısızlık</string>
+
+    <!-- Damage -->
+    <string name="damage_type">Tür</string>
+    <string name="damage_amount">Miktar</string>
+    <string name="damage_type_morale">Moral</string>
+    <string name="damage_type_health">Sağlık</string>
+
+    <!-- Entry edit sheet -->
+    <string name="entry_new_title">YENİ REPLİK</string>
+    <string name="entry_edit_title">REPLİĞİ DÜZENLE</string>
+    <string name="entry_dialogue_label">Diyalog</string>
+    <string name="entry_dialogue_placeholder">Diyalog metni</string>
+    <string name="entry_reply_options">YANIT SEÇENEKLERİ</string>
+    <string name="entry_skill_check">BECERİ KONTROLÜ</string>
+    <string name="entry_damage">HASAR</string>
+    <string name="entry_confirm">Onayla</string>
+    <string name="entry_select_reply">Diyalog için bir seçenek seç</string>
+    <string name="entry_spoken_by_you">Söyleyen SEN</string>
+    <string name="entry_reply_option">Seçenek %1$d</string>
+    <string name="entry_add_option">+ SEÇENEK EKLE</string>
+
+    <!-- Scene manager -->
+    <string name="scenes_top_bar_title">DİYALOG DÜZENLEYİCİ</string>
+    <string name="scenes_saved">KAYDEDİLDİ</string>
+    <string name="scenes_title">SAHNELER</string>
+    <string name="scenes_hint_hold_folder">YÖNETMEK İÇİN BASILI TUT</string>
+    <string name="scenes_hold_for_more">BASILI TUT</string>
+    <string name="scenes_empty_tape">BANTTA HENÜZ BİR ŞEY YOK</string>
+    <string name="scenes_menu_clear_lines">Replikleri temizle</string>
+    <string name="scenes_new">YENİ SAHNE</string>
+    <string name="scenes_tap_to_create">OLUŞTURMAK İÇİN DOKUN</string>
+    <string name="scenes_clear_confirm">EMİN MİSİN?</string>
+    <string name="scenes_menu_rename">Yeniden adlandır</string>
+    <string name="scenes_rename_title">Sahneyi yeniden adlandır</string>
+    <plurals name="scene_lines_count">
+        <item quantity="one">%d REPLİK</item>
+        <item quantity="other">%d REPLİK</item>
+    </plurals>
+
+    <!-- Speaker picker -->
+    <string name="picker_title">Konuşmacı seç</string>
+    <string name="picker_eyebrow">Replik</string>
+    <string name="picker_search">ARA</string>
+    <string name="picker_empty">KONUŞMACI BULUNAMADI</string>
+    <string name="picker_create_custom">ÖZEL KONUŞMACI OLUŞTUR</string>
+    <string name="picker_group_custom">Özel</string>
+
+    <!-- Speaker dossier -->
+    <string name="speaker_preview_label">› ÖNİZLEME</string>
+    <string name="speaker_preview_sample">“Örnek replik…”</string>
+    <string name="field_optional">"  (İSTEĞE BAĞLI)"</string>
+
+    <!-- Background dialog -->
+    <string name="background_eyebrow_animated">Animasyonlu</string>
+    <string name="background_eyebrow_plain">Düz</string>
+    <string name="background_subtitle">Sahne arka planı</string>
+    <string name="background_tab_media">Medya</string>
+    <string name="background_video">Video</string>
+    <string name="background_image">Görsel</string>
+    <string name="background_mute_title">Sesi kapat</string>
+    <string name="background_mute_subtitle">Videonun sesini kapat.</string>
+    <string name="background_fill_title">Ekranı doldur</string>
+    <string name="background_fill_subtitle">Kareyi doldurmak için videoyu kırp.</string>
+    <string name="background_no_media">HENÜZ MEDYA YOK</string>
+
+    <!-- Bar icons dialog -->
+    <string name="bar_icons_panel">Panel</string>
+    <string name="bar_icons_panel_hint">Değiştirmek için dokun: kapalı, açık, uyarı</string>
+    <string name="bar_icons_inventory">Envanter</string>
+    <string name="bar_icons_inventory_hint">Eşyayı değiştirmek için dokun</string>
+
+    <!-- Import conflict dialog -->
+    <string name="import_conflict_title">Zaten var</string>
+    <string name="import_conflict_eyebrow">Paketi içe aktar</string>
+    <string name="import_conflict_confirm">İçe aktar</string>
+    <string name="import_conflict_count">Paketteki konuşmacılardan listende zaten olanlar (%1$d): %2$s</string>
+    <string name="import_conflict_skip">Atla</string>
+    <string name="import_conflict_replace">Değiştir</string>
+    <string name="import_conflict_keep_both">İkisini de tut</string>
+    <string name="import_conflict_skip_description">Mevcut konuşmacılar olduğu gibi kalır.</string>
+    <string name="import_conflict_replace_description">Mevcut konuşmacıların üzerine paketteki sürümler yazılır.</string>
+    <string name="import_conflict_keep_both_description">Paketteki konuşmacılar yeni kopyalar olarak eklenir.</string>
+    <string name="import_conflict_bundled_skipped">Paketteki yerleşik konuşmacılar (%1$d) her zaman atlanır.</string>
+
+    <!-- Playback UI text dialog -->
+    <string name="playback_ui_title">Sahne bilgisi</string>
+    <string name="playback_ui_eyebrow">Ayrıntılar</string>
+    <string name="playback_ui_subtitle">Sahne ayrıntıları</string>
+    <string name="playback_ui_reals">Reals</string>
+    <string name="playback_ui_time">Saat</string>
+    <string name="playback_ui_day">Gün</string>
+
+    <!-- Font dialog -->
+    <string name="font_dialog_subtitle">Başka bir yazı tipi dene.</string>
+    <string name="font_dialog_hint">REPLİKLERİ DEĞİŞTİRMEK İÇİN BİR KARTA DOKUN  › › ›</string>
+    <string name="font_add_own">KENDİ YAZI TİPİNİ EKLE</string>
+    <string name="font_replace_own">KENDİ YAZI TİPİNİ DEĞİŞTİR</string>
+    <string name="font_file_hint">.ttf veya .otf</string>
+
+    <!-- Font dialog: sample speakers -->
+    <string name="skill_electrochemistry">Elektrokimya</string>
+    <string name="skill_encyclopedia">Ansiklopedi</string>
+    <string name="skill_inland_empire">İç İmparatorluk</string>
+    <string name="skill_savoir_faire">Maharet</string>
+    <string name="skill_perception">Algı</string>
+    <string name="skill_authority">Otorite</string>
+    <string name="skill_volition">İrade</string>
+    <string name="skill_rhetoric">Retorik</string>
+
+    <!-- Font dialog: sample lines -->
+    <string name="font_sample_01">Oh, bu resmen zehir gibi. Şu kıvrımlara bak. Şu pis küçük “g”ye bak.</string>
+    <string name="font_sample_02">Tarihsel olarak serif, şuna bir yanıt olarak ortaya çıktı—</string>
+    <string name="font_sample_03">Gözlerini kapat. Harfleri dinle.</string>
+    <string name="font_sample_04">Çirkin olanı seç. Kasıtlıymış gibi göster.</string>
+    <string name="font_sample_05">Şu küçük “a”ya bak. Onda derinden bir terslik var.</string>
+    <string name="font_sample_06">Serifli olanı seçeceksin. Ona saygı duyacaksın. Sormayacaksın.</string>
+    <string name="font_sample_07">Bir arayüz yapıyoruz, intihar notu değil.</string>
+    <string name="font_sample_08">Kalın olanı. Lanet olası kalın olanı.</string>
+    <string name="font_sample_09">Harfleri ucuz görünen adama kimse saygı duymaz.</string>
+    <string name="font_sample_10">Okunaklı bir şey seç.</string>
+    <string name="font_sample_11">Ayıp derecede çekici bir şey seç.</string>
+    <string name="font_sample_12">Serifsiz yazı tipi, her şeyi start-up gibi göstermek için kurulmuş burjuva bir komplodur.</string>
+    <string name="font_sample_13">Bu ıslak beton ve artık ulaşamadığın bir ilham kokuyor.</string>
+    <string name="font_sample_14">Bağlı. Kal. Yazı. Tipine. Dedektif.</string>
+    <string name="font_tile_glyph">Aa</string>
+
+    <!-- Choose icon dialog -->
+    <string name="choose_icon_title">Simge seç</string>
+    <string name="choose_icon_eyebrow">Konuşmacı simgesi</string>
+    <string name="choose_icon_subtitle">Konuşmacı için bir görsel seç.</string>
+    <string name="choose_icon_add_custom">Özel görsel ekle</string>
+
+    <!-- Editor toasts -->
+    <string name="message_scene_saved">Sahne kaydedildi</string>
+    <string name="message_scene_exported">Sahne dışa aktarıldı</string>
+    <string name="message_scene_imported">Sahne içe aktarıldı</string>
+
+    <!-- Errors -->
+    <string name="settings_font_invalid">Bu dosya yazı tipi olarak kullanılamaz</string>
+    <string name="error_record_denied">BANT YOK, GÖSTERİ YOK\nEkran kaydına izin ver ya da Ayarlar’dan “Oynatmayı kaydet” seçeneğini kapat</string>
+    <string name="error_record_failed">BANT SIKIŞTI\nVideo kaydedilmedi. Kayıt tıkandı, tekrar dene</string>
+    <string name="error_export_failed">DIŞA AKTARMA BAŞARISIZ\nSahne dışa aktarılamadı</string>
+    <string name="error_import_failed">BUNU OKUYAMIYORUM\nBu dosya beklediğim gibi değil</string>
+    <string name="error_empty_import">HİÇBİR ŞEY BULUNAMADI\n“AD: metin” biçimini dene</string>
+    <string name="error_no_script_pasted">BOŞ\nÖnce birkaç replik yapıştır, aklını okuyamam</string>
+
+    <!-- Language -->
+    <string name="settings_language_title">Dil</string>
+    <string name="settings_language_subtitle">Uygulama arayüz dili</string>
+    <string name="settings_language_system">Sistem</string>
+    <string name="settings_language_eyebrow">Dil seç</string>
+
+</resources>

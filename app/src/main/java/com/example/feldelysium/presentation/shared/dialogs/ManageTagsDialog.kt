@@ -65,6 +65,7 @@ fun ManageTagsDialog(
             FeldDialogActions(
                 confirmLabel = stringResource(R.string.common_done),
                 onConfirm = onDismiss,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {
@@ -163,6 +164,7 @@ fun ManageTagsDialog(
                         deleting = null
                     },
                     onCancel = { deleting = null },
+                    cancelLabel = stringResource(R.string.common_cancel),
                 )
             },
         ) {
@@ -223,6 +225,7 @@ private fun EditTagDialog(
                 },
                 onCancel = onDismiss,
                 confirmEnabled = valid,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {

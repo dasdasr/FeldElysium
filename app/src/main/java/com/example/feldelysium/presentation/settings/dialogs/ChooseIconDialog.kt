@@ -119,6 +119,7 @@ fun ChooseImageDialog(
                 confirmLabel = "Confirm",
                 onConfirm = { onConfirm(resId, uri) },
                 onCancel = onDismiss,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {

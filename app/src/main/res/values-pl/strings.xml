@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App name -->
+    <string name="app_name">Feld Elysium</string>
+
+    <!-- Common -->
+    <string name="common_done">Gotowe</string>
+    <string name="common_delete">Usuń</string>
+    <string name="common_save">Zapisz</string>
+    <string name="common_none">Brak</string>
+    <string name="common_back">Wstecz</string>
+    <string name="common_cancel">Anuluj</string>
+    <string name="common_ok">OK</string>
+    <string name="common_import">Importuj</string>
+    <string name="common_export">Eksportuj</string>
+    <string name="common_current">W UŻYCIU</string>
+    <string name="common_reset">RESET</string>
+    <string name="common_confirm">Potwierdź</string>
+    <string name="common_apply">Zastosuj</string>
+
+    <!-- Settings header -->
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_eyebrow">Warsztat</string>
+    <string name="settings_subtitle">Dostosuj do siebie.</string>
+
+    <!-- Playback -->
+    <string name="settings_appearance_section">Wygląd</string>
+    <string name="settings_playback_section">Odtwarzanie</string>
+    <string name="settings_cinema_frame_title">Kadr kinowy</string>
+    <string name="settings_cinema_frame_subtitle">Odtwarzaj scenę w kadrze 16:9</string>
+    <string name="settings_status_line_title">Linia statusu</string>
+    <string name="settings_status_line_subtitle">Reale, czas i dzień</string>
+    <string name="settings_panel_icons_title">Ikony panelu</string>
+    <string name="settings_panel_icons_subtitle">Wybierz podświetlane ikony paska</string>
+    <string name="settings_autoplay_title">Autoodtwarzanie</string>
+    <string name="settings_autoplay_subtitle">Automatycznie przewijaj kwestie</string>
+    <string name="settings_autoplay_speed_title">Szybkość autoodtwarzania</string>
+    <string name="settings_autoplay_speed_subtitle">Jak długo pokazywać każdą kwestię</string>
+    <string name="settings_continue_button_title">Przycisk „Continue”</string>
+    <string name="settings_continue_button_subtitle">Pokazuj przycisk „Dalej” w trybie odtwarzania</string>
+    <string name="settings_advance_dialogue_title">Przejście dalej</string>
+    <string name="settings_advance_whole_screen">Dotknij ekranu, aby pokazać następną kwestię</string>
+    <string name="settings_advance_continue_button">„Continue” — następna kwestia. Przewijaj historię dialogu</string>
+    <string name="settings_advance_autoplay_only">Tylko autoodtwarzanie</string>
+    <string name="settings_typeface_title">Czcionka</string>
+    <string name="settings_typeface_subtitle">Tekst dialogu podczas odtwarzania</string>
+    <string name="settings_tap_mode_whole_screen">Cały ekran</string>
+    <string name="settings_tap_mode_continue_button">Przycisk</string>
+    <string name="settings_tap_mode_nowhere">Nigdzie</string>
+
+    <!-- Video export -->
+    <string name="settings_video_export_section">Eksport wideo</string>
+    <string name="settings_record_playback_title">Nagrywaj odtwarzanie</string>
+    <string name="settings_record_playback_subtitle">Przycisk odtwarzania nagrywa ekran</string>
+    <string name="settings_record_sound_title">Nagrywanie dźwięku</string>
+    <string name="settings_record_sound_subtitle">Dźwięk aplikacji trafia do wideo</string>
+    <string name="settings_android_10_required">Wymaga Androida 10 lub nowszego</string>
+
+    <!-- Background -->
+    <string name="settings_background_section">Tło</string>
+    <string name="settings_background_color">Kolor</string>
+    <string name="settings_background_default">Domyślne</string>
+    <string name="settings_background_custom">Własne</string>
+
+    <!-- Speakers -->
+    <string name="settings_speakers_section">Mówcy</string>
+    <string name="settings_export_speakers_title">Eksport mówców</string>
+    <string name="settings_export_speakers_subtitle">Zapisz mówców i tagi do pliku</string>
+    <string name="settings_import_speakers_title">Import mówców</string>
+    <string name="settings_import_speakers_subtitle">Dodaj mówców i tagi z paczki</string>
+    <string name="settings_tags_title">Tagi</string>
+    <string name="settings_tags_subtitle">Zmień nazwę, kolor lub usuń</string>
+    <string name="settings_author_samples_title">Próbki autora</string>
+    <string name="settings_samples_imported_hidden">Paczka zaimportowana, próbki ukryte</string>
+    <string name="settings_samples_hide_after_import">Ukryją się po pierwszym imporcie paczki</string>
+    <string name="settings_samples_always_visible">Zawsze widoczne w wyborze</string>
+    <string name="settings_samples_always_hidden">Zawsze ukryte</string>
+    <string name="settings_samples_auto">Automatycznie</string>
+    <string name="settings_samples_show">Pokazuj</string>
+    <string name="settings_samples_hide">Ukrywaj</string>
+
+    <!-- Coming soon -->
+    <string name="settings_coming_soon_section">Wkrótce</string>
+    <string name="settings_lock_landscape_title">Zablokuj orientację poziomą</string>
+    <string name="settings_lock_landscape_subtitle">Utrzymuj ekran w poziomie</string>
+
+    <!-- Editor screen -->
+    <string name="editor_eyebrow">Edytor sceny</string>
+    <string name="editor_lines_count">Kwestii: %1$d</string>
+    <string name="editor_scene_meta">Scena dialogowa</string>
+    <string name="editor_paste">Wklej</string>
+    <string name="editor_playback">Odtwarzanie</string>
+    <string name="editor_settings">Ustawienia</string>
+    <string name="editor_menu_edit">Edytuj</string>
+    <string name="editor_menu_delete">Usuń</string>
+    <string name="editor_add_entry">Dodaj kwestię</string>
+    <string name="editor_empty_state">Wklej scenariusz lub\ndodaj kwestię.</string>
+    <string name="import_preview_no_lines">Brak kwestii</string>
+    <plurals name="import_preview_lines">
+        <item quantity="one">%d kwestia</item>
+        <item quantity="few">%d kwestie</item>
+        <item quantity="many">%d kwestii</item>
+        <item quantity="other">%d kwestii</item>
+    </plurals>
+    <plurals name="import_preview_new_speakers">
+        <item quantity="one">%d nowy mówca</item>
+        <item quantity="few">%d nowych mówców</item>
+        <item quantity="many">%d nowych mówców</item>
+        <item quantity="other">%d nowych mówców</item>
+    </plurals>
+    <string name="pack_exported">Paczka wyeksportowana</string>
+    <string name="pack_export_failed">Nie udało się wyeksportować paczki</string>
+    <string name="pack_cannot_read">Nie można odczytać tego pliku</string>
+    <string name="pack_not_a_pack">To nie jest paczka mówców</string>
+    <string name="pack_added">Dodano: %1$d</string>
+    <string name="pack_replaced">, zastąpiono: %1$d</string>
+    <string name="pack_skipped">, pominięto: %1$d</string>
+
+    <!-- Screen recording result -->
+    <string name="record_video_saved_message">WIDEO ZAPISANE\n%1$s%2$s</string>
+    <string name="record_gallery_location">Galeria › FeldElysium</string>
+    <string name="record_app_folder_location">Folder aplikacji › Movies</string>
+    <string name="record_no_sound_suffix">" · bez dźwięku"</string>
+
+    <!-- Tags -->
+    <string name="tags_title">Tagi</string>
+    <string name="tags_manage_eyebrow">Zarządzanie tagami</string>
+    <string name="tags_empty_message">Brak tagów. Dodaj tag podczas edycji mówcy.</string>
+    <string name="tags_built_in">WBUDOWANE</string>
+    <string name="tags_delete_title">Usuń tag</string>
+    <string name="tags_delete_unused_message">Ten tag nie jest używany przez żadnego mówcę.</string>
+    <string name="tags_delete_used_message">Mówców z tym tagiem: %1$d. Stracą go i przejdą do „Własnych”. Kolory zostaną.</string>
+    <string name="tags_edit_title">Edytuj tag</string>
+    <string name="tags_name_label">Nazwa</string>
+    <string name="tags_duplicate_name">Tag o tej nazwie już istnieje</string>
+    <string name="tags_default_color">Kolor domyślny</string>
+    <string name="tags_sound_label">Dźwięk</string>
+    <string name="tags_skill_checks_label">Testy umiejętności</string>
+    <string name="tags_allow_skill_checks">Zezwalaj na testy umiejętności</string>
+
+    <!-- Choose tag dialog -->
+    <string name="choose_tag_title">Wybór tagu</string>
+    <string name="choose_tag_eyebrow">Tag mówcy</string>
+    <string name="choose_tag_select">Wybierz</string>
+    <string name="choose_tag_none">Bez tagu</string>
+    <string name="choose_tag_new">+ Nowy</string>
+    <string name="choose_tag_edit">Edytuj tagi</string>
+    <string name="choose_tag_name_placeholder">Nazwa tagu</string>
+    <string name="choose_tag_allow_checks">Zezwalaj na testy</string>
+    <string name="choose_tag_add">Dodaj</string>
+
+    <!-- Custom speaker dialog -->
+    <string name="speaker_edit_title">Edycja mówcy</string>
+    <string name="speaker_create_title">Tworzenie mówcy</string>
+    <string name="speaker_eyebrow">Własny mówca</string>
+    <string name="speaker_save">Zapisz</string>
+    <string name="speaker_create">Utwórz</string>
+    <string name="speaker_name_label">Nazwa mówcy</string>
+    <string name="speaker_name_placeholder">Wpisz nazwę mówcy</string>
+    <string name="speaker_tag_label">Tag</string>
+    <string name="speaker_no_tag">Bez tagu</string>
+    <string name="speaker_color_label">Kolor</string>
+    <string name="speaker_delete">Usuń mówcę</string>
+    <string name="speaker_no_speaker">Brak mówcy</string>
+    <string name="speaker_edit_accessibility">Edytuj mówcę</string>
+
+    <!-- Bulk import dialog -->
+    <string name="bulk_import_title">Wklejanie dialogu</string>
+    <string name="bulk_import_eyebrow">Szybkie dodawanie</string>
+    <string name="bulk_import_subtitle">Znane nazwy są rozpoznawane bez względu na wielkość liter. Nowe wpisuj WIELKIMI LITERAMI.</string>
+
+    <!-- Entry check editor -->
+    <string name="check_label">Test</string>
+    <string name="check_none">Brak</string>
+    <string name="check_passive">Pasywny</string>
+    <string name="check_active">Aktywny</string>
+    <string name="check_difficulty">Trudność</string>
+    <string name="check_result">Wynik</string>
+    <string name="check_left_die">Lewa kość</string>
+    <string name="check_right_die">Prawa kość</string>
+    <string name="check_difficulty_trivial">Banalny</string>
+    <string name="check_difficulty_easy">Łatwy</string>
+    <string name="check_difficulty_medium">Średni</string>
+    <string name="check_difficulty_challenging">Wymagający</string>
+    <string name="check_difficulty_formidable">Piekielnie trudny</string>
+    <string name="check_difficulty_legendary">Legendarny</string>
+    <string name="check_difficulty_heroic">Heroiczny</string>
+    <string name="check_difficulty_godly">Boski</string>
+    <string name="check_difficulty_impossible">Niemożliwy</string>
+    <string name="check_result_success">Sukces</string>
+    <string name="check_result_failure">Porażka</string>
+
+    <!-- Damage -->
+    <string name="damage_type">Typ</string>
+    <string name="damage_amount">Ilość</string>
+    <string name="damage_type_morale">Morale</string>
+    <string name="damage_type_health">Zdrowie</string>
+
+    <!-- Entry edit sheet -->
+    <string name="entry_new_title">NOWA KWESTIA</string>
+    <string name="entry_edit_title">EDYCJA KWESTII</string>
+    <string name="entry_dialogue_label">Dialog</string>
+    <string name="entry_dialogue_placeholder">Tekst dialogu</string>
+    <string name="entry_reply_options">OPCJE ODPOWIEDZI</string>
+    <string name="entry_skill_check">TEST UMIEJĘTNOŚCI</string>
+    <string name="entry_damage">OBRAŻENIA</string>
+    <string name="entry_confirm">Potwierdź</string>
+    <string name="entry_select_reply">Wybierz odpowiedź</string>
+    <string name="entry_spoken_by_you">Mówisz TY</string>
+    <string name="entry_reply_option">Opcja %1$d</string>
+    <string name="entry_add_option">+ DODAJ OPCJĘ</string>
+
+    <!-- Scene manager -->
+    <string name="scenes_top_bar_title">EDYTOR DIALOGÓW</string>
+    <string name="scenes_saved">ZAPISANO</string>
+    <string name="scenes_title">SCENY</string>
+    <string name="scenes_hint_hold_folder">PRZYTRZYMAJ, BY OTWORZYĆ MENU</string>
+    <string name="scenes_hold_for_more">PRZYTRZYMAJ</string>
+    <string name="scenes_empty_tape">NA TAŚMIE JESZCZE NIC NIE MA</string>
+    <string name="scenes_menu_clear_lines">Wyczyść kwestie</string>
+    <string name="scenes_new">NOWA SCENA</string>
+    <string name="scenes_tap_to_create">DOTKNIJ, ABY UTWORZYĆ</string>
+    <string name="scenes_clear_confirm">NA PEWNO?</string>
+    <string name="scenes_menu_rename">Zmień nazwę</string>
+    <string name="scenes_rename_title">Zmień nazwę sceny</string>
+    <plurals name="scene_lines_count">
+        <item quantity="one">%d KWESTIA</item>
+        <item quantity="few">%d KWESTIE</item>
+        <item quantity="many">%d KWESTII</item>
+        <item quantity="other">%d KWESTII</item>
+    </plurals>
+
+    <!-- Speaker picker -->
+    <string name="picker_title">Wybór mówcy</string>
+    <string name="picker_eyebrow">Kwestia</string>
+    <string name="picker_search">SZUKAJ</string>
+    <string name="picker_empty">NIE ZNALEZIONO MÓWCÓW</string>
+    <string name="picker_create_custom">UTWÓRZ WŁASNEGO MÓWCĘ</string>
+    <string name="picker_group_custom">Własne</string>
+
+    <!-- Speaker dossier -->
+    <string name="speaker_preview_label">› PODGLĄD</string>
+    <string name="speaker_preview_sample">“Przykładowa kwestia…”</string>
+    <string name="field_optional">"  (OPCJONALNE)"</string>
+
+    <!-- Background dialog -->
+    <string name="background_eyebrow_animated">Animowane</string>
+    <string name="background_eyebrow_plain">Zwykłe</string>
+    <string name="background_subtitle">Tło sceny</string>
+    <string name="background_tab_media">Media</string>
+    <string name="background_video">Wideo</string>
+    <string name="background_image">Obraz</string>
+    <string name="background_mute_title">Wycisz dźwięk</string>
+    <string name="background_mute_subtitle">Wycisz dźwięk wideo.</string>
+    <string name="background_fill_title">Wypełnij ekran</string>
+    <string name="background_fill_subtitle">Przytnij wideo, aby wypełnić kadr.</string>
+    <string name="background_no_media">JESZCZE NIE MA MEDIÓW</string>
+
+    <!-- Bar icons dialog -->
+    <string name="bar_icons_panel">Panel</string>
+    <string name="bar_icons_panel_hint">Dotknij, aby przełączać: wył., wł., alarm</string>
+    <string name="bar_icons_inventory">Ekwipunek</string>
+    <string name="bar_icons_inventory_hint">Dotknij, aby zmienić przedmiot</string>
+
+    <!-- Import conflict dialog -->
+    <string name="import_conflict_title">Już istnieje</string>
+    <string name="import_conflict_eyebrow">Import paczki</string>
+    <string name="import_conflict_confirm">Importuj</string>
+    <string name="import_conflict_count">Mówcy z paczki, którzy są już na Twojej liście (%1$d): %2$s</string>
+    <string name="import_conflict_skip">Pomiń</string>
+    <string name="import_conflict_replace">Zastąp</string>
+    <string name="import_conflict_keep_both">Zachowaj obie wersje</string>
+    <string name="import_conflict_skip_description">Istniejący mówcy pozostaną bez zmian.</string>
+    <string name="import_conflict_replace_description">Istniejący mówcy zostaną zastąpieni wersjami z paczki.</string>
+    <string name="import_conflict_keep_both_description">Mówcy z paczki zostaną dodani jako nowe kopie.</string>
+    <string name="import_conflict_bundled_skipped">Wbudowani mówcy z paczki (%1$d) są zawsze pomijani.</string>
+
+    <!-- Playback UI text dialog -->
+    <string name="playback_ui_title">Informacje o scenie</string>
+    <string name="playback_ui_eyebrow">Szczegóły</string>
+    <string name="playback_ui_subtitle">Szczegóły sceny</string>
+    <string name="playback_ui_reals">Reale</string>
+    <string name="playback_ui_time">Czas</string>
+    <string name="playback_ui_day">Dzień</string>
+
+    <!-- Font dialog -->
+    <string name="font_dialog_subtitle">Wypróbuj inną czcionkę.</string>
+    <string name="font_dialog_hint">DOTKNIJ KARTY, ABY ZMIENIĆ KWESTIE  › › ›</string>
+    <string name="font_add_own">DODAJ WŁASNĄ CZCIONKĘ</string>
+    <string name="font_replace_own">ZAMIEŃ WŁASNĄ CZCIONKĘ</string>
+    <string name="font_file_hint">.ttf lub .otf</string>
+
+    <!-- Font dialog: sample speakers -->
+    <string name="skill_electrochemistry">Elektrochemia</string>
+    <string name="skill_encyclopedia">Encyklopedia</string>
+    <string name="skill_inland_empire">Wewnętrzne Imperium</string>
+    <string name="skill_savoir_faire">Savoir-faire</string>
+    <string name="skill_perception">Percepcja</string>
+    <string name="skill_authority">Autorytet</string>
+    <string name="skill_volition">Siła woli</string>
+    <string name="skill_rhetoric">Retoryka</string>
+
+    <!-- Font dialog: sample lines -->
+    <string name="font_sample_01">Oho, ta jest po prostu bombowa. Zobacz te krzywizny. Zobacz tę brudną małą literkę „g”.</string>
+    <string name="font_sample_02">Historycznie szeryf pojawił się jako odpowiedź na…</string>
+    <string name="font_sample_03">Zamknij oczy. Posłuchaj liter.</string>
+    <string name="font_sample_04">Weź tę brzydką. Spraw, by wyglądała na zamierzoną.</string>
+    <string name="font_sample_05">Spójrz na tę małą „a”. Coś jest z nią głęboko nie tak.</string>
+    <string name="font_sample_06">Wybierzesz szeryfową. Będziesz ją szanować. Nie będziesz pytać.</string>
+    <string name="font_sample_07">Robimy interfejs, a nie list pożegnalny.</string>
+    <string name="font_sample_08">Ta gruba. Ta cholernie gruba.</string>
+    <string name="font_sample_09">Nikt nie szanuje człowieka, którego litery wyglądają tanio.</string>
+    <string name="font_sample_10">Wybierz coś czytelnego.</string>
+    <string name="font_sample_11">Wybierz coś nieprzyzwoicie pociągającego.</string>
+    <string name="font_sample_12">Bezszeryfowe to burżuazyjny spisek, by wszystko wyglądało jak startup.</string>
+    <string name="font_sample_13">Ta pachnie mokrym betonem i natchnieniem, do którego już nie sięgniesz.</string>
+    <string name="font_sample_14">Trzymaj. Się. Swojej. Czcionki. Detektywie.</string>
+    <string name="font_tile_glyph">Aa</string>
+
+    <!-- Choose icon dialog -->
+    <string name="choose_icon_title">Wybór ikony</string>
+    <string name="choose_icon_eyebrow">Ikona mówcy</string>
+    <string name="choose_icon_subtitle">Wybierz obraz dla mówcy.</string>
+    <string name="choose_icon_add_custom">Dodaj własny obraz</string>
+
+    <!-- Editor toasts -->
+    <string name="message_scene_saved">Scena zapisana</string>
+    <string name="message_scene_exported">Scena wyeksportowana</string>
+    <string name="message_scene_imported">Scena zaimportowana</string>
+
+    <!-- Errors -->
+    <string name="settings_font_invalid">Nie można użyć tego pliku jako czcionki</string>
+    <string name="error_record_denied">BEZ NAGRANIA NIE MA POKAZU\nZezwól na nagrywanie ekranu lub wyłącz „Nagrywanie odtwarzania” w ustawieniach</string>
+    <string name="error_record_failed">TAŚMA SIĘ ZACIĘŁA\nWideo nie zostało zapisane. Nagranie się zadławiło, spróbuj ponownie</string>
+    <string name="error_export_failed">EKSPORT NIE WYSZEDŁ\nNie udało się wyeksportować sceny</string>
+    <string name="error_import_failed">Nieoczekiwany format pliku.</string>
+    <string name="error_empty_import">NIC NIE ZNALEZIONO\nSpróbuj „NAZWA: tekst”</string>
+    <string name="error_no_script_pasted">Najpierw wklej kwestie. Nie czytam w myślach.</string>
+
+    <!-- Language -->
+    <string name="settings_language_title">Język</string>
+    <string name="settings_language_subtitle">Język interfejsu aplikacji</string>
+    <string name="settings_language_system">Systemowy</string>
+    <string name="settings_language_eyebrow">Wybór języka</string>
+
+</resources>

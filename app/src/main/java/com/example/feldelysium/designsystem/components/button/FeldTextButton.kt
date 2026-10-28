@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,22 +15,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.content.FeldTitleTag
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.designsystem.components.input.feldClickable
 
 @Composable
-fun FeldTextButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun FeldTextButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    maxLines: Int = 1,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+) {
     Text(
         text = text.uppercase(),
         style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 1.6.sp),
         color = MaterialTheme.colorScheme.onSurface,
+        maxLines = maxLines,
+        softWrap = false,
+        overflow = overflow,
         modifier = modifier
             .feldClickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -41,7 +54,7 @@ fun FeldDialogActions(
     confirmLabel: String,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
-    cancelLabel: String = "Cancel",
+    cancelLabel: String,
     onCancel: (() -> Unit)? = null,
     confirmEnabled: Boolean = true,
     seed: Int = rememberSeed(),
@@ -79,6 +92,9 @@ fun FeldDialogActions(
                 .weight(1f)
                 .alpha(if (confirmEnabled) 1f else 0.45f),
             seed = seed,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            contentPadding = PaddingValues(horizontal = 24.dp, vertical = 18.dp),
         )
     }
 }

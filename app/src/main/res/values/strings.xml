@@ -165,7 +165,6 @@
     <string name="bulk_import_title">Paste dialogue</string>
     <string name="bulk_import_eyebrow">Quick add</string>
     <string name="bulk_import_subtitle">Known names: any case. New ones: CAPS.</string>
-    <string name="bulk_import_button">Import</string>
 
     <!-- Entry check editor -->
     <string name="check_label">Check</string>

@@ -10,11 +10,11 @@
     <string name="common_save">Захаваць</string>
     <string name="common_none">Няма</string>
     <string name="common_back">Назад</string>
-    <string name="common_cancel">Скасаваць</string>
+    <string name="common_cancel">Адмена</string>
     <string name="common_ok">OK</string>
     <string name="common_import">Імпарт</string>
     <string name="common_export">Экспарт</string>
-    <string name="common_current">БЯГУЧЫ</string>
+    <string name="common_current">ВЫБРАНА</string>
     <string name="common_reset">СКІНУЦЬ</string>
     <string name="common_confirm">Пацвердзіць</string>
     <string name="common_apply">Ужыць</string>
@@ -37,11 +37,11 @@
     <string name="settings_autoplay_subtitle">Аўтаматычна пракручваць рэплікі</string>
     <string name="settings_autoplay_speed_title">Хуткасць аўтапрайгравання</string>
     <string name="settings_autoplay_speed_subtitle">Як доўга паказваць кожную рэпліку</string>
-    <string name="settings_continue_button_title">Кнопка «Далей»</string>
-    <string name="settings_continue_button_subtitle">Паказваць кнопку «Далей» у рэжыме прайгравання</string>
+    <string name="settings_continue_button_title">Кнопка «Continue»</string>
+    <string name="settings_continue_button_subtitle">Паказваць кнопку «Continue» падчас прайгравання</string>
     <string name="settings_advance_dialogue_title">Пераход да наступнай рэплікі</string>
     <string name="settings_advance_whole_screen">Націсні ў любым месцы, каб паказаць наступную рэпліку</string>
-    <string name="settings_advance_continue_button">Націсні «Далей», каб перайсці да наступнай рэплікі Гісторыю дыялогу можна пракручваць</string>
+    <string name="settings_advance_continue_button">Націсні Continue, каб пракруц рэплікі. Гісторыю дыялогу можна пракручваць.</string>
     <string name="settings_advance_autoplay_only">Толькі аўтапрайграванне</string>
     <string name="settings_typeface_title">Шрыфт</string>
     <string name="settings_typeface_subtitle">Тэкст дыялогу пры прайграванні</string>
@@ -74,8 +74,8 @@
     <string name="settings_author_samples_title">Аўтарскія прыклады</string>
     <string name="settings_samples_imported_hidden">Пакет імпартаваны, прыклады схаваны</string>
     <string name="settings_samples_hide_after_import">Схаваюцца пасля першага імпарту пакета</string>
-    <string name="settings_samples_always_visible">Заўсёды бачныя ў спісе выбару</string>
-    <string name="settings_samples_always_hidden">Заўсёды схаваныя</string>
+    <string name="settings_samples_always_visible">Заўсёды паказваць у спісе</string>
+    <string name="settings_samples_always_hidden">Заўсёды хаваць</string>
     <string name="settings_samples_auto">Аўтаматычна</string>
     <string name="settings_samples_show">Паказваць</string>
     <string name="settings_samples_hide">Хаваць</string>
@@ -95,7 +95,7 @@
     <string name="editor_menu_edit">Рэдагаваць</string>
     <string name="editor_menu_delete">Выдаліць</string>
     <string name="editor_add_entry">Дадаць рэпліку</string>
-    <string name="editor_empty_state">Устаў сцэнар або\nдадай рэпліку.</string>
+    <string name="editor_empty_state">Устаў сцэнар\nабо дадай рэпліку.</string>
     <string name="import_preview_no_lines">Няма рэплік</string>
     <plurals name="import_preview_lines">
         <item quantity="one">%d рэпліка</item>
@@ -169,7 +169,6 @@
     <string name="bulk_import_title">Устаўка дыялогу</string>
     <string name="bulk_import_eyebrow">Хуткае даданне</string>
     <string name="bulk_import_subtitle">Знаёмыя імёны — незалежна ад рэгістру. Новыя пішы ВЯЛІКІМІ.</string>
-    <string name="bulk_import_button">Імпарт</string>
 
     <!-- Entry check editor -->
     <string name="check_label">Праверка</string>
@@ -216,8 +215,8 @@
     <string name="scenes_top_bar_title">РЭДАКТАР ДЫЯЛОГАЎ</string>
     <string name="scenes_saved">ЗАХАВАНА</string>
     <string name="scenes_title">СЦЭНЫ</string>
-    <string name="scenes_hint_hold_folder">ЗАЦІСНІ, КАБ КІРАВАЦЬ ПАПКАЙ</string>
-    <string name="scenes_hold_for_more">ЗАЦІСНІ, КАБ ПАБАЧЫЦЬ БОЛЬШ</string>
+    <string name="scenes_hint_hold_folder">ЗАЦІСНІ, КАБ ПАБАЧЫЦЬ БОЛЬШ</string>
+    <string name="scenes_hold_for_more">ЗАЦІСНІ</string>
     <string name="scenes_empty_tape">НА КАСЕЦЕ ПАКУЛЬ НІЧОГА</string>
     <string name="scenes_menu_clear_lines">Ачысціць рэплікі</string>
     <string name="scenes_new">НОВАЯ СЦЭНА</string>
@@ -271,7 +270,7 @@
     <string name="import_conflict_count">Спікеры з пакета, якія ўжо ёсць у тваім спісе (%1$d): %2$s</string>
     <string name="import_conflict_skip">Прапусціць</string>
     <string name="import_conflict_replace">Замяніць</string>
-    <string name="import_conflict_keep_both">Пакінуць абодвух</string>
+    <string name="import_conflict_keep_both">Пакінуць абодва</string>
     <string name="import_conflict_skip_description">Існуючыя спікеры застануцца без змен.</string>
     <string name="import_conflict_replace_description">Існуючых спікераў заменяць версіі з пакета.</string>
     <string name="import_conflict_keep_both_description">Спікеры з пакета дадуцца як новыя копіі.</string>
@@ -303,11 +302,11 @@
     <string name="skill_rhetoric">Рыторыка</string>
 
     <!-- Font dialog: sample lines -->
-    <string name="font_sample_01">Ого, гэты — проста бомба. Глянь, якія выгібы. Глянь на гэтую брудную маленькую «д».</string>
+    <string name="font_sample_01">О, вось гэта — раз**б. Глянь на гэтыя выгібы. На гэтую брудную малую «д».</string>
     <string name="font_sample_02">Гістарычна засечка ўзнікла як адказ на…</string>
     <string name="font_sample_03">Закрый вочы. Паслухай літары.</string>
-    <string name="font_sample_04">Бяры непрыгожы. Зрабі выгляд, што так і было задумана.</string>
-    <string name="font_sample_05">Глянь на гэтую малую «а». З ёй штосьці глыбока не так.</string>
+    <string name="font_sample_04">Бяры пачварны. Зрабі выгляд, што так і трэба.</string>
+    <string name="font_sample_05">Глянь на гэтую малую «a». З ёй нешта сур’ёзна не так.</string>
     <string name="font_sample_06">Ты абярэш шрыфт з засечкамі. Ты будзеш яго паважаць. Ты не будзеш перапытваць.</string>
     <string name="font_sample_07">Мы робім інтэрфейс, а не суіцыдальную запіску.</string>
     <string name="font_sample_08">Тоўсты. Той самы, чорт яго бяры, тоўсты.</string>
@@ -332,12 +331,12 @@
 
     <!-- Errors -->
     <string name="settings_font_invalid">Гэты файл не падыходзіць для шрыфта</string>
-    <string name="error_record_denied">НЯМА ЗАПІСУ — НЯМА ПАКАЗУ\nДазволь запіс экрана або выключы «Запіс прайгравання» ў наладах</string>
-    <string name="error_record_failed">КАСЕТУ ЖУЮЦЬ\nВідэа не захавалася. Запіс заглух, паспрабуй яшчэ раз</string>
+    <string name="error_record_denied">НЯМА ПЛЁНКІ — НЯМА ШОУ\nДазволь запіс экрана або выключы «Запіс прайгравання» ў наладах</string>
+    <string name="error_record_failed">КАСЕТУ ЗАЖАВАЛА\nВідэа не захавалася. Запіс заглух, паспрабуй яшчэ раз</string>
     <string name="error_export_failed">ЭКСПАРТ НЕ ЎДАЎСЯ\nНе ўдалося экспартаваць сцэну</string>
-    <string name="error_import_failed">НЕ МАГУ ПРАЧЫТАЦЬ\nГэта не той файл, якога я чакаў</string>
+    <string name="error_import_failed">НЕ МАГУ ПРАЧЫТАЦЬ\nФайл не таго фармату</string>
     <string name="error_empty_import">НІЧОГА НЕ ЗНОЙДЗЕНА\nПаспрабуй «ІМЯ: тэкст»</string>
-    <string name="error_no_script_pasted">ПУСТА\nСпачатку ўстаў рэплікі, я не ўмею чытаць думкі</string>
+    <string name="error_no_script_pasted">ПУСТА\nСпачатку ўстаў рэплікі. Думкі я не чытаю.</string>
 
     <!-- Language -->
     <string name="settings_language_title">Мова</string>
