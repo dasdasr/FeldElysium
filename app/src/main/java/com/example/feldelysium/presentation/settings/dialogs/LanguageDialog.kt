@@ -1,6 +1,9 @@
 package com.example.feldelysium.presentation.settings.dialogs
 
+import android.app.LocaleManager
+import android.content.Context
 import android.content.res.Resources
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,11 +46,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
@@ -61,6 +66,7 @@ import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.example.feldelysium.presentation.shared.language.AppLanguage
 import com.example.feldelysium.designsystem.theme.Alegreya
 import com.example.feldelysium.designsystem.theme.disco
+import com.example.feldelysium.presentation.shared.language.displayName
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -117,6 +123,8 @@ fun LanguageDialog(
                     .padding(vertical = 14.dp),
                 seed = applySeed,
                 spec = FeldButtonDefaults.OrangeFresh,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         },
     ) {
@@ -191,7 +199,9 @@ private fun LanguagePage(
     accent: Color,
     modifier: Modifier = Modifier,
 ) {
-    val native = nativeName(language)
+    val context = LocalContext.current
+    val system = remember { systemLocale(context) }
+    val native = language.displayName()
 
     Column(
         modifier = modifier,
@@ -218,7 +228,7 @@ private fun LanguagePage(
             softWrap = false,
         )
         Text(
-            text = captionName(language, native).lowercase(),
+            text = captionName(language, native, system).lowercase(),
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontFamily = FontFamily.Monospace,
                 fontSize = 14.sp,
@@ -315,17 +325,16 @@ private fun TapeKey(forward: Boolean, enabled: Boolean, onClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun nativeName(language: AppLanguage): String = when (language) {
-    AppLanguage.SYSTEM -> stringResource(R.string.settings_language_system)
-    AppLanguage.ENGLISH -> "English"
-    AppLanguage.BELARUSIAN -> "Беларуская"
-}
-
-private fun captionName(language: AppLanguage, native: String): String {
-    val system = Resources.getSystem().configuration.locales[0]
+private fun captionName(language: AppLanguage, native: String, system: Locale): String {
     val target = language.tag?.let { Locale.forLanguageTag(it) } ?: system
     var name = target.getDisplayLanguage(system)
     if (name.equals(native, ignoreCase = true)) name = target.getDisplayLanguage(Locale.ENGLISH)
     return name.replaceFirstChar { it.uppercase() }
 }
+
+private fun systemLocale(context: Context): Locale =
+    if (Build.VERSION.SDK_INT >= 33) {
+        context.getSystemService(LocaleManager::class.java).systemLocales[0]
+    } else {
+        Resources.getSystem().configuration.locales[0]
+    }

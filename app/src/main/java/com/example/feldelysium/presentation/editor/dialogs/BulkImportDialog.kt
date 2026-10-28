@@ -75,10 +75,11 @@ fun BulkImportDialog(
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = stringResource(R.string.bulk_import_button),
+                confirmLabel = stringResource(R.string.common_import),
                 onConfirm = onConfirm,
                 onCancel = onDismiss,
                 confirmEnabled = text.isNotBlank(),
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {

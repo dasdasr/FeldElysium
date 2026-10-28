@@ -24,12 +24,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.example.feldelysium.designsystem.foundation.material.dryPaperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
@@ -75,6 +78,8 @@ fun FeldButton(
     pressScale: Float = 0.015f,
     pressShift: Dp = 1.5.dp,
     pressMillis: Int = 0,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
@@ -111,7 +116,14 @@ fun FeldButton(
                 horizontalArrangement = Arrangement.spacedBy(iconSpacing),
             ) {
                 icon?.invoke()
-                Text(text.uppercase(), style = textStyle, color = contentColor)
+                Text(
+                    text.uppercase(),
+                    style = textStyle,
+                    color = contentColor,
+                    maxLines = maxLines,
+                    softWrap = maxLines > 1,
+                    overflow = overflow,
+                )
             }
         }
     }
@@ -155,6 +167,7 @@ private fun FeldDialogActionsPreview() {
                 onConfirm = {},
                 onCancel = {},
                 seed = 1,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
 
             FeldDialogActions(
@@ -171,6 +184,7 @@ private fun FeldDialogActionsPreview() {
                 onCancel = {},
                 confirmEnabled = false,
                 seed = 3,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
 
             FeldDialogActions(

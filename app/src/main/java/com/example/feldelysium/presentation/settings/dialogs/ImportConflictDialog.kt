@@ -41,6 +41,7 @@ fun ImportConflictDialog(preview: ImportPreview, onConfirm: (ImportPolicy) -> Un
                 confirmLabel = stringResource(R.string.import_conflict_confirm),
                 onConfirm = { onConfirm(policy) },
                 onCancel = onDismiss,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {

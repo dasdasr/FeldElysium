@@ -52,6 +52,7 @@ fun ChooseTagDialog(
                 confirmLabel = stringResource(R.string.choose_tag_select),
                 onConfirm = { onConfirm(current) },
                 onCancel = onDismiss,
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         },
     ) {

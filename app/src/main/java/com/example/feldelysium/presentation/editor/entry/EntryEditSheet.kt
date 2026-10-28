@@ -332,6 +332,7 @@ fun EntryEditSheet(
                 },
                 onCancel = onDismiss,
                 modifier = Modifier.navigationBarsPadding(),
+                cancelLabel = stringResource(R.string.common_cancel),
             )
         }
     }
