@@ -90,7 +90,7 @@
     <string name="editor_lines_count">Реплик: %1$d</string>
     <string name="editor_scene_meta">Диалоговая сцена</string>
     <string name="editor_paste">Вставить</string>
-    <string name="editor_playback">Воспроизведение</string>
+    <string name="editor_playback">Запуск</string>
     <string name="editor_settings">Настройки</string>
     <string name="editor_menu_edit">Редактировать</string>
     <string name="editor_menu_delete">Удалить</string>

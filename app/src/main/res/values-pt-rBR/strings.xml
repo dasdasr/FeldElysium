@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App name -->
+    <string name="app_name">Feld Elysium</string>
+
+    <!-- Common -->
+    <string name="common_done">Concluído</string>
+    <string name="common_delete">Excluir</string>
+    <string name="common_save">Salvar</string>
+    <string name="common_none">Nenhum</string>
+    <string name="common_back">Voltar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_ok">OK</string>
+    <string name="common_import">Importar</string>
+    <string name="common_export">Exportar</string>
+    <string name="common_current">ATUAL</string>
+    <string name="common_reset">REDEFINIR</string>
+    <string name="common_confirm">Confirmar</string>
+    <string name="common_apply">Aplicar</string>
+
+    <!-- Settings header -->
+    <string name="settings_title">Configurações</string>
+    <string name="settings_eyebrow">A oficina</string>
+    <string name="settings_subtitle">Deixe do seu jeito.</string>
+
+    <!-- Playback -->
+    <string name="settings_appearance_section">Aparência</string>
+    <string name="settings_playback_section">Reprodução</string>
+    <string name="settings_cinema_frame_title">Quadro de cinema</string>
+    <string name="settings_cinema_frame_subtitle">Manter a reprodução dentro de um quadro 16:9</string>
+    <string name="settings_status_line_title">Linha de status</string>
+    <string name="settings_status_line_subtitle">Reais, hora e dia</string>
+    <string name="settings_panel_icons_title">Ícones do painel</string>
+    <string name="settings_panel_icons_subtitle">Escolha quais ícones da barra ficam destacados</string>
+    <string name="settings_autoplay_title">Reprodução automática</string>
+    <string name="settings_autoplay_subtitle">Avançar as falas automaticamente</string>
+    <string name="settings_autoplay_speed_title">Velocidade automática</string>
+    <string name="settings_autoplay_speed_subtitle">Quanto tempo cada fala fica na tela</string>
+    <string name="settings_continue_button_title">Botão “Continue”</string>
+    <string name="settings_continue_button_subtitle">Mostrar o botão “Continue” na reprodução</string>
+    <string name="settings_advance_dialogue_title">Avançar o diálogo</string>
+    <string name="settings_advance_whole_screen">Toque em qualquer lugar para mostrar a próxima fala</string>
+    <string name="settings_advance_continue_button">Use Continue para avançar. O histórico do diálogo pode ser rolado</string>
+    <string name="settings_advance_autoplay_only">Somente reprodução automática</string>
+    <string name="settings_typeface_title">Fonte</string>
+    <string name="settings_typeface_subtitle">Texto do diálogo na reprodução</string>
+    <string name="settings_tap_mode_whole_screen">Qualquer lugar</string>
+    <string name="settings_tap_mode_continue_button">Botão</string>
+    <string name="settings_tap_mode_nowhere">Lugar nenhum</string>
+
+    <!-- Video export -->
+    <string name="settings_video_export_section">Exportação de vídeo</string>
+    <string name="settings_record_playback_title">Gravar a reprodução</string>
+    <string name="settings_record_playback_subtitle">O botão de reprodução grava a tela</string>
+    <string name="settings_record_sound_title">Gravar som</string>
+    <string name="settings_record_sound_subtitle">O som do app vai para o vídeo</string>
+    <string name="settings_android_10_required">Requer Android 10 ou mais recente</string>
+
+    <!-- Background -->
+    <string name="settings_background_section">Plano de fundo</string>
+    <string name="settings_background_color">Cor</string>
+    <string name="settings_background_default">Padrão</string>
+    <string name="settings_background_custom">Personalizado</string>
+
+    <!-- Speakers -->
+    <string name="settings_speakers_section">Falantes</string>
+    <string name="settings_export_speakers_title">Exportar falantes</string>
+    <string name="settings_export_speakers_subtitle">Salve seus falantes e tags em um arquivo</string>
+    <string name="settings_import_speakers_title">Importar falantes</string>
+    <string name="settings_import_speakers_subtitle">Adicione falantes e tags de um pacote</string>
+    <string name="settings_tags_title">Tags</string>
+    <string name="settings_tags_subtitle">Renomear, mudar a cor ou excluir</string>
+    <string name="settings_author_samples_title">Exemplos do autor</string>
+    <string name="settings_samples_imported_hidden">Pacote importado, exemplos ocultos</string>
+    <string name="settings_samples_hide_after_import">Ficam ocultos após a primeira importação de pacote</string>
+    <string name="settings_samples_always_visible">Sempre visíveis na lista</string>
+    <string name="settings_samples_always_hidden">Sempre ocultos</string>
+    <string name="settings_samples_auto">Automático</string>
+    <string name="settings_samples_show">Mostrar</string>
+    <string name="settings_samples_hide">Ocultar</string>
+
+    <!-- Coming soon -->
+    <string name="settings_coming_soon_section">Em breve</string>
+    <string name="settings_lock_landscape_title">Travar na horizontal</string>
+    <string name="settings_lock_landscape_subtitle">Manter a tela na horizontal</string>
+
+    <!-- Editor screen -->
+    <string name="editor_eyebrow">Editor de cena</string>
+    <string name="editor_lines_count">Falas: %1$d</string>
+    <string name="editor_scene_meta">Cena de diálogo</string>
+    <string name="editor_paste">Colar</string>
+    <string name="editor_playback">Reprodução</string>
+    <string name="editor_settings">Configurações</string>
+    <string name="editor_menu_edit">Editar</string>
+    <string name="editor_menu_delete">Excluir</string>
+    <string name="editor_add_entry">Adicionar fala</string>
+    <string name="editor_empty_state">Cole um roteiro ou\nadicione uma fala.</string>
+    <string name="import_preview_no_lines">Sem falas</string>
+    <plurals name="import_preview_lines">
+        <item quantity="one">%d fala</item>
+        <item quantity="many">%d falas</item>
+        <item quantity="other">%d falas</item>
+    </plurals>
+    <plurals name="import_preview_new_speakers">
+        <item quantity="one">%d novo falante</item>
+        <item quantity="many">%d novos falantes</item>
+        <item quantity="other">%d novos falantes</item>
+    </plurals>
+    <string name="pack_exported">Pacote exportado</string>
+    <string name="pack_export_failed">Não foi possível exportar o pacote</string>
+    <string name="pack_cannot_read">Não foi possível ler este arquivo</string>
+    <string name="pack_not_a_pack">Não é um pacote de falantes</string>
+    <string name="pack_added">Adicionados: %1$d</string>
+    <string name="pack_replaced">, substituídos: %1$d</string>
+    <string name="pack_skipped">, ignorados: %1$d</string>
+
+    <!-- Screen recording result -->
+    <string name="record_video_saved_message">VÍDEO SALVO\n%1$s%2$s</string>
+    <string name="record_gallery_location">Galeria › FeldElysium</string>
+    <string name="record_app_folder_location">Pasta do app › Movies</string>
+    <string name="record_no_sound_suffix">" · sem som"</string>
+
+    <!-- Tags -->
+    <string name="tags_title">Tags</string>
+    <string name="tags_manage_eyebrow">Gerenciar tags</string>
+    <string name="tags_empty_message">Ainda não há tags. Adicione uma ao editar um falante.</string>
+    <string name="tags_built_in">INTEGRADAS</string>
+    <string name="tags_delete_title">Excluir tag</string>
+    <string name="tags_delete_unused_message">Nenhum falante usa esta tag.</string>
+    <string name="tags_delete_used_message">%1$d falante(s) perderão esta tag e irão para “Personalizados”. As cores permanecem.</string>
+    <string name="tags_edit_title">Editar tag</string>
+    <string name="tags_name_label">Nome</string>
+    <string name="tags_duplicate_name">Já existe uma tag com este nome</string>
+    <string name="tags_default_color">Cor padrão</string>
+    <string name="tags_sound_label">Som</string>
+    <string name="tags_skill_checks_label">Testes de perícia</string>
+    <string name="tags_allow_skill_checks">Permitir testes de perícia</string>
+
+    <!-- Choose tag dialog -->
+    <string name="choose_tag_title">Escolher tag</string>
+    <string name="choose_tag_eyebrow">Tag do falante</string>
+    <string name="choose_tag_select">Selecionar</string>
+    <string name="choose_tag_none">Sem tag</string>
+    <string name="choose_tag_new">+ Nova</string>
+    <string name="choose_tag_edit">Editar tags</string>
+    <string name="choose_tag_name_placeholder">Nome da tag</string>
+    <string name="choose_tag_allow_checks">Permitir testes</string>
+    <string name="choose_tag_add">Adicionar</string>
+
+    <!-- Custom speaker dialog -->
+    <string name="speaker_edit_title">Editar falante</string>
+    <string name="speaker_create_title">Criar falante</string>
+    <string name="speaker_eyebrow">Falante personalizado</string>
+    <string name="speaker_save">Salvar</string>
+    <string name="speaker_create">Criar</string>
+    <string name="speaker_name_label">Nome</string>
+    <string name="speaker_name_placeholder">Nome do falante</string>
+    <string name="speaker_tag_label">Tag</string>
+    <string name="speaker_no_tag">Sem tag</string>
+    <string name="speaker_color_label">Cor</string>
+    <string name="speaker_delete">Excluir falante</string>
+    <string name="speaker_no_speaker">Sem falante</string>
+    <string name="speaker_edit_accessibility">Editar falante</string>
+
+    <!-- Bulk import dialog -->
+    <string name="bulk_import_title">Colar diálogo</string>
+    <string name="bulk_import_eyebrow">Adição rápida</string>
+    <string name="bulk_import_subtitle">Nomes conhecidos: em qualquer caixa. Novos: em MAIÚSCULAS.</string>
+
+    <!-- Entry check editor -->
+    <string name="check_label">Teste</string>
+    <string name="check_none">Nenhum</string>
+    <string name="check_passive">Passivo</string>
+    <string name="check_active">Ativo</string>
+    <string name="check_difficulty">Dificuldade</string>
+    <string name="check_result">Resultado</string>
+    <string name="check_left_die">Dado esquerdo</string>
+    <string name="check_right_die">Dado direito</string>
+    <string name="check_difficulty_trivial">Trivial</string>
+    <string name="check_difficulty_easy">Fácil</string>
+    <string name="check_difficulty_medium">Médio</string>
+    <string name="check_difficulty_challenging">Desafiador</string>
+    <string name="check_difficulty_formidable">Formidável</string>
+    <string name="check_difficulty_legendary">Lendário</string>
+    <string name="check_difficulty_heroic">Heroico</string>
+    <string name="check_difficulty_godly">Divino</string>
+    <string name="check_difficulty_impossible">Impossível</string>
+    <string name="check_result_success">Sucesso</string>
+    <string name="check_result_failure">Falha</string>
+
+    <!-- Damage -->
+    <string name="damage_type">Tipo</string>
+    <string name="damage_amount">Quantidade</string>
+    <string name="damage_type_morale">Moral</string>
+    <string name="damage_type_health">Saúde</string>
+
+    <!-- Entry edit sheet -->
+    <string name="entry_new_title">NOVA FALA</string>
+    <string name="entry_edit_title">EDITAR FALA</string>
+    <string name="entry_dialogue_label">Diálogo</string>
+    <string name="entry_dialogue_placeholder">Texto do diálogo</string>
+    <string name="entry_reply_options">OPÇÕES DE RESPOSTA</string>
+    <string name="entry_skill_check">TESTE DE PERÍCIA</string>
+    <string name="entry_damage">DANO</string>
+    <string name="entry_confirm">Confirmar</string>
+    <string name="entry_select_reply">Selecione uma opção para o diálogo</string>
+    <string name="entry_spoken_by_you">Dito por VOCÊ</string>
+    <string name="entry_reply_option">Opção %1$d</string>
+    <string name="entry_add_option">+ ADICIONAR OPÇÃO</string>
+
+    <!-- Scene manager -->
+    <string name="scenes_top_bar_title">EDITOR DE DIÁLOGOS</string>
+    <string name="scenes_saved">SALVO</string>
+    <string name="scenes_title">CENAS</string>
+    <string name="scenes_hint_hold_folder">SEGURE PARA GERENCIAR</string>
+    <string name="scenes_hold_for_more">SEGURE</string>
+    <string name="scenes_empty_tape">AINDA NÃO HÁ NADA NA FITA</string>
+    <string name="scenes_menu_clear_lines">Limpar falas</string>
+    <string name="scenes_new">NOVA CENA</string>
+    <string name="scenes_tap_to_create">TOQUE PARA CRIAR</string>
+    <string name="scenes_clear_confirm">TEM CERTEZA?</string>
+    <string name="scenes_menu_rename">Renomear</string>
+    <string name="scenes_rename_title">Renomear cena</string>
+    <plurals name="scene_lines_count">
+        <item quantity="one">%d FALA</item>
+        <item quantity="many">%d FALAS</item>
+        <item quantity="other">%d FALAS</item>
+    </plurals>
+
+    <!-- Speaker picker -->
+    <string name="picker_title">Escolher falante</string>
+    <string name="picker_eyebrow">Fala</string>
+    <string name="picker_search">BUSCAR</string>
+    <string name="picker_empty">NENHUM FALANTE ENCONTRADO</string>
+    <string name="picker_create_custom">CRIAR FALANTE PERSONALIZADO</string>
+    <string name="picker_group_custom">Personalizados</string>
+
+    <!-- Speaker dossier -->
+    <string name="speaker_preview_label">› PRÉVIA</string>
+    <string name="speaker_preview_sample">“Exemplo de fala…”</string>
+    <string name="field_optional">"  (OPCIONAL)"</string>
+
+    <!-- Background dialog -->
+    <string name="background_eyebrow_animated">Animado</string>
+    <string name="background_eyebrow_plain">Simples</string>
+    <string name="background_subtitle">Plano de fundo da cena</string>
+    <string name="background_tab_media">Mídia</string>
+    <string name="background_video">Vídeo</string>
+    <string name="background_image">Imagem</string>
+    <string name="background_mute_title">Silenciar som</string>
+    <string name="background_mute_subtitle">Silenciar o áudio do vídeo.</string>
+    <string name="background_fill_title">Preencher a tela</string>
+    <string name="background_fill_subtitle">Cortar o vídeo para preencher o quadro.</string>
+    <string name="background_no_media">AINDA NÃO HÁ MÍDIA</string>
+
+    <!-- Bar icons dialog -->
+    <string name="bar_icons_panel">Painel</string>
+    <string name="bar_icons_panel_hint">Toque para alternar: desligado, ligado, alerta</string>
+    <string name="bar_icons_inventory">Inventário</string>
+    <string name="bar_icons_inventory_hint">Toque para trocar o item</string>
+
+    <!-- Import conflict dialog -->
+    <string name="import_conflict_title">Já existe</string>
+    <string name="import_conflict_eyebrow">Importar pacote</string>
+    <string name="import_conflict_confirm">Importar</string>
+    <string name="import_conflict_count">Falantes do pacote que já estão na sua lista (%1$d): %2$s</string>
+    <string name="import_conflict_skip">Ignorar</string>
+    <string name="import_conflict_replace">Substituir</string>
+    <string name="import_conflict_keep_both">Manter ambos</string>
+    <string name="import_conflict_skip_description">Os falantes existentes permanecem como estão.</string>
+    <string name="import_conflict_replace_description">Os falantes existentes são sobrescritos pelas versões do pacote.</string>
+    <string name="import_conflict_keep_both_description">Os falantes do pacote são adicionados como novas cópias.</string>
+    <string name="import_conflict_bundled_skipped">Os falantes integrados do pacote (%1$d) são sempre ignorados.</string>
+
+    <!-- Playback UI text dialog -->
+    <string name="playback_ui_title">Informações da cena</string>
+    <string name="playback_ui_eyebrow">Detalhes</string>
+    <string name="playback_ui_subtitle">Detalhes da cena</string>
+    <string name="playback_ui_reals">Reais</string>
+    <string name="playback_ui_time">Hora</string>
+    <string name="playback_ui_day">Dia</string>
+
+    <!-- Font dialog -->
+    <string name="font_dialog_subtitle">Experimente outra fonte.</string>
+    <string name="font_dialog_hint">TOQUE EM UM CARTÃO PARA MUDAR AS FALAS  › › ›</string>
+    <string name="font_add_own">ADICIONAR SUA PRÓPRIA FONTE</string>
+    <string name="font_replace_own">SUBSTITUIR SUA FONTE</string>
+    <string name="font_file_hint">.ttf ou .otf</string>
+
+    <!-- Font dialog: sample speakers -->
+    <string name="skill_electrochemistry">Eletroquímica</string>
+    <string name="skill_encyclopedia">Enciclopédia</string>
+    <string name="skill_inland_empire">Império Interior</string>
+    <string name="skill_savoir_faire">Savoir Faire</string>
+    <string name="skill_perception">Percepção</string>
+    <string name="skill_authority">Autoridade</string>
+    <string name="skill_volition">Vontade</string>
+    <string name="skill_rhetoric">Retórica</string>
+
+    <!-- Font dialog: sample lines -->
+    <string name="font_sample_01">Ah, essa aqui é f*da. Olha essas curvas. Olha esse “g” minúsculo sujo.</string>
+    <string name="font_sample_02">Historicamente, a serifa surgiu como resposta a…</string>
+    <string name="font_sample_03">Feche os olhos. Escute as letras.</string>
+    <string name="font_sample_04">Fique com a feia. Faça parecer intencional.</string>
+    <string name="font_sample_05">Olha esse “a” minúsculo. Tem algo profundamente errado com ele.</string>
+    <string name="font_sample_06">Você vai escolher a serifada. Você vai respeitá-la. Você não vai perguntar.</string>
+    <string name="font_sample_07">Estamos fazendo uma interface, não um bilhete de suicídio.</string>
+    <string name="font_sample_08">O negrito. O maldito negrito.</string>
+    <string name="font_sample_09">Ninguém respeita um homem cujas letras parecem baratas.</string>
+    <string name="font_sample_10">Escolha algo legível.</string>
+    <string name="font_sample_11">Escolha algo indecentemente sexy.</string>
+    <string name="font_sample_12">Fonte sem serifa é uma conspiração burguesa para fazer tudo parecer uma startup.</string>
+    <string name="font_sample_13">Essa cheira a concreto molhado e a uma inspiração que você não alcança mais.</string>
+    <string name="font_sample_14">Assuma. Sua. Fonte. Detetive.</string>
+    <string name="font_tile_glyph">Aa</string>
+
+    <!-- Choose icon dialog -->
+    <string name="choose_icon_title">Escolher ícone</string>
+    <string name="choose_icon_eyebrow">Ícone do falante</string>
+    <string name="choose_icon_subtitle">Escolha uma imagem para o falante.</string>
+    <string name="choose_icon_add_custom">Adicionar imagem própria</string>
+
+    <!-- Editor toasts -->
+    <string name="message_scene_saved">Cena salva</string>
+    <string name="message_scene_exported">Cena exportada</string>
+    <string name="message_scene_imported">Cena importada</string>
+
+    <!-- Errors -->
+    <string name="settings_font_invalid">Esse arquivo não serve como fonte</string>
+    <string name="error_record_denied">SEM FITA, SEM SHOW\nPermita a gravação de tela ou desative “Gravar a reprodução” nas configurações</string>
+    <string name="error_record_failed">FITA EMBOLADA\nO vídeo não foi salvo. A gravação engasgou, tente de novo</string>
+    <string name="error_export_failed">FALHA NA EXPORTAÇÃO\nNão foi possível exportar a cena</string>
+    <string name="error_import_failed">NÃO CONSIGO LER\nEsse arquivo não é o que eu esperava</string>
+    <string name="error_empty_import">NADA ENCONTRADO\nTente “NOME: texto”</string>
+    <string name="error_no_script_pasted">VAZIO\nCole algumas falas primeiro, eu não leio mentes</string>
+
+    <!-- Language -->
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_language_subtitle">Idioma da interface do app</string>
+    <string name="settings_language_system">Sistema</string>
+    <string name="settings_language_eyebrow">Escolher idioma</string>
+
+</resources>
