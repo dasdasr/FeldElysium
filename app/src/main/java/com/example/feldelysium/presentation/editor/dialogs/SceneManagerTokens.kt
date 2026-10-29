@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import com.example.feldelysium.designsystem.foundation.material.accentBrush
 
-
 internal val AccentOrange = Color(0xFFE45720)
 internal val Ink = Color(0xFF1B1612)
 

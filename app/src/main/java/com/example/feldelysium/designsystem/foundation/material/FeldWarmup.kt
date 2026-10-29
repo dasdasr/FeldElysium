@@ -24,10 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalGraphicsContext
 import androidx.compose.ui.unit.dp
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.foundation.material.agsl.DRY_PAPER_AGSL
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.domain.model.DamageType
 import com.example.feldelysium.presentation.playback.components.CheckAssets
 
@@ -63,20 +63,28 @@ fun FeldWarmup() {
             .size(8.dp)
             .graphicsLayer { alpha = 0.01f },
     ) {
-        Box(Modifier
-            .size(8.dp)
-            .markerFilmMaterial(FeldMarker.Chalk, seed = 0, bake = false)
-            .background(Color.White))
-        Box(Modifier
-            .size(8.dp)
-            .distressMaterial(DistressSpec(), 0)
-            .background(Color.White))
-        Box(Modifier
-            .size(8.dp)
-            .paperMaterial(shape, FeldPaper.Panel, bake = false))
-        Box(Modifier
-            .size(8.dp)
-            .drawBehind { drawRect(ShaderBrush(dry)) })
+        Box(
+            Modifier
+                .size(8.dp)
+                .markerFilmMaterial(FeldMarker.Chalk, seed = 0, bake = false)
+                .background(Color.White),
+        )
+        Box(
+            Modifier
+                .size(8.dp)
+                .distressMaterial(DistressSpec(), 0)
+                .background(Color.White),
+        )
+        Box(
+            Modifier
+                .size(8.dp)
+                .paperMaterial(shape, FeldPaper.Panel, bake = false),
+        )
+        Box(
+            Modifier
+                .size(8.dp)
+                .drawBehind { drawRect(ShaderBrush(dry)) },
+        )
     }
 }
 

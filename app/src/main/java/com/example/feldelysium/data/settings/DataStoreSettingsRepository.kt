@@ -55,6 +55,7 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
         }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun toAppSettings(prefs: Preferences): AppSettings = AppSettings(
         lockAspectRatio16x9 = prefs[Keys.LOCK_ASPECT_RATIO_16_9] ?: true,
         playbackMoney = prefs[Keys.PLAYBACK_MONEY] ?: "40.95",

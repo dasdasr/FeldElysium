@@ -279,7 +279,11 @@ fun FeldChip(
 
                 val base = ChipTextures.brush(
                     if (enabled) BaseDark else BaseDisabled,
-                    ChipTexture.Base, density, wi, hi, seed,
+                    ChipTexture.Base,
+                    density,
+                    wi,
+                    hi,
+                    seed,
                 )
                 val filled by lazy(LazyThreadSafetyMode.NONE) {
                     ChipTextures.brush(accent, ChipTexture.Filled, density, wi, hi, seed + 1)
@@ -287,7 +291,11 @@ fun FeldChip(
                 val rimBrush by lazy(LazyThreadSafetyMode.NONE) {
                     ChipTextures.brush(
                         if (enabled) FeldPalette.Cream else FeldPalette.Line,
-                        ChipTexture.Rim, density, wi, hi, seed + 2,
+                        ChipTexture.Rim,
+                        density,
+                        wi,
+                        hi,
+                        seed + 2,
                     )
                 }
                 val stroke = Stroke(1.dp.toPx(), join = StrokeJoin.Round)

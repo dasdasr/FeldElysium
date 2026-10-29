@@ -9,9 +9,7 @@ import com.example.feldelysium.domain.model.settings.BackgroundKind
 import com.example.feldelysium.domain.model.settings.SamplesMode
 import com.example.feldelysium.domain.model.settings.TapMode
 
-
-internal fun lockedUnless(enabled: Boolean): FeldSettingStatus? =
-    if (enabled) null else FeldSettingStatus.LOCK
+internal fun lockedUnless(enabled: Boolean): FeldSettingStatus? = if (enabled) null else FeldSettingStatus.LOCK
 
 @Composable
 internal fun TapMode.label(): String = stringResource(
@@ -44,10 +42,14 @@ internal fun SamplesMode.label(): String = stringResource(
 internal fun AppSettings.samplesSubtitle(): String = stringResource(
     when (samplesMode) {
         SamplesMode.AUTO ->
-            if (packImported) R.string.settings_samples_imported_hidden
-            else R.string.settings_samples_hide_after_import
+            if (packImported) {
+                R.string.settings_samples_imported_hidden
+            } else {
+                R.string.settings_samples_hide_after_import
+            }
 
         SamplesMode.ALWAYS_SHOW -> R.string.settings_samples_always_visible
+
         SamplesMode.ALWAYS_HIDE -> R.string.settings_samples_always_hidden
     },
 )

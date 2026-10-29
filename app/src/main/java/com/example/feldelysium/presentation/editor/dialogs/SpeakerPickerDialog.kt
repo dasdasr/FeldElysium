@@ -9,9 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,13 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
@@ -64,8 +56,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,21 +69,17 @@ import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldFilmButton
 import com.example.feldelysium.designsystem.components.button.FeldTextButton
 import com.example.feldelysium.designsystem.components.container.FeldCard
-import com.example.feldelysium.designsystem.components.container.entryRough
 import com.example.feldelysium.designsystem.components.container.FeldDivider
+import com.example.feldelysium.designsystem.components.container.FeldSectionHeader
+import com.example.feldelysium.designsystem.components.container.entryRough
 import com.example.feldelysium.designsystem.components.content.FeldIcon
 import com.example.feldelysium.designsystem.components.content.FeldIconId
-import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
-import com.example.feldelysium.designsystem.components.container.FeldSectionHeader
-import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.example.feldelysium.designsystem.foundation.material.ChipTexture
-import com.example.feldelysium.designsystem.foundation.material.ChipTextures
-import com.example.feldelysium.designsystem.foundation.material.FeldMarker
-import com.example.feldelysium.designsystem.foundation.material.FeldPaper
-import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
-import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.feldClickable
+import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
+import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.FeldPaper
+import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.model.groupedByTag
@@ -430,12 +416,7 @@ fun SpeakerPickerDialog(
 }
 
 @Composable
-private fun Modifier.entrance(
-    key: String,
-    seen: MutableSet<String>,
-    index: Int,
-    animate: Boolean,
-): Modifier {
+private fun Modifier.entrance(key: String, seen: MutableSet<String>, index: Int, animate: Boolean): Modifier {
     val instant = remember(key) { !animate || key in seen }
     val animation = remember(key) {
         Animatable(if (instant) 1f else 0.35f)
@@ -456,11 +437,7 @@ private fun Modifier.entrance(
 }
 
 @Composable
-private fun SearchField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     val rough = remember { entryRough(77) }
 
     FeldCard(

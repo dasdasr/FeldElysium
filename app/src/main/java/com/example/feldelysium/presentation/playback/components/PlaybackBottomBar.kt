@@ -12,11 +12,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.feldelysium.R
+import com.example.feldelysium.domain.model.StatusLine
 import com.example.feldelysium.domain.model.settings.BarIconState
 import com.example.feldelysium.domain.model.settings.BarSlot
 import com.example.feldelysium.domain.model.settings.InventoryIcon
 import com.example.feldelysium.domain.model.settings.InventorySlot
-import com.example.feldelysium.domain.model.StatusLine
 
 private object BarLayout {
     const val ICON_SIZE = 0.075f

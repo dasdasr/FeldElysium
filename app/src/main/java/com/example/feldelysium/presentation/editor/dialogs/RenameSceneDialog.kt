@@ -43,13 +43,8 @@ import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 
-
 @Composable
-internal fun RenameSceneDialog(
-    initial: String,
-    onConfirm: (String) -> Unit,
-    onDismiss: () -> Unit,
-) {
+internal fun RenameSceneDialog(initial: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
     var field by remember { mutableStateOf(TextFieldValue(initial, TextRange(0, initial.length))) }
     val requester = remember { FocusRequester() }
     val rough = remember { entryRough(17) }
@@ -95,8 +90,20 @@ internal fun RenameSceneDialog(
             FeldDivider(thickness = 1.dp)
             Spacer(Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                FeldGhostButton(stringResource(R.string.common_cancel), onDismiss, Modifier.weight(1f), FeldIconId.Close, seed = 33)
-                FeldFilmButton(stringResource(R.string.common_save), ::commit, Modifier.weight(1f), FeldIconId.Save, seed = 9)
+                FeldGhostButton(
+                    stringResource(R.string.common_cancel),
+                    onDismiss,
+                    Modifier.weight(1f),
+                    FeldIconId.Close,
+                    seed = 33,
+                )
+                FeldFilmButton(
+                    stringResource(R.string.common_save),
+                    ::commit,
+                    Modifier.weight(1f),
+                    FeldIconId.Save,
+                    seed = 9,
+                )
             }
         }
     }

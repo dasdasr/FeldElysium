@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.content.FeldDiamond
 import com.example.feldelysium.designsystem.components.content.FeldIcon
 import com.example.feldelysium.designsystem.components.content.FeldIconId
+import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.MarkerFilmSpec
-import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 
 @Composable

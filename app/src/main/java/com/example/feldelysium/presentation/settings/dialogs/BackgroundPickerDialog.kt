@@ -34,8 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.feldelysium.R
-import com.example.feldelysium.domain.model.settings.AppSettings
-import com.example.feldelysium.domain.model.settings.BackgroundKind
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.container.FeldCard
 import com.example.feldelysium.designsystem.components.container.FeldDialog
@@ -44,6 +42,7 @@ import com.example.feldelysium.designsystem.components.container.FeldDivider
 import com.example.feldelysium.designsystem.components.content.FeldIcon
 import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldColorSwatches
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.example.feldelysium.designsystem.components.input.FeldSlider
 import com.example.feldelysium.designsystem.components.input.FeldSliderColors
@@ -53,7 +52,8 @@ import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.components.input.FeldPalette
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.BackgroundKind
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
 
 private val Presets = listOf(
@@ -99,7 +99,9 @@ fun BackgroundPickerDialog(
 
     FeldDialog(
         title = stringResource(R.string.settings_background_section),
-        eyebrow = stringResource(if (animated) R.string.background_eyebrow_animated else R.string.background_eyebrow_plain),
+        eyebrow = stringResource(
+            if (animated) R.string.background_eyebrow_animated else R.string.background_eyebrow_plain,
+        ),
         subtitle = stringResource(R.string.background_subtitle),
         onDismiss = onDismiss,
         footer = {
@@ -112,7 +114,10 @@ fun BackgroundPickerDialog(
         },
     ) {
         FeldSegmentedControl(
-            options = listOf(stringResource(R.string.background_tab_media), stringResource(R.string.settings_background_color)),
+            options = listOf(
+                stringResource(R.string.background_tab_media),
+                stringResource(R.string.settings_background_color),
+            ),
             selectedIndex = if (isMedia) 0 else 1,
             onSelect = { onKind(if (it == 0) BackgroundKind.MEDIA else BackgroundKind.COLOR) },
         )
@@ -218,7 +223,13 @@ private fun MediaHeader(video: Boolean) {
         )
         Spacer(Modifier.width(16.dp))
         Text(
-            text = if (video) stringResource(R.string.background_video).uppercase() else stringResource(R.string.background_image).uppercase(),
+            text = if (video) {
+                stringResource(
+                    R.string.background_video,
+                ).uppercase()
+            } else {
+                stringResource(R.string.background_image).uppercase()
+            },
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurface,
         )

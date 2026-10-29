@@ -24,7 +24,6 @@ import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.feldClickable
 
-
 @Composable
 internal fun NewSceneCard(onClick: () -> Unit) {
     val dash = FeldPalette.Muted

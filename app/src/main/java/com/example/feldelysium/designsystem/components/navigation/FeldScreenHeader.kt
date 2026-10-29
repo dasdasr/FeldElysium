@@ -61,7 +61,9 @@ fun FeldScreenHeader(
             haptics.tick()
             onClick()
         })
-    } else Modifier
+    } else {
+        Modifier
+    }
 
     Column(
         modifier
@@ -115,9 +117,21 @@ fun FeldScreenHeader(
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                metaStart?.let { Text(it.uppercase(), style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted) }
+                metaStart?.let {
+                    Text(
+                        it.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = FeldPalette.Muted,
+                    )
+                }
                 FeldDivider(Modifier.weight(1f).padding(horizontal = 12.dp))
-                metaEnd?.let { Text(it.uppercase(), style = MaterialTheme.typography.labelSmall, color = FeldPalette.Muted) }
+                metaEnd?.let {
+                    Text(
+                        it.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = FeldPalette.Muted,
+                    )
+                }
             }
         }
 

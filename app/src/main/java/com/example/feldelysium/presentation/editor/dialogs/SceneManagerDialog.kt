@@ -70,16 +70,34 @@ fun SceneManagerDialog(
                         index = index,
                         featured = isCurrent,
                         menuOpen = menuId == scene.id,
-                        onClick = { haptics.tick(); onOpen(scene.id) },
-                        onLongClick = { haptics.thud(); menuId = scene.id },
+                        onClick = {
+                            haptics.tick()
+                            onOpen(scene.id)
+                        },
+                        onLongClick = {
+                            haptics.thud()
+                            menuId = scene.id
+                        },
                         onDismissMenu = { menuId = null },
-                        onRename = { menuId = null; renameId = scene.id },
-                        onClear = { menuId = null; if (isCurrent) onClear() else onClearScene(scene.id) },
-                        onDelete = { menuId = null; onDelete(scene.id) },
+                        onRename = {
+                            menuId = null
+                            renameId = scene.id
+                        },
+                        onClear = {
+                            menuId = null
+                            if (isCurrent) onClear() else onClearScene(scene.id)
+                        },
+                        onDelete = {
+                            menuId = null
+                            onDelete(scene.id)
+                        },
                     )
                 }
                 item(key = "new-scene", span = { GridItemSpan(maxLineSpan) }) {
-                    NewSceneCard(onClick = { haptics.tick(); onNew() })
+                    NewSceneCard(onClick = {
+                        haptics.tick()
+                        onNew()
+                    })
                 }
             }
 
@@ -94,7 +112,10 @@ fun SceneManagerDialog(
         } else {
             RenameSceneDialog(
                 initial = scene.title,
-                onConfirm = { onRename(id, it.take(60)); renameId = null },
+                onConfirm = {
+                    onRename(id, it.take(60))
+                    renameId = null
+                },
                 onDismiss = { renameId = null },
             )
         }

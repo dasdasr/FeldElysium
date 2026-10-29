@@ -31,9 +31,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.FeldApp
 import com.example.feldelysium.R
-import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.example.feldelysium.designsystem.components.container.FeldToastHost
 import com.example.feldelysium.designsystem.components.container.rememberFeldToastState
+import com.example.feldelysium.designsystem.components.navigation.FeldScreenHeader
+import com.example.feldelysium.designsystem.theme.fontDir
 import com.example.feldelysium.domain.model.settings.AppSettings
 import com.example.feldelysium.presentation.settings.dialogs.SettingsDialogHost
 import com.example.feldelysium.presentation.settings.sections.AppearanceSection
@@ -44,15 +45,10 @@ import com.example.feldelysium.presentation.settings.sections.RecordingSection
 import com.example.feldelysium.presentation.settings.sections.SpeakersSection
 import com.example.feldelysium.presentation.settings.speakerpack.SpeakerPackViewModel
 import com.example.feldelysium.presentation.settings.speakerpack.text
-import com.example.feldelysium.designsystem.theme.fontDir
-
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun SettingsScreen(
-    onNavigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun SettingsScreen(onNavigateBack: () -> Unit, modifier: Modifier = Modifier) {
     val activity = LocalContext.current as ComponentActivity
     val container = (activity.application as FeldApp).container
 
@@ -129,7 +125,6 @@ fun SettingsScreen(
         onDismiss = { dialog = null },
     )
 }
-
 
 @Composable
 internal fun SettingsContent(

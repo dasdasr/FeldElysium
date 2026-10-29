@@ -10,15 +10,15 @@ import com.example.feldelysium.designsystem.components.settings.FeldSettingValue
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.example.feldelysium.designsystem.components.settings.FeldSettingsSection
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.theme.FONT_CUSTOM
+import com.example.feldelysium.designsystem.theme.prettyFontName
 import com.example.feldelysium.domain.model.settings.AppSettings
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
+import com.example.feldelysium.presentation.settings.SettingsDialog
 import com.example.feldelysium.presentation.settings.SettingsEvent
 import com.example.feldelysium.presentation.settings.backgroundLabel
 import com.example.feldelysium.presentation.settings.components.FeldBackgroundRow
-import com.example.feldelysium.designsystem.theme.FONT_CUSTOM
-import com.example.feldelysium.designsystem.theme.prettyFontName
-import com.example.feldelysium.presentation.settings.SettingsDialog
 import java.io.File
 
 @Composable
@@ -36,7 +36,10 @@ internal fun AppearanceSection(
             settings = settings,
             currentLabel = settings.backgroundLabel(),
             freezeVideo = freezeVideo,
-            onClick = { haptics.tick(); onOpenDialog(SettingsDialog.Background) },
+            onClick = {
+                haptics.tick()
+                onOpenDialog(SettingsDialog.Background)
+            },
         )
         FeldSettingsDivider()
 
@@ -49,7 +52,10 @@ internal fun AppearanceSection(
                 FONT_CUSTOM -> settings.customFontName
                 else -> prettyFontName(File(settings.fontChoice))
             },
-            onClick = { haptics.tick(); onOpenDialog(SettingsDialog.Font) },
+            onClick = {
+                haptics.tick()
+                onOpenDialog(SettingsDialog.Font)
+            },
         )
         FeldSettingsDivider()
 
@@ -71,7 +77,10 @@ internal fun AppearanceSection(
             title = stringResource(R.string.settings_status_line_title),
             subtitle = stringResource(R.string.settings_status_line_subtitle),
             showChevron = true,
-            onClick = { haptics.tick(); onOpenDialog(SettingsDialog.PlaybackUiText) },
+            onClick = {
+                haptics.tick()
+                onOpenDialog(SettingsDialog.PlaybackUiText)
+            },
         )
         FeldSettingsDivider()
 
@@ -80,7 +89,10 @@ internal fun AppearanceSection(
             title = stringResource(R.string.settings_panel_icons_title),
             subtitle = stringResource(R.string.settings_panel_icons_subtitle),
             showChevron = true,
-            onClick = { haptics.tick(); onOpenDialog(SettingsDialog.BarIcons) },
+            onClick = {
+                haptics.tick()
+                onOpenDialog(SettingsDialog.BarIcons)
+            },
         )
     }
 }

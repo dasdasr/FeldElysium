@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.feldelysium.domain.repository.SettingsRepository
 import com.example.feldelysium.data.speaker.PackFormatException
 import com.example.feldelysium.di.AppContainer
 import com.example.feldelysium.domain.model.ImportPolicy
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.domain.repository.SettingsRepository
 import com.example.feldelysium.domain.repository.SpeakerRepository
 import com.example.feldelysium.domain.usecase.ImportSpeakerPackUseCase
 import kotlinx.coroutines.CancellationException
@@ -42,10 +42,14 @@ class SpeakerPackViewModel(
     val messages: Flow<PackMessage> = _messages.receiveAsFlow()
 
     val speakers = repo.speakers.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(5_000), PredefinedSpeakers.ALL,
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        PredefinedSpeakers.ALL,
     )
     val tags = repo.tags.stateIn(
-        viewModelScope, SharingStarted.WhileSubscribed(5_000), PredefinedSpeakers.TAGS,
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        PredefinedSpeakers.TAGS,
     )
 
     fun saveTag(tag: SpeakerType) {
@@ -101,10 +105,7 @@ class SpeakerPackViewModel(
         _pending.value?.let(useCase::cancel)
     }
 
-    private suspend fun applyImport(
-        prepared: ImportSpeakerPackUseCase.Prepared,
-        policy: ImportPolicy? = null,
-    ) {
+    private suspend fun applyImport(prepared: ImportSpeakerPackUseCase.Prepared, policy: ImportPolicy? = null) {
         val result = if (policy != null) useCase.apply(prepared, policy) else useCase.apply(prepared)
 
         if (result.added + result.replaced > 0) {

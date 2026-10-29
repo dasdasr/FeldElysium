@@ -31,7 +31,10 @@ internal fun SpeakersSection(
             title = stringResource(R.string.settings_export_speakers_title),
             subtitle = stringResource(R.string.settings_export_speakers_subtitle),
             showChevron = true,
-            onClick = { haptics.tick(); onExportPack() },
+            onClick = {
+                haptics.tick()
+                onExportPack()
+            },
         )
         FeldSettingsDivider()
 
@@ -40,7 +43,10 @@ internal fun SpeakersSection(
             title = stringResource(R.string.settings_import_speakers_title),
             subtitle = stringResource(R.string.settings_import_speakers_subtitle),
             showChevron = true,
-            onClick = { haptics.tick(); onImportPack() },
+            onClick = {
+                haptics.tick()
+                onImportPack()
+            },
         )
         FeldSettingsDivider()
 
@@ -49,7 +55,10 @@ internal fun SpeakersSection(
             title = stringResource(R.string.settings_tags_title),
             subtitle = stringResource(R.string.settings_tags_subtitle),
             showChevron = true,
-            onClick = { haptics.tick(); onOpenDialog(SettingsDialog.Tags) },
+            onClick = {
+                haptics.tick()
+                onOpenDialog(SettingsDialog.Tags)
+            },
         )
         FeldSettingsDivider()
 
@@ -58,7 +67,10 @@ internal fun SpeakersSection(
             title = stringResource(R.string.settings_author_samples_title),
             subtitle = settings.samplesSubtitle(),
             value = settings.samplesMode.label(),
-            onClick = { haptics.tick(); onEvent(SettingsEvent.CycleSamplesMode) },
+            onClick = {
+                haptics.tick()
+                onEvent(SettingsEvent.CycleSamplesMode)
+            },
         )
     }
 }

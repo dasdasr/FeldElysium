@@ -31,11 +31,16 @@ data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int)
 
 fun ImportPreview.caption(context: Context): String {
     if (lineCount == 0) return context.getString(R.string.import_preview_no_lines)
+
     val res = context.resources
     val lines = res.getQuantityString(R.plurals.import_preview_lines, lineCount, lineCount)
-    if (newSpeakerCount == 0) return lines
-    val speakers = res.getQuantityString(R.plurals.import_preview_new_speakers, newSpeakerCount, newSpeakerCount)
-    return "$lines · $speakers"
+    val speakers = if (newSpeakerCount == 0) {
+        null
+    } else {
+        res.getQuantityString(R.plurals.import_preview_new_speakers, newSpeakerCount, newSpeakerCount)
+    }
+
+    return if (speakers == null) lines else "$lines · $speakers"
 }
 
 @Serializable

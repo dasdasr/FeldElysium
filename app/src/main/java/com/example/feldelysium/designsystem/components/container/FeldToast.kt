@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.content.FeldDiamond
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.components.input.FeldPalette
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

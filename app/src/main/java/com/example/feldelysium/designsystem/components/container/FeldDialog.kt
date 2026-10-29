@@ -39,13 +39,13 @@ import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.content.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldPalette
+import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.foundation.decal.DecalSpec
 import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.example.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.example.feldelysium.designsystem.foundation.material.wornBrush
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.designsystem.components.input.FeldPalette
-import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 
 @Composable

@@ -61,11 +61,7 @@ import com.example.feldelysium.record.ScreenRecordService
 
 @SuppressLint("ContextCastToActivity")
 @Composable
-fun EditorScreen(
-    onNavigateToPlayback: () -> Unit,
-    onNavigateToSettings: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> Unit) {
     val activity = LocalContext.current as ComponentActivity
     val container = (activity.application as FeldApp).container
 
@@ -143,7 +139,6 @@ fun EditorScreen(
         onEditEntry = { dialog = EditorDialog.EditEntry(it.id, it.speaker.id) },
         onDeleteEntry = vm::deleteEntry,
         onReorder = vm::reorderEntries,
-        modifier = modifier,
     )
 
     EditorDialogHost(
@@ -158,10 +153,7 @@ fun EditorScreen(
     )
 }
 
-private fun RecordResult.toastText(
-    context: Context,
-    askedForSound: Boolean,
-): String = when (this) {
+private fun RecordResult.toastText(context: Context, askedForSound: Boolean): String = when (this) {
     is RecordResult.Saved -> context.getString(
         R.string.record_video_saved_message,
         context.getString(
@@ -172,7 +164,6 @@ private fun RecordResult.toastText(
 
     RecordResult.Failed -> FeldError.RecordFailed.toastText(context)
 }
-
 
 @Composable
 internal fun EditorContent(
@@ -187,7 +178,6 @@ internal fun EditorContent(
     onEditEntry: (DialogueEntry) -> Unit,
     onDeleteEntry: (String) -> Unit,
     onReorder: (List<DialogueEntry>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val haptics = rememberFeldHaptics()
     val sounds = rememberFeldSounds()

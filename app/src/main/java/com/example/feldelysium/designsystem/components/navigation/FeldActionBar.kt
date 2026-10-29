@@ -19,9 +19,9 @@ import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.container.FeldDivider
-import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.feldClickable
+import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 
 @Composable

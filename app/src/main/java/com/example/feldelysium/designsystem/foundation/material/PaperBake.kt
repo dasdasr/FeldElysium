@@ -6,7 +6,6 @@ import android.util.LruCache
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -197,6 +196,7 @@ private class BakeHolder {
     var tick by mutableIntStateOf(0)
 }
 
+@Suppress("CyclomaticComplexMethod")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun Modifier.paperBaked(
     shape: RoughShape,

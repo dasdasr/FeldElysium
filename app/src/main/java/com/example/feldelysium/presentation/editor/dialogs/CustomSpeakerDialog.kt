@@ -72,12 +72,24 @@ fun CustomSpeakerDialog(
     val accent = Color(color)
 
     FeldDialog(
-        title = if (editing) stringResource(R.string.speaker_edit_title) else stringResource(R.string.speaker_create_title),
+        title = if (editing) {
+            stringResource(
+                R.string.speaker_edit_title,
+            )
+        } else {
+            stringResource(R.string.speaker_create_title)
+        },
         eyebrow = stringResource(R.string.speaker_eyebrow),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(
-                confirmLabel = if (editing) stringResource(R.string.speaker_save) else stringResource(R.string.speaker_create),
+                confirmLabel = if (editing) {
+                    stringResource(
+                        R.string.speaker_save,
+                    )
+                } else {
+                    stringResource(R.string.speaker_create)
+                },
                 onConfirm = {
                     onConfirm(
                         Speaker(

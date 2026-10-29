@@ -52,23 +52,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
-import com.example.feldelysium.domain.model.settings.AppSettings
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
-import com.example.feldelysium.designsystem.components.container.FeldEntryCard
 import com.example.feldelysium.designsystem.components.container.FeldDialog
 import com.example.feldelysium.designsystem.components.container.FeldDialogFooter
+import com.example.feldelysium.designsystem.components.container.FeldEntryCard
 import com.example.feldelysium.designsystem.components.content.FeldIcon
 import com.example.feldelysium.designsystem.components.content.FeldIconId
-import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.feldClickable
+import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.theme.Alegreya
 import com.example.feldelysium.designsystem.theme.FONT_CUSTOM
 import com.example.feldelysium.designsystem.theme.SystemFontEntry
 import com.example.feldelysium.designsystem.theme.loadSystemFonts
 import com.example.feldelysium.designsystem.theme.rememberCustomFontFamily
 import com.example.feldelysium.designsystem.theme.rememberPlaybackFontFamily
+import com.example.feldelysium.domain.model.settings.AppSettings
 import java.io.File
 
 private val SampleTexture: Int? = null
@@ -81,11 +81,7 @@ private enum class SkillColor(val color: Color) {
 }
 
 @Immutable
-private class Sample(
-    @StringRes val speaker: Int,
-    val color: Color,
-    @StringRes val text: Int,
-)
+private class Sample(@StringRes val speaker: Int, val color: Color, @StringRes val text: Int)
 
 private val Samples = listOf(
     Sample(R.string.skill_electrochemistry, SkillColor.Physique.color, R.string.font_sample_01),
@@ -206,7 +202,7 @@ fun PlaybackFontDialog(
 
         DashedAddButton(
             label = stringResource(
-                if (custom == null) R.string.font_add_own else R.string.font_replace_own
+                if (custom == null) R.string.font_add_own else R.string.font_replace_own,
             ),
             hint = stringResource(R.string.font_file_hint),
             onClick = {
