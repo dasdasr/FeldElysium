@@ -3,7 +3,7 @@ package com.example.feldelysium.designsystem.foundation.seed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.currentCompositeKeyHash
+import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -33,8 +33,8 @@ fun SeedBranch(key: Any?, content: @Composable () -> Unit) {
 @Composable
 fun rememberSeed(key: Any? = null): Int {
     val scope = LocalSeedScope.current
-    val position = currentCompositeKeyHash
-    return remember(scope, position, key) { scope.seedFor(position, key) }
+    val position = currentCompositeKeyHashCode
+    return remember(scope, position, key) { scope.seedFor(position.toInt(), key) }
 }
 
 private fun mix(a: Int, b: Int): Int {

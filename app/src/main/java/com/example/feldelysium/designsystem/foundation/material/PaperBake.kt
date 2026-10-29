@@ -4,9 +4,11 @@ import android.graphics.RuntimeShader
 import android.os.Build
 import android.util.LruCache
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -35,6 +37,8 @@ import com.example.feldelysium.designsystem.foundation.shape.RoughCache
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.shape.drawInk
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -184,6 +188,15 @@ private fun pressFilter(k: Float): ColorFilter? {
     )
 }
 
+private const val SETTLE_MS = 120L
+
+private class BakeHolder {
+    var last: ImageBitmap? = null
+    var job: Job? = null
+    var tick by mutableIntStateOf(0)
+}
+
+@Suppress("CyclomaticComplexMethod")
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 private fun Modifier.paperBaked(
     shape: RoughShape,
@@ -195,7 +208,7 @@ private fun Modifier.paperBaked(
 ): Modifier = composed {
     val layer = rememberGraphicsLayer()
     val scope = rememberCoroutineScope()
-    val epoch = remember { IntArray(1) }
+    val holder = remember { BakeHolder() }
 
     Modifier.drawWithCache {
         val d = Density(density, fontScale)
@@ -203,37 +216,55 @@ private fun Modifier.paperBaked(
         val w = size.width.roundToInt()
         val h = size.height.roundToInt()
         val drawSize = size
-        val myEpoch = ++epoch[0]
         val key = PaperBakeKey(shape.seed, shape.style, spec, wear, w, h, density, decalKey)
 
-        val bitmap = mutableStateOf(if (w > 0 && h > 0) PaperBakeCache.get(key) else null)
-        val art by lazy(LazyThreadSafetyMode.NONE) { buildArt(d, drawSize, shape, spec, wear, decals) }
-        var recorded = false
-        var requested = false
+        holder.job?.cancel()
+        var ready: ImageBitmap? = if (w > 0 && h > 0) PaperBakeCache.get(key) else null
+        ready?.let { holder.last = it }
+        var recordedInline = false
+        var scheduled = false
+
+        fun launchBake(settleMs: Long) {
+            holder.job = scope.launch {
+                if (settleMs > 0) delay(settleMs)
+                if (!recordedInline) {
+                    val art = buildArt(d, drawSize, shape, spec, wear, decals)
+                    layer.record(d, ld, IntSize(w, h)) { drawArt(art) }
+                }
+                withFrameNanos { }
+                val bmp = layer.toImageBitmap()
+                PaperBakeCache.put(key, bmp)
+                holder.last = bmp
+                holder.tick++
+            }
+        }
 
         onDrawWithContent {
-            val ready = bitmap.value
-            if (ready != null) {
-                drawImage(
-                    image = ready,
-                    dstSize = IntSize(w, h),
-                    colorFilter = pressFilter(spec.pressShade * press()),
-                )
-            } else if (w > 0 && h > 0) {
-                if (!recorded) {
-                    layer.record(d, ld, IntSize(w, h)) { drawArt(art) }
-                    recorded = true
+            holder.tick
+            if (ready == null && w > 0 && h > 0) ready = PaperBakeCache.get(key)
+            val last = holder.last
+            val filter = pressFilter(spec.pressShade * press())
+            when {
+                ready != null -> drawImage(ready!!, dstSize = IntSize(w, h), colorFilter = filter)
+
+                last != null -> {
+                    drawImage(last, dstSize = IntSize(w, h), colorFilter = filter)
+                    if (!scheduled) {
+                        scheduled = true
+                        launchBake(SETTLE_MS)
+                    }
                 }
-                drawLayer(layer)
-                if (!requested) {
-                    requested = true
-                    scope.launch {
-                        withFrameNanos { }
-                        val bmp = layer.toImageBitmap()
-                        if (epoch[0] == myEpoch) {
-                            PaperBakeCache.put(key, bmp)
-                            bitmap.value = bmp
-                        }
+
+                w > 0 && h > 0 -> {
+                    if (!recordedInline) {
+                        val art = buildArt(d, drawSize, shape, spec, wear, decals)
+                        layer.record(d, ld, IntSize(w, h)) { drawArt(art) }
+                        recordedInline = true
+                    }
+                    drawLayer(layer)
+                    if (!scheduled) {
+                        scheduled = true
+                        launchBake(0)
                     }
                 }
             }

@@ -149,9 +149,9 @@ internal class MarkDecal(
 
             MarkShape.Underline -> {
                 moveTo(0f, h * (0.6f + j[0]))
-                quadraticBezierTo(w * 0.5f, h * (0.35f + j[1]), w, h * (0.7f + j[2]))
+                quadraticTo(w * 0.5f, h * (0.35f + j[1]), w, h * (0.7f + j[2]))
                 moveTo(w * 0.1f, h * (0.9f + j[3]))
-                quadraticBezierTo(w * 0.5f, h * (0.75f + j[4]), w * 0.9f, h * (0.95f + j[5]))
+                quadraticTo(w * 0.5f, h * (0.75f + j[4]), w * 0.9f, h * (0.95f + j[5]))
             }
 
             MarkShape.Circle -> arcTo(
@@ -163,7 +163,7 @@ internal class MarkDecal(
 
             MarkShape.Arrow -> {
                 moveTo(0f, h * (0.5f + j[0]))
-                quadraticBezierTo(w * 0.5f, h * (0.5f + j[1]), w, h * 0.5f)
+                quadraticTo(w * 0.5f, h * (0.5f + j[1]), w, h * 0.5f)
                 moveTo(w * 0.78f, h * (0.12f + j[2]))
                 lineTo(w, h * 0.5f)
                 lineTo(w * 0.78f, h * (0.88f + j[3]))

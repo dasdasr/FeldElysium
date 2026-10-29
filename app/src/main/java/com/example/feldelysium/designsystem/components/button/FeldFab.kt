@@ -28,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Path
@@ -46,11 +44,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.designsystem.foundation.material.ChipTexture
+import com.example.feldelysium.designsystem.foundation.material.ChipTextures
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.accentBrush
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.example.feldelysium.theme.DiscoDialogueTheme
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -140,7 +140,10 @@ fun FeldFab(
             FeldFabVariant.Film -> FilmFace(seed, { press }, content)
 
             FeldFabVariant.Marker -> Box(
-                Modifier.fillMaxSize().markerFilmMaterial(FeldMarker.Chalk, seed).padding(6.dp),
+                Modifier
+                    .fillMaxSize()
+                    .markerFilmMaterial(FeldMarker.Chalk, seed)
+                    .padding(6.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Canvas(Modifier.fillMaxSize()) {
@@ -159,45 +162,31 @@ fun FeldFab(
 @Composable
 private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> Unit)?) {
     val density = LocalDensity.current.density
-    val body = remember(seed, density) {
-        accentBrush(Color(0xFFE45720), seed, density, fade = 0.75f, glow = 0.6f, grain = 0.05f)
-    }
+
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Canvas(
             Modifier
                 .fillMaxSize()
                 .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen },
         ) {
+            val body = ChipTextures.brush(
+                Color(0xFFE45720),
+                ChipTexture.Base,
+                density,
+                size.width.toInt(),
+                size.height.toInt(),
+                seed,
+            )
+
             drawRoundRect(brush = body, cornerRadius = CornerRadius(4.dp.toPx()))
 
-            val pitch = 10.dp.toPx()
-            val hw = 5.dp.toPx()
-            val hh = 3.5.dp.toPx()
-            val inset = 3.dp.toPx()
-            val edge = 3.dp.toPx()
-            val fade = pitch * 0.6f
-            val shift = pitch * 0.5f * press()
-            val count = (size.width / pitch).toInt() + 2
-
-            for (k in -1..count) {
-                val x = 6.dp.toPx() + k * pitch - shift
-                val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                    ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
-                if (a <= 0f) continue
-                val hole = Color.Black.copy(alpha = a)
-                val r = CornerRadius(1.dp.toPx())
-                drawRoundRect(hole, Offset(x, inset), Size(hw, hh), r, blendMode = BlendMode.DstOut)
-                drawRoundRect(
-                    hole,
-                    Offset(x, size.height - inset - hh),
-                    Size(hw, hh),
-                    r,
-                    blendMode = BlendMode.DstOut,
-                )
-            }
+            drawFilmPerforation(press())
         }
         Box(
-            Modifier.size(34.dp).markerFilmMaterial(FeldMarker.Ink, seed).padding(3.dp),
+            Modifier
+                .size(34.dp)
+                .markerFilmMaterial(FeldMarker.Ink, seed)
+                .padding(3.dp),
             contentAlignment = Alignment.Center,
         ) {
             if (content != null) {
@@ -213,7 +202,12 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
 private fun RecFace(seed: Int, press: () -> Float, content: (@Composable () -> Unit)?) {
     val density = LocalDensity.current.density
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Box(Modifier.fillMaxSize().markerFilmMaterial(FeldMarker.Chalk, seed).padding(6.dp)) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .markerFilmMaterial(FeldMarker.Chalk, seed)
+                .padding(6.dp),
+        ) {
             Canvas(Modifier.fillMaxSize()) { handRing(seed, 3.dp.toPx()) }
         }
         if (content != null) {
@@ -229,7 +223,11 @@ private fun RecFace(seed: Int, press: () -> Float, content: (@Composable () -> U
                 label = "pulse",
             )
             val dot = remember(seed, density) { accentBrush(Color(0xFFE45720), seed, density) }
-            Canvas(Modifier.fillMaxSize().padding(19.dp)) {
+            Canvas(
+                Modifier
+                    .fillMaxSize()
+                    .padding(19.dp),
+            ) {
                 val r = size.minDimension / 2f * (1f - 0.25f * press())
                 drawCircle(brush = dot, radius = r * 1.5f, alpha = 0.16f * pulse)
                 drawCircle(brush = dot, radius = r, alpha = pulse)

@@ -27,19 +27,21 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
-import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.data.settings.BackgroundKind
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
-import com.example.feldelysium.designsystem.foundation.utils.feldClickable
+import com.example.feldelysium.R
+import com.example.feldelysium.designsystem.components.content.FeldIcon
+import com.example.feldelysium.designsystem.components.content.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldPalette
+import com.example.feldelysium.designsystem.components.input.feldClickable
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.BackgroundKind
 import com.example.feldelysium.presentation.playback.components.BackgroundVideo
-import com.example.feldelysium.theme.DiscoDialogueTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -94,7 +96,7 @@ fun FeldBackgroundRow(
 
         Column(Modifier.width(96.dp)) {
             Text(
-                text = "CURRENT",
+                text = stringResource(R.string.common_current),
                 style = MaterialTheme.typography.labelSmall,
                 color = FeldPalette.Muted,
             )

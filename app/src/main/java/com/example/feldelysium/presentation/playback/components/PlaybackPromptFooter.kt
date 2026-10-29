@@ -49,8 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
+import com.example.feldelysium.designsystem.theme.FeldContinueStyle
 import com.example.feldelysium.presentation.playback.Prompt
-import com.example.feldelysium.theme.FeldContinueStyle
 import kotlin.math.max
 import kotlin.math.min
 
