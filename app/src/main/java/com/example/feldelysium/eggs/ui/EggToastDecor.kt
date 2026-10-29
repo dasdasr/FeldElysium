@@ -34,7 +34,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.random.Random
 
-private const val BurstMs = 560
+private const val BURST_MS = 560
 
 class ArcSeg(val path: Path, val alpha: Float, val frac: Float)
 private class Rib(val a: Offset, val b: Offset, val u: Float)
@@ -61,7 +61,7 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
 
     LaunchedEffect(Unit) {
         delay(150)
-        burst.animateTo(1f, tween(BurstMs, easing = LinearEasing))
+        burst.animateTo(1f, tween(BURST_MS, easing = LinearEasing))
     }
 
     LaunchedEffect(Unit) {
@@ -74,7 +74,7 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
             launch {
                 volley++
                 burst.snapTo(0f)
-                burst.animateTo(1f, tween(BurstMs, easing = LinearEasing))
+                burst.animateTo(1f, tween(BURST_MS, easing = LinearEasing))
             }
             pulse.animateTo(1.22f, tween(70))
             pulse.animateTo(1f, tween(90))
@@ -94,11 +94,11 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
             val cardR = size.width
             val cardH = cardB - cardT
 
-            val R = 12 * d
+            val r = 12 * d
             val arcR = cardH * 0.67f
             val overhang = PadStart.toPx() - 3 * d
             val cx = cardL - overhang + arcR
-            val topY = cardT - R + 3 * d
+            val topY = cardT - r + 3 * d
             val cy = topY + arcR
             val sinEnd = ((cardB + 3 * d - cy) / arcR).coerceIn(-1f, 1f)
             val startDeg = -90f
@@ -136,14 +136,14 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
                 if (ripple.value < 1f) {
                     drawCircle(
                         accent.copy(alpha = (1f - ripple.value) * 0.6f),
-                        R * appear + 12 * d * ripple.value,
+                        r * appear + 12 * d * ripple.value,
                         c,
                         style = Stroke(1.5f * d),
                     )
                 }
                 val s = pulse.value
-                drawCircle(fill, R * s * appear, c)
-                drawCircle(InkDeep, (R - 3.8f * d) * s * appear, c)
+                drawCircle(fill, r * s * appear, c)
+                drawCircle(InkDeep, (r - 3.8f * d) * s * appear, c)
                 drawCircle(Color(0xFFF3ECDD), 4.6f * d * (1f + (s - 1f) * 1.8f) * appear, c)
 
                 val b = burst.value
@@ -152,7 +152,7 @@ internal fun ToastDecor(accent: Color, seed: Int, modifier: Modifier = Modifier)
                         val u = ((b - st.delay) / (1f - st.delay)).coerceIn(0f, 1f)
                         if (u <= 0f || u >= 1f) return@forEach
                         val inv = 1f - u
-                        val r0 = R + 3f * d
+                        val r0 = r + 3f * d
                         val head = r0 + st.len * (1f - inv * inv * inv)
                         val tail = r0 + st.len * (u * u * u)
                         val len = head - tail

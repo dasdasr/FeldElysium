@@ -15,8 +15,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.FeldDistressedTitle
-import com.example.feldelysium.designsystem.components.FeldDistressedTitles
 import com.example.feldelysium.designsystem.foundation.material.DistressSpec
 import com.example.feldelysium.designsystem.foundation.material.FeldTape
 import com.example.feldelysium.designsystem.foundation.material.StickerTapeSpec
