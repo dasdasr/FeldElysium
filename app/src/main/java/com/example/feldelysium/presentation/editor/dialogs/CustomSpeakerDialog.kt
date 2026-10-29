@@ -31,7 +31,7 @@ import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerColor
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
-import com.example.feldelysium.presentation.editor.components.ChooseImageDialog
+import com.example.feldelysium.presentation.settings.dialogs.ChooseImageDialog
 import com.example.feldelysium.presentation.editor.entry.FieldLabel
 import com.example.feldelysium.presentation.editor.entry.SpeakerPhotoBlock
 import com.example.feldelysium.presentation.editor.entry.SpeakerPreview

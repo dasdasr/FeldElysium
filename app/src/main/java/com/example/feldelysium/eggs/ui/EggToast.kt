@@ -83,7 +83,7 @@ internal fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) 
         } else {
             deadline - SystemClock.elapsedRealtime()
         }
-        delay(left.coerceAtLeast(ToastReleaseGraceMs).milliseconds)
+        delay(left.coerceAtLeast(TOAST_RELEASE_GRACE_MS).milliseconds)
         onDismiss(toast.id)
     }
 

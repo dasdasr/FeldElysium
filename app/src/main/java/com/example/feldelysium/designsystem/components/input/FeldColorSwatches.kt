@@ -38,7 +38,7 @@ import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 private val Cream = Color(0xFFE6DCC4)
 private val InkDark = Color(0xFF1B1612)
 
-fun swatchSpec(argb: Long, selected: Boolean = false): PaperSpec {
+fun swatchSpec(argb: Long): PaperSpec {
     val c = Color(argb.toInt())
     return FeldPaper.DryButtonCream.copy(
         base = c,

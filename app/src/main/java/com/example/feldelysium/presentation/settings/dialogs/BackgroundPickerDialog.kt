@@ -84,7 +84,6 @@ fun BackgroundPickerDialog(
     onVideoFill: (Boolean) -> Unit,
     onReset: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val imagePicker = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
         if (uri != null) onMedia(uri.toString(), false)

@@ -1,4 +1,4 @@
-package com.example.feldelysium.presentation.editor.components
+package com.example.feldelysium.presentation.settings.dialogs
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -53,7 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val Columns = 5
+private const val COLUMNS = 5
 
 private val Cream = Color(0xFFE6DCC4)
 private val Dark = Color(0xFF1B1612)
@@ -123,14 +123,14 @@ fun ChooseImageDialog(
             )
         },
     ) {
-        tiles.chunked(Columns).forEachIndexed { _, rowTiles ->
+        tiles.chunked(COLUMNS).forEachIndexed { _, rowTiles ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                repeat(Columns) { c ->
+                repeat(COLUMNS) { c ->
                     val tile = rowTiles.getOrNull(c)
                     val tileModifier = Modifier
                         .weight(1f)

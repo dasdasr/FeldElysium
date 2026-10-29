@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.feldelysium.designsystem.components.FeldDistressedTitle
-import com.example.feldelysium.designsystem.components.FeldDistressedTitles
+import com.example.feldelysium.designsystem.components.content.FeldDistressedTitle
+import com.example.feldelysium.designsystem.components.content.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
 import com.example.feldelysium.designsystem.components.container.FeldDivider
 import com.example.feldelysium.designsystem.components.content.FeldDiamond
