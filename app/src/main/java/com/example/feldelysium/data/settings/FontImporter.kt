@@ -8,10 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class FontImporter(
-    private val resolver: ContentResolver,
-    private val fontDir: File,
-) {
+class FontImporter(private val resolver: ContentResolver, private val fontDir: File) {
     data class Imported(val fileName: String, val displayName: String)
 
     suspend fun import(uri: Uri): Imported? = withContext(Dispatchers.IO) {

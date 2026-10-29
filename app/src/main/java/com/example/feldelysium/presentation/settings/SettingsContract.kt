@@ -38,8 +38,7 @@ sealed interface SettingsEvent {
     data object ResetBarIcons : SettingsEvent
 }
 
-internal fun AppSettings.apply(event: SettingsEvent): AppSettings =
-    reduce(event).withConsistentTapMode()
+internal fun AppSettings.apply(event: SettingsEvent): AppSettings = reduce(event).withConsistentTapMode()
 
 private fun AppSettings.withConsistentTapMode(): AppSettings =
     if (!autoPlay && tapMode == TapMode.NOWHERE) copy(tapMode = TapMode.WHOLE_SCREEN) else this
@@ -49,32 +48,46 @@ private fun AppSettings.reduce(event: SettingsEvent): AppSettings {
     val d = AppSettings()
     return when (event) {
         is SettingsEvent.SetLockAspectRatio16x9 -> copy(lockAspectRatio16x9 = event.enabled)
+
         is SettingsEvent.SetAutoPlay -> copy(autoPlay = event.enabled)
+
         is SettingsEvent.ShowContinueButton -> copy(showContinueButton = event.enabled)
+
         SettingsEvent.CycleAutoPlaySpeed -> copy(autoPlaySpeed = autoPlaySpeed.next())
+
         SettingsEvent.CycleTapMode -> copy(tapMode = tapMode.next(autoPlay))
+
         is SettingsEvent.SetFontChoice -> copy(fontChoice = event.choice)
 
         is SettingsEvent.SetPlaybackMoney -> copy(playbackMoney = event.value)
+
         is SettingsEvent.SetPlaybackTime -> copy(playbackTime = event.value)
+
         is SettingsEvent.SetPlaybackDay -> copy(playbackDay = event.value)
+
         SettingsEvent.ResetPlaybackUiText ->
             copy(playbackMoney = d.playbackMoney, playbackTime = d.playbackTime, playbackDay = d.playbackDay)
 
         is SettingsEvent.SetExportEnabled -> copy(exportEnabled = event.enabled)
+
         is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
 
         is SettingsEvent.SetBackgroundKind -> copy(backgroundKind = event.kind)
+
         is SettingsEvent.SetBackgroundColor ->
             copy(backgroundColorArgb = event.argb, backgroundKind = BackgroundKind.COLOR)
+
         is SettingsEvent.SetBackgroundMedia ->
             copy(
                 backgroundKind = BackgroundKind.MEDIA,
                 backgroundMediaUri = event.uri,
                 backgroundMediaIsVideo = event.isVideo,
             )
+
         is SettingsEvent.SetBackgroundVideoSound -> copy(backgroundVideoSound = event.enabled)
+
         is SettingsEvent.SetBackgroundVideoFill -> copy(backgroundVideoFill = event.enabled)
+
         SettingsEvent.ResetBackground -> copy(
             backgroundKind = d.backgroundKind,
             backgroundColorArgb = d.backgroundColorArgb,
@@ -90,10 +103,12 @@ private fun AppSettings.reduce(event: SettingsEvent): AppSettings {
             val current = barIcons[event.slot] ?: event.slot.defaultState
             copy(barIcons = barIcons + (event.slot to current.next()))
         }
+
         is SettingsEvent.CycleInventoryIcon -> {
             val current = inventoryIcons[event.slot] ?: event.slot.defaultIcon
             copy(inventoryIcons = inventoryIcons + (event.slot to current.next()))
         }
+
         SettingsEvent.ResetBarIcons -> copy(barIcons = d.barIcons, inventoryIcons = d.inventoryIcons)
     }
 }
@@ -110,4 +125,3 @@ enum class SettingsDialog {
     Tags,
     Language,
 }
-

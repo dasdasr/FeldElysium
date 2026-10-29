@@ -28,7 +28,6 @@ import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.markerFilmMaterial
 
-
 @Composable
 fun FeldGhostButton(
     text: String,
@@ -47,7 +46,10 @@ fun FeldGhostButton(
         rough = rough,
         contentPadding = PaddingValues(horizontal = 10.dp),
         showDecals = false,
-        onClick = { haptics.tick(); onClick() },
+        onClick = {
+            haptics.tick()
+            onClick()
+        },
     ) {
         Row(
             Modifier.fillMaxWidth().height(56.dp),
@@ -62,7 +64,9 @@ fun FeldGhostButton(
                 Text(
                     text = text.uppercase(),
                     style = MaterialTheme.typography.labelLarge.copy(
-                        fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 2.sp,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 2.sp,
                     ),
                     color = Color.White,
                     maxLines = 1,

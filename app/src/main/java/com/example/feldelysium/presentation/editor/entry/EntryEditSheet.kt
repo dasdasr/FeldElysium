@@ -53,12 +53,12 @@ import com.example.feldelysium.designsystem.components.container.FeldCard
 import com.example.feldelysium.designsystem.components.container.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.content.FeldIcon
 import com.example.feldelysium.designsystem.components.content.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.FeldSwitch
 import com.example.feldelysium.designsystem.components.input.FeldTextField
+import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.components.input.FeldPalette
-import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.domain.model.DamageEffect
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.ReplyChoices
@@ -356,11 +356,7 @@ private fun Chevron() {
 }
 
 @Composable
-private fun SpeakerHeader(
-    speaker: Speaker?,
-    onClick: (() -> Unit)?,
-    onEdit: (() -> Unit)?,
-) {
+private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (() -> Unit)?) {
     val color = speaker?.let { Color(it.colorArgb) } ?: FeldPalette.Muted
 
     Row(
@@ -382,9 +378,9 @@ private fun SpeakerHeader(
 
         Text(
             text = (
-                    speaker?.name
-                        ?: stringResource(R.string.speaker_no_speaker)
-                    ).uppercase(),
+                speaker?.name
+                    ?: stringResource(R.string.speaker_no_speaker)
+                ).uppercase(),
             style = MaterialTheme.typography.titleMedium.copy(
                 letterSpacing = 1.4.sp,
             ),
@@ -417,12 +413,7 @@ private fun SpeakerHeader(
 }
 
 @Composable
-private fun ToggleRow(
-    label: String,
-    iconId: FeldIconId,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
+private fun ToggleRow(label: String, iconId: FeldIconId, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -454,10 +445,7 @@ private fun ToggleRow(
 }
 
 @Composable
-private fun ReplyOptionsEditor(
-    value: ReplyChoices,
-    onChange: (ReplyChoices) -> Unit,
-) {
+private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             stringResource(R.string.entry_select_reply),

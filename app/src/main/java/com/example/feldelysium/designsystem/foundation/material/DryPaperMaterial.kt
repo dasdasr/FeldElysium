@@ -1,6 +1,5 @@
 package com.example.feldelysium.designsystem.foundation.material
 
-import android.graphics.Color.WHITE
 import android.graphics.RuntimeShader
 import android.os.Build
 import androidx.compose.runtime.Immutable

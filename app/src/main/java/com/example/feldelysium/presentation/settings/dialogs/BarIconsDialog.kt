@@ -19,17 +19,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
-import com.example.feldelysium.domain.model.settings.BarIconState
-import com.example.feldelysium.domain.model.settings.BarSlot
-import com.example.feldelysium.domain.model.settings.InventoryIcon
-import com.example.feldelysium.domain.model.settings.InventorySlot
 import com.example.feldelysium.designsystem.components.container.FeldCard
 import com.example.feldelysium.designsystem.components.container.FeldDialog
 import com.example.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.example.feldelysium.designsystem.components.container.FeldDivider
-import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.feldClickable
+import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
+import com.example.feldelysium.domain.model.settings.BarIconState
+import com.example.feldelysium.domain.model.settings.BarSlot
+import com.example.feldelysium.domain.model.settings.InventoryIcon
+import com.example.feldelysium.domain.model.settings.InventorySlot
 import com.example.feldelysium.presentation.playback.components.BarGlyph
 import com.example.feldelysium.presentation.playback.components.iconRes
 import com.example.feldelysium.presentation.playback.components.label
@@ -80,7 +80,10 @@ fun BarIconsDialog(
         FeldDivider(seed = 41)
         Spacer(Modifier.height(16.dp))
 
-        SectionLabel(stringResource(R.string.bar_icons_inventory), hint = stringResource(R.string.bar_icons_inventory_hint))
+        SectionLabel(
+            stringResource(R.string.bar_icons_inventory),
+            hint = stringResource(R.string.bar_icons_inventory_hint),
+        )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             InventorySlot.entries.forEachIndexed { i, slot ->
                 val icon = inventory[slot] ?: slot.defaultIcon

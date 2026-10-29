@@ -7,14 +7,8 @@ import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.components.navigation.FeldToolbar
 import com.example.feldelysium.designsystem.components.navigation.FeldToolbarItem
 
-
 @Composable
-internal fun EditorToolbar(
-    hasEntries: Boolean,
-    onPaste: () -> Unit,
-    onPlayback: () -> Unit,
-    onSettings: () -> Unit,
-) {
+internal fun EditorToolbar(hasEntries: Boolean, onPaste: () -> Unit, onPlayback: () -> Unit, onSettings: () -> Unit) {
     FeldToolbar(
         items = listOf(
             FeldToolbarItem(

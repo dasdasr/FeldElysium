@@ -28,8 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Path
@@ -172,8 +170,12 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
                 .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen },
         ) {
             val body = ChipTextures.brush(
-                Color(0xFFE45720), ChipTexture.Base, density,
-                size.width.toInt(), size.height.toInt(), seed,
+                Color(0xFFE45720),
+                ChipTexture.Base,
+                density,
+                size.width.toInt(),
+                size.height.toInt(),
+                seed,
             )
 
             drawRoundRect(brush = body, cornerRadius = CornerRadius(4.dp.toPx()))
@@ -200,10 +202,12 @@ private fun FilmFace(seed: Int, press: () -> Float, content: (@Composable () -> 
 private fun RecFace(seed: Int, press: () -> Float, content: (@Composable () -> Unit)?) {
     val density = LocalDensity.current.density
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Box(Modifier
-            .fillMaxSize()
-            .markerFilmMaterial(FeldMarker.Chalk, seed)
-            .padding(6.dp)) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .markerFilmMaterial(FeldMarker.Chalk, seed)
+                .padding(6.dp),
+        ) {
             Canvas(Modifier.fillMaxSize()) { handRing(seed, 3.dp.toPx()) }
         }
         if (content != null) {
@@ -219,9 +223,11 @@ private fun RecFace(seed: Int, press: () -> Float, content: (@Composable () -> U
                 label = "pulse",
             )
             val dot = remember(seed, density) { accentBrush(Color(0xFFE45720), seed, density) }
-            Canvas(Modifier
-                .fillMaxSize()
-                .padding(19.dp)) {
+            Canvas(
+                Modifier
+                    .fillMaxSize()
+                    .padding(19.dp),
+            ) {
                 val r = size.minDimension / 2f * (1f - 0.25f * press())
                 drawCircle(brush = dot, radius = r * 1.5f, alpha = 0.16f * pulse)
                 drawCircle(brush = dot, radius = r, alpha = pulse)

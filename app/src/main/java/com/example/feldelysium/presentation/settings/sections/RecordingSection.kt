@@ -13,10 +13,7 @@ import com.example.feldelysium.presentation.settings.SettingsEvent
 import com.example.feldelysium.presentation.settings.lockedUnless
 
 @Composable
-internal fun RecordingSection(
-    settings: AppSettings,
-    onEvent: (SettingsEvent) -> Unit,
-) {
+internal fun RecordingSection(settings: AppSettings, onEvent: (SettingsEvent) -> Unit) {
     FeldSettingsSection(title = stringResource(R.string.settings_video_export_section)) {
         FeldSettingSwitchRow(
             icon = FeldIconId.Video,
@@ -33,8 +30,11 @@ internal fun RecordingSection(
             icon = FeldIconId.Microphone,
             title = stringResource(R.string.settings_record_sound_title),
             subtitle = stringResource(
-                if (audioSupported) R.string.settings_record_sound_subtitle
-                else R.string.settings_android_10_required,
+                if (audioSupported) {
+                    R.string.settings_record_sound_subtitle
+                } else {
+                    R.string.settings_android_10_required
+                },
             ),
             checked = settings.exportAudio && audioSupported,
             onCheckedChange = { onEvent(SettingsEvent.SetExportAudio(it)) },

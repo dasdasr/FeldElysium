@@ -3,7 +3,8 @@ package com.example.feldelysium.domain.model.settings
 enum class TapMode {
     WHOLE_SCREEN,
     CONTINUE_BUTTON,
-    NOWHERE;
+    NOWHERE,
+    ;
 
     fun next(autoPlay: Boolean): TapMode {
         val available = if (autoPlay) {

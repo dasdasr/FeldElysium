@@ -30,7 +30,7 @@ import com.example.feldelysium.domain.model.ImportPreview
 fun ImportConflictDialog(preview: ImportPreview, onConfirm: (ImportPolicy) -> Unit, onDismiss: () -> Unit) {
     var policy by remember { mutableStateOf(ImportPolicy.SKIP) }
     val names = preview.conflicts.take(5).joinToString { it.name } +
-            if (preview.conflicts.size > 5) "…" else ""
+        if (preview.conflicts.size > 5) "…" else ""
 
     FeldDialog(
         title = stringResource(R.string.import_conflict_title),

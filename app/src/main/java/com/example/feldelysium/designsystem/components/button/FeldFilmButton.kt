@@ -79,8 +79,12 @@ fun FeldFilmButton(
     ) {
         Canvas(Modifier.fillMaxSize().graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }) {
             val body = ChipTextures.brush(
-                Color(0xFFE45720), ChipTexture.Base, density,
-                size.width.toInt(), size.height.toInt(), seed,
+                Color(0xFFE45720),
+                ChipTexture.Base,
+                density,
+                size.width.toInt(),
+                size.height.toInt(),
+                seed,
             )
             drawRoundRect(brush = body, cornerRadius = CornerRadius(4.dp.toPx()))
             drawFilmPerforation(press)
@@ -95,7 +99,9 @@ fun FeldFilmButton(
                 Text(
                     text = text.uppercase(),
                     style = MaterialTheme.typography.labelLarge.copy(
-                        fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, letterSpacing = 2.sp,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 2.sp,
                     ),
                     color = Color.White,
                     maxLines = 1,
@@ -120,7 +126,7 @@ internal fun DrawScope.drawFilmPerforation(press: Float) {
     for (k in -1..count) {
         val x = 6.dp.toPx() + k * pitch - shift
         val a = ((x - edge) / fade).coerceIn(0f, 1f) *
-                ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
+            ((size.width - edge - (x + hw)) / fade).coerceIn(0f, 1f)
         if (a <= 0f) continue
         val hole = Color.Black.copy(alpha = a)
         val r = CornerRadius(1.dp.toPx())

@@ -33,19 +33,24 @@ internal object ChipTextures {
     private val queue = Channel<Key>(Channel.UNLIMITED)
 
     fun brush(color: Color, kind: ChipTexture, density: Float, w: Int, h: Int, seed: Int): Brush {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return SolidColor(color)
-        val key = Key(color.toArgb(), kind, density)
-        val bmp = ready[key]
-        if (bmp == null) {
-            if (requested.add(key)) queue.trySend(key)
-            return SolidColor(color)
+        val bmp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            bitmapFor(Key(color.toArgb(), kind, density))
+        } else {
+            null
         }
+        if (bmp == null) return SolidColor(color)
+
         val rnd = Random(seed.toLong())
         val ox = rnd.nextInt((W - w).coerceAtLeast(1))
         val oy = rnd.nextInt((H - h).coerceAtLeast(1))
         val shader = BitmapShader(bmp.asAndroidBitmap(), Shader.TileMode.REPEAT, Shader.TileMode.REPEAT)
             .apply { setLocalMatrix(Matrix().apply { setTranslate(-ox.toFloat(), -oy.toFloat()) }) }
         return ShaderBrush(shader)
+    }
+
+    private fun bitmapFor(key: Key): ImageBitmap? = ready[key] ?: run {
+        if (requested.add(key)) queue.trySend(key)
+        null
     }
 
     fun prewarm(density: Float, base: List<Color>, filled: List<Color>, rim: List<Color>) {

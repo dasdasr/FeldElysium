@@ -21,7 +21,10 @@ internal fun LanguageSection(onOpenDialog: (SettingsDialog) -> Unit) {
             title = stringResource(R.string.settings_language_title),
             subtitle = stringResource(R.string.settings_language_subtitle),
             value = AppLanguage.current().displayName(),
-            onClick = { haptics.tick(); onOpenDialog(SettingsDialog.Language) },
+            onClick = {
+                haptics.tick()
+                onOpenDialog(SettingsDialog.Language)
+            },
         )
     }
 }

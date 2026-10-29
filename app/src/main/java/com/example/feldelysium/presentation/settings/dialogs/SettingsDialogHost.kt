@@ -4,15 +4,15 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feldelysium.domain.model.settings.AppSettings
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.example.feldelysium.domain.model.settings.AppSettings
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
-import com.example.feldelysium.presentation.shared.dialogs.ManageTagsDialog
 import com.example.feldelysium.presentation.settings.SettingsDialog
-import com.example.feldelysium.presentation.shared.language.AppLanguage
 import com.example.feldelysium.presentation.settings.SettingsEvent
 import com.example.feldelysium.presentation.settings.speakerpack.SpeakerPackViewModel
+import com.example.feldelysium.presentation.shared.dialogs.ManageTagsDialog
+import com.example.feldelysium.presentation.shared.language.AppLanguage
 
 @Composable
 internal fun SettingsDialogHost(
@@ -131,9 +131,9 @@ private fun AppSettings.playbackTextIsDefault(): Boolean {
 private fun AppSettings.backgroundIsDefault(): Boolean {
     val d = AppSettings()
     return backgroundKind == d.backgroundKind &&
-            backgroundColorArgb == d.backgroundColorArgb &&
-            backgroundMediaUri == d.backgroundMediaUri &&
-            backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
-            backgroundVideoSound == d.backgroundVideoSound &&
-            backgroundVideoFill == d.backgroundVideoFill
+        backgroundColorArgb == d.backgroundColorArgb &&
+        backgroundMediaUri == d.backgroundMediaUri &&
+        backgroundMediaIsVideo == d.backgroundMediaIsVideo &&
+        backgroundVideoSound == d.backgroundVideoSound &&
+        backgroundVideoFill == d.backgroundVideoFill
 }

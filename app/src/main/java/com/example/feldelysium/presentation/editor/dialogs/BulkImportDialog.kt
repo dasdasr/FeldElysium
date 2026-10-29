@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.sp
 import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.button.FeldDialogActions
 import com.example.feldelysium.designsystem.components.container.FeldDialog
-import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.designsystem.components.input.FeldPalette
+import com.example.feldelysium.designsystem.components.input.FeldTextField
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.domain.usecase.ParseBulkImportUseCase

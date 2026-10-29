@@ -26,16 +26,16 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.feldelysium.designsystem.foundation.material.FeldWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
 import com.example.feldelysium.designsystem.foundation.sound.LocalFeldSounds
-import com.example.feldelysium.presentation.shared.sound.PlayerFeldSounds
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggsViewModel
 import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
+import com.example.feldelysium.presentation.shared.sound.PlayerFeldSounds
 import com.example.feldelysium.record.LocalScreenRecordRequest
 import com.example.feldelysium.record.ScreenRecordCoordinator
-import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import android.graphics.Color as AndroidColor
 
 class MainActivity : AppCompatActivity() {

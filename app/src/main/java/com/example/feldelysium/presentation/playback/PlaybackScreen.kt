@@ -48,12 +48,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.feldelysium.FeldApp
 import com.example.feldelysium.R
-import com.example.feldelysium.domain.model.settings.AppSettings
-import com.example.feldelysium.domain.model.settings.TapMode
+import com.example.feldelysium.designsystem.theme.ChromaKeyGreen
+import com.example.feldelysium.designsystem.theme.ProvidePlaybackFont
+import com.example.feldelysium.designsystem.theme.fontDir
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.model.StatusLine
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.TapMode
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
@@ -72,9 +75,6 @@ import com.example.feldelysium.record.RecordState
 import com.example.feldelysium.record.ScreenRecordCoordinator
 import com.example.feldelysium.record.ScreenRecordService
 import com.example.feldelysium.record.realScreenSize
-import com.example.feldelysium.designsystem.theme.ChromaKeyGreen
-import com.example.feldelysium.designsystem.theme.ProvidePlaybackFont
-import com.example.feldelysium.designsystem.theme.fontDir
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull

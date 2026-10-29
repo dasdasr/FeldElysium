@@ -16,10 +16,7 @@ import com.example.feldelysium.presentation.settings.lockedUnless
 import com.example.feldelysium.presentation.settings.subtitle
 
 @Composable
-internal fun PlaybackSection(
-    settings: AppSettings,
-    onEvent: (SettingsEvent) -> Unit,
-) {
+internal fun PlaybackSection(settings: AppSettings, onEvent: (SettingsEvent) -> Unit) {
     val haptics = rememberFeldHaptics()
 
     FeldSettingsSection(title = stringResource(R.string.settings_playback_section)) {
@@ -38,7 +35,10 @@ internal fun PlaybackSection(
                 title = stringResource(R.string.settings_autoplay_speed_title),
                 subtitle = stringResource(R.string.settings_autoplay_speed_subtitle),
                 value = settings.autoPlaySpeed.label,
-                onClick = { haptics.tick(); onEvent(SettingsEvent.CycleAutoPlaySpeed) },
+                onClick = {
+                    haptics.tick()
+                    onEvent(SettingsEvent.CycleAutoPlaySpeed)
+                },
             )
         }
         FeldSettingsDivider()
@@ -58,7 +58,10 @@ internal fun PlaybackSection(
             subtitle = settings.tapMode.subtitle(),
             status = lockedUnless(settings.showContinueButton),
             value = settings.tapMode.label(),
-            onClick = { haptics.tick(); onEvent(SettingsEvent.CycleTapMode) },
+            onClick = {
+                haptics.tick()
+                onEvent(SettingsEvent.CycleTapMode)
+            },
         )
     }
 }

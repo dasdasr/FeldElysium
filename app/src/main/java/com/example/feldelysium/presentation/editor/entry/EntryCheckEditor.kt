@@ -189,11 +189,7 @@ private fun CheckChip(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun EntryDamageEditor(
-    damage: DamageEffect?,
-    onChange: (DamageEffect) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun EntryDamageEditor(damage: DamageEffect?, onChange: (DamageEffect) -> Unit, modifier: Modifier = Modifier) {
     val d = damage ?: return
 
     Column(modifier) {

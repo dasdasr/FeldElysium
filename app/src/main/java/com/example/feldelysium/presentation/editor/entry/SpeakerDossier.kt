@@ -52,10 +52,10 @@ import com.example.feldelysium.designsystem.components.container.FeldCard
 import com.example.feldelysium.designsystem.components.container.FeldHandDiamond
 import com.example.feldelysium.designsystem.components.container.drawDiamondBeat
 import com.example.feldelysium.designsystem.components.container.entryRough
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.wornBrush
-import com.example.feldelysium.designsystem.components.input.FeldPalette
 
 object SpeakerDossierAssets {
     @DrawableRes
@@ -269,7 +269,7 @@ fun FieldLabel(text: String, optional: Boolean = false) {
                         fontWeight = FontWeight.Normal,
                         color = FeldPalette.Muted.copy(alpha = 0.7f),
                     ),
-                ) {  append(optionalSuffix) }
+                ) { append(optionalSuffix) }
             }
         },
         style = FeldDecalType.Label.copy(fontSize = 11.sp, letterSpacing = 1.4.sp),

@@ -63,9 +63,9 @@ import com.example.feldelysium.designsystem.components.container.FeldDialog
 import com.example.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.example.feldelysium.presentation.shared.language.AppLanguage
 import com.example.feldelysium.designsystem.theme.Alegreya
 import com.example.feldelysium.designsystem.theme.disco
+import com.example.feldelysium.presentation.shared.language.AppLanguage
 import com.example.feldelysium.presentation.shared.language.displayName
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
@@ -78,17 +78,15 @@ import kotlin.math.sign
 
 private val PageWidth = 190.dp
 private val TickGap = 80.dp
+
+@Suppress("PropertyName")
 private const val MinorPerMajor = 5
 private val NeighborPull = 32.dp
 
 private val Languages = AppLanguage.entries
 
 @Composable
-fun LanguageDialog(
-    current: AppLanguage,
-    onSelect: (AppLanguage) -> Unit,
-    onDismiss: () -> Unit,
-) {
+fun LanguageDialog(current: AppLanguage, onSelect: (AppLanguage) -> Unit, onDismiss: () -> Unit) {
     val haptics = rememberFeldHaptics()
     val scope = rememberCoroutineScope()
     val accent = MaterialTheme.disco.accent
@@ -150,12 +148,7 @@ fun LanguageDialog(
 }
 
 @Composable
-private fun LanguageCarousel(
-    pager: PagerState,
-    current: AppLanguage,
-    accent: Color,
-    onPageClick: (Int) -> Unit,
-) {
+private fun LanguageCarousel(pager: PagerState, current: AppLanguage, accent: Color, onPageClick: (Int) -> Unit) {
     BoxWithConstraints(
         Modifier
             .fillMaxWidth()
@@ -332,9 +325,8 @@ private fun captionName(language: AppLanguage, native: String, system: Locale): 
     return name.replaceFirstChar { it.uppercase() }
 }
 
-private fun systemLocale(context: Context): Locale =
-    if (Build.VERSION.SDK_INT >= 33) {
-        context.getSystemService(LocaleManager::class.java).systemLocales[0]
-    } else {
-        Resources.getSystem().configuration.locales[0]
-    }
+private fun systemLocale(context: Context): Locale = if (Build.VERSION.SDK_INT >= 33) {
+    context.getSystemService(LocaleManager::class.java).systemLocales[0]
+} else {
+    Resources.getSystem().configuration.locales[0]
+}

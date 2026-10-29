@@ -8,17 +8,18 @@ import com.example.feldelysium.R
 import java.util.Locale
 
 enum class AppLanguage(val tag: String?, val nativeName: String?) {
-        SYSTEM(null, null),
-        ENGLISH("en", "English"),
-        GERMAN("de", "Deutsch"),
-        FRENCH("fr", "Français"),
-        SPANISH("es", "Español"),
-        PORTUGUESE_BR("pt-BR", "Português"),
-        POLISH("pl", "Polski"),
-        UKRAINIAN("uk", "Українська"),
-        BELARUSIAN("be", "Беларуская"),
-        RUSSIAN("ru", "Русский"),
-        TURKISH("tr", "Türkçe");
+    SYSTEM(null, null),
+    ENGLISH("en", "English"),
+    GERMAN("de", "Deutsch"),
+    FRENCH("fr", "Français"),
+    SPANISH("es", "Español"),
+    PORTUGUESE_BR("pt-BR", "Português"),
+    POLISH("pl", "Polski"),
+    UKRAINIAN("uk", "Українська"),
+    BELARUSIAN("be", "Беларуская"),
+    RUSSIAN("ru", "Русский"),
+    TURKISH("tr", "Türkçe"),
+    ;
 
     companion object {
         fun current(): AppLanguage {
@@ -31,13 +32,15 @@ enum class AppLanguage(val tag: String?, val nativeName: String?) {
 
         fun apply(language: AppLanguage) {
             AppCompatDelegate.setApplicationLocales(
-                if (language.tag == null) LocaleListCompat.getEmptyLocaleList()
-                else LocaleListCompat.forLanguageTags(language.tag),
+                if (language.tag == null) {
+                    LocaleListCompat.getEmptyLocaleList()
+                } else {
+                    LocaleListCompat.forLanguageTags(language.tag)
+                },
             )
         }
     }
 }
 
 @Composable
-fun AppLanguage.displayName(): String =
-    nativeName ?: stringResource(R.string.settings_language_system)
+fun AppLanguage.displayName(): String = nativeName ?: stringResource(R.string.settings_language_system)

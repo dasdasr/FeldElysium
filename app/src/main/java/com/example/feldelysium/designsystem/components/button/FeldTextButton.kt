@@ -15,18 +15,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.example.feldelysium.R
 import com.example.feldelysium.designsystem.components.content.FeldTitleTag
+import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.example.feldelysium.designsystem.components.input.feldClickable
 
 @Composable
 fun FeldTextButton(

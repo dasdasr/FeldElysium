@@ -13,9 +13,13 @@ sealed interface PackMessage {
 
 fun PackMessage.text(context: Context): String = when (this) {
     PackMessage.Exported -> context.getString(R.string.pack_exported)
+
     PackMessage.ExportFailed -> context.getString(R.string.pack_export_failed)
+
     PackMessage.CannotRead -> context.getString(R.string.pack_cannot_read)
+
     is PackMessage.NotAPack -> detail ?: context.getString(R.string.pack_not_a_pack)
+
     is PackMessage.Imported -> buildString {
         append(context.getString(R.string.pack_added, added))
         if (replaced > 0) append(context.getString(R.string.pack_replaced, replaced))

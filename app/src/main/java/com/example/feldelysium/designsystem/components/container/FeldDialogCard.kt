@@ -23,13 +23,13 @@ import androidx.compose.ui.unit.dp
 import com.example.feldelysium.designsystem.components.content.FeldIcon
 import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.components.content.FeldTitleTag
+import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
 import com.example.feldelysium.designsystem.foundation.material.FeldTape
 import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.StickerTapeSpec
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.example.feldelysium.designsystem.components.input.feldClickable
 import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 
 @Composable
