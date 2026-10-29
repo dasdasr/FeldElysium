@@ -331,7 +331,7 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             Modifier
                 .fillMaxWidth()
                 .height(52.dp)
-                .paperMaterial(chipShape, swatchSpec(live, selected = true)),
+                .paperMaterial(chipShape, swatchSpec(live)),
         )
 
         Spacer(Modifier.height(12.dp))

@@ -115,7 +115,7 @@ private fun ChipTextureBaker() {
     val gc = LocalGraphicsContext.current
     val density = LocalDensity.current.density
 
-    val damageColors = DamageType.entries.map { CheckAssets.DamageColor(it) }
+    val damageColors = DamageType.entries.map { CheckAssets.damageColor(it) }
 
     LaunchedEffect(gc, density, damageColors) {
         ChipTextures.prewarm(

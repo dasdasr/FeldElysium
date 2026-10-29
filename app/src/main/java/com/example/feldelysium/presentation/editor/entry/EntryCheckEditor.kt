@@ -200,7 +200,7 @@ fun EntryDamageEditor(damage: DamageEffect?, onChange: (DamageEffect) -> Unit, m
                 CheckChip(
                     text = stringResource(type.stringRes),
                     selected = d.type == type,
-                    accent = CheckAssets.DamageColor(type),
+                    accent = CheckAssets.damageColor(type),
                 ) {
                     onChange(d.copy(type = type))
                 }
@@ -219,7 +219,7 @@ fun EntryDamageEditor(damage: DamageEffect?, onChange: (DamageEffect) -> Unit, m
                     width = 32.dp,
                     shape = FeldChipShape.Rectangle,
                     sidePad = 0.dp,
-                    accent = CheckAssets.DamageColor(d.type),
+                    accent = CheckAssets.damageColor(d.type),
                 ) {
                     onChange(d.copy(amount = n))
                 }

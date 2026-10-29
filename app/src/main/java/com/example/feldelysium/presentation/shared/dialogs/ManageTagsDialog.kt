@@ -94,7 +94,7 @@ fun ManageTagsDialog(
                 FeldHandDiamond(
                     tag.colorArgb?.let { Color(it) } ?: FeldPalette.Muted,
                     tag.id.hashCode(),
-                    14.dp,
+                    size = 14.dp,
                 )
                 Spacer(Modifier.width(12.dp))
 

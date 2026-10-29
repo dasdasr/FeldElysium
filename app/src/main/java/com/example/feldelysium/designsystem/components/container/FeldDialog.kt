@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
-import com.example.feldelysium.designsystem.components.content.FeldDistressedTitle
-import com.example.feldelysium.designsystem.components.content.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.button.FeldButton
 import com.example.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.example.feldelysium.designsystem.components.button.FeldIconButton
+import com.example.feldelysium.designsystem.components.content.FeldDistressedTitle
+import com.example.feldelysium.designsystem.components.content.FeldDistressedTitles
 import com.example.feldelysium.designsystem.components.content.FeldIconId
 import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.feldClickable

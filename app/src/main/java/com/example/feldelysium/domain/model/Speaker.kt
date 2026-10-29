@@ -13,7 +13,7 @@ data class Speaker(
     val soundKey: String get() = type.soundKey ?: SoundKeys.DEFAULT
 
     companion object {
-        const val DEFAULT_CUSTOM_COLOR: Long = 0xFF4F83D1
+        val DEFAULT_CUSTOM_COLOR: Long get() = SpeakerColor.PLAIN.argb
     }
 }
 

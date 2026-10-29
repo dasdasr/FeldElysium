@@ -128,7 +128,7 @@
     <string name="tags_built_in">INTÉGRÉS</string>
     <string name="tags_delete_title">Supprimer le tag</string>
     <string name="tags_delete_unused_message">Aucun locuteur n’utilise ce tag.</string>
-    <string name="tags_delete_used_message">%1$d locuteur(s) perdront ce tag et passeront dans «&#160;Perso&#160;». Leurs couleurs restent.</string>
+    <string name="tags_delete_used_message">Locuteurs avec ce tag&#160;: %1$d. Ils le perdront et passeront dans «&#160;Perso&#160;». Leurs couleurs restent.</string>
     <string name="tags_edit_title">Modifier le tag</string>
     <string name="tags_name_label">Nom</string>
     <string name="tags_duplicate_name">Un tag portant ce nom existe déjà</string>
