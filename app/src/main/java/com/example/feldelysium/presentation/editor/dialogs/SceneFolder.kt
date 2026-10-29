@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
@@ -166,9 +167,26 @@ internal fun SceneFolder(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f, fill = false),
                     )
+
                     if (featured) {
-                        Spacer(Modifier.width(8.dp))
-                        FeldIcon(FeldIconId.Edit, size = 18.dp, markerFilmSpec = FeldMarker.Ink, modifier = Modifier.padding(top = 8.dp))
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .offset(x = (-8).dp, y = (-4).dp)
+                                .size(20.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            FeldIcon(
+                                id = FeldIconId.BackingCube,
+                                size = 20.dp,
+                                markerFilmSpec = FeldMarker.Ink.copy(color = Color(0xFFDCCFB5)),
+                            )
+                            FeldIcon(
+                                id = FeldIconId.Edit,
+                                size = 14.dp,
+                                markerFilmSpec = FeldMarker.Ink,
+                            )
+                        }
                     }
                 }
 
