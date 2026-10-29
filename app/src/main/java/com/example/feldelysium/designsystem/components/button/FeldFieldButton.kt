@@ -20,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.feldelysium.designsystem.components.display.FeldIcon
-import com.example.feldelysium.designsystem.components.display.FeldIconId
+import com.example.feldelysium.designsystem.components.content.FeldIcon
+import com.example.feldelysium.designsystem.components.content.FeldIconId
+import com.example.feldelysium.designsystem.components.input.FeldPalette
 import com.example.feldelysium.designsystem.components.input.FeldRough
 import com.example.feldelysium.designsystem.foundation.material.FeldMarker
 import com.example.feldelysium.designsystem.foundation.material.FeldPaper
@@ -31,7 +33,6 @@ import com.example.feldelysium.designsystem.foundation.material.PaperSpec
 import com.example.feldelysium.designsystem.foundation.material.paperMaterial
 import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 
 @Composable
 fun FeldFieldButton(
@@ -86,4 +87,14 @@ fun FeldFieldButton(
             size = 20.dp,
         )
     }
+}
+
+@Preview
+@Composable
+private fun FeldFieldButtonPreview() {
+    FeldFieldButton(
+        text = "Button",
+        placeholder = "Go with it",
+        onClick = {},
+    )
 }

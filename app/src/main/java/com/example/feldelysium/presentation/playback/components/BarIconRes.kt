@@ -3,10 +3,10 @@ package com.example.feldelysium.presentation.playback.components
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 import com.example.feldelysium.R
-import com.example.feldelysium.data.settings.BarIconState
-import com.example.feldelysium.data.settings.BarSlot
-import com.example.feldelysium.data.settings.InventoryIcon
-import com.example.feldelysium.data.settings.InventorySlot
+import com.example.feldelysium.domain.model.settings.BarIconState
+import com.example.feldelysium.domain.model.settings.BarSlot
+import com.example.feldelysium.domain.model.settings.InventoryIcon
+import com.example.feldelysium.domain.model.settings.InventorySlot
 
 @get:DrawableRes
 val BarSlot.iconRes: Int

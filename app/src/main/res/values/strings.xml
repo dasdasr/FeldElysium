@@ -1,3 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App name -->
     <string name="app_name">Feld Elysium</string>
+
+    <!-- Common -->
+    <string name="common_done">Done</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_save">Save</string>
+    <string name="common_none">None</string>
+    <string name="common_back">Back</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_ok">OK</string>
+    <string name="common_import">Import</string>
+    <string name="common_export">Export</string>
+    <string name="common_current">CURRENT</string>
+    <string name="common_reset">RESET</string>
+    <string name="common_confirm">Confirm</string>
+    <string name="common_apply">Apply</string>
+
+    <!-- Settings header -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_eyebrow">The workshop</string>
+    <string name="settings_subtitle">Make it work for you.</string>
+
+    <!-- Playback -->
+    <string name="settings_playback_section">Playback</string>
+    <string name="settings_cinema_frame_title">Cinema frame</string>
+    <string name="settings_cinema_frame_subtitle">Keep playback inside a 16:9 frame</string>
+    <string name="settings_status_line_title">Status line</string>
+    <string name="settings_status_line_subtitle">Reals, time and day</string>
+    <string name="settings_panel_icons_title">Panel icons</string>
+    <string name="settings_panel_icons_subtitle">Choose which bar icons are highlighted</string>
+    <string name="settings_autoplay_title">Autoplay</string>
+    <string name="settings_autoplay_subtitle">Scroll lines automatically</string>
+    <string name="settings_autoplay_speed_title">Autoplay speed</string>
+    <string name="settings_autoplay_speed_subtitle">Time each line stays on screen</string>
+    <string name="settings_continue_button_title">Continue button</string>
+    <string name="settings_continue_button_subtitle">Show the Continue button in Playback</string>
+    <string name="settings_advance_dialogue_title">Advance dialogue</string>
+    <string name="settings_advance_whole_screen">Tap anywhere to show the next line</string>
+    <string name="settings_advance_continue_button">Use Continue to advance. Scroll through dialogue history</string>
+    <string name="settings_advance_autoplay_only">Autoplay only</string>
+    <string name="settings_typeface_title">Typeface</string>
+    <string name="settings_typeface_subtitle">Dialogue text in playback</string>
+    <string name="settings_tap_mode_whole_screen">Anywhere</string>
+    <string name="settings_tap_mode_continue_button">Button</string>
+    <string name="settings_tap_mode_nowhere">Nowhere</string>
+
+    <!-- Video export -->
+    <string name="settings_video_export_section">Video export</string>
+    <string name="settings_record_playback_title">Record playback</string>
+    <string name="settings_record_playback_subtitle">Playback button records your screen</string>
+    <string name="settings_record_sound_title">Record sound</string>
+    <string name="settings_record_sound_subtitle">App sound goes into the video</string>
+    <string name="settings_android_10_required">Needs Android 10 or newer</string>
+
+    <!-- Background -->
+    <string name="settings_background_section">Background</string>
+    <string name="settings_background_color">Color</string>
+    <string name="settings_background_default">Default</string>
+    <string name="settings_background_custom">Custom</string>
+
+    <!-- Speakers -->
+    <string name="settings_appearance_section">Appearance</string>
+    <string name="settings_speakers_section">Speakers</string>
+    <string name="settings_export_speakers_title">Export speakers</string>
+    <string name="settings_export_speakers_subtitle">Save your speakers and tags to a file</string>
+    <string name="settings_import_speakers_title">Import speakers</string>
+    <string name="settings_import_speakers_subtitle">Add speakers and tags from a pack</string>
+    <string name="settings_tags_title">Tags</string>
+    <string name="settings_tags_subtitle">Rename, recolor or delete</string>
+    <string name="settings_author_samples_title">Author\'s samples</string>
+    <string name="settings_samples_imported_hidden">Pack imported, samples are hidden</string>
+    <string name="settings_samples_hide_after_import">They\'ll hide after your first pack import</string>
+    <string name="settings_samples_always_visible">Always visible in the picker</string>
+    <string name="settings_samples_always_hidden">Always hidden</string>
+    <string name="settings_samples_auto">Auto</string>
+    <string name="settings_samples_show">Show</string>
+    <string name="settings_samples_hide">Hide</string>
+
+    <!-- Coming soon -->
+    <string name="settings_coming_soon_section">Coming soon</string>
+    <string name="settings_lock_landscape_title">Lock landscape</string>
+    <string name="settings_lock_landscape_subtitle">Lock it</string>
+
+    <!-- Editor screen -->
+    <string name="editor_eyebrow">Scene editor</string>
+    <string name="editor_lines_count">%1$d lines</string>
+    <string name="editor_scene_meta">Dialogue scene</string>
+    <string name="editor_paste">Paste</string>
+    <string name="editor_playback">Playback</string>
+    <string name="editor_settings">Settings</string>
+    <string name="editor_menu_edit">Edit</string>
+    <string name="editor_menu_delete">Delete</string>
+    <string name="editor_add_entry">Add dialogue entry</string>
+    <string name="editor_empty_state">Paste a script or\nadd a line.</string>
+    <string name="import_preview_no_lines">No lines</string>
+    <plurals name="import_preview_lines">
+        <item quantity="one">%d line</item>
+        <item quantity="other">%d lines</item>
+    </plurals>
+    <plurals name="import_preview_new_speakers">
+        <item quantity="one">%d new speaker</item>
+        <item quantity="other">%d new speakers</item>
+    </plurals>
+    <string name="pack_exported">Pack exported</string>
+    <string name="pack_export_failed">Export failed</string>
+    <string name="pack_cannot_read">Cannot read this file</string>
+    <string name="pack_not_a_pack">Not a speaker pack</string>
+    <string name="pack_added">Added %1$d</string>
+    <string name="pack_replaced">, replaced %1$d</string>
+    <string name="pack_skipped">, skipped %1$d</string>
+
+    <!-- Screen recording result -->
+    <string name="record_video_saved_message">VIDEO SAVED\n%1$s%2$s</string>
+    <string name="record_gallery_location">Gallery › FeldElysium</string>
+    <string name="record_app_folder_location">App folder › Movies</string>
+    <string name="record_no_sound_suffix"> · no sound</string>
+
+    <!-- Tags -->
+    <string name="tags_title">Tags</string>
+    <string name="tags_manage_eyebrow">Manage tags</string>
+    <string name="tags_empty_message">No tags yet. Add one when editing a speaker.</string>
+    <string name="tags_built_in">BUILT-IN</string>
+    <string name="tags_delete_title">Delete tag</string>
+    <string name="tags_delete_unused_message">This tag is not used by any speaker.</string>
+    <string name="tags_delete_used_message">%1$d speaker(s) will lose this tag and move to Custom. Their colors stay.</string>
+    <string name="tags_edit_title">Edit tag</string>
+    <string name="tags_name_label">Name</string>
+    <string name="tags_duplicate_name">A tag with this name already exists</string>
+    <string name="tags_default_color">Default color</string>
+    <string name="tags_sound_label">Sound</string>
+    <string name="tags_skill_checks_label">Skill checks</string>
+    <string name="tags_allow_skill_checks">Allow skill checks</string>
+
+    <!-- Choose tag dialog -->
+    <string name="choose_tag_title">Choose tag</string>
+    <string name="choose_tag_eyebrow">Speaker tag</string>
+    <string name="choose_tag_select">Select</string>
+    <string name="choose_tag_none">No tag</string>
+    <string name="choose_tag_new">+ New</string>
+    <string name="choose_tag_edit">Edit tags</string>
+    <string name="choose_tag_name_placeholder">Tag name</string>
+    <string name="choose_tag_allow_checks">Allow checks</string>
+    <string name="choose_tag_add">Add</string>
+
+    <!-- Custom speaker dialog -->
+    <string name="speaker_edit_title">Edit speaker</string>
+    <string name="speaker_create_title">Create speaker</string>
+    <string name="speaker_eyebrow">Custom speaker</string>
+    <string name="speaker_save">Save</string>
+    <string name="speaker_create">Create</string>
+    <string name="speaker_name_label">Name</string>
+    <string name="speaker_name_placeholder">Speaker name</string>
+    <string name="speaker_tag_label">Tag</string>
+    <string name="speaker_no_tag">No tag</string>
+    <string name="speaker_color_label">Color</string>
+    <string name="speaker_delete">Delete speaker</string>
+    <string name="speaker_no_speaker">No speaker</string>
+    <string name="speaker_edit_accessibility">Edit speaker</string>
+
+    <!-- Bulk import dialog -->
+    <string name="bulk_import_title">Paste dialogue</string>
+    <string name="bulk_import_eyebrow">Quick add</string>
+    <string name="bulk_import_subtitle">Known names: any case. New ones: CAPS.</string>
+
+    <!-- Entry check editor -->
+    <string name="check_label">Check</string>
+    <string name="check_none">None</string>
+    <string name="check_passive">Passive</string>
+    <string name="check_active">Active</string>
+    <string name="check_difficulty">Difficulty</string>
+    <string name="check_result">Result</string>
+    <string name="check_left_die">Left die</string>
+    <string name="check_right_die">Right die</string>
+    <string name="check_difficulty_trivial">Trivial</string>
+    <string name="check_difficulty_easy">Easy</string>
+    <string name="check_difficulty_medium">Medium</string>
+    <string name="check_difficulty_challenging">Challenging</string>
+    <string name="check_difficulty_formidable">Formidable</string>
+    <string name="check_difficulty_legendary">Legendary</string>
+    <string name="check_difficulty_heroic">Heroic</string>
+    <string name="check_difficulty_godly">Godly</string>
+    <string name="check_difficulty_impossible">Impossible</string>
+    <string name="check_result_success">Success</string>
+    <string name="check_result_failure">Failure</string>
+
+    <!-- Damage -->
+    <string name="damage_type">Type</string>
+    <string name="damage_amount">Amount</string>
+    <string name="damage_type_morale">Morale</string>
+    <string name="damage_type_health">Health</string>
+
+    <!-- Entry edit sheet -->
+    <string name="entry_new_title">NEW ENTRY</string>
+    <string name="entry_edit_title">EDIT ENTRY</string>
+    <string name="entry_dialogue_label">Dialogue</string>
+    <string name="entry_dialogue_placeholder">Dialogue text</string>
+    <string name="entry_reply_options">REPLY OPTIONS</string>
+    <string name="entry_skill_check">SKILL CHECK</string>
+    <string name="entry_damage">DAMAGE</string>
+    <string name="entry_confirm">Confirm</string>
+    <string name="entry_select_reply">Select one option for dialogue</string>
+    <string name="entry_spoken_by_you">Spoken by YOU</string>
+    <string name="entry_reply_option">Option %1$d</string>
+    <string name="entry_add_option">+ ADD OPTION</string>
+
+    <!-- Scene manager -->
+    <string name="scenes_top_bar_title">DIALOGUE EDITOR</string>
+    <string name="scenes_saved">SAVED</string>
+    <string name="scenes_title">SCENES</string>
+    <string name="scenes_hint_hold_folder">HOLD TO MANAGE</string>
+    <string name="scenes_hold_for_more">HOLD FOR MORE</string>
+    <string name="scenes_empty_tape">NOTHING ON TAPE YET</string>
+    <string name="scenes_menu_clear_lines">Clear lines</string>
+    <string name="scenes_new">NEW SCENE</string>
+    <string name="scenes_tap_to_create">TAP TO CREATE</string>
+    <string name="scenes_clear_confirm">SURE?</string>
+    <string name="scenes_menu_rename">Rename</string>
+    <string name="scenes_rename_title">Rename scene</string>
+    <plurals name="scene_lines_count">
+        <item quantity="one">%d LINE</item>
+        <item quantity="other">%d LINES</item>
+    </plurals>
+
+    <!-- Speaker picker -->
+    <string name="picker_title">Choose speaker</string>
+    <string name="picker_eyebrow">Dialogue line</string>
+    <string name="picker_search">SEARCH</string>
+    <string name="picker_empty">NO SPEAKERS FOUND</string>
+    <string name="picker_create_custom">CREATE CUSTOM SPEAKER</string>
+    <string name="picker_group_custom">Custom</string>
+
+    <!-- Speaker dossier -->
+    <string name="speaker_preview_label">› PREVIEW</string>
+    <string name="speaker_preview_sample">“Sample dialogue line…”</string>
+    <string name="field_optional">"  (OPTIONAL)"</string>
+
+    <!-- Background dialog -->
+    <string name="background_eyebrow_animated">Animated</string>
+    <string name="background_eyebrow_plain">Plain</string>
+    <string name="background_subtitle">Scene background</string>
+    <string name="background_tab_media">Media</string>
+    <string name="background_video">Video</string>
+    <string name="background_image">Image</string>
+    <string name="background_mute_title">Mute sound</string>
+    <string name="background_mute_subtitle">Mute video audio.</string>
+    <string name="background_fill_title">Fill screen</string>
+    <string name="background_fill_subtitle">Crop video to fill the frame.</string>
+    <string name="background_no_media">NO MEDIA YET</string>
+
+    <!-- Bar icons dialog -->
+    <string name="bar_icons_panel">Panel</string>
+    <string name="bar_icons_panel_hint">Tap to cycle: off, on, alert</string>
+    <string name="bar_icons_inventory">Inventory</string>
+    <string name="bar_icons_inventory_hint">Tap to switch the item</string>
+
+    <!-- Import conflict dialog -->
+    <string name="import_conflict_title">Already exists</string>
+    <string name="import_conflict_eyebrow">Import pack</string>
+    <string name="import_conflict_confirm">Import</string>
+    <string name="import_conflict_count">%1$d speaker(s) from the pack are already in your list: %2$s</string>
+    <string name="import_conflict_skip">Skip</string>
+    <string name="import_conflict_replace">Replace</string>
+    <string name="import_conflict_keep_both">Keep both</string>
+    <string name="import_conflict_skip_description">Existing speakers stay as they are.</string>
+    <string name="import_conflict_replace_description">Existing speakers are overwritten by the pack versions.</string>
+    <string name="import_conflict_keep_both_description">Pack speakers are added as new copies.</string>
+    <string name="import_conflict_bundled_skipped">%1$d built-in speaker(s) in the pack are always skipped.</string>
+
+    <!-- Playback UI text dialog -->
+    <string name="playback_ui_title">Scene info</string>
+    <string name="playback_ui_eyebrow">Set details</string>
+    <string name="playback_ui_subtitle">Scene details</string>
+    <string name="playback_ui_reals">Reals</string>
+    <string name="playback_ui_time">Time</string>
+    <string name="playback_ui_day">Day</string>
+
+    <!-- Font dialog -->
+    <string name="font_dialog_subtitle">Try another typeface.</string>
+    <string name="font_dialog_hint">TAP A CARD TO CHANGE THE LINES  › › ›</string>
+    <string name="font_add_own">ADD YOUR OWN FONT</string>
+    <string name="font_replace_own">REPLACE YOUR FONT</string>
+    <string name="font_file_hint">.ttf or .otf</string>
+
+    <!-- Font dialog: sample speakers -->
+    <string name="skill_electrochemistry">Electrochemistry</string>
+    <string name="skill_encyclopedia">Encyclopedia</string>
+    <string name="skill_inland_empire">Inland Empire</string>
+    <string name="skill_savoir_faire">Savoir Faire</string>
+    <string name="skill_perception">Perception</string>
+    <string name="skill_authority">Authority</string>
+    <string name="skill_volition">Volition</string>
+    <string name="skill_rhetoric">Rhetoric</string>
+
+    <!-- Font dialog: sample lines -->
+    <string name="font_sample_01">Oh, this one f*cks. Look at those curves. Look at that filthy little lowercase g.</string>
+    <string name="font_sample_02">Historically, the serif emerged as a response to—</string>
+    <string name="font_sample_03">Close your eyes. Listen to the letters.</string>
+    <string name="font_sample_04">Go with the ugly one. Make it look intentional.</string>
+    <string name="font_sample_05">Look at that lowercase ‘a’. Something is deeply wrong with it.</string>
+    <string name="font_sample_06">You will choose the serif. You will respect the serif. You will not ask.</string>
+    <string name="font_sample_07">We are making an interface, not a suicide note.</string>
+    <string name="font_sample_08">The bold one. The f*cking bold one.</string>
+    <string name="font_sample_09">Nobody respects a man whose letters look cheap.</string>
+    <string name="font_sample_10">Choose something readable.</string>
+    <string name="font_sample_11">Choose something unreasonably sexy.</string>
+    <string name="font_sample_12">Sans-serif is a bourgeois conspiracy to make everything look like a startup.</string>
+    <string name="font_sample_13">This one smells like wet concrete and an inspiration you can no longer access.</string>
+    <string name="font_sample_14">Commit. To. The. Font. Detective.</string>
+    <string name="font_tile_glyph">Aa</string>
+
+    <!-- Choose icon dialog -->
+    <string name="choose_icon_title">Choose icon</string>
+    <string name="choose_icon_eyebrow">Speaker icon</string>
+    <string name="choose_icon_subtitle">Pick a picture for the speaker.</string>
+    <string name="choose_icon_add_custom">Add custom image</string>
+
+    <!-- Editor toasts -->
+    <string name="message_scene_saved">Scene saved</string>
+    <string name="message_scene_exported">Scene exported</string>
+    <string name="message_scene_imported">Scene imported</string>
+
+    <!-- Errors -->
+    <string name="settings_font_invalid">That\'s not a usable font file</string>
+    <string name="error_record_denied">NO TAPE, NO SHOW\nAllow screen recording, or turn off «Record playback» in Settings</string>
+    <string name="error_record_failed">TAPE JAMMED\nVideo wasn\'t saved. The record choked, try again</string>
+    <string name="error_export_failed">EXPORT FAILED\nCouldn\'t export the scene</string>
+    <string name="error_import_failed">CAN\'T READ THIS\nThat file is not what I was expecting</string>
+    <string name="error_empty_import">NOTHING FOUND\nTry «NAME: text»</string>
+    <string name="error_no_script_pasted">EMPTY\nPaste some lines first, I can\'t read minds</string>
+
+    <!-- Language -->
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_subtitle">App interface language</string>
+    <string name="settings_language_system">System</string>
+    <string name="settings_language_eyebrow">Choose language</string>
+
 </resources>

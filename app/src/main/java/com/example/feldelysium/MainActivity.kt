@@ -5,12 +5,12 @@ import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -26,19 +26,19 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.feldelysium.designsystem.foundation.material.FeldWarmup
 import com.example.feldelysium.designsystem.foundation.seed.ProvideSeedScope
 import com.example.feldelysium.designsystem.foundation.sound.LocalFeldSounds
-import com.example.feldelysium.di.PlayerFeldSounds
+import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 import com.example.feldelysium.domain.sound.SoundCue
 import com.example.feldelysium.eggs.EggEvent
 import com.example.feldelysium.eggs.EggsViewModel
 import com.example.feldelysium.eggs.ui.EggToastHost
 import com.example.feldelysium.eggs.ui.LocalEasterEggs
 import com.example.feldelysium.navigation.AppNavGraph
+import com.example.feldelysium.presentation.shared.sound.PlayerFeldSounds
 import com.example.feldelysium.record.LocalScreenRecordRequest
 import com.example.feldelysium.record.ScreenRecordCoordinator
-import com.example.feldelysium.theme.DiscoDialogueTheme
 import android.graphics.Color as AndroidColor
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val eggsVm: EggsViewModel by viewModels()
 

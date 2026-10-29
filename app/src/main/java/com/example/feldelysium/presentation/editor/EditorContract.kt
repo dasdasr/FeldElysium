@@ -1,11 +1,16 @@
 package com.example.feldelysium.presentation.editor
 
+import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.runtime.saveable.Saver
+import com.example.feldelysium.R
 import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.SceneInfo
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import com.example.feldelysium.presentation.shared.FeldError
+import com.example.feldelysium.presentation.shared.toastText
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -22,16 +27,20 @@ data class EditorUiState(
     fun entry(id: String) = entries.firstOrNull { it.id == id }
 }
 
-data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int) {
-    val caption: String
-        get() {
-            if (lineCount == 0) return "No lines"
-            val lines = if (lineCount == 1) "1 line" else "$lineCount lines"
-            if (newSpeakerCount == 0) return lines
-            val speakers =
-                if (newSpeakerCount == 1) "1 new speaker" else "$newSpeakerCount new speakers"
-            return "$lines · $speakers"
-        }
+data class ImportPreview(val lineCount: Int, val newSpeakerCount: Int)
+
+fun ImportPreview.caption(context: Context): String {
+    if (lineCount == 0) return context.getString(R.string.import_preview_no_lines)
+
+    val res = context.resources
+    val lines = res.getQuantityString(R.plurals.import_preview_lines, lineCount, lineCount)
+    val speakers = if (newSpeakerCount == 0) {
+        null
+    } else {
+        res.getQuantityString(R.plurals.import_preview_new_speakers, newSpeakerCount, newSpeakerCount)
+    }
+
+    return if (speakers == null) lines else "$lines · $speakers"
 }
 
 @Serializable
@@ -60,3 +69,13 @@ val EditorDialogSaver = Saver<EditorDialog, String>(
     save = { Json.encodeToString(EditorDialog.serializer(), it) },
     restore = { Json.decodeFromString(EditorDialog.serializer(), it) },
 )
+
+sealed interface EditorMessage {
+    data class Text(@StringRes val resId: Int) : EditorMessage
+    data class Error(val error: FeldError) : EditorMessage
+}
+
+fun EditorMessage.resolve(context: Context): String = when (this) {
+    is EditorMessage.Text -> context.getString(resId)
+    is EditorMessage.Error -> error.toastText(context)
+}

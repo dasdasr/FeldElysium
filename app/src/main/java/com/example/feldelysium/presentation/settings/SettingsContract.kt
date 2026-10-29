@@ -1,56 +1,63 @@
 package com.example.feldelysium.presentation.settings
 
-import com.example.feldelysium.data.settings.AppSettings
-import com.example.feldelysium.data.settings.AutoPlaySpeed
-import com.example.feldelysium.data.settings.BackgroundKind
-import com.example.feldelysium.data.settings.BarIconState
-import com.example.feldelysium.data.settings.BarSlot
-import com.example.feldelysium.data.settings.InventoryIcon
-import com.example.feldelysium.data.settings.InventorySlot
-import com.example.feldelysium.data.settings.SamplesMode
-import com.example.feldelysium.data.settings.TapMode
+import androidx.annotation.StringRes
+import com.example.feldelysium.domain.model.settings.AppSettings
+import com.example.feldelysium.domain.model.settings.BackgroundKind
+import com.example.feldelysium.domain.model.settings.BarSlot
+import com.example.feldelysium.domain.model.settings.InventorySlot
+import com.example.feldelysium.domain.model.settings.TapMode
+import com.example.feldelysium.domain.model.settings.next
 
 sealed interface SettingsEvent {
     data class SetLockAspectRatio16x9(val enabled: Boolean) : SettingsEvent
-    data class SetExportEnabled(val enabled: Boolean) : SettingsEvent
-    data class SetExportAudio(val enabled: Boolean) : SettingsEvent
     data class SetAutoPlay(val enabled: Boolean) : SettingsEvent
     data class ShowContinueButton(val enabled: Boolean) : SettingsEvent
-    data class SetTapMode(val mode: TapMode) : SettingsEvent
-    data class SetAutoPlaySpeed(val speed: AutoPlaySpeed) : SettingsEvent
+    data object CycleAutoPlaySpeed : SettingsEvent
+    data object CycleTapMode : SettingsEvent
+    data class SetFontChoice(val choice: String) : SettingsEvent
+
     data class SetPlaybackMoney(val value: String) : SettingsEvent
     data class SetPlaybackTime(val value: String) : SettingsEvent
     data class SetPlaybackDay(val value: String) : SettingsEvent
     data object ResetPlaybackUiText : SettingsEvent
+
+    data class SetExportEnabled(val enabled: Boolean) : SettingsEvent
+    data class SetExportAudio(val enabled: Boolean) : SettingsEvent
+
     data class SetBackgroundKind(val kind: BackgroundKind) : SettingsEvent
     data class SetBackgroundColor(val argb: Long) : SettingsEvent
     data class SetBackgroundMedia(val uri: String, val isVideo: Boolean) : SettingsEvent
     data class SetBackgroundVideoSound(val enabled: Boolean) : SettingsEvent
     data class SetBackgroundVideoFill(val enabled: Boolean) : SettingsEvent
     data object ResetBackground : SettingsEvent
-    data class SetSamplesMode(val mode: SamplesMode) : SettingsEvent
-    data class SetBarIconState(val slot: BarSlot, val state: BarIconState) : SettingsEvent
+
+    data object CycleSamplesMode : SettingsEvent
+
+    data class CycleBarIcon(val slot: BarSlot) : SettingsEvent
+    data class CycleInventoryIcon(val slot: InventorySlot) : SettingsEvent
     data object ResetBarIcons : SettingsEvent
-    data class SetInventoryIcon(val slot: InventorySlot, val icon: InventoryIcon) : SettingsEvent
 }
 
+internal fun AppSettings.apply(event: SettingsEvent): AppSettings = reduce(event).withConsistentTapMode()
+
+private fun AppSettings.withConsistentTapMode(): AppSettings =
+    if (!autoPlay && tapMode == TapMode.NOWHERE) copy(tapMode = TapMode.WHOLE_SCREEN) else this
+
 @Suppress("CyclomaticComplexMethod") // flat exhaustive when: one branch per SettingsEvent
-internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
+private fun AppSettings.reduce(event: SettingsEvent): AppSettings {
     val d = AppSettings()
     return when (event) {
         is SettingsEvent.SetLockAspectRatio16x9 -> copy(lockAspectRatio16x9 = event.enabled)
 
-        is SettingsEvent.SetExportEnabled -> copy(exportEnabled = event.enabled)
-
-        is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
-
         is SettingsEvent.SetAutoPlay -> copy(autoPlay = event.enabled)
-
-        is SettingsEvent.SetTapMode -> copy(tapMode = event.mode)
 
         is SettingsEvent.ShowContinueButton -> copy(showContinueButton = event.enabled)
 
-        is SettingsEvent.SetAutoPlaySpeed -> copy(autoPlaySpeed = event.speed)
+        SettingsEvent.CycleAutoPlaySpeed -> copy(autoPlaySpeed = autoPlaySpeed.next())
+
+        SettingsEvent.CycleTapMode -> copy(tapMode = tapMode.next(autoPlay))
+
+        is SettingsEvent.SetFontChoice -> copy(fontChoice = event.choice)
 
         is SettingsEvent.SetPlaybackMoney -> copy(playbackMoney = event.value)
 
@@ -60,6 +67,10 @@ internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
 
         SettingsEvent.ResetPlaybackUiText ->
             copy(playbackMoney = d.playbackMoney, playbackTime = d.playbackTime, playbackDay = d.playbackDay)
+
+        is SettingsEvent.SetExportEnabled -> copy(exportEnabled = event.enabled)
+
+        is SettingsEvent.SetExportAudio -> copy(exportAudio = event.enabled)
 
         is SettingsEvent.SetBackgroundKind -> copy(backgroundKind = event.kind)
 
@@ -86,12 +97,31 @@ internal fun AppSettings.apply(event: SettingsEvent): AppSettings {
             backgroundVideoFill = d.backgroundVideoFill,
         )
 
-        is SettingsEvent.SetSamplesMode -> copy(samplesMode = event.mode)
+        SettingsEvent.CycleSamplesMode -> copy(samplesMode = samplesMode.next())
 
-        is SettingsEvent.SetBarIconState -> copy(barIcons = barIcons + (event.slot to event.state))
+        is SettingsEvent.CycleBarIcon -> {
+            val current = barIcons[event.slot] ?: event.slot.defaultState
+            copy(barIcons = barIcons + (event.slot to current.next()))
+        }
 
-        is SettingsEvent.SetInventoryIcon -> copy(inventoryIcons = inventoryIcons + (event.slot to event.icon))
+        is SettingsEvent.CycleInventoryIcon -> {
+            val current = inventoryIcons[event.slot] ?: event.slot.defaultIcon
+            copy(inventoryIcons = inventoryIcons + (event.slot to current.next()))
+        }
 
         SettingsEvent.ResetBarIcons -> copy(barIcons = d.barIcons, inventoryIcons = d.inventoryIcons)
     }
+}
+
+sealed interface SettingsEffect {
+    data class ShowMessage(@StringRes val messageRes: Int) : SettingsEffect
+}
+
+enum class SettingsDialog {
+    PlaybackUiText,
+    BarIcons,
+    Background,
+    Font,
+    Tags,
+    Language,
 }

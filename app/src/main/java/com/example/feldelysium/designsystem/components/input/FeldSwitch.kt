@@ -52,7 +52,6 @@ import com.example.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.example.feldelysium.designsystem.foundation.shape.RoughShape
 import com.example.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.example.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.example.feldelysium.designsystem.foundation.utils.FeldPalette
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -115,7 +114,9 @@ fun FeldSwitch(
 
     LaunchedEffect(checked) {
         val t = if (checked) 0f else 1f
-        if (!(pos.isRunning && pos.targetValue == t)) pos.animateTo(t, Settle)
+        if (pos.targetValue != t) {
+            pos.animateTo(t, Settle)
+        }
     }
 
     val press by animateFloatAsState(if (pressed) 1f else 0f, tween(90), label = "press")
@@ -160,7 +161,7 @@ fun FeldSwitch(
         if (newChecked != currentChecked) {
             haptics.confirm()
             sounds.toggle(seed)
-            currentOnChange(!currentChecked)
+            currentOnChange(newChecked)
         }
     }
 
