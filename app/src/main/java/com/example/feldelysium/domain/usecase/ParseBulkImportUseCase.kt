@@ -4,6 +4,7 @@ import com.example.feldelysium.domain.model.DialogueEntry
 import com.example.feldelysium.domain.model.Speaker
 import com.example.feldelysium.domain.model.SpeakerType
 import com.example.feldelysium.domain.registry.PredefinedSpeakers
+import java.util.Locale
 import java.util.UUID
 
 class ParseBulkImportUseCase {
@@ -12,8 +13,8 @@ class ParseBulkImportUseCase {
 
     fun execute(rawText: String, customSpeakers: List<Speaker> = emptyList()): ParseResult {
         val nameIndex: Map<String, Speaker> = buildMap {
-            PredefinedSpeakers.ALL.forEach { put(it.name.uppercase(), it) }
-            customSpeakers.forEach { put(it.name.uppercase(), it) }
+            PredefinedSpeakers.ALL.forEach { put(it.name.uppercase(Locale.ROOT), it) }
+            customSpeakers.forEach { put(it.name.uppercase(Locale.ROOT), it) }
         }
 
         val entries = mutableListOf<DialogueEntry>()
@@ -28,7 +29,7 @@ class ParseBulkImportUseCase {
             val text = textBuffer.toString().trim()
             val speaker = currentSpeaker
             if (text.isNotEmpty() && speaker != null) {
-                if (currentIsNew) newSpeakers[speaker.name.uppercase()] = speaker
+                if (currentIsNew) newSpeakers[speaker.name.uppercase(Locale.ROOT)] = speaker
                 entries += DialogueEntry(
                     id = UUID.randomUUID().toString(),
                     speaker = speaker,
@@ -41,12 +42,12 @@ class ParseBulkImportUseCase {
         for (line in rawText.lines()) {
             val match = SPEAKER_LINE.matchEntire(line)?.takeIf {
                 val name = it.groupValues[1].trim()
-                nameIndex.containsKey(name.uppercase()) || name == name.uppercase()
+                nameIndex.containsKey(name.uppercase(Locale.ROOT)) || name == name.uppercase(Locale.ROOT)
             }
             if (match != null) {
                 flushEntry()
                 val rawName = match.groupValues[1].trim()
-                val key = rawName.uppercase()
+                val key = rawName.uppercase(Locale.ROOT)
                 val known = nameIndex[key]
                 if (known != null) {
                     currentSpeaker = known
@@ -79,6 +80,6 @@ class ParseBulkImportUseCase {
     }
 
     companion object {
-        val SPEAKER_LINE = Regex("""^\s*([A-Za-z][A-Za-z0-9 /\-]+):\s*(.*)$""")
+        val SPEAKER_LINE = Regex("""^\s*([\p{L}][\p{L}\p{N} /-]*):\s*(.*)$""")
     }
 }
