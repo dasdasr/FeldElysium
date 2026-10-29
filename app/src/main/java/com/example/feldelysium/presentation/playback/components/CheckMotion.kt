@@ -75,13 +75,13 @@ object CheckAssets {
     fun label(result: CheckResult) = if (result == CheckResult.Success) "Check success" else "Check failure"
 
     @Composable
-    fun ResultColor(result: CheckResult) =
+    fun resultColor(result: CheckResult) =
         if (result == CheckResult.Success) MaterialTheme.disco.success else MaterialTheme.disco.checkFailure
 
     fun damageLabel(type: DamageType) = if (type == DamageType.Morale) "Damaged morale" else "Damaged health"
 
     @Composable
-    fun DamageColor(type: DamageType) =
+    fun damageColor(type: DamageType) =
         if (type == DamageType.Morale) MaterialTheme.disco.damageMorale else MaterialTheme.disco.checkFailure
 
     fun damageIcon(): Int = R.drawable.damage_icon

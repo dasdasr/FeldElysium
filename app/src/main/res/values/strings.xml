@@ -87,7 +87,7 @@
 
     <!-- Editor screen -->
     <string name="editor_eyebrow">Scene editor</string>
-    <string name="editor_lines_count">%1$d lines</string>
+    <string name="editor_lines_count">Lines: %1$d</string>
     <string name="editor_scene_meta">Dialogue scene</string>
     <string name="editor_paste">Paste</string>
     <string name="editor_playback">Playback</string>
@@ -126,7 +126,7 @@
     <string name="tags_built_in">BUILT-IN</string>
     <string name="tags_delete_title">Delete tag</string>
     <string name="tags_delete_unused_message">This tag is not used by any speaker.</string>
-    <string name="tags_delete_used_message">%1$d speaker(s) will lose this tag and move to Custom. Their colors stay.</string>
+    <string name="tags_delete_used_message">Speakers with this tag: %1$d. They will lose it and move to Custom. Their colors stay.</string>
     <string name="tags_edit_title">Edit tag</string>
     <string name="tags_name_label">Name</string>
     <string name="tags_duplicate_name">A tag with this name already exists</string>
@@ -261,14 +261,14 @@
     <string name="import_conflict_title">Already exists</string>
     <string name="import_conflict_eyebrow">Import pack</string>
     <string name="import_conflict_confirm">Import</string>
-    <string name="import_conflict_count">%1$d speaker(s) from the pack are already in your list: %2$s</string>
+    <string name="import_conflict_count">Speakers from the pack already in your list (%1$d): %2$s</string>
     <string name="import_conflict_skip">Skip</string>
     <string name="import_conflict_replace">Replace</string>
     <string name="import_conflict_keep_both">Keep both</string>
     <string name="import_conflict_skip_description">Existing speakers stay as they are.</string>
     <string name="import_conflict_replace_description">Existing speakers are overwritten by the pack versions.</string>
     <string name="import_conflict_keep_both_description">Pack speakers are added as new copies.</string>
-    <string name="import_conflict_bundled_skipped">%1$d built-in speaker(s) in the pack are always skipped.</string>
+    <string name="import_conflict_bundled_skipped">Built-in speakers in the pack (%1$d) are always skipped.</string>
 
     <!-- Playback UI text dialog -->
     <string name="playback_ui_title">Scene info</string>

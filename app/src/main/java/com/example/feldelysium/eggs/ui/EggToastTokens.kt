@@ -13,5 +13,5 @@ internal val PadStart = 22.dp
 internal val PadTop = 32.dp
 internal val PadBottom = 24.dp
 internal val ToastSlack = 24.dp
-internal const val ToastReleaseGraceMs = 500L
+internal const val TOAST_RELEASE_GRACE_MS = 500L
 internal val ToastFadeDistance = 100.dp

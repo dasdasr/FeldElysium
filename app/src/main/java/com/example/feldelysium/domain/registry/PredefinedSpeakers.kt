@@ -32,15 +32,14 @@ object PredefinedSpeakers {
     )
 
     val YOU = Speaker("you", "You", SpeakerColor.PLAIN.argb, null, type = SpeakerType.YOU, isBundled = true)
-    val LEGO_HARRY =
-        Speaker(
-            "lego_harry",
-            "Harry Du Brick",
-            SpeakerColor.PLAIN.argb,
-            R.drawable.ic_lego_harry,
-            type = SpeakerType.NPC,
-            isBundled = true,
-        )
+    val LEGO_HARRY = Speaker(
+        "lego_harry",
+        "Harry Du Brick",
+        SpeakerColor.PLAIN.argb,
+        R.drawable.ic_lego_harry,
+        type = SpeakerType.NPC,
+        isBundled = true,
+    )
     val LEGO_KIM = Speaker(
         "lego_kim",
         "Kim Legoragi",

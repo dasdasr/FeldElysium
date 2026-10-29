@@ -2,6 +2,7 @@ package com.example.feldelysium.data.speaker
 
 import android.content.Context
 import android.net.Uri
+import androidx.core.net.toUri
 import java.io.File
 import java.security.MessageDigest
 import java.util.UUID
@@ -15,7 +16,7 @@ class SpeakerIconStore(context: Context) {
     fun uriOf(name: String): String = Uri.fromFile(fileOf(name)).toString()
 
     fun nameOf(uri: String): String? {
-        val path = Uri.parse(uri).path ?: return null
+        val path = uri.toUri().path ?: return null
         val file = File(path)
         return file.name.takeIf { file.parentFile?.canonicalPath == dir.canonicalPath }
     }

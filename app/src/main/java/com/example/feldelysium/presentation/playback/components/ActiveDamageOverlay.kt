@@ -62,7 +62,7 @@ private fun DamageContent(damage: DamageEffect, modifier: Modifier = Modifier) {
     }
 
     BoxWithConstraints(modifier.fillMaxSize()) {
-        val color = CheckAssets.DamageColor(damage.type)
+        val color = CheckAssets.damageColor(damage.type)
         val plaqueHeight = maxHeight * CheckMotion.RESULT_TEXT_HEIGHT_FRACTION
         val slidePx = with(LocalDensity.current) { maxWidth.toPx() } * CheckMotion.DMG_SLIDE_FRACTION
 

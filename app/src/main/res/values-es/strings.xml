@@ -99,10 +99,13 @@
     <string name="import_preview_no_lines">Sin líneas</string>
     <plurals name="import_preview_lines">
         <item quantity="one">%d línea</item>
+        <item quantity="many">%d líneas</item>
         <item quantity="other">%d líneas</item>
     </plurals>
+
     <plurals name="import_preview_new_speakers">
         <item quantity="one">%d hablante nuevo</item>
+        <item quantity="many">%d hablantes nuevos</item>
         <item quantity="other">%d hablantes nuevos</item>
     </plurals>
     <string name="pack_exported">Paquete exportado</string>
@@ -222,6 +225,7 @@
     <string name="scenes_rename_title">Renombrar escena</string>
     <plurals name="scene_lines_count">
         <item quantity="one">%d LÍNEA</item>
+        <item quantity="many">%d LÍNEAS</item>
         <item quantity="other">%d LÍNEAS</item>
     </plurals>
 

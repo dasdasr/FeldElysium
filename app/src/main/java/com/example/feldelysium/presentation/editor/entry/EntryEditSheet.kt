@@ -372,7 +372,7 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FeldHandDiamond(color, speaker?.id.hashCode(), 28.dp)
+        FeldHandDiamond(color, speaker?.id.hashCode(), size = 28.dp)
 
         Spacer(Modifier.width(14.dp))
 

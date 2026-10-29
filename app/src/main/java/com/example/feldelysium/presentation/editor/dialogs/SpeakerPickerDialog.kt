@@ -175,7 +175,6 @@ fun SpeakerPickerDialog(
     onCreateCustom: () -> Unit,
     onEditCustom: (Speaker) -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var query by remember { mutableStateOf("") }
     var collapsed by remember { mutableStateOf(setOf<SpeakerType>()) }

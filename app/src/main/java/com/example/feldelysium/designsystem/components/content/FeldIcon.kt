@@ -85,13 +85,13 @@ enum class FeldIconId {
 @Composable
 fun FeldIcon(
     id: FeldIconId,
-    seed: Int? = null,
     modifier: Modifier = Modifier,
-    markerFilmSpec: MarkerFilmSpec = FeldMarker.Chalk,
-    contentDescription: String? = null,
     size: Dp = 24.dp,
-    film: Boolean = true,
     tint: Color = Color.Unspecified,
+    contentDescription: String? = null,
+    seed: Int? = null,
+    markerFilmSpec: MarkerFilmSpec = FeldMarker.Chalk,
+    film: Boolean = true,
 ) {
     @DrawableRes val res: Int = when (id) {
         FeldIconId.Back -> R.drawable.ic_fe_back

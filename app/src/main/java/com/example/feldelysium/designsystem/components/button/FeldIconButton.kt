@@ -26,10 +26,10 @@ import com.example.feldelysium.designsystem.theme.DiscoDialogueTheme
 fun FeldIconButton(
     id: FeldIconId,
     onClick: () -> Unit,
-    markerFilmSpec: MarkerFilmSpec = FeldMarker.Chalk,
     modifier: Modifier = Modifier,
     size: Dp = 24.dp,
     enabled: Boolean = true,
+    markerFilmSpec: MarkerFilmSpec = FeldMarker.Chalk,
 ) {
     Box(
         modifier

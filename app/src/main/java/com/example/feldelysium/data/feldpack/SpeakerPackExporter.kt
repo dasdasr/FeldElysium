@@ -2,7 +2,7 @@
 package com.example.feldelysium.data.feldpack
 
 import android.content.Context
-import android.net.Uri
+import androidx.core.net.toUri
 import com.example.feldelysium.domain.model.Speaker
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -58,7 +58,7 @@ class SpeakerPackExporter(private val context: Context) {
 
     private fun readIcon(rawUri: String): ByteArray? = runCatching {
         context.contentResolver
-            .openInputStream(Uri.parse(rawUri))
+            .openInputStream(rawUri.toUri())
             ?.use { it.readBytes() }
     }.getOrNull()
 
