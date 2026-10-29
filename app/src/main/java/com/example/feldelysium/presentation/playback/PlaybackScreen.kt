@@ -188,15 +188,15 @@ fun PlaybackScreenContent(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
-    onScrollChanged: (Boolean) -> Unit = {},
-    onContinue: () -> Unit = {},
-    onChoice: () -> Unit = {},
     modifier: Modifier = Modifier,
     lockAspectRatio16x9: Boolean = true,
     background: AppSettings = AppSettings(),
     money: String = "40.95",
     time: String = "16:36",
     day: String = "Day 3",
+    onScrollChanged: (Boolean) -> Unit = {},
+    onContinue: () -> Unit = {},
+    onChoice: () -> Unit = {},
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (lockAspectRatio16x9) {
@@ -241,14 +241,14 @@ private fun PlaybackStage(
     state: PlaybackUiState,
     onTap: () -> Unit,
     onBackClick: () -> Unit,
-    onScrollChanged: (Boolean) -> Unit = {},
-    onContinue: () -> Unit = {},
-    onChoice: () -> Unit = {},
     background: AppSettings,
     money: String,
     time: String,
     day: String,
     modifier: Modifier = Modifier,
+    onScrollChanged: (Boolean) -> Unit = {},
+    onContinue: () -> Unit = {},
+    onChoice: () -> Unit = {},
 ) {
     BoxWithConstraints(
         modifier = modifier

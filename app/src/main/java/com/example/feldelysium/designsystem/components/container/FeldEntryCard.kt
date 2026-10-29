@@ -356,12 +356,12 @@ fun FeldEntryCard(
                         FeldHandDiamond(
                             speakerColor,
                             seed,
-                            22.dp,
                             modifier = Modifier.graphicsLayer {
                                 val s = beatScale(pulse?.value)
                                 scaleX = s
                                 scaleY = s
                             },
+                            size = 22.dp,
                             brush = diamondBrush,
                         )
                     }
@@ -486,7 +486,7 @@ private class StampLook(seed: Int) {
 }
 
 @Composable
-fun FeldHandDiamond(color: Color, seed: Int, size: Dp = 22.dp, modifier: Modifier = Modifier, brush: Brush? = null) {
+fun FeldHandDiamond(color: Color, seed: Int, modifier: Modifier = Modifier, size: Dp = 22.dp, brush: Brush? = null) {
     val density = LocalDensity.current.density
     val b = brush ?: remember(color, seed, density) { cachedDiamondBrush(color, seed, density) }
     val j = remember(seed) {

@@ -1,6 +1,7 @@
 package com.example.feldelysium.data.scene
 
 import android.content.Context
+import androidx.core.content.edit
 import com.example.feldelysium.domain.model.DialogueScene
 import com.example.feldelysium.domain.model.SceneInfo
 import com.example.feldelysium.domain.repository.SceneRepository
@@ -28,7 +29,7 @@ class FileSceneRepository(context: Context, private val io: CoroutineDispatcher 
 
     private var currentId: String?
         get() = prefs.getString("current", null)
-        set(value) = prefs.edit().putString("current", value).apply()
+        set(value) = prefs.edit { putString("current", value) }
 
     private fun fileOf(id: String) = File(dir, "$id.json")
 

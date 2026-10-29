@@ -71,8 +71,9 @@ object SpeakerDossierAssets {
     val PreviewClip: Int? = null
 }
 
-private val FrameInset = 20.dp
+private val FrameInset = 8.dp
 private val Cream = Color(0xFFE6DCC4)
+private const val PRESS_DIM = 0.2f
 
 @Composable
 private fun AssetImage(@DrawableRes res: Int?, modifier: Modifier, placeholder: DrawScope.() -> Unit) {
@@ -100,7 +101,7 @@ fun SpeakerPhotoBlock(
         Box(
             Modifier
                 .fillMaxWidth()
-                .aspectRatio(0.92f)
+                .aspectRatio(5f / 7f)
                 .graphicsLayer {
                     rotationZ = -1.2f
                     val s = 1.05f - 0.015f * press
@@ -137,9 +138,15 @@ fun SpeakerPhotoBlock(
                     )
 
                     else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        FeldHandDiamond(accent, 3, 30.dp)
+                        FeldHandDiamond(accent, 3, size = 30.dp)
                     }
                 }
+
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .drawBehind { drawRect(Color.Black.copy(alpha = PRESS_DIM * press)) },
+                )
             }
             AssetImage(
                 if (photoPressed) a.FramePressed ?: a.Frame else a.Frame,

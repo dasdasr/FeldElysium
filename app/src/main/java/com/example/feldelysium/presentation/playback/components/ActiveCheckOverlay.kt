@@ -88,7 +88,7 @@ private fun ActiveCheckOverlayContent(check: SkillCheck, modifier: Modifier) {
             }
             ResultPlaque(
                 text = CheckAssets.label(check.result),
-                color = CheckAssets.ResultColor(check.result),
+                color = CheckAssets.resultColor(check.result),
                 height = textHeight,
                 modifier = Modifier.graphicsLayer {
                     alpha = 1f - textOut.value

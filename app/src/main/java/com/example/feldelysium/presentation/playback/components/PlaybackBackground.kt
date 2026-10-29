@@ -3,7 +3,6 @@ package com.example.feldelysium.presentation.playback.components
 import android.graphics.SurfaceTexture
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.net.Uri
 import android.view.Surface
 import android.view.TextureView
 import androidx.compose.foundation.background
@@ -28,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import com.example.feldelysium.domain.model.settings.AppSettings
 import com.example.feldelysium.domain.model.settings.BackgroundKind
@@ -37,7 +37,7 @@ fun PlaybackBackground(settings: AppSettings, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val mediaOk = remember(settings.backgroundMediaUri) {
         settings.backgroundMediaUri.isNotBlank() && runCatching {
-            context.contentResolver.openAssetFileDescriptor(Uri.parse(settings.backgroundMediaUri), "r")
+            context.contentResolver.openAssetFileDescriptor(settings.backgroundMediaUri.toUri(), "r")
                 ?.close()
         }.isSuccess
     }
@@ -98,7 +98,7 @@ fun BackgroundVideo(
                     .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
                     .build(),
             )
-            mp.setDataSource(context, Uri.parse(uri))
+            mp.setDataSource(context, uri.toUri())
             mp.isLooping = true
             mp.setOnVideoSizeChangedListener { _, w, h ->
                 if (w > 0 && h > 0) videoSize = IntSize(w, h)
@@ -148,8 +148,12 @@ fun BackgroundVideo(
                         override fun onSurfaceTextureSizeChanged(st: SurfaceTexture, w: Int, h: Int) {}
                         override fun onSurfaceTextureDestroyed(st: SurfaceTexture): Boolean {
                             runCatching { mp.setSurface(null) }
-                            surface?.release()
-                            surface = null
+
+                            surface?.let {
+                                it.release()
+                                surface = null
+                            }
+
                             return true
                         }
 
