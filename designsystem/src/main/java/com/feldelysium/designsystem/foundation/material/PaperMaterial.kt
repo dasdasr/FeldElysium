@@ -23,7 +23,7 @@ import kotlin.math.sin
 import androidx.compose.ui.graphics.lerp as lerpColor
 
 @Immutable
-data class PaperSpec(
+public data class PaperSpec(
     val base: Color,
     val scuff: Color,
     val ink: Color,
@@ -61,9 +61,9 @@ data class PaperSpec(
     val crackWidth: Dp = 0.dp,
 )
 
-object FeldPaper {
+public object FeldPaper {
 
-    val Panel = PaperSpec(
+    public val Panel: PaperSpec = PaperSpec(
         base = Color(0xFF0C1212),
         scuff = Color(0xFF1F2929),
         ink = Color(0xFF666866),
@@ -86,7 +86,7 @@ object FeldPaper {
         inkContrast = 1.8f,
     )
 
-    val Entry = Panel.copy(
+    public val Entry: PaperSpec = Panel.copy(
         wear = 0.16f,
         edgeWear = 0.5f,
         edgeBand = 10.dp,
@@ -110,7 +110,7 @@ object FeldPaper {
         inkContrast = 1.2f,
     )
 
-    val Field = Entry.copy(
+    public val Field: PaperSpec = Entry.copy(
         wear = 0.2f,
         edgeWear = 0.55f,
         maxLoss = 0.4f,
@@ -118,7 +118,7 @@ object FeldPaper {
         inkMinAlpha = 0.8f,
     )
 
-    val DryButtonCream = PaperSpec(
+    public val DryButtonCream: PaperSpec = PaperSpec(
         base = Color(0xFFDCCFB5),
         scuff = Color(0xFFB7A88D),
         ink = Color(0xFF29231D),
@@ -157,7 +157,7 @@ object FeldPaper {
         crackWidth = 1.2.dp,
     )
 
-    val DryButtonRust = PaperSpec(
+    public val DryButtonRust: PaperSpec = PaperSpec(
         base = Color(0xFFE45720),
         scuff = Color(0xFF9F3D1B),
         ink = Color(0xFF241A14),
@@ -196,7 +196,7 @@ object FeldPaper {
         crackWidth = 1.2.dp,
     )
 
-    fun flat(color: Color, from: PaperSpec = Panel) = from.copy(
+    internal fun flat(color: Color, from: PaperSpec = Panel) = from.copy(
         base = color,
         scuff = color,
         wear = 0f,
@@ -215,7 +215,7 @@ object FeldPaper {
     )
 }
 
-fun Modifier.paperMaterialMorph(
+internal fun Modifier.paperMaterialMorph(
     shape: RoughShape,
     from: PaperSpec,
     to: PaperSpec,

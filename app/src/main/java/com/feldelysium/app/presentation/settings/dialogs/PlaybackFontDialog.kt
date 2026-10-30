@@ -67,8 +67,8 @@ import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.theme.Alegreya
-import com.feldelysium.designsystem.theme.SystemFontEntry
-import com.feldelysium.designsystem.theme.loadSystemFonts
+import com.feldelysium.app.presentation.theme.SystemFontEntry
+import com.feldelysium.app.presentation.theme.loadSystemFonts
 import java.io.File
 
 private val SampleTexture: Int? = null

@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 
 @Composable
-fun Modifier.feldClickable(enabled: Boolean = true, role: Role = Role.Button, onClick: () -> Unit): Modifier =
+public fun Modifier.feldClickable(enabled: Boolean = true, role: Role = Role.Button, onClick: () -> Unit): Modifier =
     clickable(
         interactionSource = remember { MutableInteractionSource() },
         indication = null,

@@ -36,15 +36,15 @@ import com.feldelysium.designsystem.foundation.material.dryPaperMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldTheme
 
-object FeldButtonDefaults {
-    val ContentPadding = PaddingValues(horizontal = 40.dp, vertical = 18.dp)
-    val MinHeight = 56.dp
-    val InkDark = Color(0xFF1B1612)
+public object FeldButtonDefaults {
+    internal val ContentPadding = PaddingValues(horizontal = 40.dp, vertical = 18.dp)
+    internal val MinHeight = 56.dp
+    internal val InkDark = Color(0xFF1B1612)
 
-    val Cream = DryPaperSpec(base = Color(0xFFDCCFB5), crack = Color(0xFF5E4F38))
-    val Orange = DryPaperSpec(base = Color(0xFFDD6224), crack = Color(0xFF6B2A0C))
+    public val Cream: DryPaperSpec = DryPaperSpec(base = Color(0xFFDCCFB5), crack = Color(0xFF5E4F38))
+    public val Orange: DryPaperSpec = DryPaperSpec(base = Color(0xFFDD6224), crack = Color(0xFF6B2A0C))
 
-    val OrangeFresh = DryPaperSpec(
+    public val OrangeFresh: DryPaperSpec = DryPaperSpec(
         base = Color(0xFFDB6A2C), crack = Color(0xFF7A3414),
         tearDepth = 1.1.dp, tearScale = 16.dp, tearCoverage = 0.22f, bow = 0.3.dp,
         crackScale = 22.dp, crackDepth = 7.dp, crackWidth = 0.8.dp,
@@ -55,7 +55,7 @@ object FeldButtonDefaults {
 }
 
 @Composable
-fun FeldButton(
+public fun FeldButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -143,7 +143,7 @@ private fun FeldButtonPreview() {
                 {},
                 Modifier.fillMaxWidth(),
                 seed = 3,
-                spec = FeldButtonDefaults.Orange,
+                spec = FeldButtonDefaults.OrangeFresh,
                 minHeight = 72.dp,
                 contentAlignment = Alignment.CenterStart,
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp),

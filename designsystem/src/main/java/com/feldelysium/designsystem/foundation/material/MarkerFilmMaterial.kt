@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 import androidx.compose.ui.graphics.RenderEffect as ComposeRenderEffect
 
 @Immutable
-data class MarkerFilmSpec(
+public data class MarkerFilmSpec(
     val color: Color = Color.Unspecified,
 
     val coverage: Float = 0.86f,
@@ -64,10 +64,10 @@ data class MarkerFilmSpec(
     val speck: Float = 0.5f,
 )
 
-object FeldMarker {
-    val Chalk = MarkerFilmSpec(color = Color(0xFFEDE9DD))
+public object FeldMarker {
+    public val Chalk: MarkerFilmSpec = MarkerFilmSpec(color = Color(0xFFEDE9DD))
 
-    val Ink = MarkerFilmSpec(
+    public val Ink: MarkerFilmSpec = MarkerFilmSpec(
         color = Color(0xFF14110F),
         coverage = 0.96f,
         unevenness = 0.10f,
@@ -78,7 +78,7 @@ object FeldMarker {
         speck = 0.3f,
     )
 
-    val Dry = Chalk.copy(
+    public val Dry: MarkerFilmSpec = Chalk.copy(
         coverage = 0.72f,
         unevenness = 0.38f,
         erode = 0.8f,
@@ -154,7 +154,7 @@ private fun createMarkerEffect(spec: MarkerFilmSpec, seed: Int, density: Density
 }
 
 @Composable
-fun Modifier.markerFilmMaterial(
+public fun Modifier.markerFilmMaterial(
     spec: MarkerFilmSpec = FeldMarker.Chalk,
     seed: Int = 0,
     bakeKey: Any? = null,

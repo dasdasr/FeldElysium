@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.feldelysium.designsystem.R
 
-val Alegreya = FontFamily(
+public val Alegreya: FontFamily = FontFamily(
     Font(R.font.alegreya_regular, FontWeight.Normal),
     Font(R.font.alegreya_medium, FontWeight.Medium),
     Font(R.font.alegreya_bold, FontWeight.Bold),
@@ -22,7 +22,7 @@ private val RobotoCondensed = FontFamily(
     Font(R.font.roboto_condensed_bold, FontWeight.Black),
 )
 
-val FeldTypography = Typography(
+internal val FeldTypography = Typography(
     titleLarge = TextStyle(
         fontFamily = RobotoCondensed,
         fontWeight = FontWeight.Bold,
@@ -71,7 +71,7 @@ val FeldTypography = Typography(
     ),
 )
 
-val FeldContinueStyle = TextStyle(
+public val FeldContinueStyle: TextStyle = TextStyle(
     fontFamily = RobotoCondensed,
     fontWeight = FontWeight.Bold,
     fontSize = 16.sp,

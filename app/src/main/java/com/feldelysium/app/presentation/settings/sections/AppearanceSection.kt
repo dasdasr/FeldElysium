@@ -18,7 +18,7 @@ import com.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.feldelysium.designsystem.components.settings.FeldSettingsSection
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.feldelysium.designsystem.theme.prettyFontName
+import com.feldelysium.app.presentation.theme.prettyFontName
 import java.io.File
 
 @Composable

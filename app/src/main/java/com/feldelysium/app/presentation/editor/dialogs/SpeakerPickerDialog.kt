@@ -90,6 +90,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.core.net.toUri
 
 private data class SpeakerGroup(val type: SpeakerType, val title: String, val items: List<Speaker>)
 
@@ -126,7 +127,7 @@ private val avatarCache = LruCache<String, ImageBitmap>(64)
 private fun decodeAvatar(uri: String, targetPx: Int): ImageBitmap? {
     avatarCache.get(uri)?.let { return it }
 
-    val path = Uri.parse(uri).path ?: return null
+    val path = uri.toUri().path ?: return null
     val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
 
     BitmapFactory.decodeFile(path, bounds)
@@ -590,7 +591,7 @@ private fun RowScope.SpeakerChip(
     ) {
         value = if (hasAvatar) {
             value ?: withContext(Dispatchers.IO) {
-                decodeAvatar(iconUri!!, targetPx)
+                decodeAvatar(iconUri, targetPx)
             }
         } else {
             null

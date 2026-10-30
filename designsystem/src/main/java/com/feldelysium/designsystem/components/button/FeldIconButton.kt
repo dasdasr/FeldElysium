@@ -23,7 +23,7 @@ import com.feldelysium.designsystem.foundation.material.MarkerFilmSpec
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
-fun FeldIconButton(
+public fun FeldIconButton(
     id: FeldIconId,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

@@ -29,7 +29,7 @@ import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.feldelysium.designsystem.theme.FeldPalette
 
-data class FeldMenuItem(
+public data class FeldMenuItem(
     val label: String,
     val icon: FeldIconId? = null,
     val destructive: Boolean = false,
@@ -47,7 +47,7 @@ private val MenuRough = RoughStyle(
 )
 
 @Composable
-fun FeldMenu(
+public fun FeldMenu(
     expanded: Boolean,
     onDismiss: () -> Unit,
     items: List<FeldMenuItem>,

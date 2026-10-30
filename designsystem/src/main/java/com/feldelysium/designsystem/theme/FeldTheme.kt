@@ -55,7 +55,7 @@ private val FeldColorScheme = darkColorScheme(
 )
 
 @Immutable
-data class FeldExtraColors(
+public data class FeldExtraColors(
     val success: Color = FeldSuccess,
     val primaryPressed: Color = FeldOrangePressed,
     val accent: Color = FeldTeal,
@@ -65,7 +65,7 @@ data class FeldExtraColors(
 )
 
 @Composable
-fun feldSwitchColors() = SwitchDefaults.colors(
+internal fun feldSwitchColors() = SwitchDefaults.colors(
     checkedThumbColor = FeldText,
     checkedTrackColor = FeldOrange,
     checkedBorderColor = FeldOrange,
@@ -76,12 +76,12 @@ fun feldSwitchColors() = SwitchDefaults.colors(
 
 private val LocalFeldColors = staticCompositionLocalOf { FeldExtraColors() }
 
-val MaterialTheme.feld: FeldExtraColors
+public val MaterialTheme.feld: FeldExtraColors
     @Composable @ReadOnlyComposable
     get() = LocalFeldColors.current
 
 @Composable
-fun FeldTheme(content: @Composable () -> Unit) {
+public fun FeldTheme(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalFeldColors provides FeldExtraColors()) {
         MaterialTheme(
             colorScheme = FeldColorScheme,

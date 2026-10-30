@@ -56,13 +56,7 @@ import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.abs
 
-enum class FeldThumb { Diamond, Rectangle, Circle }
-
-object FeldSliderColors {
-    val Teal = FeldPalette.Teal
-    val Orange = FeldPalette.Orange
-    val Cream = FeldPalette.Cream
-}
+public enum class FeldThumb { Diamond, Rectangle, Circle }
 
 private val OffColor = Color(0xFF1F2322)
 private val ThumbRim = Color(0xFF3A3128)
@@ -74,12 +68,12 @@ private fun FeldThumb.size(): DpSize = when (this) {
 }
 
 @Composable
-fun FeldSlider(
+public fun FeldSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
-    accent: Color = FeldSliderColors.Cream,
+    accent: Color = FeldAccentColors.Cream,
     thumb: FeldThumb = FeldThumb.Rectangle,
     label: String? = null,
     valueText: ((Float) -> String)? = null,
@@ -255,21 +249,21 @@ private fun FeldSliderPreview() {
             FeldSlider(
                 a,
                 { a = it },
-                accent = FeldSliderColors.Teal,
+                accent = FeldAccentColors.Teal,
                 label = "Volume",
                 valueText = { "${(it * 100).toInt()}%" },
             )
             FeldSlider(
                 b,
                 { b = it },
-                accent = FeldSliderColors.Orange,
+                accent = FeldAccentColors.Orange,
                 label = "Brightness",
                 valueText = { "${(it * 100).toInt()}%" },
             )
             FeldSlider(
                 c,
                 { c = it },
-                accent = FeldSliderColors.Cream,
+                accent = FeldAccentColors.Cream,
                 label = "Progress",
                 thumb = FeldThumb.Circle,
             )

@@ -15,7 +15,7 @@ import kotlin.math.abs
 import kotlin.math.max
 
 @Immutable
-data class StickerTapeSpec(
+public data class StickerTapeSpec(
     val base: Color,
     val stain: Color,
     val rim: Color,
@@ -47,7 +47,7 @@ data class StickerTapeSpec(
     val edgeInset: Dp get() = tearAmp + max(abs(slantLeft.value), abs(slantRight.value)).dp
 }
 
-object FeldTape {
+internal object FeldTape {
     val Cream = StickerTapeSpec(
         base = Color(0xFFD9C5A1),
         stain = Color(0xFF8A7352),
@@ -55,7 +55,7 @@ object FeldTape {
     )
 }
 
-fun Modifier.stickerTapeMaterial(spec: StickerTapeSpec, seed: Int = 0): Modifier = drawWithCache {
+internal fun Modifier.stickerTapeMaterial(spec: StickerTapeSpec, seed: Int = 0): Modifier = drawWithCache {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         val shader = RuntimeShader(STICKER_TAPE_AGSL).apply {
             setFloatUniform("size", size.width, size.height)

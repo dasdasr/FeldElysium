@@ -35,7 +35,7 @@ import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 
 @Composable
-fun FeldFieldButton(
+public fun FeldFieldButton(
     text: String?,
     placeholder: String,
     onClick: () -> Unit,

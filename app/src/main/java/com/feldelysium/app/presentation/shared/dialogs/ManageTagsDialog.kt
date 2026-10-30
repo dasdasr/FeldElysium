@@ -36,7 +36,7 @@ import com.feldelysium.designsystem.components.container.FeldHandDiamond
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldChip
-import com.feldelysium.designsystem.components.input.FeldChipColors
+import com.feldelysium.designsystem.components.input.FeldAccentColors
 import com.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldTextField
@@ -254,7 +254,7 @@ private fun EditTagDialog(
             selected = color == null,
             onClick = { color = null },
             modifier = Modifier.height(30.dp),
-            accent = FeldChipColors.Cream,
+            accent = FeldAccentColors.Cream,
         )
 
         Spacer(Modifier.height(10.dp))
@@ -281,7 +281,7 @@ private fun EditTagDialog(
                         sound = key.takeUnless { it == SoundKeys.DEFAULT }
                     },
                     modifier = Modifier.height(30.dp),
-                    accent = FeldChipColors.Orange,
+                    accent = FeldAccentColors.Orange,
                 )
             }
         }
@@ -293,7 +293,7 @@ private fun EditTagDialog(
             selected = allowsChecks,
             onClick = { allowsChecks = !allowsChecks },
             modifier = Modifier.height(30.dp),
-            accent = FeldChipColors.Teal,
+            accent = FeldAccentColors.Teal,
         )
     }
 }

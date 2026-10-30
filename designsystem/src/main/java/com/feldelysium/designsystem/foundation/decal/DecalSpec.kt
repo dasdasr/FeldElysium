@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.theme.FeldPalette
 
-enum class DecalKind {
+public enum class DecalKind {
     Ruler,
     Perforation,
     Text,
@@ -42,7 +42,7 @@ private val DarkTones = listOf(
 )
 
 @Immutable
-data class DecalSpec(
+public data class DecalSpec(
     val weights: Map<DecalKind, Float>,
     val maxDecals: Int = 4,
     val alphaCap: Map<DecalKind, Float> = DefaultAlphaCap,
@@ -53,8 +53,8 @@ data class DecalSpec(
     val leakChance: Float = 0.05f,
     val leakColor: Color = FeldPalette.Orange,
 ) {
-    companion object {
-        val Entry = DecalSpec(
+    public companion object {
+        public val Entry: DecalSpec = DecalSpec(
             weights = mapOf(
                 DecalKind.Ruler to 0.6f,
                 DecalKind.Text to 3f,
@@ -70,7 +70,7 @@ data class DecalSpec(
             allowCenter = false,
             leakChance = 0.05f,
         )
-        val Dialog = DecalSpec(
+        public val Dialog: DecalSpec = DecalSpec(
             weights = mapOf(
                 DecalKind.Ruler to 0.8f,
                 DecalKind.Perforation to 0.8f,
@@ -88,6 +88,6 @@ data class DecalSpec(
             ),
             maxDecals = 4,
         )
-        val Panel = Dialog.copy(maxDecals = 6)
+        public val Panel: DecalSpec = Dialog.copy(maxDecals = 6)
     }
 }

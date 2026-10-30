@@ -1,6 +1,6 @@
 @file:Suppress("MatchingDeclarationName")
 
-package com.feldelysium.designsystem.theme
+package com.feldelysium.app.presentation.theme
 
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -13,12 +13,8 @@ import java.io.File
 
 data class SystemFontEntry(val name: String, val path: String)
 
+@Volatile
 private var cache: List<SystemFontEntry>? = null
-
-fun prettyFontName(file: File): String = file.nameWithoutExtension
-    .substringBefore('-')
-    .replace('_', ' ')
-    .replace(Regex("(?<=[a-z])(?=[A-Z])"), " ")
 
 suspend fun loadSystemFonts(): List<SystemFontEntry> = cache ?: withContext(Dispatchers.IO) {
     val files: List<File> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -42,3 +38,8 @@ suspend fun loadSystemFonts(): List<SystemFontEntry> = cache ?: withContext(Disp
         .sortedBy { it.name }
         .also { cache = it }
 }
+
+internal fun prettyFontName(file: File): String = file.nameWithoutExtension
+    .substringBefore('-')
+    .replace('_', ' ')
+    .replace(Regex("(?<=[a-z])(?=[A-Z])"), " ")

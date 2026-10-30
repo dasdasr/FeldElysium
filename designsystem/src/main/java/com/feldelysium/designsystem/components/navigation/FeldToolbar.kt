@@ -37,7 +37,7 @@ import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 
-data class FeldToolbarItem(
+public data class FeldToolbarItem(
     val icon: FeldIconId,
     val label: String,
     val enabled: Boolean = true,
@@ -46,7 +46,7 @@ data class FeldToolbarItem(
 )
 
 @Composable
-fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, seed: Int = rememberSeed()) {
+public fun FeldToolbar(items: List<FeldToolbarItem>, modifier: Modifier = Modifier, seed: Int = rememberSeed()) {
     Column(modifier.fillMaxWidth()) {
         Row(
             Modifier
@@ -88,7 +88,7 @@ private fun RowScope.ToolbarCell(item: FeldToolbarItem) {
 
     val targetTint = when {
         !item.enabled -> colorScheme.onSurface.copy(alpha = 0.35f)
-        primary -> item.accent!!
+        primary -> item.accent
         else -> colorScheme.onSurface.copy(alpha = 0.9f)
     }
     val tint by animateColorAsState(targetTint, tween(450), label = "toolbarTint")

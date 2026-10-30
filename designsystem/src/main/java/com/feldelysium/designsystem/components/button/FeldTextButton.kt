@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,9 +26,10 @@ import com.feldelysium.designsystem.components.content.FeldTitleTag
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
-fun FeldTextButton(
+public fun FeldTextButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -48,7 +50,7 @@ fun FeldTextButton(
 }
 
 @Composable
-fun FeldDialogActions(
+public fun FeldDialogActions(
     confirmLabel: String,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
@@ -106,7 +108,7 @@ private fun Modifier.pullUp(amount: Dp): Modifier = layout { measurable, constra
 }
 
 @Composable
-fun FeldLabeledBlock(
+public fun FeldLabeledBlock(
     label: String,
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
@@ -129,5 +131,95 @@ fun FeldLabeledBlock(
             ),
         )
         Column(Modifier.pullUp(overlap), content = content)
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldDialogActionsPreview() {
+    FeldTheme {
+        Column(Modifier.padding(16.dp)) {
+            FeldDialogActions(
+                confirmLabel = "Save entry",
+                cancelLabel = "Cancel",
+                onConfirm = {},
+                onCancel = {},
+                seed = 1,
+            )
+
+            FeldDialogActions(
+                confirmLabel = "Create speaker",
+                cancelLabel = "Back",
+                onConfirm = {},
+                onCancel = {},
+                seed = 2,
+            )
+
+            FeldDialogActions(
+                confirmLabel = "Import",
+                cancelLabel = "Cancel",
+                onConfirm = {},
+                onCancel = {},
+                confirmEnabled = false,
+                seed = 3,
+            )
+
+            FeldDialogActions(
+                confirmLabel = "Delete",
+                cancelLabel = "Keep",
+                onConfirm = {},
+                onCancel = {},
+                seed = 4,
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldTextButtonPreview() {
+    FeldTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FeldTextButton(text = "Cancel", onClick = {})
+            FeldTextButton(text = "Discard changes", onClick = {})
+            FeldTextButton(text = "Back to editing", onClick = {})
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFF111819)
+@Composable
+private fun FeldLabeledBlockPreview() {
+    FeldTheme {
+        Column(Modifier.padding(horizontal = 16.dp)) {
+            FeldLabeledBlock(
+                label = "IDENTIFICATION",
+                seed = 7,
+            ) {
+                Text(
+                    text = "Give this voice a name.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                FeldTextButton(
+                    text = "Choose voice",
+                    onClick = {},
+                )
+            }
+
+            FeldLabeledBlock(
+                label = "PERSONALITY",
+                seed = 12,
+            ) {
+                Text(
+                    text = "A little theatrical. Difficult to ignore.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
     }
 }

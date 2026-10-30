@@ -2,11 +2,11 @@ package com.feldelysium.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
-object FeldPalette {
-    val Muted = Color(0xFF8C8E8A)
-    val Line = Color(0xFF666866)
-    val Orange = Color(0xFFDD6224)
-    val Teal = Color(0xFF4FB3A6) // 0xFF3FA58E
-    val Ink = Color(0xFF1B1612)
-    val Cream = Color(0xFFDCCFB5)
+public object FeldPalette {
+    public val Muted: Color = Color(0xFF8C8E8A)
+    public val Line: Color = Color(0xFF666866)
+    public val Orange: Color = Color(0xFFDD6224)
+    public val Teal: Color = Color(0xFF4FB3A6) // 0xFF3FA58E
+    public val Ink: Color = Color(0xFF1B1612)
+    public val Cream: Color = Color(0xFFDCCFB5)
 }

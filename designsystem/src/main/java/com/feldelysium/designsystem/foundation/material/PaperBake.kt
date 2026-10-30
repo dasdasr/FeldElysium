@@ -42,7 +42,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-fun Modifier.paperMaterial(
+public fun Modifier.paperSurface(
+    seed: Int,
+    rough: RoughStyle = RoughStyle(),
+    spec: PaperSpec,
+    textured: Boolean = true,
+): Modifier = composed {
+    val shape = remember(seed, rough) { RoughShape(seed, rough) }
+    paperMaterial(shape, spec, textured = textured)
+}
+
+internal fun Modifier.paperMaterial(
     shape: RoughShape,
     spec: PaperSpec,
     wear: Float = spec.wear,

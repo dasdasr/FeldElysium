@@ -42,17 +42,18 @@ import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.feldelysium.designsystem.components.container.FeldDivider
+import com.feldelysium.designsystem.components.container.FeldPaperBox
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
+import com.feldelysium.designsystem.components.input.FeldAccentColors
 import com.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.feldelysium.designsystem.components.input.FeldSlider
-import com.feldelysium.designsystem.components.input.FeldSliderColors
 import com.feldelysium.designsystem.components.input.swatchSpec
 import com.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.feldelysium.designsystem.foundation.material.FeldPaper
-import com.feldelysium.designsystem.foundation.material.paperMaterial
+import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
 
@@ -245,14 +246,15 @@ private fun MediaHeader(video: Boolean) {
 
 @Composable
 private fun MediaPreview(settings: AppSettings) {
-    val shape = remember { RoughShape(9, PreviewRough) }
     val uri = settings.backgroundMediaUri
 
-    Box(
+    FeldPaperBox(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(16f / 10f)
-            .paperMaterial(shape, FeldPaper.Field),
+            .aspectRatio(16f / 10f),
+        seed = rememberSeed(),
+        spec = FeldPaper.Field,
+        rough = PreviewRough,
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -324,14 +326,15 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
     }
 
     val live = colorOf(hue, sat, bri)
-    val chipShape = remember { RoughShape(13, PreviewRough.copy(corner = 4.dp)) }
 
     Column {
-        Box(
-            Modifier
+        FeldPaperBox(
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
-                .paperMaterial(chipShape, swatchSpec(live)),
+                .height(52.dp),
+            seed = rememberSeed(),
+            spec = swatchSpec(live),
+            rough = PreviewRough.copy(corner = 4.dp),
         )
 
         Spacer(Modifier.height(12.dp))
@@ -343,13 +346,13 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
             },
             onValueChangeFinished = { commit() },
             valueRange = 0f..360f,
-            accent = FeldSliderColors.Cream,
+            accent = FeldAccentColors.Cream,
         )
         FeldSlider(
             value = bri,
             onValueChange = { bri = it },
             onValueChangeFinished = { commit() },
-            accent = FeldSliderColors.Teal,
+            accent = FeldAccentColors.Teal,
         )
         Spacer(Modifier.height(12.dp))
         FeldColorSwatches(

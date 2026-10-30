@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Immutable
-class DecalLayer internal constructor(
+internal class DecalLayer internal constructor(
     private val ambient: Float,
     private val seed: Int,
     private val spec: DecalSpec,
@@ -34,7 +34,7 @@ class DecalLayer internal constructor(
 }
 
 @Composable
-fun rememberDecalLayer(
+internal fun rememberDecalLayer(
     ambient: Float?,
     seed: Int,
     spec: DecalSpec,

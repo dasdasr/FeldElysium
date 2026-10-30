@@ -23,7 +23,7 @@ import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
-fun FeldActionBar(
+public fun FeldActionBar(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     cancelText: String,

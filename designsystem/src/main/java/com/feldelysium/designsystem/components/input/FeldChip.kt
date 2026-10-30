@@ -50,14 +50,14 @@ import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.roundToInt
 
-enum class FeldChipShape { Chamfer, Pill, Rectangle }
+public enum class FeldChipShape { Chamfer, Pill, Rectangle }
 
-enum class FeldChipFill { Diamond, Chamfer }
+public enum class FeldChipFill { Diamond, Chamfer }
 
-object FeldChipColors {
-    val Teal = FeldPalette.Teal
-    val Orange = FeldPalette.Orange
-    val Cream = FeldPalette.Cream
+public object FeldAccentColors {
+    public val Teal: Color = FeldPalette.Teal
+    public val Orange: Color = FeldPalette.Orange
+    public val Cream: Color = FeldPalette.Cream
 }
 
 private val BaseDark = Color(0xFF111A1A)
@@ -185,14 +185,14 @@ private fun buildReveal(
 }
 
 @Composable
-fun FeldChip(
+public fun FeldChip(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     height: Dp = ChipDefaultHeight,
     enabled: Boolean = true,
-    accent: Color = FeldChipColors.Cream,
+    accent: Color = FeldAccentColors.Cream,
     shape: FeldChipShape = FeldChipShape.Chamfer,
     fillShape: FeldChipFill = FeldChipFill.Diamond,
     fillMillis: Int = 320,

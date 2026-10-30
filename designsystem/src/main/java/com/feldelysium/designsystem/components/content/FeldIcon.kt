@@ -32,7 +32,7 @@ import com.feldelysium.designsystem.foundation.material.MarkerFilmSpec
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.feldelysium.designsystem.theme.FeldTheme
 
-enum class FeldIconId {
+public enum class FeldIconId {
     Back,
     Accept,
     BackingCube,
@@ -82,7 +82,7 @@ enum class FeldIconId {
 }
 
 @Composable
-fun FeldIcon(
+public fun FeldIcon(
     id: FeldIconId,
     modifier: Modifier = Modifier,
     size: Dp = 24.dp,
@@ -161,7 +161,7 @@ fun FeldIcon(
 }
 
 @Composable
-fun FeldDiamond(color: Color, modifier: Modifier = Modifier, size: Dp = 28.dp, outline: Boolean = false) {
+internal fun FeldDiamond(color: Color, modifier: Modifier = Modifier, size: Dp = 28.dp, outline: Boolean = false) {
     Canvas(modifier.size(size)) {
         val w = this.size.width
         val h = this.size.height

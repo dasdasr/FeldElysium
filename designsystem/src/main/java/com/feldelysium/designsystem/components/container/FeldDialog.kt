@@ -48,7 +48,7 @@ import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
-fun FeldDialog(
+public fun FeldDialog(
     title: String,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -159,7 +159,7 @@ private fun FeldDialogHeader(title: String, onDismiss: () -> Unit, eyebrow: Stri
 }
 
 @Composable
-fun FeldDialogFooter(
+public fun FeldDialogFooter(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     onReset: (() -> Unit)? = null,

@@ -2,7 +2,6 @@ package com.feldelysium.app.presentation.shared.sound
 
 import com.feldelysium.app.domain.sound.SoundCue
 import com.feldelysium.app.domain.sound.SoundPlayer
-import com.feldelysium.designsystem.foundation.sound.FeldSounds
 
 class PlayerFeldSounds(private val player: SoundPlayer) : FeldSounds {
     override fun click(seed: Int) = player.play(SoundCue.UiClick, seed)

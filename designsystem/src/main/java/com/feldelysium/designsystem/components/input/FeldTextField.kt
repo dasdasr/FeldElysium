@@ -44,7 +44,7 @@ import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.random.Random
 
-object FeldRough {
+internal object FeldRough {
     fun entry(seed: Int): RoughStyle {
         val r = Random(seed * 31 + 7)
         return RoughStyle(
@@ -73,7 +73,7 @@ object FeldRough {
 }
 
 @Composable
-fun FeldTextField(
+public fun FeldTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,

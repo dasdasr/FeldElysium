@@ -10,28 +10,28 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import kotlin.random.Random
 
 @Immutable
-data class SeedScope(val base: Int) {
+internal data class SeedScope(val base: Int) {
     fun child(key: Any?): SeedScope = SeedScope(mix(base, key.hashCode()))
     fun seedFor(position: Int, key: Any? = null): Int = mix(mix(base, position), key.hashCode())
 }
 
-val LocalSeedScope = staticCompositionLocalOf { SeedScope(0) }
+internal val LocalSeedScope = staticCompositionLocalOf { SeedScope(0) }
 
 @Composable
-fun ProvideSeedScope(sessionSeed: Int = rememberSaveable { Random.nextInt() }, content: @Composable () -> Unit) {
+public fun ProvideSeedScope(sessionSeed: Int = rememberSaveable { Random.nextInt() }, content: @Composable () -> Unit) {
     val scope = remember(sessionSeed) { SeedScope(sessionSeed) }
     CompositionLocalProvider(LocalSeedScope provides scope, content = content)
 }
 
 @Composable
-fun SeedBranch(key: Any?, content: @Composable () -> Unit) {
+internal fun SeedBranch(key: Any?, content: @Composable () -> Unit) {
     val parent = LocalSeedScope.current
     val child = remember(parent, key) { parent.child(key) }
     CompositionLocalProvider(LocalSeedScope provides child, content = content)
 }
 
 @Composable
-fun rememberSeed(key: Any? = null): Int {
+public fun rememberSeed(key: Any? = null): Int {
     val scope = LocalSeedScope.current
     val position = currentCompositeKeyHashCode
     return remember(scope, position, key) { scope.seedFor(position.toInt(), key) }

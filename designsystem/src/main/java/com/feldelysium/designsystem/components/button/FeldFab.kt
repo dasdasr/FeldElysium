@@ -55,7 +55,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-enum class FeldFabVariant {
+public enum class FeldFabVariant {
     Film,
     Marker,
     Rec,
@@ -63,7 +63,7 @@ enum class FeldFabVariant {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FeldFab(
+public fun FeldFab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),

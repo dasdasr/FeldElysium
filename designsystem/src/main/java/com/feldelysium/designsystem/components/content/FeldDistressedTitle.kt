@@ -27,7 +27,7 @@ import com.feldelysium.designsystem.theme.FeldTheme
 private val DistressPad = 3.dp
 
 @Composable
-fun FeldDistressedTitle(
+public fun FeldDistressedTitle(
     text: String,
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
@@ -58,9 +58,9 @@ fun FeldDistressedTitle(
     )
 }
 
-object FeldDistressedTitles {
+public object FeldDistressedTitles {
 
-    val Small = DistressSpec(
+    public val Small: DistressSpec = DistressSpec(
         color = Color(0xFF1B1612),
         edgeSoftness = 0.5.dp, edgeRough = 0.3.dp, edgeSize = 1.6.dp,
         edgeErode = 0.5f, bleed = 0.12f,
@@ -72,7 +72,7 @@ object FeldDistressedTitles {
         splatter = 0.25f, splatterRadius = 1.6.dp,
     )
 
-    val Large = DistressSpec(
+    public val Large: DistressSpec = DistressSpec(
         color = Color(0xFFE6DCC4),
         edgeSoftness = 0.9.dp, edgeRough = 0.5.dp, edgeSize = 2.6.dp,
         edgeErode = 0.6f, bleed = 0.25f,

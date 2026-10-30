@@ -95,7 +95,7 @@ private class SideRoundShape(private val l: Float, private val r: Float) : Shape
 }
 
 @Composable
-fun FeldSwitch(
+public fun FeldSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,

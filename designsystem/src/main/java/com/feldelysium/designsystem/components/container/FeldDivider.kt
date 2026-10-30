@@ -30,7 +30,7 @@ import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.random.Random
 
 @Composable
-fun FeldDivider(
+public fun FeldDivider(
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
     vertical: Boolean = false,

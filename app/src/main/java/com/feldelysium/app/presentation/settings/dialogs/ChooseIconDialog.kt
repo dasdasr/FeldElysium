@@ -45,9 +45,8 @@ import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.material.PaperSpec
-import com.feldelysium.designsystem.foundation.material.paperMaterial
+import com.feldelysium.designsystem.foundation.material.paperSurface
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -231,10 +230,9 @@ private fun TileBox(
     content: @Composable BoxScope.() -> Unit,
 ) {
     val seed = rememberSeed()
-    val shape = remember(seed) { RoughShape(seed * 3 + 1, TileRough) }
     Box(
         modifier = modifier
-            .paperMaterial(shape, spec)
+            .paperSurface(seed * 3 + 1, TileRough, spec)
             .feldClickable(role = Role.Button, onClick = onClick),
         content = content,
     )

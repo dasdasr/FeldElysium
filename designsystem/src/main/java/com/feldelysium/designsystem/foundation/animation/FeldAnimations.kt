@@ -16,7 +16,7 @@ import androidx.compose.runtime.remember
 import kotlin.random.Random
 
 @Immutable
-data class FeldAnimationValues(val values: Map<String, Float>) {
+internal data class FeldAnimationValues(val values: Map<String, Float>) {
     operator fun get(key: String): Float = values[key] ?: 0f
 
     fun getOrDefault(key: String, default: Float): Float = values[key] ?: default
@@ -28,35 +28,35 @@ data class FeldAnimationValues(val values: Map<String, Float>) {
 }
 
 @Immutable
-data class FeldAnimationState(val values: Map<String, Float>) {
+internal data class FeldAnimationState(val values: Map<String, Float>) {
     operator fun get(key: String): Float = values[key] ?: 0f
 
     fun getOrDefault(key: String, default: Float): Float = values[key] ?: default
 }
 
 @Stable
-fun interface FeldAnimation {
+internal fun interface FeldAnimation {
     @Composable
     operator fun invoke(values: FeldAnimationValues): FeldAnimationState
 }
 
 @Stable
-fun interface FeldInteractionAnimation {
+internal fun interface FeldInteractionAnimation {
     @Composable
     operator fun invoke(values: FeldAnimationValues, active: Boolean): FeldAnimationState
 }
 
 @Composable
-fun feldAnimate(values: FeldAnimationValues, animation: FeldAnimation): FeldAnimationState = animation(values)
+internal fun feldAnimate(values: FeldAnimationValues, animation: FeldAnimation): FeldAnimationState = animation(values)
 
 @Composable
-fun feldAnimate(
+internal fun feldAnimate(
     values: FeldAnimationValues,
     animation: FeldInteractionAnimation,
     active: Boolean,
 ): FeldAnimationState = animation(values, active)
 
-object FeldAnimations {
+internal object FeldAnimations {
 
     object Reveal {
 

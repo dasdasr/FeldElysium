@@ -23,7 +23,7 @@ import com.feldelysium.app.domain.model.SpeakerType
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.input.FeldChip
-import com.feldelysium.designsystem.components.input.FeldChipColors
+import com.feldelysium.designsystem.components.input.FeldAccentColors
 import com.feldelysium.designsystem.components.input.FeldTextField
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -70,7 +70,7 @@ fun ChooseTagDialog(
                     selected = t.id == current.id,
                     onClick = { current = t },
                     height = 34.dp,
-                    accent = FeldChipColors.Cream,
+                    accent = FeldAccentColors.Cream,
                 )
             }
             FeldChip(
@@ -78,7 +78,7 @@ fun ChooseTagDialog(
                 selected = creating,
                 onClick = { creating = !creating },
                 height = 34.dp,
-                accent = FeldChipColors.Orange,
+                accent = FeldAccentColors.Orange,
             )
             if (onManage != null) {
                 FeldChip(
@@ -86,7 +86,7 @@ fun ChooseTagDialog(
                     selected = false,
                     onClick = onManage,
                     height = 34.dp,
-                    accent = FeldChipColors.Cream,
+                    accent = FeldAccentColors.Cream,
                     outline = false,
                 )
             }
@@ -119,7 +119,7 @@ fun ChooseTagDialog(
                     selected = allowsChecks,
                     onClick = { allowsChecks = !allowsChecks },
                     height = 30.dp,
-                    accent = FeldChipColors.Teal,
+                    accent = FeldAccentColors.Teal,
                     outline = false,
                 )
 
@@ -142,7 +142,7 @@ fun ChooseTagDialog(
                         creating = false
                     },
                     height = 34.dp,
-                    accent = FeldChipColors.Orange,
+                    accent = FeldAccentColors.Orange,
                 )
             }
         }

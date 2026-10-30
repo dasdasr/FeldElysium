@@ -19,7 +19,7 @@ import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 
 @Composable
-fun FeldSettingsSection(
+public fun FeldSettingsSection(
     title: String,
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
@@ -34,7 +34,7 @@ fun FeldSettingsSection(
 }
 
 @Composable
-fun FeldSettingsDivider(modifier: Modifier = Modifier) {
+public fun FeldSettingsDivider(modifier: Modifier = Modifier) {
     FeldDivider(
         modifier = modifier.padding(horizontal = 16.dp),
         color = Color(0xFF3A3D3C),

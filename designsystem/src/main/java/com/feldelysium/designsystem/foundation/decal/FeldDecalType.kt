@@ -7,16 +7,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.feldelysium.designsystem.R
 
-object FeldDecalType {
-    val Mono = FontFamily(
+public object FeldDecalType {
+    public val Mono: FontFamily = FontFamily(
         Font(R.font.plex_mono_regular, FontWeight.Normal),
         Font(R.font.plex_mono_semibold, FontWeight.SemiBold),
     )
-    val Display = FontFamily(Font(R.font.chakra_petch_bold, FontWeight.Bold))
+    public val Display: FontFamily = FontFamily(Font(R.font.chakra_petch_bold, FontWeight.Bold))
 
-    val Base =
+    public val Base: TextStyle =
         TextStyle(fontFamily = Mono, fontSize = 7.sp, lineHeight = 9.5.sp, letterSpacing = 0.6.sp)
-    val Label = TextStyle(
+    public val Label: TextStyle = TextStyle(
         fontFamily = Display,
         fontWeight = FontWeight.Bold,
         fontSize = 8.sp,

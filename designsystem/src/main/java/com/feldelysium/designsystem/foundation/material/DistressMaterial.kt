@@ -23,13 +23,14 @@ import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.foundation.material.agsl.DISTRESS_AGSL
 
 @Immutable
-data class DistressSpec(
+public data class DistressSpec(
     val color: Color = Color.Unspecified,
     val strength: Float = 1f,
 
@@ -58,7 +59,7 @@ data class DistressSpec(
     val splatter: Float = 0.3f,
     val splatterRadius: Dp = 2.dp,
 ) {
-    fun scaled(amount: Float = 1f, size: Float = 1f, strength: Float = this.strength) = copy(
+    internal fun scaled(amount: Float = 1f, size: Float = 1f, strength: Float = this.strength): DistressSpec = copy(
         strength = strength,
         dropout = dropout * amount,
         scratch = scratch * amount,
@@ -72,7 +73,7 @@ data class DistressSpec(
     )
 }
 
-fun Modifier.distressMaterial(spec: DistressSpec, seed: Int = 0, bakeKey: Any? = null): Modifier =
+internal fun Modifier.distressMaterial(spec: DistressSpec, seed: Int = 0, bakeKey: Any? = null): Modifier =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         if (bakeKey != null) {
             distressBaked(spec, seed, bakeKey)
@@ -165,7 +166,7 @@ private fun Modifier.distressBaked(spec: DistressSpec, seed: Int, bakeKey: Any):
 private fun RuntimeShader.applyDistressUniforms(
     spec: DistressSpec,
     seed: Int,
-    density: androidx.compose.ui.unit.Density,
+    density: Density,
 ) {
     with(density) {
         setFloatUniform("seed", seed.mod(97).toFloat())

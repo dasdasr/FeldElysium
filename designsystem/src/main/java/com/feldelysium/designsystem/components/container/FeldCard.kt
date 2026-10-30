@@ -38,7 +38,7 @@ import com.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
-fun FeldCard(
+public fun FeldCard(
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),
     spec: PaperSpec = FeldPaper.Panel,

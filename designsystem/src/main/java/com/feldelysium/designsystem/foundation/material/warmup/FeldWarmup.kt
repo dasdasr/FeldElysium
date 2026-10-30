@@ -52,7 +52,7 @@ import com.feldelysium.designsystem.foundation.shape.RoughStyle
  * baked in addition to the palette defaults.
  */
 @Composable
-fun FeldWarmup(extraChipColors: List<Color> = emptyList()) {
+public fun FeldWarmup(extraChipColors: List<Color> = emptyList()) {
     PaperCacheTrim()
     ChipTextureBaker(extraChipColors)
 

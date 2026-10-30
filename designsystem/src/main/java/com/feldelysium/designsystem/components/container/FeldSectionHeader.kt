@@ -26,7 +26,7 @@ private val HeaderTagStyle: TextStyle
     )
 
 @Composable
-fun FeldSectionHeader(
+public fun FeldSectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),

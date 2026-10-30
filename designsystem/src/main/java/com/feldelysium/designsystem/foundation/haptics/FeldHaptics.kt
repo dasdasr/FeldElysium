@@ -8,22 +8,22 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 
 @Stable
-class FeldHaptics(private val feedback: HapticFeedback) {
-    fun tick() = feedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
+public class FeldHaptics(private val feedback: HapticFeedback) {
+    public fun tick(): Unit = feedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
 
-    fun toggle(on: Boolean) = feedback.performHapticFeedback(
+    public fun toggle(on: Boolean): Unit = feedback.performHapticFeedback(
         if (on) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff,
     )
 
-    fun confirm() = feedback.performHapticFeedback(HapticFeedbackType.Confirm)
+    public fun confirm(): Unit = feedback.performHapticFeedback(HapticFeedbackType.Confirm)
 
-    fun handleMove() = feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+    public fun handleMove(): Unit = feedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
 
-    fun thud() = feedback.performHapticFeedback(HapticFeedbackType.LongPress)
+    public fun thud(): Unit = feedback.performHapticFeedback(HapticFeedbackType.LongPress)
 }
 
 @Composable
-fun rememberFeldHaptics(): FeldHaptics {
+public fun rememberFeldHaptics(): FeldHaptics {
     val feedback = LocalHapticFeedback.current
     return remember(feedback) { FeldHaptics(feedback) }
 }

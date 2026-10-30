@@ -29,7 +29,7 @@ import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
 
 @Composable
-fun FeldGhostButton(
+public fun FeldGhostButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

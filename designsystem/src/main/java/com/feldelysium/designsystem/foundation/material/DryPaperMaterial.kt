@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.foundation.material.agsl.DRY_PAPER_AGSL
 
 @Immutable
-data class DryPaperSpec(
+public data class DryPaperSpec(
     val base: Color,
     val crack: Color,
 
@@ -36,7 +36,7 @@ data class DryPaperSpec(
     val pressShade: Float = 0.06f,
 )
 
-fun Modifier.dryPaperMaterial(spec: DryPaperSpec, seed: Int = 0, press: () -> Float = { 0f }): Modifier =
+internal fun Modifier.dryPaperMaterial(spec: DryPaperSpec, seed: Int = 0, press: () -> Float = { 0f }): Modifier =
     drawWithCache {
         val rim = 1.dp.toPx()
 

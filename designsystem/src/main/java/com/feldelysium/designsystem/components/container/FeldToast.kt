@@ -36,7 +36,7 @@ import kotlin.time.Duration.Companion.milliseconds
 private val ToastRough = RoughStyle(roughness = 1.dp, corner = 3.dp, tornChance = 0.15f)
 
 @Composable
-fun FeldToast(
+internal fun FeldToast(
     text: String,
     modifier: Modifier = Modifier,
     accent: Color = FeldPalette.Orange,
@@ -66,14 +66,14 @@ fun FeldToast(
 }
 
 @Stable
-class FeldToastState {
-    class Message(val id: Long, val text: String, val accent: Color?, val durationMillis: Long)
+public class FeldToastState {
+    public class Message(public val id: Long, public val text: String, public val accent: Color?, public val durationMillis: Long)
 
-    var current by mutableStateOf<Message?>(null)
+    public var current: Message? by mutableStateOf<Message?>(null)
         private set
     private var counter = 0L
 
-    fun show(text: String, accent: Color? = null, durationMillis: Long = 2500L) {
+    public fun show(text: String, accent: Color? = null, durationMillis: Long = 2500L) {
         current = Message(++counter, text, accent, durationMillis)
     }
 
@@ -83,10 +83,10 @@ class FeldToastState {
 }
 
 @Composable
-fun rememberFeldToastState(): FeldToastState = remember { FeldToastState() }
+public fun rememberFeldToastState(): FeldToastState = remember { FeldToastState() }
 
 @Composable
-fun FeldToastHost(state: FeldToastState, modifier: Modifier = Modifier) {
+public fun FeldToastHost(state: FeldToastState, modifier: Modifier = Modifier) {
     val message = state.current
     var last by remember { mutableStateOf<FeldToastState.Message?>(null) }
 

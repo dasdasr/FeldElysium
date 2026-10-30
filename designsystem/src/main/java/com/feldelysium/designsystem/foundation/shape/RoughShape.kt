@@ -21,7 +21,7 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Immutable
-data class RoughStyle(
+public data class RoughStyle(
     val roughness: Dp = 1.2.dp,
     val irregularity: Float = 0.65f,
     val smoothness: Float = 0.55f,
@@ -86,16 +86,17 @@ internal object RoughCache {
 }
 private data class Knot(val p: Offset, val jumpNext: Boolean = false)
 
-class RoughShape(val seed: Int, val style: RoughStyle = RoughStyle()) : Shape {
+@Immutable
+public class RoughShape(
+    public val seed: Int,
+    public val style: RoughStyle = RoughStyle(),
+) : Shape {
 
-    fun rimPx(density: Density): Float = with(density) {
+    internal fun rimPx(density: Density): Float = with(density) {
         style.roughness.toPx() * (1.5f + style.jerkAmp + style.cornerJitter) + style.inset.toPx()
     }
 
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
-        Outline.Generic(buildPath(size, density))
-
-    fun buildPath(size: Size, density: Density): Path {
+    internal fun buildPath(size: Size, density: Density): Path {
         if (size.minDimension <= 0f) return Path()
 
         val amp = with(density) { style.roughness.toPx() }
@@ -211,9 +212,18 @@ class RoughShape(val seed: Int, val style: RoughStyle = RoughStyle()) : Shape {
             close()
         }
     }
+
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
+        Outline.Generic(buildPath(size, density))
+
+    override fun equals(other: Any?): Boolean =
+        other is RoughShape && seed == other.seed && style == other.style
+
+    override fun hashCode(): Int = 31 * seed + style.hashCode()
+
 }
 
-class InkLayer(val path: Path, val alpha: Float)
+internal class InkLayer(val path: Path, val alpha: Float)
 
 private class LoopNoise(seed: Int, private val len: Float, cellPx: Float) {
     private val cells = (len / cellPx).roundToInt().coerceAtLeast(3)
@@ -252,7 +262,7 @@ private class LoopSteps(seed: Int, len: Float, cellPx: Float, private val rampPx
     }
 }
 
-fun RoughShape.buildInkLayers(outline: Path, density: Density, baseWidth: Float): List<InkLayer> {
+internal fun RoughShape.buildInkLayers(outline: Path, density: Density, baseWidth: Float): List<InkLayer> {
     val measure = PathMeasure().apply { setPath(outline, true) }
     val len = measure.length
     if (len <= 0f) return emptyList()
@@ -312,7 +322,7 @@ fun RoughShape.buildInkLayers(outline: Path, density: Density, baseWidth: Float)
     }
 }
 
-fun DrawScope.drawInk(layers: List<InkLayer>, brush: Brush, alpha: Float = 1f) {
+internal fun DrawScope.drawInk(layers: List<InkLayer>, brush: Brush, alpha: Float = 1f) {
     if (alpha <= 0f) return
     for (layer in layers) drawPath(layer.path, brush, alpha = layer.alpha * alpha)
 }

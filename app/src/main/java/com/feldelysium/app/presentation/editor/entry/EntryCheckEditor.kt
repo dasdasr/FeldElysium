@@ -22,7 +22,7 @@ import com.feldelysium.app.domain.model.SkillCheck
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.presentation.playback.components.CheckAssets
 import com.feldelysium.designsystem.components.input.FeldChip
-import com.feldelysium.designsystem.components.input.FeldChipColors
+import com.feldelysium.designsystem.components.input.FeldAccentColors
 import com.feldelysium.designsystem.components.input.FeldChipShape
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -171,7 +171,7 @@ private fun CheckChip(
     shape: FeldChipShape = FeldChipShape.Chamfer,
     outline: Boolean = true,
     sidePad: Dp = Dp.Unspecified,
-    accent: Color = FeldChipColors.Orange,
+    accent: Color = FeldAccentColors.Orange,
     onClick: () -> Unit,
 ) {
     FeldChip(

@@ -22,7 +22,7 @@ import com.feldelysium.designsystem.foundation.material.stickerTapeMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldTheme
 
-private val CompactCream = FeldTape.Cream.copy(
+public val CompactCream: StickerTapeSpec = FeldTape.Cream.copy(
     tearAmp = 4.dp,
     tearScale = 16.dp,
     slantLeft = 9.dp,
@@ -37,7 +37,7 @@ private val CompactCream = FeldTape.Cream.copy(
 )
 
 @Composable
-fun FeldTitleTag(
+public fun FeldTitleTag(
     text: String,
     modifier: Modifier = Modifier,
     seed: Int = rememberSeed(),

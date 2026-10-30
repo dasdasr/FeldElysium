@@ -34,7 +34,7 @@ import com.feldelysium.designsystem.foundation.material.DistressSpec
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
-fun FeldScreenHeader(
+public fun FeldScreenHeader(
     title: String,
     modifier: Modifier = Modifier,
     eyebrow: String? = null,

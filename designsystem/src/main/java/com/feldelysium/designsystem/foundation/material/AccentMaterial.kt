@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.toArgb
 import com.feldelysium.designsystem.foundation.material.agsl.ACCENT_AGSL
 import com.feldelysium.designsystem.foundation.material.agsl.WORN_AGSL
 
-fun accentBrush(
+public fun accentBrush(
     color: Color,
     seed: Int,
     density: Float,
@@ -37,7 +37,7 @@ fun accentBrush(
     return ShaderBrush(shader)
 }
 
-fun wornBrush(color: Color, seed: Int, density: Float, wear: Float = 0.5f, scale: Float = 26f): Brush {
+public fun wornBrush(color: Color, seed: Int, density: Float, wear: Float = 0.5f, scale: Float = 26f): Brush {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return SolidColor(color)
     val s = scale * density
     val shader = RuntimeShader(WORN_AGSL).apply {

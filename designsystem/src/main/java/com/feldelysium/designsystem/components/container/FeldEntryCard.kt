@@ -107,7 +107,7 @@ private val EntryRough = RoughStyle(
     jerkChance = 0.04f,
 )
 
-fun entryRough(seed: Int): RoughStyle {
+public fun entryRough(seed: Int): RoughStyle {
     val r = Random(seed * 31 + 7)
     return EntryRough.copy(
         corner = (2f + r.nextFloat() * 4f).dp,
@@ -138,7 +138,7 @@ private fun cachedDiamondBrush(color: Color, seed: Int, density: Float): Brush {
 }
 
 @Composable
-fun FeldEntryCard(
+public fun FeldEntryCard(
     speakerName: String,
     speakerColor: Color,
     text: String,
@@ -221,8 +221,8 @@ fun FeldEntryCard(
             val fresh = isDragging && now - sway.velocityStamp < SWAY_VELOCITY_TTL_NANOS
             val velocity = if (fresh) sway.velocityY else 0f
             val torque = -SWAY_STIFFNESS * sway.angle -
-                SWAY_DAMPING * angularVelocity +
-                SWAY_GAIN * velocity * sway.dir
+                    SWAY_DAMPING * angularVelocity +
+                    SWAY_GAIN * velocity * sway.dir
 
             angularVelocity += torque * dt
             sway.angle = (sway.angle + angularVelocity * dt)
@@ -486,7 +486,7 @@ private class StampLook(seed: Int) {
 }
 
 @Composable
-fun FeldHandDiamond(color: Color, seed: Int, modifier: Modifier = Modifier, size: Dp = 22.dp, brush: Brush? = null) {
+public fun FeldHandDiamond(color: Color, seed: Int, modifier: Modifier = Modifier, size: Dp = 22.dp, brush: Brush? = null) {
     val density = LocalDensity.current.density
     val b = brush ?: remember(color, seed, density) { cachedDiamondBrush(color, seed, density) }
     val j = remember(seed) {
@@ -515,7 +515,7 @@ private fun gauss(t: Float, c: Float, w: Float): Float {
 internal fun beatScale(t: Float?): Float =
     if (t == null) 1f else 1f + 0.18f * gauss(t, 0.07f, 0.05f) + 0.11f * gauss(t, 0.34f, 0.06f)
 
-fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
+public fun DrawScope.drawDiamondBeat(brush: Brush, hold: Float, t: Float?) {
     val stroke = 1.5.dp.toPx()
     val r = size.minDimension / 2f + 6.dp.toPx()
     fun diamond(rad: Float) = Path().apply {

@@ -29,13 +29,13 @@ import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldTheme
 
-enum class FeldSettingStatus {
+public enum class FeldSettingStatus {
     SOON,
     LOCK,
 }
 
 @Composable
-fun FeldSettingRow(
+public fun FeldSettingRow(
     icon: FeldIconId,
     title: String,
     modifier: Modifier = Modifier,
@@ -107,7 +107,7 @@ fun FeldSettingRow(
 }
 
 @Composable
-fun FeldSettingValueRow(
+public fun FeldSettingValueRow(
     icon: FeldIconId,
     title: String,
     value: String,
@@ -138,7 +138,7 @@ fun FeldSettingValueRow(
 }
 
 @Composable
-fun FeldSettingSwitchRow(
+public fun FeldSettingSwitchRow(
     icon: FeldIconId,
     title: String,
     checked: Boolean,

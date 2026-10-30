@@ -87,7 +87,7 @@ private val DividerColor = Color(0xFFB9AD92)
 private val Snap = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)
 
 @Composable
-fun FeldSegmentedControl(
+public fun FeldSegmentedControl(
     options: List<String>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,

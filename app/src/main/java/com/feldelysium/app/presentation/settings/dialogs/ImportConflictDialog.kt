@@ -22,7 +22,7 @@ import com.feldelysium.app.domain.model.ImportPreview
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.input.FeldChip
-import com.feldelysium.designsystem.components.input.FeldChipColors
+import com.feldelysium.designsystem.components.input.FeldAccentColors
 import com.feldelysium.designsystem.theme.FeldPalette
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -67,7 +67,7 @@ fun ImportConflictDialog(preview: ImportPreview, onConfirm: (ImportPolicy) -> Un
                     selected = policy == p,
                     onClick = { policy = p },
                     modifier = Modifier.height(34.dp),
-                    accent = FeldChipColors.Cream,
+                    accent = FeldAccentColors.Cream,
                 )
             }
         }

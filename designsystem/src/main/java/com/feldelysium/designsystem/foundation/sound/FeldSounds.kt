@@ -1,19 +1,21 @@
 package com.feldelysium.designsystem.foundation.sound
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 
-interface FeldSounds {
-    fun click(seed: Int = 0)
-    fun select()
-    fun toggle(seed: Int = 0)
-    fun cancel()
-    fun save()
-    fun delete()
-    fun tab(seed: Int = 0)
+public interface FeldSounds {
+    public fun click(seed: Int = 0)
+    public fun select()
+    public fun toggle(seed: Int = 0)
+    public fun cancel()
+    public fun save()
+    public fun delete()
+    public fun tab(seed: Int = 0)
 }
 
-object NoFeldSounds : FeldSounds {
+internal object NoFeldSounds : FeldSounds {
     override fun click(seed: Int) = Unit
     override fun select() = Unit
     override fun toggle(seed: Int) = Unit
@@ -23,7 +25,9 @@ object NoFeldSounds : FeldSounds {
     override fun tab(seed: Int) = Unit
 }
 
-val LocalFeldSounds = staticCompositionLocalOf<FeldSounds> { NoFeldSounds }
+public val LocalFeldSounds: ProvidableCompositionLocal<FeldSounds> = staticCompositionLocalOf<FeldSounds> { NoFeldSounds }
 
-@Composable
-fun rememberFeldSounds(): FeldSounds = LocalFeldSounds.current
+public val feldSounds: FeldSounds
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalFeldSounds.current

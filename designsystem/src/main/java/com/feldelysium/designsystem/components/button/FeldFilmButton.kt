@@ -45,7 +45,7 @@ import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
 
 @Composable
-fun FeldFilmButton(
+public fun FeldFilmButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
