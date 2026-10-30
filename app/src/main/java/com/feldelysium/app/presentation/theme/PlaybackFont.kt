@@ -7,8 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import com.feldelysium.designsystem.theme.Alegreya
 import com.feldelysium.app.domain.model.settings.AppSettings
+import com.feldelysium.designsystem.theme.Alegreya
 import java.io.File
 
 const val FONT_CUSTOM = "custom"

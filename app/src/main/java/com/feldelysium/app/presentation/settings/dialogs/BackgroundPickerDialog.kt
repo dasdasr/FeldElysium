@@ -34,6 +34,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.settings.AppSettings
+import com.feldelysium.app.domain.model.settings.BackgroundKind
+import com.feldelysium.app.presentation.playback.components.BackgroundVideo
 import com.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldDialog
@@ -52,9 +55,6 @@ import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.material.paperMaterial
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.app.domain.model.settings.AppSettings
-import com.feldelysium.app.domain.model.settings.BackgroundKind
-import com.feldelysium.app.presentation.playback.components.BackgroundVideo
 
 private val Presets = listOf(
     0xFF00B140L,

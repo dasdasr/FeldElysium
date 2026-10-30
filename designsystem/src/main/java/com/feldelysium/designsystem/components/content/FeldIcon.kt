@@ -72,7 +72,6 @@ enum class FeldIconId {
     PanelCalendar,
     Calendar,
     Time,
-    Logo,
     Heart,
     Paste,
     Search,
@@ -129,7 +128,6 @@ fun FeldIcon(
         FeldIconId.Speed -> R.drawable.ic_fe_speed
         FeldIconId.Panel -> R.drawable.ic_fe_panel
         FeldIconId.PanelCalendar -> R.drawable.ic_fe_panel_calendar
-        FeldIconId.Logo -> R.drawable.ic_fe_feld_elysium
         FeldIconId.Heart -> R.drawable.ic_fe_heart
         FeldIconId.Paste -> R.drawable.ic_fe_paste
         FeldIconId.Search -> R.drawable.ic_fe_search

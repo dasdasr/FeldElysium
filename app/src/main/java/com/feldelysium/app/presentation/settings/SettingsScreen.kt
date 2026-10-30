@@ -31,10 +31,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.feldelysium.app.FeldApp
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.container.FeldToastHost
-import com.feldelysium.designsystem.components.container.rememberFeldToastState
-import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
-import com.feldelysium.app.presentation.theme.fontDir
 import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.app.presentation.settings.dialogs.SettingsDialogHost
 import com.feldelysium.app.presentation.settings.sections.AppearanceSection
@@ -45,6 +41,10 @@ import com.feldelysium.app.presentation.settings.sections.RecordingSection
 import com.feldelysium.app.presentation.settings.sections.SpeakersSection
 import com.feldelysium.app.presentation.settings.speakerpack.SpeakerPackViewModel
 import com.feldelysium.app.presentation.settings.speakerpack.text
+import com.feldelysium.app.presentation.theme.fontDir
+import com.feldelysium.designsystem.components.container.FeldToastHost
+import com.feldelysium.designsystem.components.container.rememberFeldToastState
+import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
 
 @SuppressLint("ContextCastToActivity")
 @Composable

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.SceneInfo
 import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.entryRough
 import com.feldelysium.designsystem.components.content.FeldIcon
@@ -52,7 +53,6 @@ import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
-import com.feldelysium.app.domain.model.SceneInfo
 
 private val FeaturedHeight = 214.dp
 private val CompactHeight = 188.dp

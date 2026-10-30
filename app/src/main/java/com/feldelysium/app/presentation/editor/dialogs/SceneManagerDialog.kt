@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.app.domain.model.SceneInfo
+import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 
 @Composable
 fun SceneManagerDialog(

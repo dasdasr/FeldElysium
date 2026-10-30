@@ -337,7 +337,5 @@
     <string name="settings_language_subtitle">App interface language</string>
     <string name="settings_language_system">System</string>
     <string name="settings_language_eyebrow">Choose language</string>
-    <string name="language_next">Next languages</string>
-    <string name="language_previous">Previous languages</string>
 
 </resources>

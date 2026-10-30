@@ -4,9 +4,7 @@ import com.feldelysium.app.domain.scene.SceneSession
 import java.io.InputStream
 import java.io.OutputStream
 
-class SceneTransferUseCase(
-    private val session: SceneSession
-) {
+class SceneTransferUseCase(private val session: SceneSession) {
     suspend fun export(output: OutputStream) {
         output.use { session.exportScene(it) }
     }

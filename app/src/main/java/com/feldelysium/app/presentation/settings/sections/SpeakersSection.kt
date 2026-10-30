@@ -3,17 +3,17 @@ package com.feldelysium.app.presentation.settings.sections
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.settings.AppSettings
+import com.feldelysium.app.presentation.settings.SettingsDialog
+import com.feldelysium.app.presentation.settings.SettingsEvent
+import com.feldelysium.app.presentation.settings.label
+import com.feldelysium.app.presentation.settings.samplesSubtitle
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.feldelysium.designsystem.components.settings.FeldSettingsSection
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.feldelysium.app.domain.model.settings.AppSettings
-import com.feldelysium.app.presentation.settings.SettingsDialog
-import com.feldelysium.app.presentation.settings.SettingsEvent
-import com.feldelysium.app.presentation.settings.label
-import com.feldelysium.app.presentation.settings.samplesSubtitle
 
 @Composable
 internal fun SpeakersSection(

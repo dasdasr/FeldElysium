@@ -39,11 +39,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.feldelysium.designsystem.components.content.FeldSpeakerDiamond
-import com.feldelysium.designsystem.components.content.FeldTitleTag
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.eggs.EasterEggs
 import com.feldelysium.app.eggs.EggReply
+import com.feldelysium.designsystem.components.content.FeldSpeakerDiamond
+import com.feldelysium.designsystem.components.content.FeldTitleTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max

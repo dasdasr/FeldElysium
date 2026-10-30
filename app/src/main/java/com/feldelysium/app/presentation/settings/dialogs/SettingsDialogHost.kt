@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.app.eggs.EggEvent
 import com.feldelysium.app.eggs.ui.LocalEasterEggs
@@ -13,6 +12,7 @@ import com.feldelysium.app.presentation.settings.SettingsEvent
 import com.feldelysium.app.presentation.settings.speakerpack.SpeakerPackViewModel
 import com.feldelysium.app.presentation.shared.dialogs.ManageTagsDialog
 import com.feldelysium.app.presentation.shared.language.AppLanguage
+import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 
 @Composable
 internal fun SettingsDialogHost(

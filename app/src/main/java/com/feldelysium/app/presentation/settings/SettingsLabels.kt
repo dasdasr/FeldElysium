@@ -3,11 +3,11 @@ package com.feldelysium.app.presentation.settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.settings.FeldSettingStatus
 import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.app.domain.model.settings.BackgroundKind
 import com.feldelysium.app.domain.model.settings.SamplesMode
 import com.feldelysium.app.domain.model.settings.TapMode
+import com.feldelysium.designsystem.components.settings.FeldSettingStatus
 
 internal fun lockedUnless(enabled: Boolean): FeldSettingStatus? = if (enabled) null else FeldSettingStatus.LOCK
 

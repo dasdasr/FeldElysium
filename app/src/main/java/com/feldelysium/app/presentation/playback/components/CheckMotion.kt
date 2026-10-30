@@ -8,9 +8,9 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.theme.disco
 import com.feldelysium.app.domain.model.CheckResult
 import com.feldelysium.app.domain.model.DamageType
+import com.feldelysium.designsystem.theme.disco
 
 object CheckMotion {
     const val TAPE_ROLL_START_DELAY_MS = 100

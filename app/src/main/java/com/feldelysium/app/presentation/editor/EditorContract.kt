@@ -12,13 +12,13 @@ import com.feldelysium.app.domain.model.SceneInfo
 import com.feldelysium.app.domain.model.SkillCheck
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.domain.model.SpeakerType
-import java.io.InputStream
-import java.io.OutputStream
 import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.app.presentation.shared.FeldError
 import com.feldelysium.app.presentation.shared.toastText
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.io.InputStream
+import java.io.OutputStream
 
 @Immutable
 data class EditorUiState(

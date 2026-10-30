@@ -33,17 +33,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.feldelysium.app.BuildConfig
 import com.feldelysium.app.FeldApp
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.button.FeldFab
-import com.feldelysium.designsystem.components.container.FeldToastHost
-import com.feldelysium.designsystem.components.container.FeldToastState
-import com.feldelysium.designsystem.components.container.rememberFeldToastState
-import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
-import com.feldelysium.designsystem.foundation.decal.DecalContext
-import com.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
-import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.feldelysium.app.presentation.theme.fontDir
-import com.feldelysium.app.presentation.theme.rememberPlaybackFontFamily
 import com.feldelysium.app.domain.model.DialogueEntry
 import com.feldelysium.app.eggs.EggEvent
 import com.feldelysium.app.eggs.EggScreen
@@ -55,9 +44,20 @@ import com.feldelysium.app.presentation.editor.sections.EntryList
 import com.feldelysium.app.presentation.settings.SettingsViewModel
 import com.feldelysium.app.presentation.shared.FeldError
 import com.feldelysium.app.presentation.shared.toastText
+import com.feldelysium.app.presentation.theme.fontDir
+import com.feldelysium.app.presentation.theme.rememberPlaybackFontFamily
 import com.feldelysium.app.record.LocalScreenRecordRequest
 import com.feldelysium.app.record.RecordResult
 import com.feldelysium.app.record.ScreenRecordService
+import com.feldelysium.designsystem.components.button.FeldFab
+import com.feldelysium.designsystem.components.container.FeldToastHost
+import com.feldelysium.designsystem.components.container.FeldToastState
+import com.feldelysium.designsystem.components.container.rememberFeldToastState
+import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
+import com.feldelysium.designsystem.foundation.decal.DecalContext
+import com.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
+import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
+import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 
 @SuppressLint("ContextCastToActivity")
 @Composable

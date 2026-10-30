@@ -21,14 +21,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.DialogueEntry
+import com.feldelysium.app.eggs.EggEvent
+import com.feldelysium.app.eggs.ui.LocalEasterEggs
 import com.feldelysium.designsystem.components.container.FeldEntryCard
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldMenu
 import com.feldelysium.designsystem.components.input.FeldMenuItem
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.feldelysium.app.domain.model.DialogueEntry
-import com.feldelysium.app.eggs.EggEvent
-import com.feldelysium.app.eggs.ui.LocalEasterEggs
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 

@@ -66,6 +66,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.Speaker
+import com.feldelysium.app.domain.model.SpeakerType
+import com.feldelysium.app.domain.model.groupedByTag
+import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.designsystem.components.button.FeldFilmButton
 import com.feldelysium.designsystem.components.button.FeldTextButton
 import com.feldelysium.designsystem.components.container.FeldCard
@@ -80,10 +84,6 @@ import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.app.domain.model.Speaker
-import com.feldelysium.app.domain.model.SpeakerType
-import com.feldelysium.app.domain.model.groupedByTag
-import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

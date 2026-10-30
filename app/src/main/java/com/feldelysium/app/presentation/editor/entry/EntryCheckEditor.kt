@@ -14,9 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.input.FeldChip
-import com.feldelysium.designsystem.components.input.FeldChipColors
-import com.feldelysium.designsystem.components.input.FeldChipShape
 import com.feldelysium.app.domain.model.CheckDifficulty
 import com.feldelysium.app.domain.model.CheckResult
 import com.feldelysium.app.domain.model.DamageEffect
@@ -24,6 +21,9 @@ import com.feldelysium.app.domain.model.DamageType
 import com.feldelysium.app.domain.model.SkillCheck
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.presentation.playback.components.CheckAssets
+import com.feldelysium.designsystem.components.input.FeldChip
+import com.feldelysium.designsystem.components.input.FeldChipColors
+import com.feldelysium.designsystem.components.input.FeldChipShape
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

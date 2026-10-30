@@ -42,8 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -52,6 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,6 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.feldelysium.app.R
+import com.feldelysium.app.presentation.shared.language.AppLanguage
+import com.feldelysium.app.presentation.shared.language.displayName
 import com.feldelysium.designsystem.components.button.FeldButton
 import com.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.feldelysium.designsystem.components.container.FeldDialog
@@ -67,8 +69,6 @@ import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.feldelysium.designsystem.theme.Alegreya
 import com.feldelysium.designsystem.theme.disco
-import com.feldelysium.app.presentation.shared.language.AppLanguage
-import com.feldelysium.app.presentation.shared.language.displayName
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.Locale

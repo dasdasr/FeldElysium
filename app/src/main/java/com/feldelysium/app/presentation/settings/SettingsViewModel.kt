@@ -8,10 +8,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.feldelysium.app.R
 import com.feldelysium.app.data.settings.FontImporter
 import com.feldelysium.app.data.settings.MediaUriPermissions
-import com.feldelysium.app.presentation.theme.FONT_CUSTOM
 import com.feldelysium.app.di.AppContainer
 import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.app.domain.repository.SettingsRepository
+import com.feldelysium.app.presentation.theme.FONT_CUSTOM
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted

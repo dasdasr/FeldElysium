@@ -19,12 +19,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.SpeakerType
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.input.FeldChip
 import com.feldelysium.designsystem.components.input.FeldChipColors
 import com.feldelysium.designsystem.components.input.FeldTextField
-import com.feldelysium.app.domain.model.SpeakerType
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

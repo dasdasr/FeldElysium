@@ -23,6 +23,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.SoundKeys
+import com.feldelysium.app.domain.model.Speaker
+import com.feldelysium.app.domain.model.SpeakerColor
+import com.feldelysium.app.domain.model.SpeakerType
+import com.feldelysium.app.domain.registry.PredefinedSpeakers
+import com.feldelysium.app.presentation.editor.entry.FieldLabel
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.container.FeldDivider
@@ -36,12 +42,6 @@ import com.feldelysium.designsystem.components.input.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldTextField
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.material.FeldMarker
-import com.feldelysium.app.domain.model.SoundKeys
-import com.feldelysium.app.domain.model.Speaker
-import com.feldelysium.app.domain.model.SpeakerColor
-import com.feldelysium.app.domain.model.SpeakerType
-import com.feldelysium.app.domain.registry.PredefinedSpeakers
-import com.feldelysium.app.presentation.editor.entry.FieldLabel
 
 @Composable
 fun ManageTagsDialog(

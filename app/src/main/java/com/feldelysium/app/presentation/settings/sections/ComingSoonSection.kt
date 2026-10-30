@@ -8,12 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.feldelysium.app.R
+import com.feldelysium.app.eggs.EggEvent
+import com.feldelysium.app.eggs.ui.LocalEasterEggs
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.settings.FeldSettingStatus
 import com.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.feldelysium.designsystem.components.settings.FeldSettingsSection
-import com.feldelysium.app.eggs.EggEvent
-import com.feldelysium.app.eggs.ui.LocalEasterEggs
 
 @Composable
 internal fun ComingSoonSection() {

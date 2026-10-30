@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.ImportPolicy
+import com.feldelysium.app.domain.model.ImportPreview
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.input.FeldChip
 import com.feldelysium.designsystem.components.input.FeldChipColors
 import com.feldelysium.designsystem.components.input.FeldPalette
-import com.feldelysium.app.domain.model.ImportPolicy
-import com.feldelysium.app.domain.model.ImportPreview
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

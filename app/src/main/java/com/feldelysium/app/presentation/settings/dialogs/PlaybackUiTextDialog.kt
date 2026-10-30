@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.feldelysium.designsystem.components.container.FeldDivider
@@ -24,7 +25,6 @@ import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldTextField
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.app.domain.model.settings.AppSettings
 
 private val Teal = Color(0xFF4FB3A6)
 

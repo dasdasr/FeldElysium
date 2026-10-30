@@ -46,6 +46,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.DamageEffect
+import com.feldelysium.app.domain.model.DialogueEntry
+import com.feldelysium.app.domain.model.ReplyChoices
+import com.feldelysium.app.domain.model.SkillCheck
+import com.feldelysium.app.domain.model.Speaker
+import com.feldelysium.app.domain.model.SpeakerType
+import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.button.FeldIconButton
 import com.feldelysium.designsystem.components.button.FeldLabeledBlock
@@ -59,13 +66,6 @@ import com.feldelysium.designsystem.components.input.FeldTextField
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.app.domain.model.DamageEffect
-import com.feldelysium.app.domain.model.DialogueEntry
-import com.feldelysium.app.domain.model.ReplyChoices
-import com.feldelysium.app.domain.model.SkillCheck
-import com.feldelysium.app.domain.model.Speaker
-import com.feldelysium.app.domain.model.SpeakerType
-import com.feldelysium.app.domain.registry.PredefinedSpeakers
 
 private val SheetRough = RoughStyle(
     roughness = 0.8.dp,

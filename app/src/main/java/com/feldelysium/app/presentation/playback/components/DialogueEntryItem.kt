@@ -23,9 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.app.domain.model.DialogueEntry
 import com.feldelysium.app.domain.registry.PredefinedSpeakers
+import com.feldelysium.designsystem.components.container.FeldDivider
 
 private const val NAME_TRACKING_EM = 0.4f / 12f
 private const val HANGING_INDENT_EM = 14f / 12f

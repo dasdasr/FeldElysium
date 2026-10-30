@@ -19,13 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.container.FeldCard
-import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.container.FeldDialogFooter
-import com.feldelysium.designsystem.components.container.FeldDivider
-import com.feldelysium.designsystem.components.input.FeldPalette
-import com.feldelysium.designsystem.components.input.feldClickable
-import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.app.domain.model.settings.BarIconState
 import com.feldelysium.app.domain.model.settings.BarSlot
 import com.feldelysium.app.domain.model.settings.InventoryIcon
@@ -35,6 +28,13 @@ import com.feldelysium.app.presentation.playback.components.iconRes
 import com.feldelysium.app.presentation.playback.components.label
 import com.feldelysium.app.presentation.playback.components.mirrored
 import com.feldelysium.app.presentation.playback.components.tint
+import com.feldelysium.designsystem.components.container.FeldCard
+import com.feldelysium.designsystem.components.container.FeldDialog
+import com.feldelysium.designsystem.components.container.FeldDialogFooter
+import com.feldelysium.designsystem.components.container.FeldDivider
+import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.components.input.feldClickable
+import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 
 @Composable
 fun BarIconsDialog(

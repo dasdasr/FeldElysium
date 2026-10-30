@@ -23,8 +23,8 @@ import com.feldelysium.app.domain.repository.SpeakerRepository
 import com.feldelysium.app.domain.scene.SceneSession
 import com.feldelysium.app.domain.sound.SoundCue
 import com.feldelysium.app.domain.sound.SoundPlayer
-import com.feldelysium.app.domain.usecase.SceneTransferUseCase
 import com.feldelysium.app.domain.usecase.ParseBulkImportUseCase
+import com.feldelysium.app.domain.usecase.SceneTransferUseCase
 import com.feldelysium.app.presentation.shared.FeldError
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,56 +66,70 @@ class EditorViewModel(
 
     val messages = _messages.receiveAsFlow()
 
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     fun dispatch(event: EditorEvent): Boolean = when (event) {
         is EditorEvent.AddEntry -> {
             addEntry(event.speakerId, event.text, event.check, event.damage, event.replies)
             true
         }
+
         is EditorEvent.UpdateEntry -> {
             session.updateEntry(event.entry)
             true
         }
+
         is EditorEvent.DeleteEntry -> {
             session.deleteEntry(event.id)
             true
         }
+
         is EditorEvent.ReorderEntries -> {
             session.reorder(event.entries)
             true
         }
+
         EditorEvent.ClearScene -> {
             session.clear()
             true
         }
+
         is EditorEvent.SaveSpeaker -> {
             viewModelScope.launch { speakerRepo.save(event.speaker) }
             true
         }
+
         is EditorEvent.DeleteSpeaker -> {
             viewModelScope.launch { speakerRepo.delete(event.id) }
             true
         }
+
         is EditorEvent.SaveTag -> {
             viewModelScope.launch { speakerRepo.saveTag(event.tag) }
             true
         }
+
         is EditorEvent.DeleteTag -> {
             viewModelScope.launch { speakerRepo.deleteTag(event.id) }
             true
         }
+
         is EditorEvent.ImportLines -> importLines(event.text)
+
         EditorEvent.RefreshScenes -> {
             viewModelScope.launch { sceneList.value = session.listScenes() }
             true
         }
+
         EditorEvent.NewScene -> {
             viewModelScope.launch { session.newScene() }
             true
         }
+
         is EditorEvent.OpenScene -> {
             viewModelScope.launch { session.openScene(event.id) }
             true
         }
+
         is EditorEvent.DeleteScene -> {
             viewModelScope.launch {
                 session.deleteScene(event.id)
@@ -123,6 +137,7 @@ class EditorViewModel(
             }
             true
         }
+
         is EditorEvent.ClearSceneById -> {
             viewModelScope.launch {
                 session.clearScene(event.id)
@@ -130,10 +145,12 @@ class EditorViewModel(
             }
             true
         }
+
         is EditorEvent.RenameSceneById -> {
             renameSceneById(event.id, event.title)
             true
         }
+
         is EditorEvent.ExportScene -> {
             viewModelScope.launch {
                 val ok = attempt { sceneTransfer.export(event.output) }
@@ -146,6 +163,7 @@ class EditorViewModel(
             }
             true
         }
+
         is EditorEvent.ImportScene -> {
             viewModelScope.launch {
                 val ok = attempt { sceneTransfer.import(event.input) }
@@ -190,7 +208,9 @@ class EditorViewModel(
         val result = parser.execute(text, customSpeakers())
         return when {
             text.isBlank() -> fail(FeldError.NoScriptPasted)
+
             result.entries.isEmpty() -> fail(FeldError.EmptyImport)
+
             else -> {
                 viewModelScope.launch {
                     result.newSpeakers.forEach { speakerRepo.save(it) }

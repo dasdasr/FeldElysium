@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.TextUnit
-import com.feldelysium.designsystem.R as DesignR
 import kotlin.math.roundToInt
+import com.feldelysium.designsystem.R as DesignR
 
 private const val TIME_FONT_SCALE = 2.3f
 

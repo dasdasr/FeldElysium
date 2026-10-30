@@ -4,13 +4,13 @@ import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.feldelysium.app.R
+import com.feldelysium.app.domain.model.settings.AppSettings
+import com.feldelysium.app.presentation.settings.SettingsEvent
+import com.feldelysium.app.presentation.settings.lockedUnless
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.feldelysium.designsystem.components.settings.FeldSettingsSection
-import com.feldelysium.app.domain.model.settings.AppSettings
-import com.feldelysium.app.presentation.settings.SettingsEvent
-import com.feldelysium.app.presentation.settings.lockedUnless
 
 @Composable
 internal fun RecordingSection(settings: AppSettings, onEvent: (SettingsEvent) -> Unit) {

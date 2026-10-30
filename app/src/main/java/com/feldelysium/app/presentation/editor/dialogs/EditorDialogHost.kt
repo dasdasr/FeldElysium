@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.app.eggs.EggEvent
 import com.feldelysium.app.eggs.ui.LocalEasterEggs
 import com.feldelysium.app.presentation.editor.EditorDialog
@@ -20,6 +19,7 @@ import com.feldelysium.app.presentation.editor.EditorViewModel
 import com.feldelysium.app.presentation.editor.caption
 import com.feldelysium.app.presentation.editor.entry.EntryEditSheet
 import com.feldelysium.app.presentation.shared.dialogs.ManageTagsDialog
+import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 
 @Composable
 internal fun EditorDialogHost(

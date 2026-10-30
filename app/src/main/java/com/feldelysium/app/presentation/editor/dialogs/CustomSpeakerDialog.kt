@@ -19,14 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.button.FeldDialogActions
-import com.feldelysium.designsystem.components.button.FeldFieldButton
-import com.feldelysium.designsystem.components.button.FeldTextButton
-import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.components.input.FeldColorSwatches
-import com.feldelysium.designsystem.components.input.FeldTextField
-import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.domain.model.SpeakerColor
 import com.feldelysium.app.domain.model.SpeakerType
@@ -35,6 +27,14 @@ import com.feldelysium.app.presentation.editor.entry.FieldLabel
 import com.feldelysium.app.presentation.editor.entry.SpeakerPhotoBlock
 import com.feldelysium.app.presentation.editor.entry.SpeakerPreview
 import com.feldelysium.app.presentation.settings.dialogs.ChooseImageDialog
+import com.feldelysium.designsystem.components.button.FeldDialogActions
+import com.feldelysium.designsystem.components.button.FeldFieldButton
+import com.feldelysium.designsystem.components.button.FeldTextButton
+import com.feldelysium.designsystem.components.container.FeldDialog
+import com.feldelysium.designsystem.components.content.FeldIconId
+import com.feldelysium.designsystem.components.input.FeldColorSwatches
+import com.feldelysium.designsystem.components.input.FeldTextField
+import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import java.util.UUID
 import kotlin.math.absoluteValue
 

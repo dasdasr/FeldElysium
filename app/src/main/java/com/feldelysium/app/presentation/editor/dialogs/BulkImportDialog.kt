@@ -21,13 +21,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.feldelysium.app.R
-import com.feldelysium.designsystem.components.button.FeldDialogActions
-import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.input.FeldTextField
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.app.domain.usecase.ParseBulkImportUseCase
+import com.feldelysium.designsystem.components.button.FeldDialogActions
+import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.components.input.FeldTextField
 
 private val ImportTextStyle: TextStyle
     @Composable get() = MaterialTheme.typography.bodyMedium.copy(
