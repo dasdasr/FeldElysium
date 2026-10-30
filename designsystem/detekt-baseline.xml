@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:DecalFactory.kt:internal fun buildDecal: Decal?</ID>
+    <ID>CyclomaticComplexMethod:DecalPlanner.kt:internal fun planDecals: DecalPlan</ID>
+    <ID>CyclomaticComplexMethod:DecalPlanner.kt:private fun pickKind: DecalKind?</ID>
+    <ID>CyclomaticComplexMethod:RoughShape.kt:RoughShape$fun buildPath: Path</ID>
+    <ID>LongMethod:DecalFactory.kt:internal fun buildDecal: Decal?</ID>
+    <ID>LongMethod:PaperMaterial.kt:fun Modifier.paperMaterialMorph: Modifier</ID>
+    <ID>LongMethod:RoughShape.kt:RoughShape$fun buildPath: Path</ID>
+    <ID>LoopWithTooManyJumpStatements:DecalPlanner.kt:while</ID>
+    <ID>LoopWithTooManyJumpStatements:FeldSlider.kt:while</ID>
+    <ID>LoopWithTooManyJumpStatements:FeldSwitch.kt:while</ID>
+    <ID>MatchingDeclarationName:DecalPlanner.kt:DecalPlan</ID>
+    <ID>MatchingDeclarationName:DesignUtils.kt:FeldPalette</ID>
+    <ID>MatchingDeclarationName:DistressMaterial.kt:DistressSpec</ID>
+    <ID>MatchingDeclarationName:DryPaperMaterial.kt:DryPaperSpec</ID>
+    <ID>MatchingDeclarationName:FeldButton.kt:FeldButtonDefaults</ID>
+    <ID>MatchingDeclarationName:FeldDistressedTitle.kt:FeldDistressedTitles</ID>
+    <ID>MatchingDeclarationName:FeldFab.kt:FeldFabVariant</ID>
+    <ID>MatchingDeclarationName:FeldIcon.kt:FeldIconId</ID>
+    <ID>MatchingDeclarationName:FeldMenu.kt:FeldMenuItem</ID>
+    <ID>MatchingDeclarationName:FeldTextField.kt:FeldRough</ID>
+    <ID>MatchingDeclarationName:FeldTheme.kt:DiscoExtraColors</ID>
+    <ID>MatchingDeclarationName:FeldToast.kt:FeldToastState</ID>
+    <ID>MatchingDeclarationName:FeldToolbar.kt:FeldToolbarItem</ID>
+    <ID>ReturnCount:DecalPlanner.kt:internal fun planDecals: DecalPlan</ID>
+    <ID>ReturnCount:DecalPlanner.kt:private fun pickKind: DecalKind?</ID>
+  </CurrentIssues>
+</SmellBaseline>

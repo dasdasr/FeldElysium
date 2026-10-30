@@ -3,7 +3,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.benchmark"
+    namespace = "com.feldelysium.benchmark"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
     compileSdk {
         version = release(37)
     }
@@ -32,6 +37,10 @@ dependencies {
     implementation(libs.androidx.espresso.core)
     implementation(libs.androidx.junit)
     implementation(libs.androidx.uiautomator)
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 androidComponents {
