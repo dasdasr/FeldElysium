@@ -33,7 +33,7 @@ import com.feldelysium.designsystem.foundation.material.PaperSpec
 import com.feldelysium.designsystem.foundation.material.paperMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.foundation.sound.feldSounds
 
 private val Cream = Color(0xFFE6DCC4)
 private val InkDark = Color(0xFF1B1612)
@@ -142,7 +142,7 @@ private fun Swatch(
     var swatchSize by remember { mutableStateOf(0.dp) }
     val density = LocalDensity.current
 
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
 
     Box(
         modifier = modifier

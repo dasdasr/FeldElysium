@@ -21,3 +21,4 @@ rootProject.name = "FeldElysium"
 include(":app")
 include(":benchmark")
 include(":designsystem")
+include(":catalog")

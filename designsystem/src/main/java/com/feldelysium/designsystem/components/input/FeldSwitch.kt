@@ -58,7 +58,7 @@ import com.feldelysium.designsystem.foundation.material.paperMaterialMorph
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.foundation.sound.feldSounds
 import com.feldelysium.designsystem.theme.FeldPalette
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -107,7 +107,7 @@ public fun FeldSwitch(
     val density = LocalDensity.current
     val haptics = rememberFeldHaptics()
     val scope = rememberCoroutineScope()
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
 
     val inset = 2.dp
     val halfInner = (width - inset * 2) / 2

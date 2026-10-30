@@ -57,7 +57,7 @@ import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.feldelysium.designsystem.foundation.decal.DecalContext
 import com.feldelysium.designsystem.foundation.decal.LocalFeldDecalContext
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.foundation.sound.feldSounds
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -77,7 +77,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
     val state by vm.state.collectAsStateWithLifecycle()
 
     val haptics = rememberFeldHaptics()
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
     val toast = rememberFeldToastState()
 
     var dialog by rememberSaveable(stateSaver = EditorDialogSaver) {
@@ -186,7 +186,7 @@ internal fun EditorContent(
     onReorder: (List<DialogueEntry>) -> Unit,
 ) {
     val haptics = rememberFeldHaptics()
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
     val eggs = LocalEasterEggs.current
 
     val decalContext = remember(state.sceneName, state.entries.size) {

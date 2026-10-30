@@ -64,7 +64,7 @@ import com.feldelysium.designsystem.components.button.FeldButtonDefaults
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.foundation.sound.feldSounds
 import com.feldelysium.designsystem.theme.Alegreya
 import com.feldelysium.designsystem.theme.feld
 import kotlinx.coroutines.flow.drop
@@ -90,7 +90,7 @@ fun LanguageDialog(current: AppLanguage, onSelect: (AppLanguage) -> Unit, onDism
     val haptics = rememberFeldHaptics()
     val scope = rememberCoroutineScope()
     val accent = MaterialTheme.feld.accent
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
     val applySeed = rememberSeed("apply")
     val pager = rememberPagerState(initialPage = Languages.indexOf(current)) { Languages.size }
 

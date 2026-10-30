@@ -25,7 +25,7 @@ import androidx.compose.ui.zIndex
 import com.feldelysium.designsystem.components.content.FeldTitleTag
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.foundation.sound.feldSounds
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
@@ -59,7 +59,7 @@ public fun FeldDialogActions(
     confirmEnabled: Boolean = true,
     seed: Int = rememberSeed(),
 ) {
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
 
     Row(
         modifier = modifier

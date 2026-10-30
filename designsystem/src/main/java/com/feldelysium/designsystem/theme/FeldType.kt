@@ -10,16 +10,16 @@ import androidx.compose.ui.unit.sp
 import com.feldelysium.designsystem.R
 
 public val Alegreya: FontFamily = FontFamily(
-    Font(R.font.alegreya_regular, FontWeight.Normal),
-    Font(R.font.alegreya_medium, FontWeight.Medium),
-    Font(R.font.alegreya_bold, FontWeight.Bold),
+    Font(R.font.feld_alegreya_regular, FontWeight.Normal),
+    Font(R.font.feld_alegreya_medium, FontWeight.Medium),
+    Font(R.font.feld_alegreya_bold, FontWeight.Bold),
 )
 
 private val RobotoCondensed = FontFamily(
-    Font(R.font.roboto_condensed_regular, FontWeight.Normal),
-    Font(R.font.roboto_condensed_regular, FontWeight.Medium),
-    Font(R.font.roboto_condensed_bold, FontWeight.Bold),
-    Font(R.font.roboto_condensed_bold, FontWeight.Black),
+    Font(R.font.feld_roboto_condensed_regular, FontWeight.Normal),
+    Font(R.font.feld_roboto_condensed_regular, FontWeight.Medium),
+    Font(R.font.feld_roboto_condensed_bold, FontWeight.Bold),
+    Font(R.font.feld_roboto_condensed_bold, FontWeight.Black),
 )
 
 internal val FeldTypography = Typography(

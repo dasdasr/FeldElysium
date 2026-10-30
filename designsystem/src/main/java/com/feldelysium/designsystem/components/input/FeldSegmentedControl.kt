@@ -54,7 +54,7 @@ import com.feldelysium.designsystem.foundation.material.paperMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
+import com.feldelysium.designsystem.foundation.sound.feldSounds
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.PI
 import kotlin.math.abs
@@ -112,7 +112,7 @@ public fun FeldSegmentedControl(
         label = "segmentPress",
     )
 
-    val sounds = rememberFeldSounds()
+    val sounds = feldSounds
 
     BoxWithConstraints(
         modifier = modifier
