@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.foundation.material.accentBrush
 import com.feldelysium.designsystem.foundation.material.agsl.SLIDER_TRACK_AGSL
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.abs
 

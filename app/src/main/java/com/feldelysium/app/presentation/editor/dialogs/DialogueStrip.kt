@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 
 private const val MAX_BARS = 40
 

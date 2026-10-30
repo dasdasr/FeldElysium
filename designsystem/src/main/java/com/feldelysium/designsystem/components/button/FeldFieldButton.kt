@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldRough
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.FeldPaper

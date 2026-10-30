@@ -46,6 +46,7 @@ import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.designsystem.foundation.material.ChipTexture
 import com.feldelysium.designsystem.foundation.material.ChipTextures
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.roundToInt
 

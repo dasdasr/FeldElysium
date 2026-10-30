@@ -25,7 +25,7 @@ import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.content.FeldDistressedTitle
 import com.feldelysium.designsystem.components.content.FeldDistressedTitles
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 
 @Composable

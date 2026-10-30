@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldSwitch
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.seed.rememberSeed

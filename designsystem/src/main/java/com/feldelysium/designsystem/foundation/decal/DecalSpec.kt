@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 
 enum class DecalKind {
     Ruler,

@@ -26,7 +26,7 @@ import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.app.domain.usecase.ParseBulkImportUseCase
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldTextField
 
 private val ImportTextStyle: TextStyle

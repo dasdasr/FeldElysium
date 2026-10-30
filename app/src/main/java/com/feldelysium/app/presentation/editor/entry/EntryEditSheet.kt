@@ -60,7 +60,7 @@ import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldHandDiamond
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldSwitch
 import com.feldelysium.designsystem.components.input.FeldTextField
 import com.feldelysium.designsystem.components.input.feldClickable

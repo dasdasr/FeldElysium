@@ -78,7 +78,7 @@ import com.feldelysium.designsystem.components.container.FeldSectionHeader
 import com.feldelysium.designsystem.components.container.entryRough
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.components.input.FeldPalette
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
