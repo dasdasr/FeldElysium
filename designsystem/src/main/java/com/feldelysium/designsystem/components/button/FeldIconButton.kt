@@ -20,7 +20,7 @@ import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.MarkerFilmSpec
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
 fun FeldIconButton(
@@ -42,7 +42,7 @@ fun FeldIconButton(
 @Preview(widthDp = 400, heightDp = 260, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldIconPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(14.dp),

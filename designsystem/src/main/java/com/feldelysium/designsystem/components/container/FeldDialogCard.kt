@@ -30,7 +30,7 @@ import com.feldelysium.designsystem.foundation.material.PaperSpec
 import com.feldelysium.designsystem.foundation.material.StickerTapeSpec
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
 fun FeldDialogCard(
@@ -102,7 +102,7 @@ fun FeldDialogCard(
 @Preview(widthDp = 380, heightDp = 360, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldDialogCardPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         FeldDialogCard(
             title = "Bulk import",
             subtitle = "Paste your dialogue lines. One per line.",

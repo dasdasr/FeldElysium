@@ -22,7 +22,7 @@ import com.feldelysium.designsystem.foundation.material.FeldTape
 import com.feldelysium.designsystem.foundation.material.distressMaterial
 import com.feldelysium.designsystem.foundation.material.stickerTapeMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 private val DistressPad = 3.dp
 
@@ -88,7 +88,7 @@ object FeldDistressedTitles {
 @Preview(widthDp = 500, heightDp = 500, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldDistressedTitlePreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(
             modifier = Modifier.padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(28.dp),

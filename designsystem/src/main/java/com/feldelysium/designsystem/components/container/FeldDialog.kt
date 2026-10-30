@@ -45,7 +45,7 @@ import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.feldelysium.designsystem.foundation.material.wornBrush
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
 fun FeldDialog(
@@ -203,7 +203,7 @@ fun FeldDialogFooter(
 @Preview(showBackground = true, backgroundColor = 0xFF111819)
 @Composable
 private fun FeldDialogPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         FeldDialog(
             title = "Create Speaker",
             eyebrow = "NEW IDENTITY",
@@ -252,7 +252,7 @@ private fun FeldDialogPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF111819)
 @Composable
 private fun FeldDialogMinimalPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         FeldDialog(
             title = "Are You Sure?",
             eyebrow = "UNSAVED CHANGES",
@@ -279,7 +279,7 @@ private fun FeldDialogMinimalPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF111819)
 @Composable
 private fun FeldDialogFooterPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(Modifier.padding(16.dp)) {
             FeldDialogFooter(
                 onCancel = {},

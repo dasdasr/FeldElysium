@@ -50,8 +50,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -68,7 +66,7 @@ import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
 import com.feldelysium.designsystem.theme.Alegreya
-import com.feldelysium.designsystem.theme.disco
+import com.feldelysium.designsystem.theme.feld
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -91,7 +89,7 @@ private val Languages = AppLanguage.entries
 fun LanguageDialog(current: AppLanguage, onSelect: (AppLanguage) -> Unit, onDismiss: () -> Unit) {
     val haptics = rememberFeldHaptics()
     val scope = rememberCoroutineScope()
-    val accent = MaterialTheme.disco.accent
+    val accent = MaterialTheme.feld.accent
     val sounds = rememberFeldSounds()
     val applySeed = rememberSeed("apply")
     val pager = rememberPagerState(initialPage = Languages.indexOf(current)) { Languages.size }
@@ -291,7 +289,6 @@ private fun TapeKey(forward: Boolean, enabled: Boolean, onClick: () -> Unit) {
     val source = remember { MutableInteractionSource() }
     val pressed by source.collectIsPressedAsState()
     val shape = RoundedCornerShape(6.dp)
-    val description = stringResource(if (forward) R.string.language_next else R.string.language_previous)
 
     Box(
         Modifier
@@ -307,8 +304,7 @@ private fun TapeKey(forward: Boolean, enabled: Boolean, onClick: () -> Unit) {
                 indication = null,
                 enabled = enabled,
                 onClick = onClick,
-            )
-            .semantics { contentDescription = description },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

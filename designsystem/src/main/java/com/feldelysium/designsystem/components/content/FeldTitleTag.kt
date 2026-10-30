@@ -20,7 +20,7 @@ import com.feldelysium.designsystem.foundation.material.FeldTape
 import com.feldelysium.designsystem.foundation.material.StickerTapeSpec
 import com.feldelysium.designsystem.foundation.material.stickerTapeMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 private val CompactCream = FeldTape.Cream.copy(
     tearAmp = 4.dp,
@@ -79,7 +79,7 @@ fun FeldTitleTag(
 @Preview(widthDp = 360, heightDp = 420, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldTitleTagPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             FeldTitleTag("Choose speaker", seed = 1)
             FeldTitleTag("Choose speaker", seed = 1, distressed = true)

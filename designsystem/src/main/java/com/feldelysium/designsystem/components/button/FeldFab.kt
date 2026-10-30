@@ -50,7 +50,7 @@ import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.accentBrush
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -280,7 +280,7 @@ private fun DrawScope.handPlus(seed: Int, strokeW: Float, arm: Float = 0.22f) {
 @Preview(widthDp = 340, heightDp = 130, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldFabPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Row(
             Modifier.padding(24.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp),

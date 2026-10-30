@@ -40,7 +40,7 @@ import com.feldelysium.designsystem.foundation.material.paperMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.random.Random
 
 object FeldRough {
@@ -214,7 +214,7 @@ fun FeldTextField(
 @Preview(showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldTextFieldPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         var text by remember { mutableStateOf("123") }
         FeldTextField(
             value = text,

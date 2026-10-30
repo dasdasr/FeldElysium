@@ -27,7 +27,7 @@ import com.feldelysium.designsystem.components.input.FeldPalette
 import com.feldelysium.designsystem.components.input.FeldSwitch
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 enum class FeldSettingStatus {
     SOON,
@@ -184,7 +184,7 @@ private fun FeldStamp(status: FeldSettingStatus) {
 @Preview(widthDp = 380, heightDp = 420, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldSettingRowPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column {
             FeldSettingSwitchRow(
                 icon = FeldIconId.Cinema,

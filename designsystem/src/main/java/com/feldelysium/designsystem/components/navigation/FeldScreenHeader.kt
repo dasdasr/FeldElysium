@@ -31,7 +31,7 @@ import com.feldelysium.designsystem.components.input.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.material.DistressSpec
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
 fun FeldScreenHeader(
@@ -145,7 +145,7 @@ fun FeldScreenHeader(
 @Preview(widthDp = 380, heightDp = 360, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldScreenHeaderPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             FeldScreenHeader(
                 title = "The final interview",

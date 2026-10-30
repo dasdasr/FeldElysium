@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.foundation.material.agsl.INK_AGSL
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.random.Random
 
 @Composable
@@ -110,7 +110,7 @@ fun FeldDivider(
 )
 @Composable
 private fun FeldDividerPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),

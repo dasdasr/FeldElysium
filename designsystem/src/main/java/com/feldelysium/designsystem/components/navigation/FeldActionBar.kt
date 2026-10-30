@@ -20,7 +20,7 @@ import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.input.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable
 fun FeldActionBar(
@@ -68,7 +68,7 @@ fun FeldActionBar(
 @Preview(widthDp = 380, heightDp = 260, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldActionBarPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
             FeldActionBar(onCancel = {}, confirmText = "Confirm", onConfirm = {}, cancelText = "Cancel", seed = 1)
             FeldActionBar(onCancel = {}, cancelText = "Cancel", seed = 7)

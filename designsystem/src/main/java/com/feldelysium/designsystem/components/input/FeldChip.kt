@@ -46,7 +46,7 @@ import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.designsystem.foundation.material.ChipTexture
 import com.feldelysium.designsystem.foundation.material.ChipTextures
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.roundToInt
 
 enum class FeldChipShape { Chamfer, Pill, Rectangle }
@@ -363,7 +363,7 @@ fun FeldChip(
 @Preview(showBackground = true, backgroundColor = 0xFF0B1011, widthDp = 360)
 @Composable
 private fun FeldChipPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(
             Modifier.padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),

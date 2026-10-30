@@ -37,7 +37,7 @@ import com.feldelysium.app.record.ScreenRecordCoordinator
 import com.feldelysium.designsystem.foundation.material.warmup.FeldWarmup
 import com.feldelysium.designsystem.foundation.seed.ProvideSeedScope
 import com.feldelysium.designsystem.foundation.sound.LocalFeldSounds
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import android.graphics.Color as AndroidColor
 
 class MainActivity : AppCompatActivity() {
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         setContent {
-            DiscoDialogueTheme {
+            FeldTheme {
                 val damageColors = DamageType.entries.map { CheckAssets.damageColor(it) }
                 FeldWarmup(extraChipColors = damageColors)
 

@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.foundation.material.accentBrush
 import com.feldelysium.designsystem.foundation.material.agsl.SLIDER_TRACK_AGSL
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.abs
 
 enum class FeldThumb { Diamond, Rectangle, Circle }
@@ -246,7 +246,7 @@ private fun Modifier.sliderThumb(kind: FeldThumb, seed: Int, press: () -> Float)
 @Preview(showBackground = true, backgroundColor = 0xFF0B1011, widthDp = 360)
 @Composable
 private fun FeldSliderPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         var a by remember { mutableFloatStateOf(0.7f) }
         var b by remember { mutableFloatStateOf(0.45f) }
         var c by remember { mutableFloatStateOf(0.8f) }

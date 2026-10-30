@@ -30,7 +30,7 @@ import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.MarkerFilmSpec
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 enum class FeldIconId {
     Back,
@@ -188,7 +188,7 @@ fun FeldDiamond(color: Color, modifier: Modifier = Modifier, size: Dp = 28.dp, o
 )
 @Composable
 private fun FeldIconPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         val icons = FeldIconId.entries
 
         Column(

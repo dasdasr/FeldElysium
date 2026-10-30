@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.ColorMatrix
 import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.CheckResult
 import com.feldelysium.app.domain.model.DamageType
-import com.feldelysium.designsystem.theme.disco
+import com.feldelysium.designsystem.theme.feld
 
 object CheckMotion {
     const val TAPE_ROLL_START_DELAY_MS = 100
@@ -76,13 +76,13 @@ object CheckAssets {
 
     @Composable
     fun resultColor(result: CheckResult) =
-        if (result == CheckResult.Success) MaterialTheme.disco.success else MaterialTheme.disco.checkFailure
+        if (result == CheckResult.Success) MaterialTheme.feld.success else MaterialTheme.feld.checkFailure
 
     fun damageLabel(type: DamageType) = if (type == DamageType.Morale) "Damaged morale" else "Damaged health"
 
     @Composable
     fun damageColor(type: DamageType) =
-        if (type == DamageType.Morale) MaterialTheme.disco.damageMorale else MaterialTheme.disco.checkFailure
+        if (type == DamageType.Morale) MaterialTheme.feld.damageMorale else MaterialTheme.feld.checkFailure
 
     fun damageIcon(): Int = R.drawable.damage_icon
 }

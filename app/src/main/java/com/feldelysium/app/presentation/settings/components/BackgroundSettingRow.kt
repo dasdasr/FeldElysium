@@ -41,7 +41,7 @@ import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -150,7 +150,7 @@ private fun VideoThumbnail(uri: String, modifier: Modifier = Modifier) {
 @Preview(widthDp = 380, heightDp = 420, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldSettingRowPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         FeldBackgroundRow(
             settings = AppSettings(),
             currentLabel = "Color",

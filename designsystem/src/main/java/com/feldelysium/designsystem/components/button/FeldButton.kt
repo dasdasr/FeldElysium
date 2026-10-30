@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.feldelysium.designsystem.foundation.material.dryPaperMaterial
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 
 object FeldButtonDefaults {
     val ContentPadding = PaddingValues(horizontal = 40.dp, vertical = 18.dp)
@@ -130,7 +130,7 @@ fun FeldButton(
 @Preview(widthDp = 400, heightDp = 260, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldButtonPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(
             Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -155,7 +155,7 @@ private fun FeldButtonPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF111819)
 @Composable
 private fun FeldDialogActionsPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -199,7 +199,7 @@ private fun FeldDialogActionsPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF111819)
 @Composable
 private fun FeldTextButtonPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -214,7 +214,7 @@ private fun FeldTextButtonPreview() {
 @Preview(showBackground = true, backgroundColor = 0xFF111819)
 @Composable
 private fun FeldLabeledBlockPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(Modifier.padding(horizontal = 16.dp)) {
             FeldLabeledBlock(
                 label = "IDENTIFICATION",

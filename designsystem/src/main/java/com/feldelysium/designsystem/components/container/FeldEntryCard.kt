@@ -82,7 +82,7 @@ import com.feldelysium.designsystem.foundation.material.wornBrush
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.exp
@@ -588,7 +588,7 @@ private fun DrawScope.drawTab(brush: Brush, seed: Int, barWidth: Float = size.wi
 @Preview(widthDp = 380, heightDp = 520, showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldEntryCardPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             FeldEntryCard(
                 "Logic",

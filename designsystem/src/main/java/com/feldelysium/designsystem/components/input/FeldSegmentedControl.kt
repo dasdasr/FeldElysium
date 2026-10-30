@@ -55,7 +55,7 @@ import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.feldelysium.designsystem.foundation.sound.rememberFeldSounds
-import com.feldelysium.designsystem.theme.DiscoDialogueTheme
+import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sin
@@ -227,7 +227,7 @@ private fun Modifier.paintedPill(seed: Int, smear: () -> Float): Modifier = draw
 @Preview(showBackground = true, backgroundColor = 0xFF0B1011)
 @Composable
 private fun FeldSegmentedControlPreview() {
-    DiscoDialogueTheme {
+    FeldTheme {
         Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             var a by remember { mutableIntStateOf(0) }
             var b by remember { mutableIntStateOf(1) }
