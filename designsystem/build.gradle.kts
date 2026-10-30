@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "com.feldelysium.designsystem"
     compileSdk = 37
+    resourcePrefix = "feld_"
 
     defaultConfig {
         minSdk = 24

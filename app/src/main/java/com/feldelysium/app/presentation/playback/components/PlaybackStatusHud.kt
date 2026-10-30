@@ -59,7 +59,7 @@ fun PlaybackStatusHud(money: String, time: String, day: String, modifier: Modifi
             modifier = Modifier.fillMaxSize(),
             content = {
                 Icon(
-                    painter = painterResource(DesignR.drawable.ic_fe_real),
+                    painter = painterResource(DesignR.drawable.feld_ic_real),
                     tint = gray(1f),
                     contentDescription = null,
                     modifier = Modifier.size(iconSize),
