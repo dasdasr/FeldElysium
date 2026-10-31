@@ -25,8 +25,8 @@ import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.content.FeldDistressedTitle
 import com.feldelysium.designsystem.components.content.FeldDistressedTitles
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.foundation.decal.FeldDecalType
+import com.feldelysium.designsystem.theme.FeldPalette
 
 @Composable
 internal fun ManagerTopBar(count: Int, onBack: () -> Unit) {

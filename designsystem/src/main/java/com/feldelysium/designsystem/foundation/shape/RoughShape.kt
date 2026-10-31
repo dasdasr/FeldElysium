@@ -63,6 +63,7 @@ internal data class RoughKey(
     val density: Float,
     val inkWidth: Float,
 )
+
 internal class RoughGeometry(val path: Path, val ink: List<InkLayer>)
 
 internal object RoughCache {
@@ -84,13 +85,99 @@ internal object RoughCache {
         }
     }
 }
+
 private data class Knot(val p: Offset, val jumpNext: Boolean = false)
 
+private fun Random.jitter(a: Float): Float = (nextFloat() * 2f - 1f) * a
+
+private class Side(
+    val start: Offset,
+    val end: Offset,
+    val dir: Offset,
+    val normal: Offset,
+    val n: Int,
+    val sideStart: Float,
+    val length: Float,
+)
+
+private class RoughEnvelope(
+    private val table: FloatArray,
+    private val stepPx: Float,
+    private val irregularity: Float,
+) {
+    fun at(s: Float): Float {
+        val x = s / (stepPx * 2.5f)
+        val i = floor(x).toInt()
+        val f = x - i
+        val u = f * f * (3f - 2f * f)
+        val a = table[i.mod(32)]
+        val b = table[(i + 1).mod(32)]
+        val v = (a + (b - a) * u).pow(1.5f)
+        return (1f - irregularity) + v * (irregularity * 1.5f)
+    }
+}
+
+private class KnotWalker(
+    private val rnd: Random,
+    private val style: RoughStyle,
+    density: Density,
+    private val envelope: RoughEnvelope,
+) {
+    private val amp = with(density) { style.roughness.toPx() }
+    private val stepPx = with(density) { style.step.toPx() }
+    private val jw = with(density) { style.jerkWidth.toPx() }
+    private val smooth = style.smoothness.coerceIn(0f, 0.95f)
+    private val maxDrift = amp * 1.5f
+    private var drift = 0f
+    private var jerkOff = 0f
+
+    fun walk(side: Side): List<Knot> = buildList {
+        for (k in 0..side.n) {
+            val t = k / side.n.toFloat()
+            val base = lerp(side.start, side.end, t)
+            drift = drift * smooth + rnd.jitter(1f) * (1f - smooth)
+            val dev = (drift * amp * envelope.at(side.sideStart + t * side.length) * 1.6f)
+                .coerceIn(-maxDrift, maxDrift)
+            val inside = k in 1 until side.n
+            val slide = if (inside) rnd.jitter(stepPx * style.slide) else 0f
+
+            if (inside && rnd.nextFloat() < style.jerkChance) {
+                add(
+                    Knot(
+                        base + side.normal * (dev + jerkOff) + side.dir * (slide - jw * 0.5f),
+                        jumpNext = true,
+                    ),
+                )
+                val sign = if (rnd.nextBoolean()) 1f else -1f
+                jerkOff = sign * (0.5f + rnd.nextFloat() * 0.5f) * amp * style.jerkAmp
+                add(Knot(base + side.normal * (dev + jerkOff) + side.dir * (slide + jw * 0.5f)))
+            } else {
+                jerkOff *= 0.6f
+                add(Knot(base + side.normal * (dev + jerkOff) + side.dir * slide))
+            }
+        }
+    }
+}
+
+private fun assemblePath(sides: List<List<Knot>>, corners: List<Offset>, torn: BooleanArray): Path = Path().apply {
+    moveTo(sides[0][0].p.x, sides[0][0].p.y)
+    for (i in 0 until 4) {
+        catmullRomTo(sides[i])
+        val ci = (i + 1) % 4
+        val c = corners[ci]
+        val next = sides[ci][0].p
+        if (torn[ci]) {
+            lineTo(c.x, c.y)
+            lineTo(next.x, next.y)
+        } else {
+            quadraticTo(c.x, c.y, next.x, next.y)
+        }
+    }
+    close()
+}
+
 @Immutable
-public class RoughShape(
-    public val seed: Int,
-    public val style: RoughStyle = RoughStyle(),
-) : Shape {
+public class RoughShape(public val seed: Int, public val style: RoughStyle = RoughStyle()) : Shape {
 
     internal fun rimPx(density: Density): Float = with(density) {
         style.roughness.toPx() * (1.5f + style.jerkAmp + style.cornerJitter) + style.inset.toPx()
@@ -103,26 +190,44 @@ public class RoughShape(
         val rim = rimPx(density)
         val stepPx = with(density) { style.step.toPx() }
         val cornerPx = with(density) { style.corner.toPx() }
-        val jw = with(density) { style.jerkWidth.toPx() }
-        val smooth = style.smoothness.coerceIn(0f, 0.95f)
 
         val rnd = Random(seed)
-        fun j(a: Float) = (rnd.nextFloat() * 2f - 1f) * a
-
-        val table = FloatArray(32) { rnd.nextFloat() }
-        fun envelope(s: Float): Float {
-            val x = s / (stepPx * 2.5f)
-            val i = floor(x).toInt()
-            val f = x - i
-            val u = f * f * (3f - 2f * f)
-            val a = table[i.mod(32)]
-            val b = table[(i + 1).mod(32)]
-            val v = (a + (b - a) * u).pow(1.5f)
-            return (1f - style.irregularity) + v * (style.irregularity * 1.5f)
-        }
-
+        val envelope = RoughEnvelope(FloatArray(32) { rnd.nextFloat() }, stepPx, style.irregularity)
         val torn = BooleanArray(4) { it == style.forceTorn || rnd.nextFloat() < style.tornChance }
+        val corners = buildCorners(size, rim, amp, torn, rnd)
+        val radius = buildRadii(cornerPx, torn, rnd)
+        val cornerScale = floatArrayOf(
+            style.leftCornerScale,
+            style.rightCornerScale,
+            style.rightCornerScale,
+            style.leftCornerScale,
+        )
 
+        val walker = KnotWalker(rnd, style, density, envelope)
+        var perimeter = 0f
+        val sides = List(4) { i ->
+            val a = corners[i]
+            val b = corners[(i + 1) % 4]
+            val length = (b - a).getDistance()
+            val dir = (b - a) / length
+            val nStart = a + dir * radius[i]
+            val nEnd = b - dir * radius[(i + 1) % 4]
+            val side = Side(
+                start = a + dir * (radius[i] * cornerScale[i]),
+                end = b - dir * (radius[(i + 1) % 4] * cornerScale[(i + 1) % 4]),
+                dir = dir,
+                normal = Offset(-dir.y, dir.x),
+                n = ((nEnd - nStart).getDistance() / stepPx).roundToInt().coerceAtLeast(1),
+                sideStart = perimeter,
+                length = length,
+            )
+            perimeter += length
+            walker.walk(side)
+        }
+        return assemblePath(sides, corners, torn)
+    }
+
+    private fun buildCorners(size: Size, rim: Float, amp: Float, torn: BooleanArray, rnd: Random): List<Offset> {
         val cj = amp * style.cornerJitter
         val sx = floatArrayOf(-1f, 1f, 1f, -1f)
         val sy = floatArrayOf(-1f, -1f, 1f, 1f)
@@ -132,95 +237,23 @@ public class RoughShape(
             Offset(size.width - rim, size.height - rim),
             Offset(rim, size.height - rim),
         )
-        val corners = base4.mapIndexed { i, o ->
+        return base4.mapIndexed { i, o ->
             val push = if (torn[i]) rim * style.tornPush else 0f
-            Offset(o.x + j(cj) + sx[i] * push, o.y + j(cj) + sy[i] * push)
+            Offset(o.x + rnd.jitter(cj) + sx[i] * push, o.y + rnd.jitter(cj) + sy[i] * push)
         }
-        val radius = FloatArray(4) { i ->
-            val r =
-                cornerPx * (1f - style.cornerVariation + rnd.nextFloat() * 2f * style.cornerVariation)
-            if (torn[i]) r * 0.15f else r
-        }
-        val cornerScale = floatArrayOf(
-            style.leftCornerScale,
-            style.rightCornerScale,
-            style.rightCornerScale,
-            style.leftCornerScale,
-        )
+    }
 
-        var perimeter = 0f
-        var drift = 0f
-        var jerkOff = 0f
-        val maxDrift = amp * 1.5f
-
-        val sides = List(4) { i ->
-            val a = corners[i]
-            val b = corners[(i + 1) % 4]
-            val length = (b - a).getDistance()
-            val dir = (b - a) / length
-            val normal = Offset(-dir.y, dir.x)
-            val start = a + dir * (radius[i] * cornerScale[i])
-            val end = b - dir * (radius[(i + 1) % 4] * cornerScale[(i + 1) % 4])
-            val nStart = a + dir * radius[i]
-            val nEnd = b - dir * radius[(i + 1) % 4]
-            val n = ((nEnd - nStart).getDistance() / stepPx).roundToInt().coerceAtLeast(1)
-            val sideStart = perimeter
-            perimeter += length
-
-            buildList {
-                for (k in 0..n) {
-                    val t = k / n.toFloat()
-                    val base = lerp(start, end, t)
-                    drift = drift * smooth + j(1f) * (1f - smooth)
-                    val dev = (drift * amp * envelope(sideStart + t * length) * 1.6f)
-                        .coerceIn(-maxDrift, maxDrift)
-                    val slide = if (k in 1 until n) j(stepPx * style.slide) else 0f
-
-                    val jerk = k in 1 until n && rnd.nextFloat() < style.jerkChance
-                    if (jerk) {
-                        add(
-                            Knot(
-                                base + normal * (dev + jerkOff) + dir * (slide - jw * 0.5f),
-                                jumpNext = true,
-                            ),
-                        )
-                        val sign = if (rnd.nextBoolean()) 1f else -1f
-                        jerkOff = sign * (0.5f + rnd.nextFloat() * 0.5f) * amp * style.jerkAmp
-                        add(Knot(base + normal * (dev + jerkOff) + dir * (slide + jw * 0.5f)))
-                    } else {
-                        jerkOff *= 0.6f
-                        add(Knot(base + normal * (dev + jerkOff) + dir * slide))
-                    }
-                }
-            }
-        }
-
-        return Path().apply {
-            moveTo(sides[0][0].p.x, sides[0][0].p.y)
-            for (i in 0 until 4) {
-                catmullRomTo(sides[i])
-                val ci = (i + 1) % 4
-                val c = corners[ci]
-                val next = sides[ci][0].p
-                if (torn[ci]) {
-                    lineTo(c.x, c.y)
-                    lineTo(next.x, next.y)
-                } else {
-                    quadraticTo(c.x, c.y, next.x, next.y)
-                }
-            }
-            close()
-        }
+    private fun buildRadii(cornerPx: Float, torn: BooleanArray, rnd: Random): FloatArray = FloatArray(4) { i ->
+        val r = cornerPx * (1f - style.cornerVariation + rnd.nextFloat() * 2f * style.cornerVariation)
+        if (torn[i]) r * 0.15f else r
     }
 
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
         Outline.Generic(buildPath(size, density))
 
-    override fun equals(other: Any?): Boolean =
-        other is RoughShape && seed == other.seed && style == other.style
+    override fun equals(other: Any?): Boolean = other is RoughShape && seed == other.seed && style == other.style
 
     override fun hashCode(): Int = 31 * seed + style.hashCode()
-
 }
 
 internal class InkLayer(val path: Path, val alpha: Float)

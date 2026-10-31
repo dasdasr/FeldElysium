@@ -25,7 +25,9 @@ internal object NoFeldSounds : FeldSounds {
     override fun tab(seed: Int) = Unit
 }
 
-public val LocalFeldSounds: ProvidableCompositionLocal<FeldSounds> = staticCompositionLocalOf<FeldSounds> { NoFeldSounds }
+public val LocalFeldSounds: ProvidableCompositionLocal<FeldSounds> = staticCompositionLocalOf<FeldSounds> {
+    NoFeldSounds
+}
 
 public val feldSounds: FeldSounds
     @Composable

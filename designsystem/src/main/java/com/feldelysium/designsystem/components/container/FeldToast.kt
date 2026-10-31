@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.components.content.FeldDiamond
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.feldelysium.designsystem.theme.FeldPalette
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -67,7 +67,12 @@ internal fun FeldToast(
 
 @Stable
 public class FeldToastState {
-    public class Message(public val id: Long, public val text: String, public val accent: Color?, public val durationMillis: Long)
+    public class Message(
+        public val id: Long,
+        public val text: String,
+        public val accent: Color?,
+        public val durationMillis: Long,
+    )
 
     public var current: Message? by mutableStateOf<Message?>(null)
         private set

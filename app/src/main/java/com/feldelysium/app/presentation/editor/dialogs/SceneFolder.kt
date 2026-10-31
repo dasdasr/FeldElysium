@@ -48,11 +48,11 @@ import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldMenu
 import com.feldelysium.designsystem.components.input.FeldMenuItem
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
+import com.feldelysium.designsystem.theme.FeldPalette
 
 private val FeaturedHeight = 214.dp
 private val CompactHeight = 188.dp

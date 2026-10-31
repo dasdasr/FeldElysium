@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalGraphicsContext
 import androidx.compose.ui.unit.dp
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.foundation.material.ChipTextures
 import com.feldelysium.designsystem.foundation.material.DistressSpec
 import com.feldelysium.designsystem.foundation.material.FeldMarker
@@ -38,6 +37,7 @@ import com.feldelysium.designsystem.foundation.material.markerFilmMaterial
 import com.feldelysium.designsystem.foundation.material.paperMaterial
 import com.feldelysium.designsystem.foundation.shape.RoughShape
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.feldelysium.designsystem.theme.FeldPalette
 
 /**
  * Pre-compiles AGSL shaders and pre-bakes chip textures so the first real screen doesn't jank.

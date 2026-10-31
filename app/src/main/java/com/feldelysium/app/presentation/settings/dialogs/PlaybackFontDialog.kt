@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.sp
 import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.app.presentation.theme.FONT_CUSTOM
+import com.feldelysium.app.presentation.theme.SystemFontEntry
+import com.feldelysium.app.presentation.theme.loadSystemFonts
 import com.feldelysium.app.presentation.theme.rememberCustomFontFamily
 import com.feldelysium.app.presentation.theme.rememberPlaybackFontFamily
 import com.feldelysium.designsystem.components.button.FeldButtonDefaults
@@ -62,13 +64,11 @@ import com.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.feldelysium.designsystem.components.container.FeldEntryCard
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.material.FeldMarker
 import com.feldelysium.designsystem.theme.Alegreya
-import com.feldelysium.app.presentation.theme.SystemFontEntry
-import com.feldelysium.app.presentation.theme.loadSystemFonts
+import com.feldelysium.designsystem.theme.FeldPalette
 import java.io.File
 
 private val SampleTexture: Int? = null

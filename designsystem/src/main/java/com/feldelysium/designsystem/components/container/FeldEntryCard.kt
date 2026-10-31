@@ -221,8 +221,8 @@ public fun FeldEntryCard(
             val fresh = isDragging && now - sway.velocityStamp < SWAY_VELOCITY_TTL_NANOS
             val velocity = if (fresh) sway.velocityY else 0f
             val torque = -SWAY_STIFFNESS * sway.angle -
-                    SWAY_DAMPING * angularVelocity +
-                    SWAY_GAIN * velocity * sway.dir
+                SWAY_DAMPING * angularVelocity +
+                SWAY_GAIN * velocity * sway.dir
 
             angularVelocity += torque * dt
             sway.angle = (sway.angle + angularVelocity * dt)
@@ -486,7 +486,13 @@ private class StampLook(seed: Int) {
 }
 
 @Composable
-public fun FeldHandDiamond(color: Color, seed: Int, modifier: Modifier = Modifier, size: Dp = 22.dp, brush: Brush? = null) {
+public fun FeldHandDiamond(
+    color: Color,
+    seed: Int,
+    modifier: Modifier = Modifier,
+    size: Dp = 22.dp,
+    brush: Brush? = null,
+) {
     val density = LocalDensity.current.density
     val b = brush ?: remember(color, seed, density) { cachedDiamondBrush(color, seed, density) }
     val j = remember(seed) {

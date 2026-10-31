@@ -52,10 +52,10 @@ import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldHandDiamond
 import com.feldelysium.designsystem.components.container.drawDiamondBeat
 import com.feldelysium.designsystem.components.container.entryRough
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.material.wornBrush
+import com.feldelysium.designsystem.theme.FeldPalette
 
 object SpeakerDossierAssets {
     @DrawableRes

@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.feldelysium.designsystem.theme
 
 import androidx.compose.material3.MaterialTheme

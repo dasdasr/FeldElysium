@@ -38,13 +38,13 @@ import com.feldelysium.designsystem.components.button.FeldIconButton
 import com.feldelysium.designsystem.components.content.FeldDistressedTitle
 import com.feldelysium.designsystem.components.content.FeldDistressedTitles
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.decal.DecalSpec
 import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.designsystem.foundation.material.DryPaperSpec
 import com.feldelysium.designsystem.foundation.material.wornBrush
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 
 @Composable

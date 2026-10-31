@@ -163,11 +163,7 @@ private fun Modifier.distressBaked(spec: DistressSpec, seed: Int, bakeKey: Any):
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun RuntimeShader.applyDistressUniforms(
-    spec: DistressSpec,
-    seed: Int,
-    density: Density,
-) {
+private fun RuntimeShader.applyDistressUniforms(spec: DistressSpec, seed: Int, density: Density) {
     with(density) {
         setFloatUniform("seed", seed.mod(97).toFloat())
         setFloatUniform("strength", spec.strength)

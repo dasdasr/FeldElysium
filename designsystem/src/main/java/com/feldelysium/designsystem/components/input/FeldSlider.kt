@@ -47,7 +47,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.setProgress
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.feldelysium.designsystem.foundation.material.accentBrush
 import com.feldelysium.designsystem.foundation.material.agsl.SLIDER_TRACK_AGSL
@@ -56,16 +55,7 @@ import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlin.math.abs
 
-public enum class FeldThumb { Diamond, Rectangle, Circle }
-
 private val OffColor = Color(0xFF1F2322)
-private val ThumbRim = Color(0xFF3A3128)
-
-private fun FeldThumb.size(): DpSize = when (this) {
-    FeldThumb.Diamond -> DpSize(26.dp, 26.dp)
-    FeldThumb.Rectangle -> DpSize(12.dp, 26.dp)
-    FeldThumb.Circle -> DpSize(22.dp, 22.dp)
-}
 
 @Composable
 public fun FeldSlider(

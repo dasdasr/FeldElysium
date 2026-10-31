@@ -215,6 +215,7 @@ public object FeldPaper {
     )
 }
 
+@Suppress("LongMethod")
 internal fun Modifier.paperMaterialMorph(
     shape: RoughShape,
     from: PaperSpec,

@@ -22,8 +22,8 @@ import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.SpeakerType
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.input.FeldChip
 import com.feldelysium.designsystem.components.input.FeldAccentColors
+import com.feldelysium.designsystem.components.input.FeldChip
 import com.feldelysium.designsystem.components.input.FeldTextField
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -11,6 +11,7 @@ import com.feldelysium.app.presentation.settings.SettingsEvent
 import com.feldelysium.app.presentation.settings.backgroundLabel
 import com.feldelysium.app.presentation.settings.components.FeldBackgroundRow
 import com.feldelysium.app.presentation.theme.FONT_CUSTOM
+import com.feldelysium.app.presentation.theme.prettyFontName
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.settings.FeldSettingRow
 import com.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
@@ -18,7 +19,6 @@ import com.feldelysium.designsystem.components.settings.FeldSettingValueRow
 import com.feldelysium.designsystem.components.settings.FeldSettingsDivider
 import com.feldelysium.designsystem.components.settings.FeldSettingsSection
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
-import com.feldelysium.app.presentation.theme.prettyFontName
 import java.io.File
 
 @Composable

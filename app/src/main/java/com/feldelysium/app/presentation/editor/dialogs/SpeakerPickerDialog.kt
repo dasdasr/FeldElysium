@@ -1,7 +1,6 @@
 package com.feldelysium.app.presentation.editor.dialogs
 
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.LruCache
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
@@ -65,6 +64,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.net.toUri
 import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.domain.model.SpeakerType
@@ -78,19 +78,18 @@ import com.feldelysium.designsystem.components.container.FeldSectionHeader
 import com.feldelysium.designsystem.components.container.entryRough
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.components.navigation.FeldScreenHeader
 import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.shape.RoughStyle
+import com.feldelysium.designsystem.theme.FeldPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
-import androidx.core.net.toUri
 
 private data class SpeakerGroup(val type: SpeakerType, val title: String, val items: List<Speaker>)
 

@@ -39,8 +39,8 @@ import com.feldelysium.app.domain.model.settings.BackgroundKind
 import com.feldelysium.app.presentation.playback.components.BackgroundVideo
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
-import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.components.input.feldClickable
+import com.feldelysium.designsystem.theme.FeldPalette
 import com.feldelysium.designsystem.theme.FeldTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

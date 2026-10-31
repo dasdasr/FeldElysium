@@ -21,8 +21,8 @@ import com.feldelysium.app.domain.model.DamageType
 import com.feldelysium.app.domain.model.SkillCheck
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.presentation.playback.components.CheckAssets
-import com.feldelysium.designsystem.components.input.FeldChip
 import com.feldelysium.designsystem.components.input.FeldAccentColors
+import com.feldelysium.designsystem.components.input.FeldChip
 import com.feldelysium.designsystem.components.input.FeldChipShape
 
 @OptIn(ExperimentalLayoutApi::class)
