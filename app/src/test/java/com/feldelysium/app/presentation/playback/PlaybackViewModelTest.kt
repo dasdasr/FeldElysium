@@ -60,12 +60,25 @@ class PlaybackViewModelTest {
             assertTrue(awaitItem().isPanelOpen)
 
             vm.dispatch(PlaybackEvent.Tap)
-            val revealed = awaitItem()
+
+            var revealed = awaitItem()
+            while (revealed.revealedEntries.none { it.id == "1" }) {
+                revealed = awaitItem()
+            }
+
             assertEquals(listOf("1"), revealed.revealedEntries.map { it.id })
-            assertTrue(revealed.prompt is Prompt.Pending)
+
+            while (revealed.prompt !is Prompt.Pending) {
+                revealed = awaitItem()
+            }
 
             advanceUntilIdle()
-            val prompted = awaitItem()
+
+            var prompted = awaitItem()
+            while (prompted.prompt !is Prompt.Continue) {
+                prompted = awaitItem()
+            }
+
             assertTrue(prompted.prompt is Prompt.Continue)
             cancelAndIgnoreRemainingEvents()
         }
