@@ -3,42 +3,17 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>CyclomaticComplexMethod:DataStoreSpeakerRepository.kt:DataStoreSpeakerRepository$override suspend fun importPack: ImportReport</ID>
-    <ID>CyclomaticComplexMethod:DecalFactory.kt:internal fun buildDecal: Decal?</ID>
-    <ID>CyclomaticComplexMethod:DecalPlanner.kt:internal fun planDecals: DecalPlan</ID>
-    <ID>CyclomaticComplexMethod:DecalPlanner.kt:private fun pickKind: DecalKind?</ID>
     <ID>CyclomaticComplexMethod:EasterEggs.kt:EasterEggs$fun report: Boolean</ID>
-    <ID>CyclomaticComplexMethod:RoughShape.kt:RoughShape$fun buildPath: Path</ID>
     <ID>CyclomaticComplexMethod:SpeakerPackIO.kt:SpeakerPackIO$fun read: SpeakerDocument</ID>
     <ID>CyclomaticComplexMethod:SpeakerPackImporter.kt:SpeakerPackImporter$private fun restoreIcon: String?</ID>
     <ID>LongMethod:DataStoreSpeakerRepository.kt:DataStoreSpeakerRepository$override suspend fun importPack: ImportReport</ID>
-    <ID>LongMethod:DecalFactory.kt:internal fun buildDecal: Decal?</ID>
     <ID>LongMethod:EggToastCard.kt:internal fun Modifier.toastCard: Modifier</ID>
-    <ID>LongMethod:PaperMaterial.kt:fun Modifier.paperMaterialMorph: Modifier</ID>
-    <ID>LongMethod:RoughShape.kt:RoughShape$fun buildPath: Path</ID>
-    <ID>LoopWithTooManyJumpStatements:DecalPlanner.kt:while</ID>
     <ID>LoopWithTooManyJumpStatements:EasterEggs.kt:EasterEggs$for</ID>
-    <ID>LoopWithTooManyJumpStatements:FeldSlider.kt:while</ID>
-    <ID>LoopWithTooManyJumpStatements:FeldSwitch.kt:while</ID>
     <ID>LoopWithTooManyJumpStatements:SpeakerPackIO.kt:SpeakerPackIO$while</ID>
-    <ID>MatchingDeclarationName:DecalPlanner.kt:DecalPlan</ID>
-    <ID>MatchingDeclarationName:DesignUtils.kt:FeldPalette</ID>
-    <ID>MatchingDeclarationName:DistressMaterial.kt:DistressSpec</ID>
-    <ID>MatchingDeclarationName:DryPaperMaterial.kt:DryPaperSpec</ID>
     <ID>MatchingDeclarationName:EggToastDecor.kt:ArcSeg</ID>
-    <ID>MatchingDeclarationName:FeldButton.kt:FeldButtonDefaults</ID>
-    <ID>MatchingDeclarationName:FeldDistressedTitle.kt:FeldDistressedTitles</ID>
-    <ID>MatchingDeclarationName:FeldFab.kt:FeldFabVariant</ID>
-    <ID>MatchingDeclarationName:FeldIcon.kt:FeldIconId</ID>
-    <ID>MatchingDeclarationName:FeldMenu.kt:FeldMenuItem</ID>
-    <ID>MatchingDeclarationName:FeldTextField.kt:FeldRough</ID>
-    <ID>MatchingDeclarationName:FeldTheme.kt:DiscoExtraColors</ID>
-    <ID>MatchingDeclarationName:FeldToast.kt:FeldToastState</ID>
-    <ID>MatchingDeclarationName:FeldToolbar.kt:FeldToolbarItem</ID>
     <ID>MatchingDeclarationName:SpeakerDossier.kt:SpeakerDossierAssets</ID>
     <ID>NestedBlockDepth:SpeakerPackIO.kt:SpeakerPackIO$fun read: SpeakerDocument</ID>
     <ID>NestedBlockDepth:SpeakerPackImporter.kt:SpeakerPackImporter$private fun restoreIcon: String?</ID>
-    <ID>ReturnCount:DecalPlanner.kt:internal fun planDecals: DecalPlan</ID>
-    <ID>ReturnCount:DecalPlanner.kt:private fun pickKind: DecalKind?</ID>
     <ID>ReturnCount:EasterEggs.kt:EasterEggs$fun report: Boolean</ID>
     <ID>ReturnCount:EasterEggs.kt:EasterEggs$private fun isEligible: Boolean</ID>
     <ID>ReturnCount:EasterEggs.kt:EasterEggs$private fun pickReply: Pair&lt;Int, EggReply&gt;?</ID>

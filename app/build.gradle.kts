@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.feldelysium"
+    namespace = "com.feldelysium.app"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.feldelysium"
+        applicationId = "com.feldelysium.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 1
         versionName = System.getenv("VERSION_NAME") ?: "1.0-local"
     }
@@ -56,25 +56,32 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     composeCompiler {}
 
     lint {
         abortOnError = true
+        checkReleaseBuilds = true
     }
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 detekt {
     buildUponDefaultConfig = true
     config.setFrom("$rootDir/config/detekt/detekt.yml")
+    baseline = file("detekt-baseline.xml")
     parallel = true
 }
 
 dependencies {
 
+    implementation(project(":designsystem"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.animation.core)
@@ -101,6 +108,8 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     detektPlugins(libs.detekt.rules.ktlint.wrapper)
