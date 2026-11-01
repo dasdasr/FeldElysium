@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -49,12 +48,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.feldelysium.app.R
 import com.feldelysium.designsystem.components.container.FeldCard
-import com.feldelysium.designsystem.components.container.FeldHandDiamond
-import com.feldelysium.designsystem.components.container.drawDiamondBeat
-import com.feldelysium.designsystem.components.container.entryRough
+import com.feldelysium.designsystem.components.container.FeldWornDiamond
+import com.feldelysium.designsystem.components.container.noteRough
 import com.feldelysium.designsystem.foundation.decal.FeldDecalType
 import com.feldelysium.designsystem.foundation.material.FeldPaper
-import com.feldelysium.designsystem.foundation.material.wornBrush
+import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldPalette
 
 object SpeakerDossierAssets {
@@ -91,6 +89,7 @@ fun SpeakerPhotoBlock(
     accent: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    seed: Int = rememberSeed(),
 ) {
     val a = SpeakerDossierAssets
     val photoSource = remember { MutableInteractionSource() }
@@ -138,7 +137,7 @@ fun SpeakerPhotoBlock(
                     )
 
                     else -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        FeldHandDiamond(accent, 3, size = 30.dp)
+                        FeldWornDiamond(accent, seed = seed, size = 30.dp)
                     }
                 }
 
@@ -158,13 +157,8 @@ fun SpeakerPhotoBlock(
 
 @Composable
 fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = Modifier) {
-    val rough = remember(seed) { entryRough(seed) }
+    val rough = remember(seed) { noteRough(seed) }
     val a = SpeakerDossierAssets
-    val density = LocalDensity.current.density
-
-    val ringBrush = remember(color, seed, density) {
-        wornBrush(color, seed + 2, density, wear = 0.4f, scale = 10f)
-    }
 
     Box(modifier.fillMaxWidth()) {
         FeldCard(
@@ -172,7 +166,7 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
                 .fillMaxWidth()
                 .padding(top = 8.dp),
             seed = seed,
-            spec = FeldPaper.Entry,
+            spec = FeldPaper.Note,
             rough = rough,
             ambient = 0.3f,
             contentPadding = PaddingValues(
@@ -215,14 +209,7 @@ fun SpeakerPreview(name: String, color: Color, seed: Int, modifier: Modifier = M
                             .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(22.dp)
-                                .drawBehind { drawDiamondBeat(brush = ringBrush, hold = 0f, t = null) },
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            FeldHandDiamond(color = color, seed = seed, size = 22.dp)
-                        }
+                        FeldWornDiamond(color = color, seed = seed, size = 22.dp, ring = 1f)
 
                         Spacer(Modifier.width(14.dp))
 

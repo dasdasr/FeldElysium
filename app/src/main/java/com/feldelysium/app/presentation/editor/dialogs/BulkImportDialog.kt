@@ -71,7 +71,6 @@ fun BulkImportDialog(
     FeldDialog(
         title = stringResource(R.string.bulk_import_title),
         eyebrow = stringResource(R.string.bulk_import_eyebrow),
-        subtitle = stringResource(R.string.bulk_import_subtitle),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(

@@ -57,7 +57,7 @@ import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.button.FeldIconButton
 import com.feldelysium.designsystem.components.button.FeldLabeledBlock
 import com.feldelysium.designsystem.components.container.FeldCard
-import com.feldelysium.designsystem.components.container.FeldHandDiamond
+import com.feldelysium.designsystem.components.container.FeldWornDiamond
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldSwitch
@@ -169,7 +169,7 @@ fun EntryEditSheet(
                 .heightIn(max = 840.dp)
                 .imePadding()
                 .bleedBottom(SheetBleed),
-            spec = FeldPaper.Entry,
+            spec = FeldPaper.Note,
             rough = SheetRough,
             contentPadding = PaddingValues(
                 start = 20.dp,
@@ -372,7 +372,7 @@ private fun SpeakerHeader(speaker: Speaker?, onClick: (() -> Unit)?, onEdit: (()
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FeldHandDiamond(color, speaker?.id.hashCode(), size = 28.dp)
+        FeldWornDiamond(color, seed = speaker?.id.hashCode(), size = 28.dp)
 
         Spacer(Modifier.width(14.dp))
 
@@ -467,9 +467,11 @@ private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> 
                     tint = FeldPalette.Muted,
                     modifier = Modifier
                         .size(24.dp)
-                        .feldClickable {
-                            onChange(value.copy(chosenIndex = i))
-                        },
+                        .feldClickable(
+                            {
+                                onChange(value.copy(chosenIndex = i))
+                            },
+                        ),
                 )
 
                 Spacer(Modifier.width(8.dp))
@@ -515,7 +517,7 @@ private fun ReplyOptionsEditor(value: ReplyChoices, onChange: (ReplyChoices) -> 
                 style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.4.sp),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 modifier = Modifier
-                    .feldClickable { onChange(value.copy(options = value.options + "")) }
+                    .feldClickable(onClick = { onChange(value.copy(options = value.options + "")) })
                     .padding(vertical = 8.dp),
             )
         }

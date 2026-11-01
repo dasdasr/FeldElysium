@@ -111,7 +111,6 @@ fun ChooseImageDialog(
     FeldDialog(
         title = stringResource(R.string.choose_icon_title),
         eyebrow = stringResource(R.string.choose_icon_eyebrow),
-        subtitle = stringResource(R.string.choose_icon_subtitle),
         onDismiss = onDismiss,
         footer = {
             FeldDialogActions(

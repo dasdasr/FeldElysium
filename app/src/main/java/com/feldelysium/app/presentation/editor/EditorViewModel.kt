@@ -226,6 +226,7 @@ class EditorViewModel(
             session.rename(title)
             viewModelScope.launch {
                 session.save()
+                sceneList.value = session.listScenes()
                 notify(R.string.message_scene_saved)
             }
             return
@@ -293,6 +294,8 @@ private fun editorUiState(
         allSpeakers = speakers,
         pickerSpeakers = if (hideSamples) speakers.filterNot { it.isSample } else speakers,
         tags = tags,
-        scenes = scenes,
+        scenes = scenes.map {
+            if (it.id == scene.id) it.copy(title = scene.title, lines = scene.entries.size) else it
+        },
     )
 }

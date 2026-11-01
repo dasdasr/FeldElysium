@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import com.feldelysium.app.R
+import com.feldelysium.app.presentation.shared.AccentTeal
 import com.feldelysium.app.presentation.shared.language.AppLanguage
 import com.feldelysium.app.presentation.shared.language.displayName
 import com.feldelysium.designsystem.components.button.FeldButton
@@ -66,7 +67,6 @@ import com.feldelysium.designsystem.foundation.haptics.rememberFeldHaptics
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.foundation.sound.feldSounds
 import com.feldelysium.designsystem.theme.Alegreya
-import com.feldelysium.designsystem.theme.feld
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -89,7 +89,7 @@ private val Languages = AppLanguage.entries
 fun LanguageDialog(current: AppLanguage, onSelect: (AppLanguage) -> Unit, onDismiss: () -> Unit) {
     val haptics = rememberFeldHaptics()
     val scope = rememberCoroutineScope()
-    val accent = MaterialTheme.feld.accent
+    val accent = AccentTeal
     val sounds = feldSounds
     val applySeed = rememberSeed("apply")
     val pager = rememberPagerState(initialPage = Languages.indexOf(current)) { Languages.size }

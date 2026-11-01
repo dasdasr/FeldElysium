@@ -28,12 +28,13 @@ import com.feldelysium.app.presentation.playback.components.iconRes
 import com.feldelysium.app.presentation.playback.components.label
 import com.feldelysium.app.presentation.playback.components.mirrored
 import com.feldelysium.app.presentation.playback.components.tint
+import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.input.feldClickable
 import com.feldelysium.designsystem.foundation.decal.FeldDecalType
+import com.feldelysium.designsystem.foundation.seed.rememberSeed
 import com.feldelysium.designsystem.theme.FeldPalette
 
 @Composable
@@ -44,19 +45,20 @@ fun BarIconsDialog(
     onCycleInventory: (InventorySlot) -> Unit,
     onReset: () -> Unit,
     onDismiss: () -> Unit,
+    seed: Int = rememberSeed(),
 ) {
     FeldDialog(
         title = stringResource(R.string.settings_panel_icons_title),
         eyebrow = stringResource(R.string.settings_playback_section),
         onDismiss = onDismiss,
-        seed = 21,
+        seed = seed,
         footer = {
-            FeldDialogFooter(
-                onReset = onReset,
-                onCancel = onDismiss,
-                cancelLabel = stringResource(R.string.common_cancel).uppercase(),
+            FeldDialogActions(
+                onConfirm = onDismiss,
+                onCancel = onReset,
+                cancelLabel = stringResource(R.string.common_reset).uppercase(),
                 confirmLabel = stringResource(R.string.common_ok),
-                seed = 22,
+                seed = seed,
             )
         },
     ) {
@@ -67,7 +69,7 @@ fun BarIconsDialog(
                 IconTile(
                     caption = state.label,
                     captionColor = state.tint,
-                    seed = 30 + i,
+                    seed = seed + i,
                     onClick = { onCycleIcon(slot) },
                     modifier = Modifier.weight(1f),
                 ) {
@@ -77,7 +79,7 @@ fun BarIconsDialog(
         }
 
         Spacer(Modifier.height(20.dp))
-        FeldDivider(seed = 41)
+        FeldDivider(seed = seed + 11)
         Spacer(Modifier.height(16.dp))
 
         SectionLabel(
@@ -90,7 +92,7 @@ fun BarIconsDialog(
                 IconTile(
                     caption = icon.name,
                     captionColor = BarIconState.INACTIVE.tint,
-                    seed = 50 + i,
+                    seed = seed + (i * 10),
                     onClick = { onCycleInventory(slot) },
                     modifier = Modifier.weight(1f),
                 ) {
@@ -132,12 +134,19 @@ private fun IconTile(
         seed = seed,
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 14.dp),
     ) {
-        Box(Modifier.fillMaxWidth().height(64.dp), contentAlignment = Alignment.Center) { glyph() }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(64.dp),
+            contentAlignment = Alignment.Center,
+        ) { glyph() }
         Text(
             caption,
             style = FeldDecalType.Base.copy(fontSize = 10.sp, letterSpacing = 1.4.sp, textAlign = TextAlign.Center),
             color = captionColor,
-            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
         )
     }
 }

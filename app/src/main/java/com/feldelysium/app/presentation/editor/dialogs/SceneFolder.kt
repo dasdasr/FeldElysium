@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.SceneInfo
 import com.feldelysium.designsystem.components.container.FeldCard
-import com.feldelysium.designsystem.components.container.entryRough
+import com.feldelysium.designsystem.components.container.noteRough
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldMenu
@@ -85,7 +85,7 @@ internal fun SceneFolder(
     onDelete: () -> Unit,
 ) {
     val seed = scene.id.hashCode()
-    val rough = remember(seed) { entryRough(seed) }
+    val rough = remember(seed) { noteRough(seed) }
     val orange = rememberOrangeBrush(seed + 5)
     val renameLabel = stringResource(R.string.scenes_menu_rename)
 
@@ -135,7 +135,7 @@ internal fun SceneFolder(
                 .fillMaxWidth()
                 .height(if (featured) FeaturedHeight else CompactHeight),
             seed = seed,
-            spec = if (featured) CreamSheet else FeldPaper.Entry,
+            spec = if (featured) CreamSheet else FeldPaper.Note,
             rough = rough,
             contentPadding = PaddingValues(
                 start = if (featured) 46.dp else 14.dp,

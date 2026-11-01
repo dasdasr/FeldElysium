@@ -58,10 +58,9 @@ import com.feldelysium.app.presentation.theme.SystemFontEntry
 import com.feldelysium.app.presentation.theme.loadSystemFonts
 import com.feldelysium.app.presentation.theme.rememberCustomFontFamily
 import com.feldelysium.app.presentation.theme.rememberPlaybackFontFamily
-import com.feldelysium.designsystem.components.button.FeldButtonDefaults
+import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.container.FeldDialogFooter
-import com.feldelysium.designsystem.components.container.FeldEntryCard
+import com.feldelysium.designsystem.components.container.FeldNoteCard
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.feldClickable
@@ -146,18 +145,17 @@ fun PlaybackFontDialog(
     FeldDialog(
         title = stringResource(R.string.settings_typeface_title),
         eyebrow = stringResource(R.string.settings_playback_section),
-        subtitle = stringResource(R.string.font_dialog_subtitle),
         onDismiss = onDismiss,
         modifier = modifier,
         footer = {
-            FeldDialogFooter(
-                onReset = {
+            FeldDialogActions(
+                onConfirm = onDismiss,
+                onCancel = {
                     haptics.thud()
                     onReset()
                 },
-                onCancel = onDismiss,
                 confirmLabel = stringResource(R.string.common_done),
-                buttonSpec = FeldButtonDefaults.Cream,
+                cancelLabel = stringResource(R.string.common_reset),
             )
         },
     ) {
@@ -270,11 +268,11 @@ private fun SampleCard(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier.graphicsLayer { rotationZ = tilt }) {
-        FeldEntryCard(
-            speakerName = stringResource(sample.speaker),
-            speakerColor = sample.color,
+        FeldNoteCard(
+            title = stringResource(sample.speaker),
+            accent = sample.color,
             text = stringResource(sample.text),
-            number = number,
+            index = number,
             ambient = 0.7f,
             seed = seed,
             fontFamily = family,
