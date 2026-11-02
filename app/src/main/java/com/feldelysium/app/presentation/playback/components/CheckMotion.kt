@@ -2,7 +2,6 @@ package com.feldelysium.app.presentation.playback.components
 
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.Easing
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
@@ -10,7 +9,7 @@ import androidx.compose.ui.graphics.ColorMatrix
 import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.CheckResult
 import com.feldelysium.app.domain.model.DamageType
-import com.feldelysium.designsystem.theme.feld
+import com.feldelysium.app.presentation.shared.AppColors
 
 object CheckMotion {
     const val TAPE_ROLL_START_DELAY_MS = 100
@@ -75,14 +74,12 @@ object CheckAssets {
     fun label(result: CheckResult) = if (result == CheckResult.Success) "Check success" else "Check failure"
 
     @Composable
-    fun resultColor(result: CheckResult) =
-        if (result == CheckResult.Success) MaterialTheme.feld.success else MaterialTheme.feld.checkFailure
+    fun resultColor(result: CheckResult) = if (result == CheckResult.Success) AppColors.Success else AppColors.Failure
 
     fun damageLabel(type: DamageType) = if (type == DamageType.Morale) "Damaged morale" else "Damaged health"
 
     @Composable
-    fun damageColor(type: DamageType) =
-        if (type == DamageType.Morale) MaterialTheme.feld.damageMorale else MaterialTheme.feld.checkFailure
+    fun damageColor(type: DamageType) = if (type == DamageType.Morale) AppColors.DamageMorale else AppColors.Failure
 
     fun damageIcon(): Int = R.drawable.damage_icon
 }

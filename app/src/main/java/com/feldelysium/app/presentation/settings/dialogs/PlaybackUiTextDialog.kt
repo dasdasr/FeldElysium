@@ -18,8 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.settings.AppSettings
+import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
@@ -49,18 +49,17 @@ fun PlaybackUiTextDialog(
     FeldDialog(
         title = stringResource(R.string.playback_ui_title),
         eyebrow = stringResource(R.string.playback_ui_eyebrow),
-        subtitle = stringResource(R.string.playback_ui_subtitle),
         onDismiss = onDismiss,
         seed = seed,
         footer = {
-            FeldDialogFooter(
-                onReset = {
+            FeldDialogActions(
+                onConfirm = onDismiss,
+                onCancel = {
                     moneyText = defaults.playbackMoney
                     timeText = defaults.playbackTime
                     dayText = defaults.playbackDay
                     onReset()
                 },
-                onCancel = onDismiss,
                 cancelLabel = stringResource(R.string.common_reset),
                 confirmLabel = stringResource(R.string.common_ok),
                 seed = rememberSeed("footer"),

@@ -37,6 +37,7 @@ import com.feldelysium.app.domain.model.DialogueEntry
 import com.feldelysium.app.eggs.EggEvent
 import com.feldelysium.app.eggs.EggScreen
 import com.feldelysium.app.eggs.ui.LocalEasterEggs
+import com.feldelysium.app.navigation.rememberResumedGuard
 import com.feldelysium.app.presentation.editor.dialogs.EditorDialogHost
 import com.feldelysium.app.presentation.editor.sections.EditorToolbar
 import com.feldelysium.app.presentation.editor.sections.EmptyState
@@ -79,6 +80,7 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
     val haptics = rememberFeldHaptics()
     val sounds = feldSounds
     val toast = rememberFeldToastState()
+    val whenResumed = rememberResumedGuard()
 
     var dialog by rememberSaveable(stateSaver = EditorDialogSaver) {
         mutableStateOf<EditorDialog>(EditorDialog.None)
@@ -121,30 +123,57 @@ fun EditorScreen(onNavigateToPlayback: () -> Unit, onNavigateToSettings: () -> U
         state = state,
         fontFamily = fontFamily,
         toast = toast,
-        onOpenSceneManager = { dialog = EditorDialog.SceneManager },
-        onOpenImport = { dialog = EditorDialog.ImportLines },
-        onPlayback = {
-            haptics.confirm()
-            if (settings.exportEnabled) {
-                requestRecord(
-                    settings.exportAudio,
-                    onNavigateToPlayback,
-                    {
-                        toast.show(
-                            FeldError.RecordDenied.toastText(activity),
-                            durationMillis = 4000L,
-                        )
-                    },
-                )
-            } else {
-                onNavigateToPlayback()
+        onOpenSceneManager = {
+            whenResumed {
+                dialog = EditorDialog.SceneManager
             }
         },
-        onSettings = onNavigateToSettings,
-        onAddEntry = { dialog = EditorDialog.NewEntry(it) },
-        onEditEntry = { dialog = EditorDialog.EditEntry(it.id, it.speaker.id) },
-        onDeleteEntry = { vm.dispatch(EditorEvent.DeleteEntry(it)) },
-        onReorder = { vm.dispatch(EditorEvent.ReorderEntries(it)) },
+        onOpenImport = {
+            whenResumed {
+                dialog = EditorDialog.ImportLines
+            }
+        },
+        onPlayback = {
+            whenResumed {
+                haptics.confirm()
+
+                if (settings.exportEnabled) {
+                    requestRecord(
+                        settings.exportAudio,
+                        onNavigateToPlayback,
+                        {
+                            toast.show(
+                                FeldError.RecordDenied.toastText(activity),
+                                durationMillis = 4000L,
+                            )
+                        },
+                    )
+                } else {
+                    onNavigateToPlayback()
+                }
+            }
+        },
+        onSettings = {
+            whenResumed {
+                onNavigateToSettings()
+            }
+        },
+        onAddEntry = { speakerId ->
+            whenResumed {
+                dialog = EditorDialog.NewEntry(speakerId)
+            }
+        },
+        onEditEntry = { entry ->
+            whenResumed {
+                dialog = EditorDialog.EditEntry(entry.id, entry.speaker.id)
+            }
+        },
+        onDeleteEntry = {
+            vm.dispatch(EditorEvent.DeleteEntry(it))
+        },
+        onReorder = {
+            vm.dispatch(EditorEvent.ReorderEntries(it))
+        },
     )
 
     EditorDialogHost(
@@ -191,10 +220,10 @@ internal fun EditorContent(
 
     val decalContext = remember(state.sceneName, state.entries.size) {
         DecalContext(
-            sceneName = state.sceneName,
-            lineCount = state.entries.size,
-            segmentFrom = 1,
-            segmentTo = state.entries.size.coerceAtLeast(1),
+            groupName = state.sceneName,
+            count = state.entries.size,
+            rangeFrom = 1,
+            rangeTo = state.entries.size.coerceAtLeast(1),
             appVersion = BuildConfig.VERSION_NAME,
         )
     }

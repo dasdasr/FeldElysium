@@ -37,10 +37,11 @@ import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.settings.AppSettings
 import com.feldelysium.app.domain.model.settings.BackgroundKind
 import com.feldelysium.app.presentation.playback.components.BackgroundVideo
-import com.feldelysium.designsystem.components.button.FeldButtonDefaults
+import com.feldelysium.app.presentation.shared.toArgbLong
+import com.feldelysium.app.presentation.shared.toComposeColor
+import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldDialog
-import com.feldelysium.designsystem.components.container.FeldDialogFooter
 import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.container.FeldPaperBox
 import com.feldelysium.designsystem.components.content.FeldIcon
@@ -49,7 +50,6 @@ import com.feldelysium.designsystem.components.input.FeldAccentColors
 import com.feldelysium.designsystem.components.input.FeldColorSwatches
 import com.feldelysium.designsystem.components.input.FeldSegmentedControl
 import com.feldelysium.designsystem.components.input.FeldSlider
-import com.feldelysium.designsystem.components.input.swatchSpec
 import com.feldelysium.designsystem.components.settings.FeldSettingSwitchRow
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.foundation.seed.rememberSeed
@@ -65,7 +65,7 @@ private val Presets = listOf(
     0xFF3F8F86L,
     0xFF3E67C8L,
     0xFF7C55C9L,
-)
+).map { it.toComposeColor() }
 
 private val PreviewRough = RoughStyle(
     roughness = 0.9.dp,
@@ -101,14 +101,14 @@ fun BackgroundPickerDialog(
         eyebrow = stringResource(
             if (animated) R.string.background_eyebrow_animated else R.string.background_eyebrow_plain,
         ),
-        subtitle = stringResource(R.string.background_subtitle),
         onDismiss = onDismiss,
         footer = {
-            FeldDialogFooter(
-                onReset = onReset,
-                onCancel = onDismiss,
-                confirmLabel = stringResource(R.string.common_save),
-                buttonSpec = FeldButtonDefaults.Cream,
+            FeldDialogActions(
+                confirmLabel = stringResource(R.string.common_reset),
+                onConfirm = onDismiss,
+                cancelLabel = stringResource(R.string.common_cancel),
+                onCancel = onReset,
+                destructive = true,
             )
         },
     ) {
@@ -332,7 +332,9 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
                 .fillMaxWidth()
                 .height(52.dp),
             seed = rememberSeed(),
-            spec = swatchSpec(live),
+            spec = FeldPaper.Panel.copy(
+                base = live.toComposeColor(),
+            ),
             rough = PreviewRough.copy(corner = 4.dp),
         )
 
@@ -356,8 +358,8 @@ private fun ColorPane(argb: Long, onColor: (Long) -> Unit) {
         Spacer(Modifier.height(12.dp))
         FeldColorSwatches(
             colors = Presets,
-            selected = argb,
-            onSelect = onColor,
+            selected = argb.toComposeColor(),
+            onSelect = { onColor(it.toArgbLong()) },
         )
     }
 }

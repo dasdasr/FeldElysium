@@ -42,27 +42,17 @@ fun AppNavGraph() {
             )
         },
     ) {
-        composable<AppRoute.Editor> {
+        composable<AppRoute.Editor> { entry ->
             EditorScreen(
-                onNavigateToPlayback = {
-                    navController.navigate(AppRoute.Playback)
-                },
-                onNavigateToSettings = {
-                    navController.navigate(AppRoute.Settings)
-                },
+                onNavigateToPlayback = { if (entry.isResumed()) navController.navigate(AppRoute.Playback) },
+                onNavigateToSettings = { if (entry.isResumed()) navController.navigate(AppRoute.Settings) },
             )
         }
-
-        composable<AppRoute.Settings> {
-            SettingsScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
+        composable<AppRoute.Settings> { entry ->
+            SettingsScreen(onNavigateBack = { if (entry.isResumed()) navController.popBackStack() })
         }
-
-        composable<AppRoute.Playback> {
-            PlaybackScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
+        composable<AppRoute.Playback> { entry ->
+            PlaybackScreen(onNavigateBack = { if (entry.isResumed()) navController.popBackStack() })
         }
     }
 }

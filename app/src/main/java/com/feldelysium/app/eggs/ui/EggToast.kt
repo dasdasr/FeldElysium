@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.eggs.EasterEggs
 import com.feldelysium.app.eggs.EggReply
-import com.feldelysium.designsystem.components.content.FeldSpeakerDiamond
+import com.feldelysium.designsystem.components.content.FeldDiamond
 import com.feldelysium.designsystem.components.content.FeldTitleTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -150,7 +150,7 @@ internal fun EggToast(toast: EasterEggs.ActiveToast, onDismiss: (Long) -> Unit) 
             ) {
                 Spacer(Modifier.width(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    FeldSpeakerDiamond(
+                    FeldDiamond(
                         color = accent,
                         size = 22.dp,
                         seed = seed,

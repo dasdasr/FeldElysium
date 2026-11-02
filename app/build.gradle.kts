@@ -81,7 +81,7 @@ detekt {
 
 dependencies {
 
-    implementation(project(":designsystem"))
+    implementation(libs.feld.design)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.animation.core)

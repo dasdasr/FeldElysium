@@ -1,10 +1,15 @@
 package com.feldelysium.app.presentation.editor.dialogs
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.LruCache
-import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
@@ -36,8 +41,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -53,11 +58,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -69,13 +74,12 @@ import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.Speaker
 import com.feldelysium.app.domain.model.SpeakerType
 import com.feldelysium.app.domain.model.groupedByTag
-import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.designsystem.components.button.FeldFilmButton
 import com.feldelysium.designsystem.components.button.FeldTextButton
 import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldDivider
 import com.feldelysium.designsystem.components.container.FeldSectionHeader
-import com.feldelysium.designsystem.components.container.entryRough
+import com.feldelysium.designsystem.components.container.noteRough
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.feldClickable
@@ -86,10 +90,10 @@ import com.feldelysium.designsystem.foundation.shape.RoughStyle
 import com.feldelysium.designsystem.theme.FeldPalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.random.Random
-import kotlin.time.Duration.Companion.milliseconds
 
 private data class SpeakerGroup(val type: SpeakerType, val title: String, val items: List<Speaker>)
 
@@ -100,7 +104,7 @@ private sealed interface PickerItem {
         override val key get() = "h_${group.type.id}"
     }
 
-    data class Pair(val speakers: List<Speaker>, val row: Int, val groupId: String) : PickerItem {
+    data class SpeakerPair(val speakers: List<Speaker>, val row: Int, val groupId: String) : PickerItem {
         override val key get() = "r_${groupId}_$row"
     }
 }
@@ -122,49 +126,55 @@ private val FadeStops = listOf(
 
 private val avatarCache = LruCache<String, ImageBitmap>(64)
 
+private const val EXIT_MS = 140L
+
+private fun avatarKey(s: Speaker): String? = s.customIconUri ?: s.iconResId?.let { "res:$it" }
+
 @Suppress("ReturnCount")
-private fun decodeAvatar(uri: String, targetPx: Int): ImageBitmap? {
-    avatarCache.get(uri)?.let { return it }
+private fun decodeAvatar(context: Context, speaker: Speaker, targetPx: Int): ImageBitmap? {
+    val key = avatarKey(speaker) ?: return null
+    avatarCache.get(key)?.let { return it }
 
-    val path = uri.toUri().path ?: return null
-    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    val bitmap = runCatching {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        val uriPath = speaker.customIconUri?.toUri()?.path
+        fun bounds() = if (uriPath != null) {
+            BitmapFactory.decodeFile(uriPath, bounds)
+        } else {
+            BitmapFactory.decodeResource(context.resources, speaker.iconResId!!, bounds)
+        }
+        bounds()
+        if (bounds.outWidth <= 0) return null
 
-    BitmapFactory.decodeFile(path, bounds)
+        var sample = 1
+        while (bounds.outWidth / (sample * 2) >= targetPx && bounds.outHeight / (sample * 2) >= targetPx) {
+            sample *= 2
+        }
+        val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+        if (uriPath != null) {
+            BitmapFactory.decodeFile(uriPath, opts)
+        } else {
+            BitmapFactory.decodeResource(context.resources, speaker.iconResId!!, opts)
+        }
+    }.getOrNull() ?: return null
 
-    if (bounds.outWidth <= 0) return null
-
-    var sample = 1
-    while (
-        bounds.outWidth / (sample * 2) >= targetPx &&
-        bounds.outHeight / (sample * 2) >= targetPx
-    ) {
-        sample *= 2
-    }
-
-    val bitmap = BitmapFactory.decodeFile(
-        path,
-        BitmapFactory.Options().apply { inSampleSize = sample },
-    ) ?: return null
-
-    return bitmap.asImageBitmap().also { avatarCache.put(uri, it) }
+    return bitmap.asImageBitmap().also { avatarCache.put(key, it) }
 }
 
-@Preview
 @Composable
-private fun SpeakerPickerDialogPreview() {
-    SpeakerPickerDialog(
-        speakers = PredefinedSpeakers.ALL + Speaker(
-            id = "custom",
-            name = "Ancient Reptilian Brain",
-            colorArgb = Speaker.DEFAULT_CUSTOM_COLOR,
-            type = SpeakerType.CUSTOM,
-        ),
-        onSpeakerSelected = {},
-        onCreateCustom = {},
-        onEditCustom = {},
-        onDismiss = {},
-        tags = listOf(SpeakerType.NPC),
-    )
+private fun rememberAvatar(speaker: Speaker, enabled: Boolean): ImageBitmap? {
+    val context = LocalContext.current
+    val key = avatarKey(speaker)
+    val px = with(LocalDensity.current) { AvatarHeight.roundToPx() }
+    val initial = if (enabled && key != null) avatarCache.get(key) else null
+    return produceState(initial, key, enabled) {
+        value = when {
+            !enabled || key == null -> null
+
+            else -> avatarCache.get(key)
+                ?: withContext(Dispatchers.IO) { decodeAvatar(context, speaker, px) }
+        }
+    }.value
 }
 
 @Composable
@@ -179,7 +189,6 @@ fun SpeakerPickerDialog(
     var query by remember { mutableStateOf("") }
     var collapsed by remember { mutableStateOf(setOf<SpeakerType>()) }
     var avatarMode by remember { mutableStateOf(true) }
-
     var q by remember { mutableStateOf("") }
 
     LaunchedEffect(query) {
@@ -188,42 +197,41 @@ fun SpeakerPickerDialog(
         q = trimmed
     }
 
-    val roughs = remember {
-        List(CHIP_VARIANTS) { entryRough(CHIP_SEED_BASE + it) }
+    // Enter/exit: the window itself can't animate, so we animate the content
+    // and call the host's callback after the exit finishes. `closing` also
+    // swallows double taps.
+    var visible by remember { mutableStateOf(false) }
+    var closing by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) { visible = true }
+    fun close(after: () -> Unit) {
+        if (closing) return
+        closing = true
+        visible = false
+        scope.launch {
+            delay(EXIT_MS)
+            after()
+        }
     }
-    val seen = remember { HashSet<String>() }
 
-    var settled by remember { mutableStateOf(true) }
+    val roughs = remember { List(CHIP_VARIANTS) { noteRough(CHIP_SEED_BASE + it) } }
 
-    LaunchedEffect(Unit) {
-        withFrameNanos { }
-        withFrameNanos { }
-        settled = true
-    }
-
+    val context = LocalContext.current
     val density = LocalDensity.current
-
     LaunchedEffect(speakers) {
         val px = with(density) { AvatarHeight.roundToPx() }
         withContext(Dispatchers.IO) {
-            speakers.mapNotNull { it.customIconUri }
-                .take(16)
-                .forEach { decodeAvatar(it, px) }
+            speakers.filter { avatarKey(it) != null }.take(24).forEach { decodeAvatar(context, it, px) }
         }
     }
 
     val customTitle = stringResource(R.string.picker_group_custom)
-
     val groups = remember(speakers, tags, q, customTitle) {
         speakers
             .filter { q.isEmpty() || it.name.contains(q, ignoreCase = true) }
             .groupedByTag(tags)
             .map { (tag, items) ->
-                SpeakerGroup(
-                    type = tag,
-                    title = if (tag.isCustom) customTitle else tag.name,
-                    items = items,
-                )
+                SpeakerGroup(tag, if (tag.isCustom) customTitle else tag.name, items)
             }
             .filter { it.items.isNotEmpty() }
             .sortedBy { if (it.type == SpeakerType.YOU) 0 else 1 }
@@ -233,10 +241,9 @@ fun SpeakerPickerDialog(
         buildList {
             groups.forEachIndexed { groupIndex, group ->
                 add(PickerItem.Header(group, groupIndex))
-
                 if (q.isNotEmpty() || group.type !in collapsed) {
                     group.items.chunked(2).forEachIndexed { rowIndex, pair ->
-                        add(PickerItem.Pair(pair, rowIndex, group.type.id))
+                        add(PickerItem.SpeakerPair(pair, rowIndex, group.type.id))
                     }
                 }
             }
@@ -246,110 +253,83 @@ fun SpeakerPickerDialog(
     val bg = MaterialTheme.colorScheme.background
 
     Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            decorFitsSystemWindows = false,
-        ),
+        onDismissRequest = { close(onDismiss) },
+        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(bg)
-                .systemBarsPadding()
-                .imePadding(),
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(tween(180)) + slideInVertically(tween(220)) { it / 24 },
+            exit = fadeOut(tween(EXIT_MS.toInt())) + slideOutVertically(tween(EXIT_MS.toInt())) { it / 24 },
         ) {
-            FeldScreenHeader(
-                title = stringResource(R.string.picker_title),
-                eyebrow = stringResource(R.string.picker_eyebrow),
-                navIcon = FeldIconId.Close,
-                onNav = onDismiss,
-                divider = false,
-                titleStyle = MaterialTheme.typography.titleLarge.copy(
-                    fontSize = 44.sp,
-                    lineHeight = 46.sp,
-                    letterSpacing = 1.sp,
-                ),
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(bg)
+                    .systemBarsPadding()
+                    .imePadding(),
             ) {
-                SearchField(
-                    value = query,
-                    onValueChange = { query = it },
-                    modifier = Modifier.weight(1f),
+                FeldScreenHeader(
+                    title = stringResource(R.string.picker_title),
+                    eyebrow = stringResource(R.string.picker_eyebrow),
+                    navIcon = FeldIconId.Close,
+                    onNav = { close(onDismiss) },
+                    divider = false,
+                    titleStyle = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 44.sp,
+                        lineHeight = 46.sp,
+                        letterSpacing = 1.sp,
+                    ),
                 )
 
-                ViewToggle(
-                    avatarMode = avatarMode,
-                    onClick = { avatarMode = !avatarMode },
-                )
-            }
+                Spacer(Modifier.height(8.dp))
 
-            Box(Modifier.weight(1f)) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(top = 10.dp, bottom = 16.dp),
+                Row(
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    if (items.isEmpty()) {
-                        item(key = "empty") {
-                            Text(
-                                text = stringResource(R.string.picker_empty),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = FeldPalette.Muted,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 32.dp),
-                            )
-                        }
-                    }
+                    SearchField(query, { query = it }, Modifier.weight(1f))
+                    ViewToggle(avatarMode) { avatarMode = !avatarMode }
+                }
 
-                    itemsIndexed(items, key = { _, item -> item.key }) { index, item ->
-                        Box(
-                            Modifier.entrance(
-                                key = item.key,
-                                seen = seen,
-                                index = index,
-                                animate = settled,
-                            ),
-                        ) {
+                Box(Modifier.weight(1f)) {
+                    LazyColumn(
+                        Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(top = 10.dp, bottom = 16.dp),
+                    ) {
+                        if (items.isEmpty()) {
+                            item(key = "empty") {
+                                Text(
+                                    stringResource(R.string.picker_empty),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = FeldPalette.Muted,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .animateItem()
+                                        .fillMaxWidth()
+                                        .padding(vertical = 32.dp),
+                                )
+                            }
+                        }
+
+                        items(items, key = { it.key }) { item ->
                             when (item) {
                                 is PickerItem.Header -> {
-                                    val expanded =
-                                        q.isNotEmpty() || item.group.type !in collapsed
-
-                                    Column {
-                                        Spacer(
-                                            Modifier.height(
-                                                if (item.index == 0) 0.dp else 10.dp,
-                                            ),
-                                        )
-
+                                    val expanded = q.isNotEmpty() || item.group.type !in collapsed
+                                    Column(Modifier.animateItem()) {
+                                        Spacer(Modifier.height(if (item.index == 0) 0.dp else 10.dp))
                                         FeldSectionHeader(
                                             title = item.group.title,
                                             seed = 40 + item.index,
-                                            modifier = Modifier.alpha(
-                                                if (expanded) 1f else 0.6f,
-                                            ),
+                                            modifier = Modifier.alpha(if (expanded) 1f else 0.6f),
                                             onClick = {
                                                 val type = item.group.type
-                                                collapsed = if (type in collapsed) {
-                                                    collapsed - type
-                                                } else {
-                                                    collapsed + type
-                                                }
+                                                collapsed =
+                                                    if (type in collapsed) collapsed - type else collapsed + type
                                             },
                                             trailing = {
                                                 Text(
-                                                    text = item.group.items.size.toString(),
+                                                    item.group.items.size.toString(),
                                                     style = MaterialTheme.typography.labelMedium,
                                                     color = FeldPalette.Muted,
                                                 )
@@ -358,91 +338,177 @@ fun SpeakerPickerDialog(
                                     }
                                 }
 
-                                is PickerItem.Pair -> SpeakerRow(
+                                is PickerItem.SpeakerPair -> SpeakerRow(
                                     pair = item.speakers,
                                     rowIndex = item.row,
                                     roughs = roughs,
-                                    top = when {
-                                        avatarMode -> if (item.row == 0) 8.dp else 2.dp
-                                        else -> if (item.row == 0) 8.dp else 0.dp
+                                    top = if (item.row == 0) {
+                                        8.dp
+                                    } else if (avatarMode) {
+                                        2.dp
+                                    } else {
+                                        0.dp
                                     },
                                     avatarMode = avatarMode,
-                                    onSelect = onSpeakerSelected,
-                                    onEdit = onEditCustom,
+                                    onSelect = { close { onSpeakerSelected(it) } },
+                                    onEdit = { close { onEditCustom(it) } },
+                                    modifier = Modifier.animateItem(),
                                 )
                             }
                         }
                     }
+
+                    Box(
+                        Modifier
+                            .align(Alignment.TopCenter)
+                            .fillMaxWidth()
+                            .height(32.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    colorStops = FadeStops.map { (p, a) -> p to bg.copy(alpha = a) }.toTypedArray(),
+                                ),
+                            ),
+                    )
                 }
 
-                Box(
-                    Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth()
-                        .height(32.dp)
-                        .background(
-                            Brush.verticalGradient(
-                                colorStops = FadeStops.map { (position, alpha) ->
-                                    position to bg.copy(alpha = alpha)
-                                }.toTypedArray(),
-                            ),
-                        ),
-                )
-            }
+                FeldDivider()
 
-            FeldDivider()
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                FeldFilmButton(
-                    text = stringResource(R.string.picker_create_custom),
-                    onClick = onCreateCustom,
-                    modifier = Modifier.fillMaxWidth(),
-                    icon = FeldIconId.Add,
-                )
-
-                FeldTextButton(
-                    stringResource(R.string.common_cancel),
-                    onDismiss,
-                )
+                Column(
+                    Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    FeldFilmButton(
+                        text = stringResource(R.string.picker_create_custom),
+                        onClick = { close(onCreateCustom) },
+                        modifier = Modifier.fillMaxWidth(),
+                        icon = FeldIconId.Add,
+                    )
+                    FeldTextButton(stringResource(R.string.common_cancel), { close(onDismiss) })
+                }
             }
         }
     }
 }
 
 @Composable
-private fun Modifier.entrance(key: String, seen: MutableSet<String>, index: Int, animate: Boolean): Modifier {
-    val instant = remember(key) { !animate || key in seen }
-    val animation = remember(key) {
-        Animatable(if (instant) 1f else 0.35f)
-    }
-
-    LaunchedEffect(key) {
-        if (!instant) {
-            delay((index.coerceAtMost(6) * 15L).milliseconds)
-            animation.animateTo(1f, tween(160))
+private fun SpeakerRow(
+    pair: List<Speaker>,
+    rowIndex: Int,
+    roughs: List<RoughStyle>,
+    top: Dp,
+    avatarMode: Boolean,
+    onSelect: (Speaker) -> Unit,
+    onEdit: (Speaker) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = top),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        pair.forEachIndexed { column, speaker ->
+            val variant = (rowIndex * 2 + column) % CHIP_VARIANTS
+            SpeakerChip(
+                speaker = speaker,
+                seed = CHIP_SEED_BASE + variant,
+                rough = roughs[variant],
+                avatarMode = avatarMode,
+                onClick = { onSelect(speaker) },
+                onEdit = if (!speaker.isBundled) ({ onEdit(speaker) }) else null,
+            )
         }
-        seen += key
+        if (pair.size == 1) Spacer(Modifier.weight(1f))
     }
+}
 
-    return graphicsLayer {
-        alpha = animation.value
-        translationY = (1f - animation.value) * 14.dp.toPx()
+@Composable
+private fun RowScope.SpeakerChip(
+    speaker: Speaker,
+    seed: Int,
+    rough: RoughStyle,
+    avatarMode: Boolean,
+    onClick: () -> Unit,
+    onEdit: (() -> Unit)?,
+) {
+    val color = Color(speaker.colorArgb)
+    val hasAvatar = avatarMode && avatarKey(speaker) != null
+    val avatar = rememberAvatar(speaker, hasAvatar)
+
+    val avatarAlpha by animateFloatAsState(if (avatar != null) 1f else 0f, tween(180), label = "avatar")
+    val startPad by animateFloatAsState(if (hasAvatar) 46f else 12f, tween(160), label = "pad")
+    val tilt = remember(speaker.id) { (Random(speaker.id.hashCode()).nextFloat() - 0.5f) * 8f }
+    val seedHash = speaker.id.hashCode()
+
+    Box(Modifier.weight(1f)) {
+        FeldCard(
+            modifier = Modifier.fillMaxWidth(),
+            seed = seed,
+            spec = FeldPaper.Note,
+            rough = rough,
+            contentPadding = PaddingValues(start = startPad.dp, end = if (onEdit != null) 2.dp else 10.dp),
+            showDecals = false,
+            onClick = onClick,
+        ) {
+            Row(Modifier.fillMaxWidth().height(ChipHeight), verticalAlignment = Alignment.CenterVertically) {
+                // Depends only on the mode, so the text doesn't jump while the avatar loads.
+                if (!hasAvatar) {
+                    Canvas(Modifier.size(12.dp)) {
+                        drawPath(
+                            outlineDiamondPath(size.width, size.height, seedHash),
+                            color,
+                            style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round),
+                        )
+                    }
+                    Spacer(Modifier.width(8.dp))
+                }
+
+                Text(
+                    speaker.name.uppercase(),
+                    style = MaterialTheme.typography.labelMedium.copy(lineHeight = 1.0.em),
+                    color = color,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+
+                if (onEdit != null) {
+                    Box(Modifier.size(36.dp).feldClickable(onClick = onEdit), contentAlignment = Alignment.Center) {
+                        FeldIcon(FeldIconId.Edit, size = 16.dp)
+                    }
+                }
+            }
+        }
+
+        avatar?.let { bitmap ->
+            Image(
+                bitmap = bitmap,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(x = (-4).dp, y = (-3).dp)
+                    .size(AvatarWidth, AvatarHeight)
+                    .graphicsLayer {
+                        alpha = avatarAlpha
+                        rotationZ = tilt
+                        val s = 0.85f + 0.15f * avatarAlpha
+                        scaleX = s
+                        scaleY = s
+                    }
+                    .shadow(4.dp, RoundedCornerShape(4.dp), clip = false)
+                    .clip(RoundedCornerShape(4.dp)),
+            )
+        }
     }
 }
 
 @Composable
 private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
-    val rough = remember { entryRough(77) }
+    val rough = remember { noteRough(77) }
 
     FeldCard(
         modifier = modifier.fillMaxWidth(),
         seed = 77,
-        spec = FeldPaper.Entry,
+        spec = FeldPaper.Note,
         rough = rough,
         contentPadding = PaddingValues(horizontal = 14.dp),
         showDecals = false,
@@ -496,14 +562,14 @@ private fun SearchField(value: String, onValueChange: (String) -> Unit, modifier
 
 @Composable
 private fun ViewToggle(avatarMode: Boolean, onClick: () -> Unit) {
-    val rough = remember { entryRough(78) }
+    val rough = remember { noteRough(78) }
     val haptics = rememberFeldHaptics()
     val tint = if (avatarMode) FeldPalette.Orange else FeldPalette.Muted
 
     FeldCard(
         modifier = Modifier.size(48.dp),
         seed = 78,
-        spec = FeldPaper.Entry,
+        spec = FeldPaper.Note,
         rough = rough,
         contentPadding = PaddingValues(0.dp),
         showDecals = false,
@@ -523,171 +589,6 @@ private fun ViewToggle(avatarMode: Boolean, onClick: () -> Unit) {
             } else {
                 FeldIcon(FeldIconId.Image, size = 22.dp, tint = tint)
             }
-        }
-    }
-}
-
-@Composable
-private fun SpeakerRow(
-    pair: List<Speaker>,
-    rowIndex: Int,
-    roughs: List<RoughStyle>,
-    top: Dp,
-    avatarMode: Boolean,
-    onSelect: (Speaker) -> Unit,
-    onEdit: (Speaker) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = top),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        pair.forEachIndexed { columnIndex, speaker ->
-            val variant = (rowIndex * 2 + columnIndex) % CHIP_VARIANTS
-
-            SpeakerChip(
-                speaker = speaker,
-                seed = CHIP_SEED_BASE + variant,
-                rough = roughs[variant],
-                avatarMode = avatarMode,
-                onClick = { onSelect(speaker) },
-                onEdit = if (!speaker.isBundled) {
-                    { onEdit(speaker) }
-                } else {
-                    null
-                },
-            )
-        }
-
-        if (pair.size == 1) Spacer(Modifier.weight(1f))
-    }
-}
-
-@Composable
-private fun RowScope.SpeakerChip(
-    speaker: Speaker,
-    seed: Int,
-    rough: RoughStyle,
-    avatarMode: Boolean,
-    onClick: () -> Unit,
-    onEdit: (() -> Unit)?,
-) {
-    val color = Color(speaker.colorArgb)
-    val iconUri = speaker.customIconUri
-    val hasAvatar = avatarMode && iconUri != null
-    val density = LocalDensity.current
-    val targetPx = with(density) { AvatarHeight.roundToPx() }
-
-    val cached = remember(iconUri) {
-        iconUri?.let { avatarCache.get(it) }
-    }
-
-    val avatar by produceState<ImageBitmap?>(
-        cached,
-        iconUri,
-        hasAvatar,
-    ) {
-        value = if (hasAvatar) {
-            value ?: withContext(Dispatchers.IO) {
-                decodeAvatar(iconUri, targetPx)
-            }
-        } else {
-            null
-        }
-    }
-
-    val avatarAlpha by animateFloatAsState(
-        if (avatar != null) 1f else 0f,
-        tween(180),
-        label = "avatar",
-    )
-
-    val tilt = remember(speaker.id) {
-        (Random(speaker.id.hashCode()).nextFloat() - 0.5f) * 8f
-    }
-
-    val seedHash = speaker.id.hashCode()
-
-    val startPad by animateFloatAsState(
-        if (hasAvatar) 46f else 12f,
-        tween(160),
-        label = "pad",
-    )
-
-    Box(Modifier.weight(1f)) {
-        FeldCard(
-            modifier = Modifier.fillMaxWidth(),
-            seed = seed,
-            spec = FeldPaper.Entry,
-            rough = rough,
-            contentPadding = PaddingValues(
-                start = startPad.dp,
-                end = if (onEdit != null) 2.dp else 10.dp,
-            ),
-            showDecals = false,
-            onClick = onClick,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ChipHeight),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (!hasAvatar || avatar == null) {
-                    Canvas(Modifier.size(12.dp)) {
-                        drawPath(
-                            outlineDiamondPath(size.width, size.height, seedHash),
-                            color,
-                            style = Stroke(1.3.dp.toPx(), join = StrokeJoin.Round),
-                        )
-                    }
-
-                    Spacer(Modifier.width(8.dp))
-                }
-
-                val base = MaterialTheme.typography.labelMedium
-
-                Text(
-                    text = speaker.name.uppercase(),
-                    style = base.copy(lineHeight = 1.0.em),
-                    color = color,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-
-                if (onEdit != null) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .feldClickable(onClick = onEdit),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        FeldIcon(FeldIconId.Edit, size = 16.dp)
-                    }
-                }
-            }
-        }
-
-        avatar?.let { bitmap ->
-            Image(
-                bitmap = bitmap,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset(x = (-4).dp, y = (-3).dp)
-                    .size(AvatarWidth, AvatarHeight)
-                    .graphicsLayer {
-                        alpha = avatarAlpha
-                        rotationZ = tilt
-                        scaleX = 0.85f + 0.15f * avatarAlpha
-                        scaleY = 0.85f + 0.15f * avatarAlpha
-                    }
-                    .shadow(4.dp, RoundedCornerShape(4.dp), clip = false)
-                    .clip(RoundedCornerShape(4.dp)),
-            )
         }
     }
 }

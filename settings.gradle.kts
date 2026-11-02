@@ -14,11 +14,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 
 rootProject.name = "FeldElysium"
 include(":app")
 include(":benchmark")
-include(":designsystem")
-include(":catalog")

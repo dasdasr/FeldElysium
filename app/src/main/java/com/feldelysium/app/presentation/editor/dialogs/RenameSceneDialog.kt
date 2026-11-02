@@ -38,7 +38,7 @@ import com.feldelysium.designsystem.components.button.FeldFilmButton
 import com.feldelysium.designsystem.components.button.FeldGhostButton
 import com.feldelysium.designsystem.components.container.FeldCard
 import com.feldelysium.designsystem.components.container.FeldDivider
-import com.feldelysium.designsystem.components.container.entryRough
+import com.feldelysium.designsystem.components.container.noteRough
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.foundation.material.FeldPaper
 import com.feldelysium.designsystem.theme.FeldPalette
@@ -47,7 +47,7 @@ import com.feldelysium.designsystem.theme.FeldPalette
 internal fun RenameSceneDialog(initial: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
     var field by remember { mutableStateOf(TextFieldValue(initial, TextRange(0, initial.length))) }
     val requester = remember { FocusRequester() }
-    val rough = remember { entryRough(17) }
+    val rough = remember { noteRough(17) }
 
     fun commit() {
         val t = field.text.trim()
@@ -58,7 +58,7 @@ internal fun RenameSceneDialog(initial: String, onConfirm: (String) -> Unit, onD
         FeldCard(
             modifier = Modifier.fillMaxWidth(),
             seed = 17,
-            spec = FeldPaper.Entry,
+            spec = FeldPaper.Note,
             rough = rough,
             contentPadding = PaddingValues(16.dp),
             showDecals = false,

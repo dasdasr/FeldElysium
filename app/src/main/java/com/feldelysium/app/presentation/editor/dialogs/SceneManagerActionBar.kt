@@ -111,11 +111,13 @@ internal fun ClearControl(enabled: Boolean, onConfirm: () -> Unit) {
                 Modifier
                     .graphicsLayer { rotationZ = -6f }
                     .drawBehind { drawRect(orange) }
-                    .feldClickable {
-                        haptics.thud()
-                        armed = false
-                        onConfirm()
-                    }
+                    .feldClickable(
+                        onClick = {
+                            haptics.thud()
+                            armed = false
+                            onConfirm()
+                        },
+                    )
                     .padding(horizontal = 12.dp, vertical = 10.dp),
             ) {
                 Text(
@@ -131,10 +133,13 @@ internal fun ClearControl(enabled: Boolean, onConfirm: () -> Unit) {
             Box(
                 Modifier
                     .size(48.dp)
-                    .feldClickable(enabled = enabled) {
-                        haptics.tick()
-                        armed = true
-                    },
+                    .feldClickable(
+                        enabled = enabled,
+                        onClick = {
+                            haptics.tick()
+                            armed = true
+                        },
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 FeldIcon(FeldIconId.Delete, size = 22.dp)

@@ -27,6 +27,8 @@ import com.feldelysium.app.presentation.editor.entry.FieldLabel
 import com.feldelysium.app.presentation.editor.entry.SpeakerPhotoBlock
 import com.feldelysium.app.presentation.editor.entry.SpeakerPreview
 import com.feldelysium.app.presentation.settings.dialogs.ChooseImageDialog
+import com.feldelysium.app.presentation.shared.toArgbLong
+import com.feldelysium.app.presentation.shared.toComposeColor
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.button.FeldFieldButton
 import com.feldelysium.designsystem.components.button.FeldTextButton
@@ -68,7 +70,7 @@ fun CustomSpeakerDialog(
     var customColors by remember {
         mutableStateOf(listOfNotNull(color.takeIf { SpeakerColor.isCustom(it) }))
     }
-    val palette = SpeakerColor.AllArgb + customColors
+    val palette = (SpeakerColor.AllArgb + customColors).map(Long::toComposeColor)
     val accent = Color(color)
 
     FeldDialog(
@@ -151,9 +153,9 @@ fun CustomSpeakerDialog(
         FieldLabel(stringResource(R.string.speaker_color_label))
         FeldColorSwatches(
             colors = palette,
-            selected = color,
+            selected = color.toComposeColor(),
             onSelect = {
-                color = it
+                color = it.toArgbLong()
                 colorTouched = true
             },
             columns = 6,

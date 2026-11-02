@@ -24,7 +24,7 @@ import com.feldelysium.app.R
 import com.feldelysium.app.domain.model.DialogueEntry
 import com.feldelysium.app.eggs.EggEvent
 import com.feldelysium.app.eggs.ui.LocalEasterEggs
-import com.feldelysium.designsystem.components.container.FeldEntryCard
+import com.feldelysium.designsystem.components.container.FeldNoteCard
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldMenu
 import com.feldelysium.designsystem.components.input.FeldMenuItem
@@ -70,11 +70,11 @@ internal fun EntryList(
                 val selected = menuEntryId == entry.id
 
                 Box {
-                    FeldEntryCard(
-                        speakerName = entry.speaker.name,
-                        speakerColor = Color(entry.speaker.colorArgb),
+                    FeldNoteCard(
+                        title = entry.speaker.name,
+                        accent = Color(entry.speaker.colorArgb),
                         text = entry.text,
-                        number = index + 1,
+                        index = index + 1,
                         ambient = 0.7f,
                         seed = entry.id.hashCode(),
                         isDragging = isDragging,

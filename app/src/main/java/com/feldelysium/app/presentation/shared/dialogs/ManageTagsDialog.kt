@@ -29,10 +29,12 @@ import com.feldelysium.app.domain.model.SpeakerColor
 import com.feldelysium.app.domain.model.SpeakerType
 import com.feldelysium.app.domain.registry.PredefinedSpeakers
 import com.feldelysium.app.presentation.editor.entry.FieldLabel
+import com.feldelysium.app.presentation.shared.toArgbLong
+import com.feldelysium.app.presentation.shared.toComposeColor
 import com.feldelysium.designsystem.components.button.FeldDialogActions
 import com.feldelysium.designsystem.components.container.FeldDialog
 import com.feldelysium.designsystem.components.container.FeldDivider
-import com.feldelysium.designsystem.components.container.FeldHandDiamond
+import com.feldelysium.designsystem.components.container.FeldWornDiamond
 import com.feldelysium.designsystem.components.content.FeldIcon
 import com.feldelysium.designsystem.components.content.FeldIconId
 import com.feldelysium.designsystem.components.input.FeldAccentColors
@@ -57,10 +59,16 @@ fun ManageTagsDialog(
         speakers.groupingBy { it.type.id }.eachCount()
     }
 
+    fun closeDialog() {
+        editing = null
+        deleting = null
+        onDismiss()
+    }
+
     FeldDialog(
         title = stringResource(R.string.tags_title),
         eyebrow = stringResource(R.string.tags_manage_eyebrow),
-        onDismiss = onDismiss,
+        onDismiss = ::closeDialog,
         footer = {
             FeldDialogActions(
                 confirmLabel = stringResource(R.string.common_done),
@@ -91,9 +99,9 @@ fun ManageTagsDialog(
                     .padding(vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                FeldHandDiamond(
+                FeldWornDiamond(
                     tag.colorArgb?.let { Color(it) } ?: FeldPalette.Muted,
-                    tag.id.hashCode(),
+                    seed = tag.id.hashCode(),
                     size = 14.dp,
                 )
                 Spacer(Modifier.width(12.dp))
@@ -121,14 +129,14 @@ fun ManageTagsDialog(
                     FeldIcon(
                         FeldIconId.Edit,
                         size = 20.dp,
-                        modifier = Modifier.feldClickable { editing = tag },
+                        modifier = Modifier.feldClickable(onClick = { editing = tag }),
                     )
                     Spacer(Modifier.width(14.dp))
                     FeldIcon(
                         FeldIconId.Delete,
                         markerFilmSpec = FeldMarker.Dry,
                         size = 20.dp,
-                        modifier = Modifier.feldClickable { deleting = tag },
+                        modifier = Modifier.feldClickable(onClick = { deleting = tag }),
                     )
                 }
             }
@@ -188,23 +196,21 @@ private fun EditTagDialog(
     onSave: (SpeakerType) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    var name by remember { mutableStateOf(tag.name) }
-    var color by remember { mutableStateOf(tag.colorArgb) }
-    var sound by remember { mutableStateOf(tag.soundKey) }
+    var name by remember(tag.id) { mutableStateOf(tag.name) }
+    var color by remember(tag.id) { mutableStateOf(tag.colorArgb) }
+    var sound by remember(tag.id) { mutableStateOf(tag.soundKey) }
+    var allowsChecks by remember(tag.id) { mutableStateOf(tag.allowsChecks) }
 
     val clean = SpeakerType.normalizeName(name)
     val valid = clean.isNotEmpty() && clean.lowercase() !in takenNames
 
-    val palette = remember {
-        val c = tag.colorArgb
-        if (c != null && SpeakerColor.isCustom(c)) {
-            SpeakerColor.AllArgb + c
-        } else {
-            SpeakerColor.AllArgb
+    val palette = remember(tag.colorArgb) {
+        val colors = SpeakerColor.AllArgb.let { base ->
+            val custom = tag.colorArgb?.takeIf(SpeakerColor::isCustom)
+            if (custom != null) base + custom else base
         }
+        colors.map(Long::toComposeColor)
     }
-
-    var allowsChecks by remember { mutableStateOf(tag.allowsChecks) }
 
     FeldDialog(
         title = stringResource(R.string.tags_edit_title),
@@ -222,6 +228,7 @@ private fun EditTagDialog(
                             allowsChecks = allowsChecks,
                         ),
                     )
+                    onDismiss()
                 },
                 onCancel = onDismiss,
                 confirmEnabled = valid,
@@ -260,8 +267,8 @@ private fun EditTagDialog(
         Spacer(Modifier.height(10.dp))
         FeldColorSwatches(
             colors = palette,
-            selected = color ?: 0L,
-            onSelect = { color = it },
+            selected = (color ?: 0L).toComposeColor(),
+            onSelect = { color = it.toArgbLong() },
             columns = 6,
             minRows = 2,
         )

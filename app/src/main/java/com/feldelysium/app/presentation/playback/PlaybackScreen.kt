@@ -68,13 +68,13 @@ import com.feldelysium.app.presentation.playback.components.PlaybackBottomBar
 import com.feldelysium.app.presentation.playback.components.PlaybackPromptFooter
 import com.feldelysium.app.presentation.playback.components.StageRef
 import com.feldelysium.app.presentation.settings.SettingsViewModel
+import com.feldelysium.app.presentation.shared.ChromaKeyGreen
 import com.feldelysium.app.presentation.theme.ProvidePlaybackFont
 import com.feldelysium.app.presentation.theme.fontDir
 import com.feldelysium.app.record.RecordState
 import com.feldelysium.app.record.ScreenRecordCoordinator
 import com.feldelysium.app.record.ScreenRecordService
 import com.feldelysium.app.record.realScreenSize
-import com.feldelysium.designsystem.theme.ChromaKeyGreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull

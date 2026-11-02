@@ -19,6 +19,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.content.ContextCompat
@@ -103,7 +104,9 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             FeldTheme {
-                val damageColors = DamageType.entries.map { CheckAssets.damageColor(it) }
+                val damageColors: List<Color> = DamageType.entries.map { type ->
+                    CheckAssets.damageColor(type)
+                }
                 FeldWarmup(extraChipColors = damageColors)
 
                 ProvideSeedScope {
