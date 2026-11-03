@@ -313,7 +313,7 @@ private fun DialogueHistoryListPreview() {
                 text = "Go-go gyro, we are so back, so so bak, you know?",
             ),
             DialogueEntry(
-                speaker = PredefinedSpeakers.LEGO_KIM,
+                speaker = PredefinedSpeakers.LEGO_HARRY,
                 text = "Go-go gyro",
             ),
             DialogueEntry(
