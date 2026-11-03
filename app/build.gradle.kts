@@ -77,6 +77,7 @@ detekt {
     config.setFrom("$rootDir/config/detekt/detekt.yml")
     baseline = file("detekt-baseline.xml")
     parallel = true
+    autoCorrect = !providers.environmentVariable("CI").isPresent
 }
 
 dependencies {

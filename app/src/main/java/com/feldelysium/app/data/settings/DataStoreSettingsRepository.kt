@@ -75,7 +75,7 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
         packImported = prefs[Keys.PACK_IMPORTED] ?: false,
         exportEnabled = prefs[Keys.EXPORT_ENABLED] ?: true,
         exportAudio = prefs[Keys.EXPORT_AUDIO] ?: true,
-        autoPlay = prefs[Keys.AUTO_PLAY] ?: false,
+        autoPlay = prefs[Keys.AUTO_PLAY] ?: true,
         autoPlaySpeed = prefs[Keys.AUTO_PLAY_SPEED]
             ?.let { runCatching { AutoPlaySpeed.valueOf(it) }.getOrNull() }
             ?: AutoPlaySpeed.NORMAL,
