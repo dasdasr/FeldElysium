@@ -2,14 +2,14 @@ package com.feldelysium.app.domain.model.settings
 
 data class AppSettings(
     val lockAspectRatio16x9: Boolean = true,
-    val exportEnabled: Boolean = false,
-    val exportAudio: Boolean = false,
+    val exportEnabled: Boolean = true,
+    val exportAudio: Boolean = true,
 
     val customFontFile: String = "",
     val customFontName: String = "",
     val fontChoice: String = "",
 
-    val autoPlay: Boolean = false,
+    val autoPlay: Boolean = true,
     val autoPlaySpeed: AutoPlaySpeed = AutoPlaySpeed.NORMAL,
     val playbackMoney: String = "40.95",
     val playbackTime: String = "16:36",

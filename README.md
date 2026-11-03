@@ -121,4 +121,4 @@ Release builds need your own signing config.
   </a>
 </p>
 
-<sub><a href="LICENSE">MIT License</a> · <a href="NOTICE.md">Notice</a></sub>
+<sub><a href="LICENSE.md">MIT License</a> · <a href="NOTICE.md">Notice</a></sub>

@@ -74,6 +74,7 @@ object PredefinedSpeakers {
 
     val NPCS: List<Speaker> = listOf(
         LEGO_HARRY,
+        LEGO_KIM,
     )
 
     val ALL: List<Speaker> = SKILLS + NPCS + YOU
