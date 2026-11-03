@@ -2,8 +2,8 @@ package com.feldelysium.app.domain.model.settings
 
 data class AppSettings(
     val lockAspectRatio16x9: Boolean = true,
-    val exportEnabled: Boolean = true,
-    val exportAudio: Boolean = true,
+    val exportEnabled: Boolean = false,
+    val exportAudio: Boolean = false,
 
     val customFontFile: String = "",
     val customFontName: String = "",
